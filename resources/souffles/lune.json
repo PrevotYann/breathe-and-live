@@ -12,7 +12,7 @@
         },
         "special": {
             "nom": "Non choisi",
-            "description": "Si seul combattant, +1 dé de dégats pour les formes de Souffle."
+            "description": "Si seul combattant, +1 dé de dégâts pour les formes de Souffle."
         },
         "coutEndurance": 0,
         "formes": [
@@ -23,7 +23,7 @@
                 "modificateur": "Finesse",
                 "cout": 10,
                 "portee": "4.5m",
-                "degats": "3d6 + Finesse",
+                "degats": "3d6 + @statsBase.finesse",
                 "traits": [
                     "À distance",
                     "Peut être utilisée à distance de mêlée jusqu'à la distance autorisée"
@@ -36,7 +36,7 @@
                 "modificateur": "Finesse",
                 "cout": 10,
                 "portee": "3m",
-                "degats": "3d8 + Finesse",
+                "degats": "3d8 + @statsBase.finesse",
                 "traits": []
             },
             {
@@ -46,7 +46,7 @@
                 "modificateur": "Force",
                 "cout": 5,
                 "portee": "4.5m",
-                "degats": "2d8 + Force",
+                "degats": "2d8 + @statsBase.force",
                 "traits": []
             },
             {
@@ -56,7 +56,7 @@
                 "modificateur": "Finesse",
                 "cout": 1,
                 "portee": "3m",
-                "degats": "1d12 + Finesse",
+                "degats": "1d12 + @statsBase.finesse",
                 "traits": [
                     "En ligne droite",
                     "Doit se déplacer dans une seule direction"
@@ -69,7 +69,7 @@
                 "modificateur": "Force/Finesse",
                 "cout": 11,
                 "portee": "1.5m - 6m",
-                "degats": "3d8 + Force/Finesse",
+                "degats": "3d8 + max(@statsBase.force, @statsBase.finesse)",
                 "traits": []
             },
             {
@@ -79,7 +79,7 @@
                 "modificateur": "Force",
                 "cout": 14,
                 "portee": "4.5m",
-                "degats": "4d8 + Force",
+                "degats": "4d8 + @statsBase.force",
                 "traits": []
             },
             {
@@ -89,7 +89,7 @@
                 "modificateur": "Finesse",
                 "cout": 7,
                 "portee": "3m",
-                "degats": "3d6 + Finesse",
+                "degats": "3d6 + @statsBase.finesse",
                 "traits": []
             },
             {
@@ -99,7 +99,7 @@
                 "modificateur": "Force/Finesse",
                 "cout": 13,
                 "portee": "7.5m",
-                "degats": "1d20 + Force/Finesse",
+                "degats": "1d20 + max(@statsBase.force, @statsBase.finesse)",
                 "traits": [
                     "À distance",
                     "Peut être utilisée à distance de mêlée jusqu'à la distance autorisée"
@@ -112,7 +112,7 @@
                 "modificateur": "Force",
                 "cout": 1,
                 "portee": "1.5m",
-                "degats": "1d12 + Force",
+                "degats": "1d12 + @statsBase.force",
                 "traits": []
             },
             {
@@ -122,7 +122,7 @@
                 "modificateur": "Finesse",
                 "cout": 5,
                 "portee": "4.5m",
-                "degats": "2d8 + Finesse",
+                "degats": "2d8 + @statsBase.finesse",
                 "traits": []
             },
             {
@@ -132,7 +132,7 @@
                 "modificateur": "Force/Finesse",
                 "cout": 7,
                 "portee": "6m",
-                "degats": "1d6 + Force/Finesse",
+                "degats": "1d6 + max(@statsBase.force, @statsBase.finesse)",
                 "traits": [
                     "Déflecteur/Annulateur",
                     "Annule les dégâts subis"
@@ -145,7 +145,7 @@
                 "modificateur": "Force",
                 "cout": 9,
                 "portee": "6m",
-                "degats": "1d20 + Force",
+                "degats": "1d20 + @statsBase.force",
                 "traits": []
             },
             {
@@ -155,7 +155,7 @@
                 "modificateur": "Finesse",
                 "cout": 8,
                 "portee": "6m",
-                "degats": "2d8 + Finesse",
+                "degats": "2d8 + @statsBase.finesse",
                 "traits": [
                     "À distance",
                     "Peut être utilisée à distance de mêlée jusqu'à la distance autorisée"
@@ -168,7 +168,7 @@
                 "modificateur": "Force",
                 "cout": 18,
                 "portee": "9m",
-                "degats": "2d20 + Force",
+                "degats": "2d20 + @statsBase.force",
                 "traits": []
             },
             {
@@ -178,7 +178,7 @@
                 "modificateur": "Force/Finesse",
                 "cout": 19,
                 "portee": "7.5m",
-                "degats": "4d8 + Force/Finesse",
+                "degats": "4d8 + max(@statsBase.force, @statsBase.finesse)",
                 "traits": [
                     "À distance",
                     "Peut être utilisée à distance de mêlée jusqu'à la distance autorisée"
@@ -191,7 +191,7 @@
                 "modificateur": "Finesse",
                 "cout": 16,
                 "portee": "9m",
-                "degats": "3d20 + Finesse",
+                "degats": "3d20 + @statsBase.finesse",
                 "traits": [
                     "Temps de charge (1 tour)",
                     "Être attaqué interrompt la charge"

@@ -23,8 +23,8 @@
         "description": "Coup vertical descendant en arc, d’une puissance écrasante.",
         "stat": "finesse",
         "cout": 2,
-        "portee": "1.5 m",
-        "degats": "2d10 + @statsBase.force"
+        "portee": "1.5m",
+        "degats": "2d10 + @statsBase.finesse"
       },
       {
         "id": "sun-2",
@@ -32,8 +32,8 @@
         "description": "Rotation rapide à 360°, coup circulaire couvrant tous les angles.",
         "stat": "vitesse",
         "cout": 3,
-        "portee": "3 m (cercle)",
-        "degats": "2d8 + @statsBase.finesse"
+        "portee": "3m (cercle)",
+        "degats": "2d8 + @statsBase.vitesse"
       },
       {
         "id": "sun-3",
@@ -41,8 +41,8 @@
         "description": "Deux arcs horizontaux successifs, rapide et brutal.",
         "stat": "finesse",
         "cout": 3,
-        "portee": "1.5 m",
-        "degats": "2d10 + @statsBase.force"
+        "portee": "1.5m",
+        "degats": "2d10 + @statsBase.finesse"
       },
       {
         "id": "sun-4",
@@ -50,7 +50,7 @@
         "description": "Coup ascendant énergique, suivi d’une explosion lumineuse.",
         "stat": "force",
         "cout": 3,
-        "portee": "1.5 m",
+        "portee": "1.5m",
         "degats": "2d10 + @statsBase.force"
       },
       {
@@ -59,7 +59,7 @@
         "description": "Enchaînement fluide d’attaques en spirale, élégant mais mortel.",
         "stat": "finesse",
         "cout": 4,
-        "portee": "3 m",
+        "portee": "3m",
         "degats": "2d8 + @statsBase.finesse"
       },
       {
@@ -68,8 +68,8 @@
         "description": "Coup éclatant qui perturbe la vision de l’ennemi.",
         "stat": "courage",
         "cout": 3,
-        "portee": "3 m",
-        "degats": "2d6 + @statsBase.force"
+        "portee": "3m",
+        "degats": "2d6 + @statsBase.courage"
       },
       {
         "id": "sun-7",
@@ -77,8 +77,8 @@
         "description": "Coup droit d’une intensité solaire, fulgurant.",
         "stat": "vitesse",
         "cout": 3,
-        "portee": "3 m",
-        "degats": "2d10 + @statsBase.finesse"
+        "portee": "3m",
+        "degats": "2d10 + @statsBase.vitesse"
       },
       {
         "id": "sun-8",
@@ -86,8 +86,8 @@
         "description": "Succession de frappes rapides imitant les rayons du soleil.",
         "stat": "vitesse",
         "cout": 4,
-        "portee": "1.5 m",
-        "degats": "3d6 + @statsBase.force"
+        "portee": "1.5m",
+        "degats": "3d6 + @statsBase.vitesse"
       },
       {
         "id": "sun-9",
@@ -95,7 +95,7 @@
         "description": "Arc circulaire enflammé, repoussant les adversaires alentour.",
         "stat": "force",
         "cout": 5,
-        "portee": "3 m (cercle)",
+        "portee": "3m (cercle)",
         "degats": "2d10 + @statsBase.force"
       },
       {
@@ -104,7 +104,7 @@
         "description": "Frappe continue qui génère un flot de chaleur suffocant.",
         "stat": "finesse",
         "cout": 4,
-        "portee": "1.5 m",
+        "portee": "1.5m",
         "degats": "2d8 + @statsBase.finesse"
       },
       {
@@ -113,8 +113,8 @@
         "description": "Charge fulgurante en ligne droite, incandescente.",
         "stat": "vitesse",
         "cout": 5,
-        "portee": "6 m (ligne)",
-        "degats": "2d10 + @statsBase.force"
+        "portee": "6m (ligne)",
+        "degats": "2d10 + @statsBase.vitesse"
       },
       {
         "id": "sun-12",
@@ -122,7 +122,7 @@
         "description": "Frappe d’une intensité maximale, émettant chaleur et lumière extrêmes.",
         "stat": "force",
         "cout": 6,
-        "portee": "3 m",
+        "portee": "3m",
         "degats": "3d8 + @statsBase.force"
       },
       {
@@ -131,8 +131,8 @@
         "description": "Cycle enchaîné des 12 premières formes, exécutées sans pause.",
         "stat": "vitesse",
         "cout": 6,
-        "portee": "3 m",
-        "degats": "4d10 + @statsBase.finesse"
+        "portee": "3m",
+        "degats": "4d10 + @statsBase.vitesse"
       }
     ]
   }
