@@ -23,7 +23,7 @@
                 "modificateur": "Force",
                 "cout": 2,
                 "portee": "1.5m / CàC",
-                "degats": "3d6 + Force",
+                "degats": "3d6 + @statsBase.force",
                 "traits": []
             },
             {
@@ -33,7 +33,7 @@
                 "modificateur": "Finesse",
                 "cout": 3,
                 "portee": "1.5m / CàC",
-                "degats": "1d20 + Finesse",
+                "degats": "1d20 + @statsBase.finesse",
                 "traits": []
             },
             {
@@ -43,7 +43,7 @@
                 "modificateur": "Force",
                 "cout": 9,
                 "portee": "1.5m / CàC",
-                "degats": "4d8 + Force",
+                "degats": "4d8 + @statsBase.force",
                 "traits": []
             },
             {
@@ -53,7 +53,7 @@
                 "modificateur": "Finesse",
                 "cout": 4,
                 "portee": "1.5m / CàC",
-                "degats": "1d12 + Finesse",
+                "degats": "1d12 + @statsBase.finesse",
                 "traits": [
                     "Déflecteur / Neutralisateur",
                     "Annule les dégâts subis"
@@ -66,7 +66,7 @@
                 "modificateur": "Force",
                 "cout": 11,
                 "portee": "9m",
-                "degats": "2d8 + Force",
+                "degats": "2d8 + @statsBase.force",
                 "traits": [
                     "À distance",
                     "Peut être utilisée à partir de la portée de combat rapproché jusqu'à la distance autorisée"
@@ -79,7 +79,7 @@
                 "modificateur": "Force",
                 "cout": 10,
                 "portee": "1.5m / CàC",
-                "degats": "2d20 + Force",
+                "degats": "2d20 + @statsBase.force",
                 "traits": []
             },
             {
@@ -89,7 +89,7 @@
                 "modificateur": "Force / Finesse",
                 "cout": 0,
                 "portee": "1.5m / CàC",
-                "degats": "1d8 + Force ou Finesse",
+                "degats": "1d8 + max(@statsBase.force, @statsBase.finesse)",
                 "traits": [
                     "Régénérateur",
                     "Régénère la résistance"
@@ -102,7 +102,7 @@
                 "modificateur": "Finesse",
                 "cout": 11,
                 "portee": "6m",
-                "degats": "3d6 + Finesse",
+                "degats": "3d6 + @statsBase.finesse",
                 "traits": [
                     "Chaser",
                     "Impossible à contrer ou à esquiver"
@@ -115,7 +115,7 @@
                 "modificateur": "Force / Finesse",
                 "cout": 16,
                 "portee": "9m",
-                "degats": "3d20 + Force ou Finesse",
+                "degats": "3d20 + max(@statsBase.force, @statsBase.finesse)",
                 "traits": [
                     "Temps de charge (1 tour)",
                     "Une attaque subie interrompt la charge"
