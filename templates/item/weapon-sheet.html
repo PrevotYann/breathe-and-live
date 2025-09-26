@@ -1,0 +1,116 @@
+<form class="{{cssClass}} breathe-weapon-sheet" autocomplete="off">
+  <header class="sheet-header flexrow">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+    <div class="header-fields">
+      <h1><input name="name" type="text" value="{{item.name}}" placeholder="Nom de l'arme" /></h1>
+      <div class="grid-2col">
+        <div>
+          <label>Catégorie</label>
+          <select name="system.categorie">
+            {{#each categorieList as |label key|}}
+              <option value="{{key}}" {{#if (eq key ../system.categorie)}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div>
+          <label>Type</label>
+          <input type="text" name="system.typeArme" value="{{system.typeArme}}" placeholder="nichirin / maul / fouet…" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Onglets -->
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="resume">Résumé</a>
+    <a class="item" data-tab="jets">Jets</a>
+    <a class="item" data-tab="props">Propriétés</a>
+    <a class="item" data-tab="munitions">Munitions</a>
+  </nav>
+
+  <section class="sheet-body">
+    <!-- Résumé -->
+    <div class="tab" data-group="primary" data-tab="resume">
+      <h2>Description</h2>
+      <textarea name="system.notes" rows="4" placeholder="Notes sur l'arme (ex: écarlate, dents de scie, poison auto…)">{{system.notes}}</textarea>
+
+      <div class="grid-3col" style="margin-top:.5rem;">
+        <div>
+          <label>Portée</label>
+          <input type="text" name="system.portee" value="{{system.portee}}" placeholder="1.5 m / 3 m / 9 m…" />
+        </div>
+        <div>
+          <label>Dégâts</label>
+          <input type="text" name="system.degats" value="{{system.degats}}" placeholder="ex: 1d6 / 2d10" />
+        </div>
+        <div>
+          <label>Type d’arme</label>
+          <input type="text" name="system.typeArme" value="{{system.typeArme}}" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Jets -->
+    <div class="tab" data-group="primary" data-tab="jets">
+      <h2>Jets</h2>
+      <div class="grid-2col">
+        <div>
+          <label>Mod. Attaque</label>
+          <select name="system.modAttaque">
+            {{#each statsList as |label key|}}
+              <option value="{{key}}" {{#if (eq key ../system.modAttaque)}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div>
+          <label>Mod. Dégâts</label>
+          <select name="system.modDegats">
+            {{#each statsList as |label key|}}
+              <option value="{{key}}" {{#if (eq key ../system.modDegats)}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:.5rem; margin-top:.5rem;">
+        <a class="weapon-roll-attack button">🎲 Jet d'attaque</a>
+        <a class="weapon-roll-damage button">💥 Jet de dégâts</a>
+      </div>
+    </div>
+
+    <!-- Propriétés -->
+    <div class="tab" data-group="primary" data-tab="props">
+      <h2>Propriétés (tags)</h2>
+      <p class="hint">Saisis une liste séparée par des virgules (ex: décapitation, écarlate, saignement)</p>
+      <input type="text" name="system.proprietesStr" value="{{join system.proprietes ', '}}" placeholder="décapitation, écarlate, ..." />
+      <p style="margin-top:.3rem;">Exemples :  
+        • <b>écarlate</b> (Lame rouge) — entrave régénération démoniaque  
+        • <b>décapitation</b> — peut décapiter (vs démons)  
+        • <b>poison auto</b> — lame qui s’enduit de poison à l’étui
+      </p>
+    </div>
+
+    <!-- Munitions -->
+    <div class="tab" data-group="primary" data-tab="munitions">
+      <h2>Munitions (pour armes à feu / jets)</h2>
+      <div class="grid-3col">
+        <div>
+          <label>Utilise des munitions</label>
+          <input type="checkbox" name="system.munitions.utilise" {{checked system.munitions.utilise}} />
+        </div>
+        <div>
+          <label>Charge</label>
+          <input type="number" name="system.munitions.charge" value="{{system.munitions.charge}}" />
+        </div>
+        <div>
+          <label>Charge max</label>
+          <input type="number" name="system.munitions.chargeMax" value="{{system.munitions.chargeMax}}" />
+        </div>
+      </div>
+      <div>
+        <label>Règle de rechargement</label>
+        <input type="text" name="system.munitions.rechargement" value="{{system.munitions.rechargement}}" placeholder="ex: Action complète pour recharger…" />
+      </div>
+    </div>
+  </section>
+</form>

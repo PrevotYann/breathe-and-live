@@ -1,0 +1,139 @@
+{
+  "name": "Souffle du Soleil",
+  "type": "souffle",
+  "img": "icons/svg/sun.svg",
+  "system": {
+    "nom": "Souffle du Soleil",
+    "resume": "Technique la plus puissante. Consommation d'E divisée par 2, dégâts triplés en Marque.",
+    "prerequis": {
+      "sens": "Aucun",
+      "caracteristiques": "Génie",
+      "armes": "Katana Nichirin"
+    },
+    "special": {
+      "nom": "Élu",
+      "description": "E/2 sur toutes les formes; dégâts x3 en Marque; TCB: Permanent acquis; gagne Marque au 1er combat vs Lune, Vision pénétrante et Lame rouge après avoir vaincu seul une Lune."
+    },
+    "coutEndurance": 0,
+    "effet": "+2 jets d’attaque/dégâts des formes (optionnel selon ta table).",
+    "formes": [
+      {
+        "id": "sun-1",
+        "nom": "Valse",
+        "description": "Coup vertical descendant en arc, d’une puissance écrasante.",
+        "stat": "finesse",
+        "cout": 2,
+        "portee": "1.5 m",
+        "degats": "2d10 + @statsBase.force"
+      },
+      {
+        "id": "sun-2",
+        "nom": "Ciel d’Azur sans Nuages",
+        "description": "Rotation rapide à 360°, coup circulaire couvrant tous les angles.",
+        "stat": "vitesse",
+        "cout": 3,
+        "portee": "3 m (cercle)",
+        "degats": "2d8 + @statsBase.finesse"
+      },
+      {
+        "id": "sun-3",
+        "nom": "Soleil Furieux",
+        "description": "Deux arcs horizontaux successifs, rapide et brutal.",
+        "stat": "finesse",
+        "cout": 3,
+        "portee": "1.5 m",
+        "degats": "2d10 + @statsBase.force"
+      },
+      {
+        "id": "sun-4",
+        "nom": "Soleil Radieux",
+        "description": "Coup ascendant énergique, suivi d’une explosion lumineuse.",
+        "stat": "force",
+        "cout": 3,
+        "portee": "1.5 m",
+        "degats": "2d10 + @statsBase.force"
+      },
+      {
+        "id": "sun-5",
+        "nom": "Flamme de la Danse",
+        "description": "Enchaînement fluide d’attaques en spirale, élégant mais mortel.",
+        "stat": "finesse",
+        "cout": 4,
+        "portee": "3 m",
+        "degats": "2d8 + @statsBase.finesse"
+      },
+      {
+        "id": "sun-6",
+        "nom": "Lueur Aveuglante",
+        "description": "Coup éclatant qui perturbe la vision de l’ennemi.",
+        "stat": "courage",
+        "cout": 3,
+        "portee": "3 m",
+        "degats": "2d6 + @statsBase.force"
+      },
+      {
+        "id": "sun-7",
+        "nom": "Soleil de Midi",
+        "description": "Coup droit d’une intensité solaire, fulgurant.",
+        "stat": "vitesse",
+        "cout": 3,
+        "portee": "3 m",
+        "degats": "2d10 + @statsBase.finesse"
+      },
+      {
+        "id": "sun-8",
+        "nom": "Éclat Solaire",
+        "description": "Succession de frappes rapides imitant les rayons du soleil.",
+        "stat": "vitesse",
+        "cout": 4,
+        "portee": "1.5 m",
+        "degats": "3d6 + @statsBase.force"
+      },
+      {
+        "id": "sun-9",
+        "nom": "Cercle Flamboyant",
+        "description": "Arc circulaire enflammé, repoussant les adversaires alentour.",
+        "stat": "force",
+        "cout": 5,
+        "portee": "3 m (cercle)",
+        "degats": "2d10 + @statsBase.force"
+      },
+      {
+        "id": "sun-10",
+        "nom": "Brasier Étincelant",
+        "description": "Frappe continue qui génère un flot de chaleur suffocant.",
+        "stat": "finesse",
+        "cout": 4,
+        "portee": "1.5 m",
+        "degats": "2d8 + @statsBase.finesse"
+      },
+      {
+        "id": "sun-11",
+        "nom": "Rayon Brûlant",
+        "description": "Charge fulgurante en ligne droite, incandescente.",
+        "stat": "vitesse",
+        "cout": 5,
+        "portee": "6 m (ligne)",
+        "degats": "2d10 + @statsBase.force"
+      },
+      {
+        "id": "sun-12",
+        "nom": "Incandescence Totale",
+        "description": "Frappe d’une intensité maximale, émettant chaleur et lumière extrêmes.",
+        "stat": "force",
+        "cout": 6,
+        "portee": "3 m",
+        "degats": "3d8 + @statsBase.force"
+      },
+      {
+        "id": "sun-13",
+        "nom": "Treizième Forme",
+        "description": "Cycle enchaîné des 12 premières formes, exécutées sans pause.",
+        "stat": "vitesse",
+        "cout": 6,
+        "portee": "3 m",
+        "degats": "4d10 + @statsBase.finesse"
+      }
+    ]
+  }
+}

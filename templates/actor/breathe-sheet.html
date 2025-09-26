@@ -1,0 +1,197 @@
+<form class="{{cssClass}} breathe-and-live" autocomplete="off">
+
+  <!-- Header -->
+  <header class="sheet-header flexrow">
+    <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+    <div class="header-fields">
+      <h1><input name="name" type="text" value="{{actor.name}}" placeholder="Nom du personnage" /></h1>
+      <div class="grid-2col">
+        <label>Classe :</label>
+        <input type="text" name="system.details.classe" value="{{details.classe}}" />
+
+        <label>Niveau :</label>
+        <input type="number" name="system.details.niveau" value="{{details.niveau}}" />
+      </div>
+      <div class="grid-2col">
+        <label>Rang :</label>
+        <input type="text" name="system.details.rang" value="{{details.rang}}" />
+      </div>
+    </div>
+  </header>
+
+  <!-- Onglets -->
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="stats">Stats</a>
+    <a class="item" data-tab="competences">Compétences</a>
+    <a class="item" data-tab="souffles">Souffles & Techniques</a>
+    <a class="item" data-tab="capacites">Capacités</a>
+    <a class="item" data-tab="inventaire">Inventaire</a>
+  </nav>
+
+  <!-- Corps de fiche -->
+  <section class="sheet-body">
+
+    <!-- Onglet : Stats -->
+    <div class="tab stats" data-group="primary" data-tab="stats">
+      <h2>Ressources</h2>
+      <div class="resources grid-4col">
+        <div class="resource">
+          <label>PV</label>
+          <input class="resource-input" data-field="system.attributes.pv.value" type="number" value="{{attributes.pv.value}}" />
+          / {{attributes.pv.max}}
+        </div>
+        <div class="resource">
+          <label>Endurance</label>
+          <input class="resource-input" data-field="system.attributes.endurance.value" type="number" value="{{attributes.endurance.value}}" />
+          / {{attributes.endurance.max}}
+        </div>
+        <div class="resource">
+          <label>Réactions</label>
+          <input class="resource-input" data-field="system.attributes.reactions.value" type="number" value="{{attributes.reactions.value}}" />
+          / {{attributes.reactions.max}}
+        </div>
+        <div class="resource">
+          <label>CA</label>
+          <input class="resource-input" data-field="system.attributes.ca" type="number" value="{{attributes.ca}}" />
+        </div>
+      </div>
+
+      <h2>Caractéristiques</h2>
+        <div class="stats grid-3col">
+          {{#each statsBase as |val key|}}
+            <div class="stat">
+              <label>{{localize (concat "BREATHE.statsBase." key)}}</label>
+              <input type="number" name="system.statsBase.{{key}}" value="{{val}}" />
+              {{#if ../canRollStats}}
+                <button type="button" class="roll-stat" data-stat="{{key}}">🎲</button>
+              {{else}}
+                <button type="button" class="roll-stat disabled" title="Pas de permission" disabled>🎲</button>
+              {{/if}}
+            </div>
+          {{/each}}
+        </div>
+
+
+    </div>
+
+    <!-- Onglet : Compétences -->
+    <div class="tab competences" data-group="primary" data-tab="competences">
+      <h2>Compétences dérivées</h2>
+      <div class="grid-3col">
+        {{#each statsDerivees as |val key|}}
+          <div class="stat">
+            <label>{{localize (concat "BREATHE.statsDerivees." key)}}</label>
+            <input type="number" name="system.statsDerivees.{{key}}" value="{{val}}" />
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <!-- Onglet : Souffles -->
+    <div class="tab souffles" data-group="primary" data-tab="souffles">
+      <h2>Souffles</h2>
+      <ul class="item-list">
+        {{#each souffles as |item|}}
+          <li class="item flexrow" data-item-id="{{item._id}}">
+            <div class="item-name">{{item.name}}</div>
+            <div class="item-controls">
+              <a class="item-edit" title="Éditer"><i class="fas fa-edit"></i></a>
+              <a class="item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+
+      <!-- Formes du/des Souffles (dynamiques) -->
+      <h3>Formes disponibles</h3>
+      {{#if soufflesForms.length}}
+        <div class="souffles-formes">
+          {{#each soufflesForms as |s|}}
+            <div class="souffle-block">
+              <h4>{{s.name}}</h4>
+              <ol class="item-list">
+                {{#each s.formes as |f|}}
+                  <li class="flexrow" data-forme-id="{{f.id}}">
+                    <div class="forme-name">{{f.nom}}</div>
+                    <div class="forme-desc" title="{{f.description}}">{{f.description}}</div>
+                    <div class="forme-cost"><span class="badge badge-cost">{{f.cout}}</span></div>
+                    <div class="forme-dmg"><span class="badge badge-dmg" title="{{f.degats}}">{{f.degats}}</span></div>
+                    <div class="forme-action" style="text-align:right;">
+                      {{#if ../../canUseForms}}
+                        <a class="button forme-use" data-item-id="{{../_id}}" data-forme-id="{{f.id}}">Utiliser</a>
+                      {{else}}
+                        <a class="button forme-use disabled" data-item-id="{{../_id}}" data-forme-id="{{f.id}}" title="Pas de permission">Utiliser</a>
+                      {{/if}}
+                    </div>
+                  </li>
+                {{/each}}
+              </ol>
+            </div>
+          {{/each}}
+
+        </div>
+      {{else}}
+        <p class="hint">Aucun Souffle n’est équipé.</p>
+      {{/if}}
+
+      <h2>Techniques</h2>
+      <ul class="item-list">
+        {{#each techniques as |item|}}
+          <li class="item flexrow" data-item-id="{{item._id}}">
+            <div class="item-name">{{item.name}}</div>
+            <div class="item-controls">
+              <a class="item-edit"><i class="fas fa-edit"></i></a>
+              <a class="item-delete"><i class="fas fa-trash"></i></a>
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <!-- Onglet : Capacités -->
+    <div class="tab capacites" data-group="primary" data-tab="capacites">
+      <h2>Capacités</h2>
+      <ul class="item-list">
+        {{#each capacites as |item|}}
+          <li class="item flexrow" data-item-id="{{item._id}}">
+            <div class="item-name">{{item.name}} ({{item.system.categorie}})</div>
+            <div class="item-controls">
+              <a class="item-edit"><i class="fas fa-edit"></i></a>
+              <a class="item-delete"><i class="fas fa-trash"></i></a>
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+    </div>
+
+    <!-- Onglet : Inventaire -->
+    <div class="tab inventaire" data-group="primary" data-tab="inventaire">
+      <h2>Armes</h2>
+      <ul class="item-list">
+        {{#each armes as |item|}}
+          <li class="item flexrow" data-item-id="{{item._id}}">
+            <div class="item-name">{{item.name}} ({{item.system.degats}})</div>
+            <div class="item-controls">
+              <a class="item-edit"><i class="fas fa-edit"></i></a>
+              <a class="item-delete"><i class="fas fa-trash"></i></a>
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+
+      <h2>Objets</h2>
+      <ul class="item-list">
+        {{#each objets as |item|}}
+          <li class="item flexrow" data-item-id="{{item._id}}">
+            <div class="item-name">{{item.name}} x{{item.system.quantite}}</div>
+            <div class="item-controls">
+              <a class="item-edit"><i class="fas fa-edit"></i></a>
+              <a class="item-delete"><i class="fas fa-trash"></i></a>
+            </div>
+          </li>
+        {{/each}}
+      </ul>
+    </div>
+
+  </section>
+</form>

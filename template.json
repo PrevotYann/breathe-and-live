@@ -1,32 +1,191 @@
 {
-"Actor": {
-  "types": ["character"],
-  "htmlFields": ["biography"],
-  "character": {
-    "biography": "",
-    "health": {
-      "value": 10,
-      "min": 0,
-      "max": 10
-    },
-    "power": {
-      "value": 5,
-      "min": 0,
-      "max": 5
-    },
-    "attributes": {},
-    "groups": {}
+  "Actor": {
+    "types": [
+      "character",
+      "demoniste",
+      "demon",
+      "npc"
+    ],
+    "templates": {
+      "base": {
+        "details": {
+          "name": "",
+          "classe": "",
+          "rang": "",
+          "niveau": 1,
+          "background": ""
+        },
+        "attributes": {
+          "pv": {
+            "value": 0,
+            "max": 0
+          },
+          "endurance": {
+            "value": 0,
+            "max": 0
+          },
+          "ca": 0,
+          "reactions": {
+            "value": 0,
+            "max": 0
+          }
+        },
+        "statsBase": {
+          "force": 0,
+          "finesse": 0,
+          "courage": 0,
+          "vitesse": 0,
+          "social": 0,
+          "intellect": 0
+        },
+        "statsDerivees": {
+          "athletisme": 0,
+          "puissanceBrute": 0,
+          "dexterite": 0,
+          "equilibre": 0,
+          "precision": 0,
+          "mithridatisme": 0,
+          "endurance": 0,
+          "tolerance": 0,
+          "reflexes": 0,
+          "agilite": 0,
+          "rapidite": 0,
+          "ruse": 0,
+          "manipulation": 0,
+          "performance": 0,
+          "intimidation": 0,
+          "perception": 0,
+          "intuition": 0,
+          "medecine": 0,
+          "nature": 0,
+          "sciences": 0,
+          "enquete": 0,
+          "survie": 0
+        },
+        "capacites": {
+          "extrasensorielles": [],
+          "surnaturelles": [],
+          "humaines": []
+        },
+        "souffles": [],
+        "equipement": []
+      },
+      "character": {
+        "classType": "pourfendeur",
+        "souffle": "",
+        "pointsCompetence": 0
+      },
+      "demoniste": {
+        "classType": "demoniste",
+        "souffle": "",
+        "techniquesSanguinaires": [],
+        "pointsCorruption": 0
+      },
+      "demon": {
+        "sangDemoniaque": {
+          "value": 0,
+          "max": 0
+        },
+        "pointsDemonisation": 0,
+        "pouvoirsSanguinaires": []
+      },
+      "npc": {
+        "role": "",
+        "notes": ""
+      }
+    }
+  },
+  "Item": {
+    "types": [
+      "arme",
+      "souffle",
+      "technique",
+      "objet",
+      "capacite"
+    ],
+    "templates": {
+      "arme": {
+        "categorie": "melee",
+        "typeArme": "nichirin",
+        "portee": "1.5 m",
+        "degats": "1d6",
+        "modAttaque": "@statsBase.finesse",
+        "modDegats": "@statsBase.force",
+        "proprietes": [],
+        "notes": "",
+        "munitions": {
+          "utilise": false,
+          "charge": 0,
+          "chargeMax": 0,
+          "rechargement": ""
+        }
+      },
+      "souffle": {
+        "nom": "",
+        "resume": "",
+        "prerequis": {
+          "sens": "",
+          "caracteristiques": "",
+          "armes": ""
+        },
+        "special": {
+          "nom": "",
+          "description": ""
+        },
+        "coutEndurance": 0,
+        "effet": "",
+        "formes": []
+      },
+      "technique": {
+        "categorie": "générale",
+        "activation": "passive",
+        "couts": {
+          "endurance": 0,
+          "reactions": 0,
+          "autre": ""
+        },
+        "jets": {
+          "formule": "",
+          "portee": "",
+          "cibles": "1",
+          "degats": ""
+        },
+        "conditions": {
+          "prerequis": "",
+          "etatRequis": ""
+        },
+        "usages": {
+          "par": "combat",
+          "max": 0,
+          "restant": 0,
+          "recharge": ""
+        },
+        "effet": "",
+        "resume": ""
+      },
+      "objet": {
+        "categorie": "",
+        "effet": "",
+        "quantite": 1
+      },
+      "capacite": {
+        "famille": "extrasensorielle",
+        "resume": "",
+        "effet": "",
+        "sens": "odorat",
+        "niveau": 1,
+        "bonus": {
+          "perception": 0,
+          "detection": "",
+          "special": ""
+        },
+        "pointsCout": 0,
+        "bonusPassifs": [],
+        "conditions": "",
+        "automatiser": false,
+        "typeHumaine": "action",
+        "noteRegle": ""
+      }
+    }
   }
-},
-"Item": {
-  "types": ["item"],
-  "htmlFields": ["description"],
-  "item": {
-    "description": "",
-    "quantity": 1,
-    "weight": 0,
-    "attributes": {},
-    "groups": {}
-  }
-}
 }

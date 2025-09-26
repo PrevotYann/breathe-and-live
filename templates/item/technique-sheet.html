@@ -1,0 +1,140 @@
+<form class="{{cssClass}} breathe-technique-sheet" autocomplete="off">
+  <header class="sheet-header flexrow">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
+    <div class="header-fields">
+      <h1>
+        <input name="name" type="text" value="{{item.name}}" placeholder="Nom de la technique" />
+      </h1>
+      <div class="grid-2col">
+        <div>
+          <label>Catégorie</label>
+          <select name="system.categorie">
+            {{#each categorieList as |label key|}}
+              <option value="{{key}}" {{#if (eq key ../system.categorie)}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div>
+          <label>Activation</label>
+          <select name="system.activation">
+            {{#each activationList as |label key|}}
+              <option value="{{key}}" {{#if (eq key ../system.activation)}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Onglets -->
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="resume">Résumé</a>
+    <a class="item" data-tab="mecanique">Mécanique</a>
+    <a class="item" data-tab="jets">Jets & Dégâts</a>
+    <a class="item" data-tab="conditions">Conditions & Usages</a>
+  </nav>
+
+  <section class="sheet-body">
+    <!-- Résumé -->
+    <div class="tab" data-group="primary" data-tab="resume">
+      <h2>Résumé</h2>
+      <textarea name="system.resume" rows="5" placeholder="Description narrative ou rappel de règles…">{{system.resume}}</textarea>
+      <h2>Effet</h2>
+      <textarea name="system.effet" rows="4" placeholder="Effet mécanique détaillé…">{{system.effet}}</textarea>
+    </div>
+
+    <!-- Mécanique -->
+    <div class="tab" data-group="primary" data-tab="mecanique">
+      <h2>Coûts</h2>
+      <div class="grid-3col">
+        <div>
+          <label>Endurance</label>
+          <input type="number" name="system.couts.endurance" value="{{system.couts.endurance}}" />
+        </div>
+        <div>
+          <label>Points de Réaction</label>
+          <input type="number" name="system.couts.reactions" value="{{system.couts.reactions}}" />
+        </div>
+        <div>
+          <label>Autre</label>
+          <input type="text" name="system.couts.autre" value="{{system.couts.autre}}" placeholder="BDP, PV, etc." />
+        </div>
+      </div>
+    </div>
+
+    <!-- Jets & Dégâts -->
+    <div class="tab" data-group="primary" data-tab="jets">
+      <h2>Jet / Formule</h2>
+      <p class="hint">
+        Tu peux utiliser des données d’acteur dans la formule : ex. <code>2d6 + @statsBase.finesse + 1</code>
+      </p>
+      <div class="grid-2col">
+        <div>
+          <label>Formule</label>
+          <input type="text" name="system.jets.formule" value="{{system.jets.formule}}" placeholder="ex: 1d20 + @statsBase.vitesse" />
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:.5rem;">
+          <a class="technique-roll button" title="Lancer le jet">🎲 Lancer</a>
+        </div>
+      </div>
+
+      <div class="grid-3col">
+        <div>
+          <label>Portée</label>
+          <input type="text" name="system.jets.portee" value="{{system.jets.portee}}" placeholder="1.5 m / 9 m / contact…" />
+        </div>
+        <div>
+          <label>Cibles</label>
+          <input type="text" name="system.jets.cibles" value="{{system.jets.cibles}}" placeholder="1 / zone / ligne…" />
+        </div>
+        <div>
+          <label>Dégâts</label>
+          <input type="text" name="system.jets.degats" value="{{system.jets.degats}}" placeholder="2d6 / 2d10+Force…" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Conditions & Usages -->
+    <div class="tab" data-group="primary" data-tab="conditions">
+      <h2>Conditions</h2>
+      <div class="grid-2col">
+        <div>
+          <label>Pré-requis</label>
+          <input type="text" name="system.conditions.prerequis" value="{{system.conditions.prerequis}}" placeholder="Ex: Hashira, Souffle X, Génie, etc." />
+        </div>
+        <div>
+          <label>État requis</label>
+          <input type="text" name="system.conditions.etatRequis" value="{{system.conditions.etatRequis}}" placeholder="Marque, Monde Transparent, Lame Rouge…" />
+        </div>
+      </div>
+
+      <h2>Usages</h2>
+      <div class="grid-4col">
+        <div>
+          <label>Période</label>
+          <select name="system.usages.par">
+            {{#each usageParList as |label key|}}
+              <option value="{{key}}" {{#if (eq key ../system.usages.par)}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div>
+          <label>Max</label>
+          <input type="number" name="system.usages.max" value="{{system.usages.max}}" />
+        </div>
+        <div>
+          <label>Restant</label>
+          <input type="number" name="system.usages.restant" value="{{system.usages.restant}}" />
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <a class="technique-reset-uses button">↺ Réinitialiser</a>
+        </div>
+      </div>
+
+      <div>
+        <label>Recharge</label>
+        <input type="text" name="system.usages.recharge" value="{{system.usages.recharge}}" placeholder="Ex: court repos, long repos, fin de combat…" />
+      </div>
+    </div>
+  </section>
+</form>

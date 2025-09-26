@@ -1,0 +1,218 @@
+{
+    "BREATHE": {
+        "systemName": "Breathe and Live – Demon Slayer",
+        "tabs": {
+            "stats": "Stats",
+            "competences": "Compétences",
+            "souffles": "Souffles & Techniques",
+            "capacites": "Capacités",
+            "inventaire": "Inventaire",
+            "resume": "Résumé",
+            "prerequis": "Pré-requis",
+            "special": "Capacité spéciale",
+            "formes": "Formes",
+            "mecanique": "Mécanique",
+            "jets": "Jets & Dégâts",
+            "conditions": "Conditions & Usages",
+            "props": "Propriétés",
+            "munitions": "Munitions"
+        },
+        "labels": {
+            "classe": "Classe",
+            "rang": "Rang",
+            "niveau": "Niveau",
+            "souffle": "Souffle",
+            "ressources": "Ressources",
+            "pv": "PV",
+            "endurance": "Endurance",
+            "reactions": "Réactions",
+            "ca": "CA",
+            "caracteristiques": "Caractéristiques",
+            "derivées": "Compétences dérivées",
+            "portee": "Portée",
+            "degats": "Dégâts",
+            "effet": "Effet",
+            "effetGlobal": "Effet global",
+            "coutEndurance": "Coût d'endurance",
+            "statUtilisee": "Stat utilisée",
+            "description": "Description",
+            "cibles": "Cibles",
+            "formule": "Formule",
+            "prereq": "Pré-requis",
+            "etatRequis": "État requis",
+            "usages": "Usages",
+            "periode": "Période",
+            "max": "Max",
+            "restant": "Restant",
+            "recharge": "Recharge",
+            "categorie": "Catégorie",
+            "activation": "Activation",
+            "couts": "Coûts",
+            "pointsCreation": "Points (création)",
+            "bonus": "Bonus",
+            "notes": "Notes",
+            "type": "Type",
+            "armes": "Armes",
+            "objets": "Objets",
+            "techniques": "Techniques",
+            "resumeCourt": "Résumé court"
+        },
+        "statsBase": {
+            "force": "Force",
+            "finesse": "Finesse",
+            "courage": "Courage",
+            "vitesse": "Vitesse",
+            "social": "Social",
+            "intellect": "Intellect"
+        },
+        "statsDerivees": {
+            "athletisme": "Athlétisme",
+            "puissanceBrute": "Puissance brute",
+            "dexterite": "Dextérité",
+            "equilibre": "Équilibre",
+            "precision": "Précision",
+            "mithridatisme": "Mithridatisme",
+            "endurance": "Endurance (dérivée)",
+            "tolerance": "Tolérance",
+            "reflexes": "Réflexes",
+            "agilite": "Agilité",
+            "rapidite": "Rapidité",
+            "ruse": "Ruse",
+            "manipulation": "Manipulation",
+            "performance": "Performance",
+            "intimidation": "Intimidation",
+            "perception": "Perception",
+            "intuition": "Intuition",
+            "medecine": "Médecine",
+            "nature": "Nature",
+            "sciences": "Sciences",
+            "enquete": "Enquête",
+            "survie": "Survie"
+        },
+        "items": {
+            "souffle": {
+                "name": "Souffle",
+                "resume": "Résumé",
+                "prerequis": {
+                    "sens": "Sens requis",
+                    "caracteristiques": "Caractéristiques requises",
+                    "armes": "Armes requises"
+                },
+                "special": {
+                    "nom": "Nom de la capacité",
+                    "description": "Description de la capacité"
+                },
+                "formes": "Formes",
+                "forme": {
+                    "nom": "Nom",
+                    "stat": "Stat utilisée",
+                    "cout": "Coût",
+                    "portee": "Portée",
+                    "degats": "Dégâts",
+                    "description": "Description"
+                },
+                "actions": {
+                    "addForme": "Ajouter une forme",
+                    "delForme": "Supprimer"
+                }
+            },
+            "technique": {
+                "name": "Technique",
+                "categorie": {
+                    "generale": "Générale",
+                    "tcb": "Souffle de Concentration Intégral",
+                    "marque": "Forme Marquée",
+                    "mondeTransparent": "Monde Transparent",
+                    "lameRouge": "Lame Rouge",
+                    "demoniste": "Technique de Démoniste"
+                },
+                "activation": {
+                    "action": "Action",
+                    "reaction": "Réaction",
+                    "passive": "Passive"
+                },
+                "usages": {
+                    "combat": "Par combat",
+                    "jour": "Par jour",
+                    "rencontre": "Par rencontre",
+                    "scene": "Par scène"
+                },
+                "buttons": {
+                    "roll": "Lancer",
+                    "reset": "Réinitialiser"
+                }
+            },
+            "capacite": {
+                "name": "Capacité",
+                "famille": {
+                    "extrasensorielle": "Extrasensorielle",
+                    "surnaturelle": "Surnaturelle",
+                    "humaine": "Humaine"
+                },
+                "sens": {
+                    "odorat": "Odorat",
+                    "ouie": "Ouïe",
+                    "vue": "Vision",
+                    "gout": "Goût",
+                    "toucher": "Toucher"
+                },
+                "humaineType": {
+                    "action": "Action",
+                    "reaction": "Réaction",
+                    "passive": "Passive"
+                },
+                "fields": {
+                    "niveau": "Niveau",
+                    "perceptionBonus": "Bonus Perception (+)",
+                    "detection": "Détection",
+                    "special": "Spécial",
+                    "pointsCout": "Coût (points création)",
+                    "conditions": "Pré-requis",
+                    "automatiser": "Automatiser (expérimental)",
+                    "typeHumaine": "Type",
+                    "noteRegle": "Note de règle",
+                    "bonusPassifs": "Bonus/Modificateurs"
+                },
+                "actions": {
+                    "addBonus": "Ajouter un bonus",
+                    "delBonus": "Supprimer"
+                }
+            },
+            "arme": {
+                "name": "Arme",
+                "categorie": {
+                    "melee": "Mêlée",
+                    "distance": "Distance"
+                },
+                "fields": {
+                    "typeArme": "Type d’arme",
+                    "portee": "Portée",
+                    "degats": "Dégâts",
+                    "modAttaque": "Mod. Attaque",
+                    "modDegats": "Mod. Dégâts",
+                    "proprietes": "Propriétés",
+                    "notes": "Notes",
+                    "munitions": "Munitions",
+                    "utiliseMunitions": "Utilise des munitions",
+                    "charge": "Charge",
+                    "chargeMax": "Charge max",
+                    "rechargement": "Règle de rechargement"
+                },
+                "buttons": {
+                    "attack": "Jet d'attaque",
+                    "damage": "Jet de dégâts"
+                },
+                "tagsHint": "Liste séparée par des virgules (ex: décapitation, écarlate, saignement)"
+            }
+        },
+        "rolls": {
+            "rollOf": "Jet de {{stat}}",
+            "attack": "Jet d'attaque",
+            "damage": "Dégâts"
+        },
+        "messages": {
+            "invalidFormula": "Formule invalide : {{formule}}",
+            "notEditable": "Cette fiche n’est pas éditable."
+        }
+    }
+}

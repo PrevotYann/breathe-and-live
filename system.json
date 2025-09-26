@@ -1,41 +1,78 @@
 {
-  "id": "worldbuilding",
-  "version": "0.8.2",
-  "title": "Simple World-Building",
-  "url": "https://github.com/foundryvtt/worldbuilding/",
-  "description": "A minimalist game system which provides configurable Actor and Item templates to support free-form system agnostic game-play.",
-  "license": "LICENSE.txt",
+  "id": "breathe-and-live",
+  "title": "Breathe and Live – Demon Slayer RPG",
+  "description": "Adaptation du système JDR Breathe and Live (Demon Slayer) pour Foundry VTT.",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "11",
+    "verified": "11",
+    "maximum": "13"
+  },
   "authors": [
     {
-      "name": "Atropos",
-      "url": "https://foundryvtt.com"
+      "name": "Rasen",
+      "email": "",
+      "url": ""
     }
   ],
-  "esmodules": ["module/simple.js"],
-  "styles": ["styles/simple.css"],
-  "packs": [],
+  "esmodules": [
+    "module/breathe.js"
+  ],
+  "styles": [
+    "styles/breathe.css"
+  ],
   "languages": [
     {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json"
-    },
-    {
-      "lang": "pl",
-      "name": "Polski",
-      "path": "lang/pl.json"
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
     }
   ],
-  "compatibility": {
-    "minimum": "10",
-    "verified": "11"
+  "packs": [
+    {
+      "name": "bl-souffles",
+      "label": "Breathe – Souffles",
+      "path": "packs/bl-souffles.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "bl-techniques",
+      "label": "Breathe – Techniques",
+      "path": "packs/bl-techniques.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "bl-capacites",
+      "label": "Breathe – Capacités",
+      "path": "packs/bl-capacites.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "bl-armes",
+      "label": "Breathe – Armes",
+      "path": "packs/bl-armes.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "bl-acteurs",
+      "label": "Breathe – Acteurs",
+      "path": "packs/bl-acteurs.db",
+      "type": "Actor",
+      "system": "breathe-and-live"
+    }
+  ],
+  "system": {
+    "templates": [
+      "template.json"
+    ]
   },
-  "grid": {
-    "distance": 5,
-    "units": "ft"
-  },
-  "primaryTokenAttribute": "health",
-  "secondaryTokenAttribute": "power",
-  "manifest": "https://raw.githubusercontent.com/foundryvtt/worldbuilding/master/system.json",
-  "download": "https://github.com/foundryvtt/worldbuilding/archive/refs/tags/release-082.zip"
+  "scripts": [],
+  "dependencies": [],
+  "manifest": "",
+  "download": "",
+  "license": "LICENSE"
 }

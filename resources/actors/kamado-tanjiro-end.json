@@ -1,0 +1,283 @@
+{
+    "name": "Kamado Tanjiro (Fin du manga)",
+    "type": "character",
+    "img": "icons/svg/warrior.svg",
+    "system": {
+        "details": {
+            "classe": "Pourfendeur de Démons",
+            "rang": "Hashira+",
+            "niveau": 11,
+            "background": "Souffle du Soleil maîtrisé"
+        },
+        "attributes": {
+            "pv": {
+                "value": 45,
+                "max": 45
+            },
+            "endurance": {
+                "value": 25,
+                "max": 25
+            },
+            "ca": 14,
+            "reactions": {
+                "value": 12,
+                "max": 12
+            }
+        },
+        "statsBase": {
+            "force": 5,
+            "finesse": 4,
+            "courage": 5,
+            "vitesse": 4,
+            "social": 3,
+            "intellect": 3
+        },
+        "statsDerivees": {
+            "athletisme": 6,
+            "puissanceBrute": 6,
+            "dexterite": 5,
+            "equilibre": 5,
+            "precision": 5,
+            "mithridatisme": 5,
+            "endurance": 7,
+            "tolerance": 5,
+            "reflexes": 5,
+            "agilite": 5,
+            "rapidite": 5,
+            "ruse": 4,
+            "manipulation": 4,
+            "performance": 4,
+            "intimidation": 4,
+            "perception": 6,
+            "intuition": 5,
+            "medecine": 4,
+            "nature": 4,
+            "sciences": 4,
+            "enquete": 4,
+            "survie": 4
+        }
+    },
+    "items": [
+        {
+            "name": "Souffle du Soleil",
+            "type": "souffle",
+            "img": "icons/svg/sun.svg",
+            "system": {
+                "nom": "Souffle du Soleil",
+                "resume": "Technique suprême.",
+                "prerequis": {
+                    "sens": "Aucun",
+                    "caracteristiques": "Génie",
+                    "armes": "Katana Nichirin"
+                },
+                "special": {
+                    "nom": "Élu",
+                    "description": "E/2; dégâts x3 en Marque; TCB permanent; gagne Marque / Vision / Lame Rouge selon conditions."
+                },
+                "coutEndurance": 0,
+                "effet": "",
+                "formes": [
+                    {
+                        "id": "f1",
+                        "nom": "Valse",
+                        "description": "Arc vertical.",
+                        "stat": "finesse",
+                        "cout": 2,
+                        "portee": "1.5 m",
+                        "degats": "2d10 + @statsBase.force"
+                    },
+                    {
+                        "id": "f13",
+                        "nom": "Treizième Forme",
+                        "description": "Cycle complet.",
+                        "stat": "vitesse",
+                        "cout": 6,
+                        "portee": "1.5 m",
+                        "degats": "3d10 + @statsBase.finesse"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "TCB : Permanent",
+            "type": "technique",
+            "img": "icons/svg/aura.svg",
+            "system": {
+                "categorie": "tcb",
+                "activation": "passive",
+                "couts": {
+                    "endurance": 0,
+                    "reactions": 0,
+                    "autre": ""
+                },
+                "jets": {
+                    "formule": "",
+                    "portee": "",
+                    "cibles": "—",
+                    "degats": ""
+                },
+                "conditions": {
+                    "prerequis": "Entraînement avancé",
+                    "etatRequis": ""
+                },
+                "usages": {
+                    "par": "combat",
+                    "max": 0,
+                    "restant": 0,
+                    "recharge": ""
+                },
+                "effet": "Respiration constante.",
+                "resume": ""
+            }
+        },
+        {
+            "name": "Forme Marquée",
+            "type": "technique",
+            "img": "icons/svg/explosion.svg",
+            "system": {
+                "categorie": "marque",
+                "activation": "action",
+                "couts": {
+                    "endurance": 4,
+                    "reactions": 0,
+                    "autre": ""
+                },
+                "jets": {
+                    "formule": "",
+                    "portee": "",
+                    "cibles": "Self",
+                    "degats": ""
+                },
+                "conditions": {
+                    "prerequis": "Hashira+",
+                    "etatRequis": ""
+                },
+                "usages": {
+                    "par": "combat",
+                    "max": 1,
+                    "restant": 1,
+                    "recharge": "Fin de combat"
+                },
+                "effet": "Puissance accrue; Soleil: x3 dégâts.",
+                "resume": ""
+            }
+        },
+        {
+            "name": "Monde Transparent",
+            "type": "technique",
+            "img": "icons/svg/eye.svg",
+            "system": {
+                "categorie": "mondeTransparent",
+                "activation": "action",
+                "couts": {
+                    "endurance": 2,
+                    "reactions": 0,
+                    "autre": ""
+                },
+                "jets": {
+                    "formule": "",
+                    "portee": "—",
+                    "cibles": "—",
+                    "degats": ""
+                },
+                "conditions": {
+                    "prerequis": "",
+                    "etatRequis": ""
+                },
+                "usages": {
+                    "par": "combat",
+                    "max": 1,
+                    "restant": 1,
+                    "recharge": "Fin de combat"
+                },
+                "effet": "Perception améliorée (esquives/anticipation).",
+                "resume": ""
+            }
+        },
+        {
+            "name": "Lame Rouge",
+            "type": "technique",
+            "img": "icons/svg/sword.svg",
+            "system": {
+                "categorie": "lameRouge",
+                "activation": "action",
+                "couts": {
+                    "endurance": 2,
+                    "reactions": 0,
+                    "autre": ""
+                },
+                "jets": {
+                    "formule": "",
+                    "portee": "—",
+                    "cibles": "Arme",
+                    "degats": ""
+                },
+                "conditions": {
+                    "prerequis": "",
+                    "etatRequis": ""
+                },
+                "usages": {
+                    "par": "combat",
+                    "max": 1,
+                    "restant": 1,
+                    "recharge": "Fin de combat"
+                },
+                "effet": "Entrave la régénération démoniaque.",
+                "resume": ""
+            }
+        },
+        {
+            "name": "Odorat (Niv. 3)",
+            "type": "capacite",
+            "img": "icons/svg/nose.svg",
+            "system": {
+                "famille": "extrasensorielle",
+                "resume": "+5 Perception; 18 m; évalue la puissance d’un démon.",
+                "effet": "",
+                "sens": "odorat",
+                "niveau": 3,
+                "bonus": {
+                    "perception": 5,
+                    "detection": "18 m",
+                    "special": "Évalue la puissance"
+                }
+            }
+        },
+        {
+            "name": "Force physique accrue",
+            "type": "capacite",
+            "img": "icons/svg/mighty.svg",
+            "system": {
+                "famille": "surnaturelle",
+                "resume": "+3 Force (combat), +6 Puissance brute (permanent).",
+                "effet": "",
+                "pointsCout": 3,
+                "bonusPassifs": [
+                    {
+                        "cle": "statsDerivees.puissanceBrute",
+                        "valeur": "+6"
+                    }
+                ],
+                "conditions": "",
+                "automatiser": false
+            }
+        },
+        {
+            "name": "Lame Nichirin – Standard",
+            "type": "arme",
+            "img": "icons/svg/sword.svg",
+            "system": {
+                "categorie": "melee",
+                "typeArme": "nichirin",
+                "portee": "1.5 m",
+                "degats": "1d6",
+                "modAttaque": "@statsBase.finesse",
+                "modDegats": "@statsBase.force",
+                "proprietes": [
+                    "décapitation"
+                ],
+                "notes": ""
+            }
+        }
+    ]
+}
