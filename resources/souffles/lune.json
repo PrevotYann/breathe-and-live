@@ -1,0 +1,202 @@
+{
+    "name": "Souffle de la Lune",
+    "type": "souffle",
+    "img": "systems/breathe-and-live/assets/icons/souffles/lune.png",
+    "system": {
+        "nom": "Souffle de la Lune",
+        "resume": "Ses utilisateurs exécutent des mouvements puissants qui imitent la forme d'un croissant de lune. Ils sont généralement des combattants solitaires, même s'ils peuvent parfois combattre en équipe. Cela s'explique par leur nature plutôt réservée et distante.",
+        "prerequis": {
+            "sens": "Aucun",
+            "caracteristiques": "Aucun",
+            "armes": "Katana Nichirin"
+        },
+        "special": {
+            "nom": "Non choisi",
+            "description": "Si seul combattant, +1 dé de dégats pour les formes de Souffle."
+        },
+        "coutEndurance": 0,
+        "formes": [
+            {
+                "id": "lune-01",
+                "nom": "Lune sombre, Palais du soir",
+                "description": "L'épéiste dessine la lame dans un large arc de croissant, puis la rengaine d'un seul mouvement, libérant une propagation chaotique de lames en forme de croissant le long du chemin incurvé.",
+                "modificateur": "Finesse",
+                "cout": 10,
+                "portee": "4.5m",
+                "degats": "3d6 + Finesse",
+                "traits": [
+                    "À distance",
+                    "Peut être utilisée à distance de mêlée jusqu'à la distance autorisée"
+                ]
+            },
+            {
+                "id": "lune-02",
+                "nom": "Observation de la Lune avec des Fleurs de Perles",
+                "description": "L'épéiste dessine la lame dans un large arc de croissant, puis la rengaine d'un seul mouvement, libérant une propagation chaotique de lames en forme de croissant.",
+                "modificateur": "Finesse",
+                "cout": 10,
+                "portee": "3m",
+                "degats": "3d8 + Finesse",
+                "traits": []
+            },
+            {
+                "id": "lune-03",
+                "nom": "Lune Répugnante, chaînes",
+                "description": "L'épéiste exécute deux balayages massifs vers l'avant, déclenchant une rafale de lames en croissant mineures derrière chaque coup.",
+                "modificateur": "Force",
+                "cout": 5,
+                "portee": "4.5m",
+                "degats": "2d8 + Force",
+                "traits": []
+            },
+            {
+                "id": "lune-04",
+                "nom": "Lune Voilée, Poussière Fantomatique",
+                "description": "L'épéiste avance en décrivant un arc étroit, générant une lame en forme de croissant de lune qui se déplace dans une ligne focalisée et perçante. Ce mouvement est conçu pour percer les armures ou transpercer plusieurs cibles successives.",
+                "modificateur": "Finesse",
+                "cout": 1,
+                "portee": "3m",
+                "degats": "1d12 + Finesse",
+                "traits": [
+                    "En ligne droite",
+                    "Doit se déplacer dans une seule direction"
+                ]
+            },
+            {
+                "id": "lune-05",
+                "nom": "Esprit Lunaire, Tourbillon Calamiteux",
+                "description": "L'épéiste superpose des entailles en croissant dans un mouvement spiralé pour former un tourbillon de lames lunaires. Il peut être utilisé à l'arrêt ou avec un élan vers l'avant pour engloutir ses adversaires.",
+                "modificateur": "Force/Finesse",
+                "cout": 11,
+                "portee": "1.5m - 6m",
+                "degats": "3d8 + Force/Finesse",
+                "traits": []
+            },
+            {
+                "id": "lune-06",
+                "nom": "Nuit Éternelle, Lune Solitaire - Sans Fin",
+                "description": "L'épéiste frappe l'air à plusieurs reprises et en succession rapide, générant un barrage quasi constant de lames de lune qui parcourent plusieurs mètres vers l'avant.",
+                "modificateur": "Force",
+                "cout": 14,
+                "portee": "4.5m",
+                "degats": "4d8 + Force",
+                "traits": []
+            },
+            {
+                "id": "lune-07",
+                "nom": "Miroir de Malheur, Illuminé par la Lune",
+                "description": "L'épéiste délivre un coup frontal en forme de croissant, déclenchant une explosion de lames de lune droites et courbes qui s'étendent vers l'extérieur en éventail.",
+                "modificateur": "Finesse",
+                "cout": 7,
+                "portee": "3m",
+                "degats": "3d6 + Finesse",
+                "traits": []
+            },
+            {
+                "id": "lune-08",
+                "nom": "Dragon à Queue Annelée",
+                "description": "L'épéiste se balance dans un arc élevé, envoyant une puissante frappe à longue portée qui laisse derrière elle de nombreuses lames de lune sur son passage.",
+                "modificateur": "Force/Finesse",
+                "cout": 13,
+                "portee": "7.5m",
+                "degats": "1d20 + Force/Finesse",
+                "traits": [
+                    "À distance",
+                    "Peut être utilisée à distance de mêlée jusqu'à la distance autorisée"
+                ]
+            },
+            {
+                "id": "lune-09",
+                "nom": "Chemin de la Lune Décroissante",
+                "description": "L'épéiste frappe à plusieurs reprises à proximité, enchaînant coups après coups dans une séquence implacable. Chaque attaque est conçue pour légèrement chevaucher la précédente.",
+                "modificateur": "Force",
+                "cout": 1,
+                "portee": "1.5m",
+                "degats": "1d12 + Force",
+                "traits": []
+            },
+            {
+                "id": "lune-10",
+                "nom": "Percer la Roche, la Lune Entre les Feuilles de Bambou",
+                "description": "L'épéiste crée trois entailles rotatives, comme des lames de scie, chacune entourée d'ondes en forme de croissant de lune.",
+                "modificateur": "Finesse",
+                "cout": 5,
+                "portee": "4.5m",
+                "degats": "2d8 + Finesse",
+                "traits": []
+            },
+            {
+                "id": "lune-11",
+                "nom": "Lune Creuse",
+                "description": "L'épéiste tord son corps dans une spirale dans les airs, frappant avec une toile d'arcs en croissant dans toutes les directions.",
+                "modificateur": "Force/Finesse",
+                "cout": 7,
+                "portee": "6m",
+                "degats": "1d6 + Force/Finesse",
+                "traits": [
+                    "Déflecteur/Annulateur",
+                    "Annule les dégâts subis"
+                ]
+            },
+            {
+                "id": "lune-12",
+                "nom": "Sécheresse, Ciel Fendu par la Lune",
+                "description": "L'épéiste exécute une coupe diagonale ascendante et nette, créant des lames de lune déchiquetées.",
+                "modificateur": "Force",
+                "cout": 9,
+                "portee": "6m",
+                "degats": "1d20 + Force",
+                "traits": []
+            },
+            {
+                "id": "lune-13",
+                "nom": "Enterrement de l'Horizon Immobile",
+                "description": "L'épéiste balaie bas dans un mouvement horizontal et fluide, envoyant des lames fines comme des rasoirs effleurer le terrain. Les lames restent silencieuses et invisibles.",
+                "modificateur": "Finesse",
+                "cout": 8,
+                "portee": "6m",
+                "degats": "2d8 + Finesse",
+                "traits": [
+                    "À distance",
+                    "Peut être utilisée à distance de mêlée jusqu'à la distance autorisée"
+                ]
+            },
+            {
+                "id": "lune-14",
+                "nom": "Catastrophe, Tenman Lune Croissante",
+                "description": "L'épéiste crée un anneau de coups en expansion à partir d'un point central, envoyant des lames en forme de croissant dans toutes les directions. Chaque vague devient de plus en plus large.",
+                "modificateur": "Force",
+                "cout": 18,
+                "portee": "9m",
+                "degats": "2d20 + Force",
+                "traits": []
+            },
+            {
+                "id": "lune-15",
+                "nom": "Voile de la Dernière Lune",
+                "description": "L'épéiste lance une séquence de coups lents, chacun plus long que le précédent, avant de se terminer par un arc final silencieux.",
+                "modificateur": "Force/Finesse",
+                "cout": 19,
+                "portee": "7.5m",
+                "degats": "4d8 + Force/Finesse",
+                "traits": [
+                    "À distance",
+                    "Peut être utilisée à distance de mêlée jusqu'à la distance autorisée"
+                ]
+            },
+            {
+                "id": "lune-16",
+                "nom": "Arc-en-ciel Lunaire, Croissant de Lune",
+                "description": "L'épéiste se balance vers le haut, générant six lames courbes qui s'écrasent vers le bas dans un arc dispersé. L'impact laisse de profonds cratères.",
+                "modificateur": "Finesse",
+                "cout": 16,
+                "portee": "9m",
+                "degats": "3d20 + Finesse",
+                "traits": [
+                    "Temps de charge (1 tour)",
+                    "Être attaqué interrompt la charge"
+                ]
+            }
+        ]
+    }
+}

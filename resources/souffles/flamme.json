@@ -1,0 +1,126 @@
+{
+    "name": "Souffle de la Flamme",
+    "type": "souffle",
+    "img": "systems/breathe-and-live/assets/icons/souffles/flamme.png",
+    "system": {
+        "nom": "Souffle de la Flamme",
+        "resume": "Souffle offensif basé sur la puissance brute et la vitesse. Axé sur des attaques directes, destructrices et spectaculaires, avec quelques techniques défensives et de récupération.",
+        "prerequis": {
+            "sens": "Aucun",
+            "caracteristiques": "Esprit",
+            "armes": "Katana Nichirin"
+        },
+        "special": {
+            "nom": "Cœur flamboyant",
+            "description": "Lorsque l’épéiste utilise une Forme de la Flamme, il peut ignorer un effet qui réduirait ses dégâts ou son mouvement une fois par combat. Représente la détermination inébranlable et la volonté d’avancer malgré la douleur."
+        },
+        "coutEndurance": 0,
+        "formes": [
+            {
+                "id": "flamme-01",
+                "nom": "Feu Inconscient",
+                "description": "L'épéiste charge son adversaire à grande vitesse et le décapite en un ou plusieurs coups.",
+                "modificateur": "Force",
+                "cout": 2,
+                "portee": "1.5m / CàC",
+                "degats": "3d6 + Force",
+                "traits": []
+            },
+            {
+                "id": "flamme-02",
+                "nom": "Soleil Levant Brûlant",
+                "description": "L'épéiste utilise une attaque tranchante vers le haut.",
+                "modificateur": "Finesse",
+                "cout": 3,
+                "portee": "1.5m / CàC",
+                "degats": "1d20 + Finesse",
+                "traits": []
+            },
+            {
+                "id": "flamme-03",
+                "nom": "Univers Flamboyant",
+                "description": "L'épéiste frappe son épée d'un coup horizontal qui l'amène près du sol.",
+                "modificateur": "Force",
+                "cout": 9,
+                "portee": "1.5m / CàC",
+                "degats": "4d8 + Force",
+                "traits": []
+            },
+            {
+                "id": "flamme-04",
+                "nom": "Ondulation de la Flamme en Fleurs",
+                "description": "L'épéiste fait tournoyer son épée, déviant ainsi les attaques de ses ennemis. Tous les dégâts qui vous sont infligés sont déviés et transmis à la cible de votre choix pendant le round.",
+                "modificateur": "Finesse",
+                "cout": 4,
+                "portee": "1.5m / CàC",
+                "degats": "1d12 + Finesse",
+                "traits": [
+                    "Déflecteur / Neutralisateur",
+                    "Annule les dégâts subis"
+                ]
+            },
+            {
+                "id": "flamme-05",
+                "nom": "Tigre de Flamme",
+                "description": "Une série de coups d'épée prenant la forme d'un tigre. Cette technique grave une profonde empreinte dans le sol.",
+                "modificateur": "Force",
+                "cout": 11,
+                "portee": "9m",
+                "degats": "2d8 + Force",
+                "traits": [
+                    "À distance",
+                    "Peut être utilisée à partir de la portée de combat rapproché jusqu'à la distance autorisée"
+                ]
+            },
+            {
+                "id": "flamme-06",
+                "nom": "Brasier Déchaîné",
+                "description": "L'épéiste abat sa lame du dessus de sa tête dans un coup puissant et complet du corps.",
+                "modificateur": "Force",
+                "cout": 10,
+                "portee": "1.5m / CàC",
+                "degats": "2d20 + Force",
+                "traits": []
+            },
+            {
+                "id": "flamme-07",
+                "nom": "Flamme Purificatrice",
+                "description": "Une position de repos passive pour regagner de l'endurance égale à la quantité de dégâts infligés par l'ennemi au cours du tour précédent.",
+                "modificateur": "Force / Finesse",
+                "cout": 0,
+                "portee": "1.5m / CàC",
+                "degats": "1d8 + Force ou Finesse",
+                "traits": [
+                    "Régénérateur",
+                    "Régénère la résistance"
+                ]
+            },
+            {
+                "id": "flamme-08",
+                "nom": "Rafale de Flammes Dansantes",
+                "description": "L'épéiste utilise un modèle de jeu de jambes circulaire pour esquiver et dévier plusieurs attaques ennemies tout en frappant plusieurs fois.",
+                "modificateur": "Finesse",
+                "cout": 11,
+                "portee": "6m",
+                "degats": "3d6 + Finesse",
+                "traits": [
+                    "Chaser",
+                    "Impossible à contrer ou à esquiver"
+                ]
+            },
+            {
+                "id": "flamme-09",
+                "nom": "Rengoku",
+                "description": "Un coup dévastateur lancé depuis une position élevée.",
+                "modificateur": "Force / Finesse",
+                "cout": 16,
+                "portee": "9m",
+                "degats": "3d20 + Force ou Finesse",
+                "traits": [
+                    "Temps de charge (1 tour)",
+                    "Une attaque subie interrompt la charge"
+                ]
+            }
+        ]
+    }
+}
