@@ -7,4 +7,16 @@ export class BreatheItemTechniqueSheet extends ItemSheet {
       height: 520,
     });
   }
+
+  async getData(options) {
+    const data = await super.getData(options);
+    data.canEdit = !!(game.user?.isGM || this.item.isOwner);
+    return data;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    if (!(game.user?.isGM || this.item.isOwner)) return;
+    // listeners d’édition si besoin
+  }
 }

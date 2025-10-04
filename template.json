@@ -8,6 +8,11 @@
     ],
     "templates": {
       "common": {
+        "class": {
+          "type": "Pourfendeur",
+          "rank": "Mizunoto",
+          "level": 1
+        },
         "stats": {
           "base": {
             "force": 0,
@@ -16,7 +21,8 @@
             "vitesse": 0,
             "social": 0,
             "intellect": 0
-          }
+          },
+          "derived": {}
         },
         "resources": {
           "hp": {
@@ -32,11 +38,6 @@
             "max": 0
           },
           "ca": 10
-        },
-        "class": {
-          "type": "Pourfendeur",
-          "rank": "Mizunoto",
-          "level": 1
         }
       }
     },
@@ -44,6 +45,65 @@
       "templates": [
         "common"
       ]
+    },
+    "demonist": {
+      "templates": [
+        "common"
+      ],
+      "resources": {
+        "bdp": {
+          "value": 0,
+          "max": 0
+        },
+        "demonisation": 0
+      }
+    },
+    "demon": {
+      "templates": [
+        "common"
+      ],
+      "resources": {
+        "bdp": {
+          "value": 0,
+          "max": 0
+        }
+      }
+    },
+    "npc": {
+      "templates": [
+        "common"
+      ]
+    }
+  },
+  "Item": {
+    "types": [
+      "weapon",
+      "technique",
+      "feature",
+      "sense",
+      "bda",
+      "gear",
+      "medical",
+      "poison",
+      "food",
+      "outfit",
+      "vehicle"
+    ],
+    "templates": {},
+    "weapon": {
+      "damage": "1d8",
+      "range": 1.5,
+      "tags": [],
+      "description": ""
+    },
+    "technique": {
+      "breath": "",
+      "form": 1,
+      "costE": 0,
+      "damage": "1d8",
+      "range": 1.5,
+      "tags": [],
+      "description": ""
     }
   }
 }

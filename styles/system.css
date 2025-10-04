@@ -8,7 +8,8 @@
 .bl .item-list .controls a { margin-left: .25rem; }
 .bl .field.small input { width: 100%; }
 .bl .pair { display:flex; align-items:center; gap:.25rem; }
-
+.bl-readonly input, .bl-readonly button { pointer-events: none; opacity: .75; }
+.bl-readonly .controls { display: none; }
 
 /* ============================
    Fiche Breathe and Live

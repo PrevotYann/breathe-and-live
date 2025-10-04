@@ -3,6 +3,13 @@ import { BreatheItemTechniqueSheet } from "./sheets/item-technique-sheet.mjs";
 
 Hooks.once("init", () => {
   console.log("Breathe & Live | init");
+
+  // Helpers pour les templates
+  Handlebars.registerHelper("eq", (a, b) => a === b);
+  Handlebars.registerHelper("join", (arr, sep) =>
+    Array.isArray(arr) ? arr.join(sep ?? ", ") : arr
+  );
+
   // Actor
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("breathe-and-live", BreatheActorSheet, {
@@ -21,13 +28,37 @@ Hooks.once("init", () => {
 class BLActor extends Actor {
   prepareDerivedData() {
     const b = this.system?.stats?.base ?? {};
+
     if (this.type !== "demon") {
+      this.system.resources.e ??= { value: 0, max: 0 };
+      this.system.resources.rp ??= { value: 0, max: 0 };
+      this.system.resources.hp ??= { value: 20, max: 20 };
+      this.system.resources.ca ??= 10;
+
+      // Max calculés
       this.system.resources.e.max = 20 + (b.courage ?? 0); // E = 20 + Courage
       this.system.resources.ca = 10 + (b.vitesse ?? 0); // CA = 10 + Vitesse
-      const rp = 5 + (b.vitesse ?? 0) + (b.intellect ?? 0); // RP = 5 + Vit + Int
-      this.system.resources.rp.max = rp;
-      if ((this.system.resources.rp.value ?? 0) === 0)
-        this.system.resources.rp.value = rp;
+      const rpMax = 5 + (b.vitesse ?? 0) + (b.intellect ?? 0); // RP = 5 + Vit + Int
+      this.system.resources.rp.max = rpMax;
+
+      // Remplissage "safe" si value invalide (0 ou > max) — utile à l'import/création
+      if (
+        !Number.isFinite(this.system.resources.e.value) ||
+        this.system.resources.e.value <= 0
+      )
+        this.system.resources.e.value = this.system.resources.e.max;
+
+      if (
+        !Number.isFinite(this.system.resources.rp.value) ||
+        this.system.resources.rp.value <= 0
+      )
+        this.system.resources.rp.value = rpMax;
+
+      if (
+        !Number.isFinite(this.system.resources.hp.value) ||
+        this.system.resources.hp.value <= 0
+      )
+        this.system.resources.hp.value = this.system.resources.hp.max;
     } else {
       const baseHP = this.system.resources.hp?.base ?? 0;
       this.system.resources.hp.max = baseHP + 5 * (b.force ?? 0);

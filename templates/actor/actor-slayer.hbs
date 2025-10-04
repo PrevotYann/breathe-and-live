@@ -1,22 +1,22 @@
-<form class="bl actor-slayer flexcol" autocomplete="off">
+<form class="bl actor-slayer flexcol {{#unless canEdit}}bl-readonly{{/unless}}" autocomplete="off">
   <header class="sheet-header flexrow">
     <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
     <div class="header-fields">
       <h1 class="charname">
-        <input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}"/>
+        <input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" {{#unless canEdit}}disabled{{/unless}}/>
       </h1>
       <div class="flexrow gap">
         <div class="field small">
           <label>Classe</label>
-          <input type="text" name="system.class.type" value="{{system.class.type}}" placeholder="Pourfendeur"/>
+          <input type="text" name="system.class.type" value="{{system.class.type}}" placeholder="Pourfendeur" {{#unless canEdit}}disabled{{/unless}}/>
         </div>
         <div class="field small">
           <label>Rang</label>
-          <input type="text" name="system.class.rank" value="{{system.class.rank}}" placeholder="Mizunoto"/>
+          <input type="text" name="system.class.rank" value="{{system.class.rank}}" placeholder="Mizunoto" {{#unless canEdit}}disabled{{/unless}}/>
         </div>
         <div class="field small">
           <label>Niveau</label>
-          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" />
+          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" {{#unless canEdit}}disabled{{/unless}}/>
         </div>
       </div>
     </div>
@@ -36,42 +36,42 @@
         <div class="res">
           <label>PV</label>
           <div class="pair">
-            <input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" min="0"/>
+            <input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
             <span>/</span>
-            <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" min="0"/>
+            <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
           </div>
         </div>
 
         <div class="res">
           <label>Endurance (E)</label>
           <div class="pair">
-            <input type="number" name="system.resources.e.value" value="{{system.resources.e.value}}" min="0"/>
+            <input type="number" name="system.resources.e.value" value="{{system.resources.e.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
             <span>/</span>
-            <input type="number" name="system.resources.e.max" value="{{system.resources.e.max}}" min="0"/>
+            <input type="number" name="system.resources.e.max" value="{{system.resources.e.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
           </div>
         </div>
 
         <div class="res">
           <label>Points de Réaction (RP)</label>
           <div class="pair">
-            <input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" min="0"/>
+            <input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
             <span>/</span>
-            <input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" min="0"/>
+            <input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
           </div>
         </div>
 
         <div class="res">
           <label>Classe d’Armure (CA)</label>
-          <input type="number" name="system.resources.ca" value="{{system.resources.ca}}" min="0"/>
+          <input type="number" name="system.resources.ca" value="{{system.resources.ca}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
         </div>
 
         {{#if system.resources.bdp}}
         <div class="res">
           <label>BDP</label>
           <div class="pair">
-            <input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" min="0"/>
+            <input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
             <span>/</span>
-            <input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" min="0"/>
+            <input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
           </div>
         </div>
         {{/if}}
@@ -82,12 +82,12 @@
     <div class="tab" data-group="primary" data-tab="stats">
       <h3>Caractéristiques de base</h3>
       <div class="grid stats-base">
-        <label>Force</label>     <input type="number" name="system.stats.base.force"    value="{{system.stats.base.force}}"/>
-        <label>Finesse</label>   <input type="number" name="system.stats.base.finesse"  value="{{system.stats.base.finesse}}"/>
-        <label>Courage</label>   <input type="number" name="system.stats.base.courage"  value="{{system.stats.base.courage}}"/>
-        <label>Vitesse</label>   <input type="number" name="system.stats.base.vitesse"  value="{{system.stats.base.vitesse}}"/>
-        <label>Social</label>    <input type="number" name="system.stats.base.social"   value="{{system.stats.base.social}}"/>
-        <label>Intellect</label> <input type="number" name="system.stats.base.intellect" value="{{system.stats.base.intellect}}"/>
+        <label>Force</label>     <input type="number" name="system.stats.base.force"     value="{{system.stats.base.force}}"     {{#unless canEdit}}disabled{{/unless}}/>
+        <label>Finesse</label>   <input type="number" name="system.stats.base.finesse"   value="{{system.stats.base.finesse}}"   {{#unless canEdit}}disabled{{/unless}}/>
+        <label>Courage</label>   <input type="number" name="system.stats.base.courage"   value="{{system.stats.base.courage}}"   {{#unless canEdit}}disabled{{/unless}}/>
+        <label>Vitesse</label>   <input type="number" name="system.stats.base.vitesse"   value="{{system.stats.base.vitesse}}"   {{#unless canEdit}}disabled{{/unless}}/>
+        <label>Social</label>    <input type="number" name="system.stats.base.social"    value="{{system.stats.base.social}}"    {{#unless canEdit}}disabled{{/unless}}/>
+        <label>Intellect</label> <input type="number" name="system.stats.base.intellect" value="{{system.stats.base.intellect}}" {{#unless canEdit}}disabled{{/unless}}/>
       </div>
 
       {{#if system.stats.derived}}
@@ -95,7 +95,7 @@
       <div class="grid stats-derived">
         {{#each system.stats.derived as |val key|}}
           <label>{{key}}</label>
-          <input type="number" name="system.stats.derived.{{key}}" value="{{val}}"/>
+          <input type="number" name="system.stats.derived.{{key}}" value="{{val}}" {{#unless canEdit}}disabled{{/unless}}/>
         {{/each}}
       </div>
       {{/if}}
@@ -109,17 +109,19 @@
       <ol class="item-list">
         {{#each actor.items as |it|}}
           {{#if (eq it.type "technique")}}
-          <li class="item flexrow" data-item-id="{{it.id}}">
-            <div class="name"><a class="item-edit">{{it.name}}</a></div>
-            <div>{{it.system.breath}}</div>
-            <div>{{it.system.form}}</div>
-            <div>{{it.system.costE}}</div>
-            <div>{{it.system.damage}}</div>
-            <div class="controls">
-              <a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>
-              <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
-            </div>
-          </li>
+            <li class="item flexrow" data-item-id="{{it.id}}">
+              <div class="name"><a class="item-edit">{{it.name}}</a></div>
+              <div>{{it.system.breath}}</div>
+              <div>{{it.system.form}}</div>
+              <div>{{it.system.costE}}</div>
+              <div>{{it.system.damage}}</div>
+              {{#if canEdit}}
+              <div class="controls">
+                <a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>
+                <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+              </div>
+              {{/if}}
+            </li>
           {{/if}}
         {{/each}}
       </ol>
@@ -136,9 +138,11 @@
           <li class="item flexrow" data-item-id="{{it.id}}">
             <div class="name"><a class="item-edit">{{it.name}}</a></div>
             <div>{{it.type}}</div>
+            {{#if canEdit}}
             <div class="controls">
               <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
             </div>
+            {{/if}}
           </li>
           {{/unless}}
         {{/each}}

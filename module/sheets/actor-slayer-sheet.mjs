@@ -1,3 +1,5 @@
+import { useTechnique } from "../chat/use-technique.mjs";
+
 export class BreatheActorSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -19,13 +21,13 @@ export class BreatheActorSheet extends ActorSheet {
   async getData(options) {
     const data = await super.getData(options);
 
-    // Certaines bases "worldbuilding" plus anciennes exposent encore les valeurs dans data.data
+    // Source brute (system) ou compat (data.data)
     const rawSys =
-      this.actor.system && Object.keys(this.actor.system).length
+      (this.actor.system && Object.keys(this.actor.system).length
         ? this.actor.system
-        : this.actor.data?.data ?? {}; // compat
+        : this.actor.data?.data ?? {}) || {};
 
-    // Valeurs par défaut minimales attendues par le .hbs
+    // Défauts attendus par le template
     const defaults = {
       class: { type: "Pourfendeur", rank: "Mizunoto", level: 1 },
       stats: {
@@ -47,40 +49,77 @@ export class BreatheActorSheet extends ActorSheet {
       },
     };
 
-    // On injecte les défauts SANS écraser les vraies valeurs si elles existent
-    data.system = foundry.utils.mergeObject(defaults, rawSys, {
-      inplace: false,
-      insertKeys: true,
-      overwrite: false,
-    });
+    // IMPORTANT : on fusionne en laissant PRÉVALOIR les vraies données (rawSys)
+    data.system = foundry.utils.mergeObject(
+      foundry.utils.duplicate(defaults),
+      rawSys,
+      {
+        inplace: false,
+        insertKeys: true,
+        overwrite: true,
+      }
+    );
+
+    // Seul GM ou Owner peut éditer
+    const canEdit = game.user?.isGM || this.actor.isOwner;
+    data.canEdit = !!canEdit;
+
     return data;
   }
 
   activateListeners(html) {
     super.activateListeners(html);
-    if (!this.isEditable) return;
+    const canEdit = game.user?.isGM || this.actor.isOwner;
 
+    // Si pas d’édition, on bloque les actions destructrices/modificatrices
+    if (!canEdit) return;
+
+    // Delete item
     html.find(".item-delete").on("click", (ev) => {
       const li = ev.currentTarget.closest(".item");
       const id = li?.dataset.itemId;
       if (id) this.actor.deleteEmbeddedDocuments("Item", [id]);
     });
 
-    html.find(".item-chat, .bl-use-technique").on("click", async (ev) => {
+    // Use Technique (chat roll + E consumption)
+    html.on("click", ".item-chat, .bl-use-technique", async (ev) => {
+      // Find the technique item
       const li = ev.currentTarget.closest(".item");
-      const item = li
-        ? this.actor.items.get(li.dataset.itemId)
-        : this.actor.items.getName(this.object.name);
-      const tech = item ?? null;
-      if (!tech) return;
-      // Message simple pour l’instant
-      const r = await new Roll(tech.system.damage ?? "1d8").roll({
-        async: true,
-      });
-      await r.toMessage({
+      const item = li ? this.actor.items.get(li.dataset.itemId) : null;
+      if (!item) return;
+
+      if (item.type === "technique") {
+        return useTechnique(this.actor, item); // <-- uses the helper
+      }
+
+      // Read cost and current Endurance
+      const cost = Number(item.system?.costE ?? 0) || 0;
+      const ePath = "system.resources.e.value";
+      const eVal = getProperty(this.actor, ePath) ?? 0;
+
+      // Not enough Endurance?
+      if (eVal < cost) {
+        ui.notifications.warn(
+          `Pas assez d'Endurance (E). Requis: ${cost}, actuel: ${eVal}`
+        );
+        return;
+      }
+
+      // Consume Endurance first (so a crash mid-roll can't “refund” E)
+      await this.actor.update({ [ePath]: eVal - cost });
+
+      // Roll damage
+      const dmg = item.system?.damage || "1d8";
+      const roll = await new Roll(dmg).roll({ async: true });
+
+      // Send to chat (show E spent)
+      await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        flavor: `Technique : ${tech.name} — dégâts potentiels`,
+        flavor: `Technique : ${item.name} — E -${cost}`,
       });
+
+      // Optional: re-render to reflect the new E immediately on the sheet
+      this.render(false);
     });
   }
 }
