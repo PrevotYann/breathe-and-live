@@ -1,8 +1,8 @@
 {
   "Actor": {
     "types": [
-      "character",
-      "demoniste",
+      "slayer",
+      "demonist",
       "demon",
       "npc"
     ],
@@ -70,13 +70,13 @@
         "souffles": [],
         "equipement": []
       },
-      "character": {
-        "classType": "pourfendeur",
+      "slayer": {
+        "classType": "slayer",
         "souffle": "",
         "pointsCompetence": 0
       },
-      "demoniste": {
-        "classType": "demoniste",
+      "demonist": {
+        "classType": "demonist",
         "souffle": "",
         "techniquesSanguinaires": [],
         "pointsCorruption": 0

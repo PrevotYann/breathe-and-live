@@ -12,10 +12,10 @@ export class BreatheActor extends Actor {
 
     // Vérification du type d'acteur
     switch (this.type) {
-      case "character":
+      case "slayer":
         this._prepareCharacterData(actorData, stats, attrs);
         break;
-      case "demoniste":
+      case "demonist":
         this._prepareDemonisteData(actorData, stats, attrs);
         break;
       case "demon":

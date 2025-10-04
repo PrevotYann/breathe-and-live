@@ -13,7 +13,7 @@ Hooks.once("init", async function () {
   CONFIG.Actor.documentClass = BreatheActor;
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("breathe-and-live", BreatheActorSheet, {
-    types: ["character", "demoniste", "demon", "npc"],
+    types: ["slayer", "demonist", "demon", "npc"],
     makeDefault: true,
   });
 

@@ -32,7 +32,7 @@ export class BreatheTechniqueSheet extends ItemSheet {
     const sys = this.item.system ?? {};
 
     // Valeurs par défaut robustes
-    sys.categorie ??= "générale"; // "tcb" | "marque" | "mondeTransparent" | "lameRouge" | "demoniste" | "générale"
+    sys.categorie ??= "générale"; // "tcb" | "marque" | "mondeTransparent" | "lameRouge" | "demonist" | "générale"
     sys.activation ??= "passive"; // "action" | "reaction" | "passive"
     sys.couts ??= { endurance: 0, reactions: 0, autre: "" };
     sys.jets ??= { formule: "", portee: "", cibles: "1", degats: "" };
@@ -48,7 +48,7 @@ export class BreatheTechniqueSheet extends ItemSheet {
       marque: "Forme Marquée",
       mondeTransparent: "Monde Transparent",
       lameRouge: "Lame Rouge",
-      demoniste: "Technique de Démoniste",
+      demonist: "Technique de Démoniste",
     };
 
     ctx.activationList = {

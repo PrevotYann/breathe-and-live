@@ -52,8 +52,8 @@ export class BreatheActorSheet extends ActorSheet {
     context.details = actorData.details || {};
 
     // Types d'acteur
-    context.isCharacter = this.actor.type === "character";
-    context.isDemoniste = this.actor.type === "demoniste";
+    context.isSlayer = this.actor.type === "slayer";
+    context.isDemoniste = this.actor.type === "demonist";
     context.isDemon = this.actor.type === "demon";
     context.isNpc = this.actor.type === "npc";
 
