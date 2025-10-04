@@ -1,3 +1,15 @@
+.bl .sheet-header { align-items: center; gap: 1rem; }
+.bl .sheet-header .profile { width: 96px; height: 96px; border-radius: 8px; }
+.bl .grid { display: grid; gap: .5rem; }
+.bl .grid.resources { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.bl .grid.stats-base { grid-template-columns: 1fr 80px 1fr 80px 1fr 80px; align-items: center; }
+.bl .list-header, .bl .item-list .item { display: grid; grid-template-columns: 1fr 120px 70px 80px 110px 60px; gap: .5rem; align-items: center; }
+.bl .item-list { margin: .5rem 0; }
+.bl .item-list .controls a { margin-left: .25rem; }
+.bl .field.small input { width: 100%; }
+.bl .pair { display:flex; align-items:center; gap:.25rem; }
+
+
 /* ============================
    Fiche Breathe and Live
    ============================ */

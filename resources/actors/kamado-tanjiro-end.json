@@ -1,282 +1,443 @@
 {
-    "name": "Kamado Tanjiro (Fin du manga)",
+    "name": "Tanjiro Kamado (Fin du manga)",
     "type": "slayer",
-    "img": "icons/svg/warrior.svg",
+    "img": "icons/svg/sword.svg",
     "system": {
-        "details": {
-            "classe": "Pourfendeur de Démons",
-            "rang": "Hashira+",
-            "niveau": 11,
-            "background": "Souffle du Soleil maîtrisé"
+        "class": {
+            "type": "Pourfendeur",
+            "rank": "Hashira (équivalent)",
+            "level": 10
         },
-        "attributes": {
-            "pv": {
-                "value": 45,
-                "max": 45
-            },
-            "endurance": {
-                "value": 25,
-                "max": 25
-            },
-            "ca": 14,
-            "reactions": {
-                "value": 12,
-                "max": 12
+        "stats": {
+            "base": {
+                "force": 6,
+                "finesse": 6,
+                "courage": 8,
+                "vitesse": 7,
+                "social": 4,
+                "intellect": 5
             }
         },
-        "statsBase": {
-            "force": 5,
-            "finesse": 4,
-            "courage": 5,
-            "vitesse": 4,
-            "social": 3,
-            "intellect": 3
-        },
-        "statsDerivees": {
-            "athletisme": 6,
-            "puissanceBrute": 6,
-            "dexterite": 5,
-            "equilibre": 5,
-            "precision": 5,
-            "mithridatisme": 5,
-            "endurance": 7,
-            "tolerance": 5,
-            "reflexes": 5,
-            "agilite": 5,
-            "rapidite": 5,
-            "ruse": 4,
-            "manipulation": 4,
-            "performance": 4,
-            "intimidation": 4,
-            "perception": 6,
-            "intuition": 5,
-            "medecine": 4,
-            "nature": 4,
-            "sciences": 4,
-            "enquete": 4,
-            "survie": 4
+        "resources": {
+            "hp": {
+                "value": 40,
+                "max": 40
+            },
+            "e": {
+                "value": 28,
+                "max": 28
+            },
+            "rp": {
+                "value": 17,
+                "max": 17
+            },
+            "ca": 17
         }
     },
     "items": [
         {
-            "name": "Souffle du Soleil",
-            "type": "souffle",
-            "img": "icons/svg/sun.svg",
+            "name": "Lame Nichirin (noire)",
+            "type": "weapon",
+            "img": "icons/weapons/swords/sword-guard-gem-blue.webp",
             "system": {
-                "nom": "Souffle du Soleil",
-                "resume": "Technique suprême.",
-                "prerequis": {
-                    "sens": "Aucun",
-                    "caracteristiques": "Génie",
-                    "armes": "Katana Nichirin"
-                },
-                "special": {
-                    "nom": "Élu",
-                    "description": "E/2; dégâts x3 en Marque; TCB permanent; gagne Marque / Vision / Lame Rouge selon conditions."
-                },
-                "coutEndurance": 0,
-                "effet": "",
-                "formes": [
-                    {
-                        "id": "f1",
-                        "nom": "Valse",
-                        "description": "Arc vertical.",
-                        "stat": "finesse",
-                        "cout": 2,
-                        "portee": "1.5 m",
-                        "degats": "2d10 + @statsBase.force"
-                    },
-                    {
-                        "id": "f13",
-                        "nom": "Treizième Forme",
-                        "description": "Cycle complet.",
-                        "stat": "vitesse",
-                        "cout": 6,
-                        "portee": "1.5 m",
-                        "degats": "3d10 + @statsBase.finesse"
-                    }
-                ]
-            }
-        },
-        {
-            "name": "TCB : Permanent",
-            "type": "technique",
-            "img": "icons/svg/aura.svg",
-            "system": {
-                "categorie": "tcb",
-                "activation": "passive",
-                "couts": {
-                    "endurance": 0,
-                    "reactions": 0,
-                    "autre": ""
-                },
-                "jets": {
-                    "formule": "",
-                    "portee": "",
-                    "cibles": "—",
-                    "degats": ""
-                },
-                "conditions": {
-                    "prerequis": "Entraînement avancé",
-                    "etatRequis": ""
-                },
-                "usages": {
-                    "par": "combat",
-                    "max": 0,
-                    "restant": 0,
-                    "recharge": ""
-                },
-                "effet": "Respiration constante.",
-                "resume": ""
-            }
-        },
-        {
-            "name": "Forme Marquée",
-            "type": "technique",
-            "img": "icons/svg/explosion.svg",
-            "system": {
-                "categorie": "marque",
-                "activation": "action",
-                "couts": {
-                    "endurance": 4,
-                    "reactions": 0,
-                    "autre": ""
-                },
-                "jets": {
-                    "formule": "",
-                    "portee": "",
-                    "cibles": "Self",
-                    "degats": ""
-                },
-                "conditions": {
-                    "prerequis": "Hashira+",
-                    "etatRequis": ""
-                },
-                "usages": {
-                    "par": "combat",
-                    "max": 1,
-                    "restant": 1,
-                    "recharge": "Fin de combat"
-                },
-                "effet": "Puissance accrue; Soleil: x3 dégâts.",
-                "resume": ""
-            }
-        },
-        {
-            "name": "Monde Transparent",
-            "type": "technique",
-            "img": "icons/svg/eye.svg",
-            "system": {
-                "categorie": "mondeTransparent",
-                "activation": "action",
-                "couts": {
-                    "endurance": 2,
-                    "reactions": 0,
-                    "autre": ""
-                },
-                "jets": {
-                    "formule": "",
-                    "portee": "—",
-                    "cibles": "—",
-                    "degats": ""
-                },
-                "conditions": {
-                    "prerequis": "",
-                    "etatRequis": ""
-                },
-                "usages": {
-                    "par": "combat",
-                    "max": 1,
-                    "restant": 1,
-                    "recharge": "Fin de combat"
-                },
-                "effet": "Perception améliorée (esquives/anticipation).",
-                "resume": ""
-            }
-        },
-        {
-            "name": "Lame Rouge",
-            "type": "technique",
-            "img": "icons/svg/sword.svg",
-            "system": {
-                "categorie": "lameRouge",
-                "activation": "action",
-                "couts": {
-                    "endurance": 2,
-                    "reactions": 0,
-                    "autre": ""
-                },
-                "jets": {
-                    "formule": "",
-                    "portee": "—",
-                    "cibles": "Arme",
-                    "degats": ""
-                },
-                "conditions": {
-                    "prerequis": "",
-                    "etatRequis": ""
-                },
-                "usages": {
-                    "par": "combat",
-                    "max": 1,
-                    "restant": 1,
-                    "recharge": "Fin de combat"
-                },
-                "effet": "Entrave la régénération démoniaque.",
-                "resume": ""
-            }
-        },
-        {
-            "name": "Odorat (Niv. 3)",
-            "type": "capacite",
-            "img": "icons/svg/nose.svg",
-            "system": {
-                "famille": "extrasensorielle",
-                "resume": "+5 Perception; 18 m; évalue la puissance d’un démon.",
-                "effet": "",
-                "sens": "odorat",
-                "niveau": 3,
-                "bonus": {
-                    "perception": 5,
-                    "detection": "18 m",
-                    "special": "Évalue la puissance"
-                }
-            }
-        },
-        {
-            "name": "Force physique accrue",
-            "type": "capacite",
-            "img": "icons/svg/mighty.svg",
-            "system": {
-                "famille": "surnaturelle",
-                "resume": "+3 Force (combat), +6 Puissance brute (permanent).",
-                "effet": "",
-                "pointsCout": 3,
-                "bonusPassifs": [
-                    {
-                        "cle": "statsDerivees.puissanceBrute",
-                        "valeur": "+6"
-                    }
+                "damage": "1d8 + {{system.stats.base.force}}",
+                "range": 1.5,
+                "tags": [
+                    "versatile",
+                    "slayerBlade"
                 ],
-                "conditions": "",
-                "automatiser": false
+                "description": "Lame Nichirin noire de Tanjiro. Les attaques d’arme demandent un jet pour toucher ; les Techniques de Souffle auto-touchent (esquive possible via RP)."
             }
         },
         {
-            "name": "Lame Nichirin – Standard",
-            "type": "arme",
-            "img": "icons/svg/sword.svg",
+            "name": "Eau — Forme 1 : Coupe de la surface",
+            "type": "technique",
+            "img": "icons/magic/water/strike-wave-blue.webp",
             "system": {
-                "categorie": "melee",
-                "typeArme": "nichirin",
-                "portee": "1.5 m",
-                "degats": "1d6",
-                "modAttaque": "@statsBase.finesse",
-                "modDegats": "@statsBase.force",
-                "proprietes": [
-                    "décapitation"
+                "breath": "Eau",
+                "form": 1,
+                "costE": 2,
+                "damage": "2d8",
+                "range": 1.5,
+                "tags": [
+                    "autoHit"
                 ],
-                "notes": ""
+                "description": "Frappe tranchante initiale, fluide et directe."
+            }
+        },
+        {
+            "name": "Eau — Forme 2 : Roue d’eau",
+            "type": "technique",
+            "img": "icons/magic/water/projectile-ice-snowball.webp",
+            "system": {
+                "breath": "Eau",
+                "form": 2,
+                "costE": 3,
+                "damage": "2d8+2",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "mobility"
+                ],
+                "description": "Coup tournoyant ascendant ; peut aider au repositionnement."
+            }
+        },
+        {
+            "name": "Eau — Forme 3 : Danse du courant",
+            "type": "technique",
+            "img": "icons/magic/water/wave-water-blue.webp",
+            "system": {
+                "breath": "Eau",
+                "form": 3,
+                "costE": 3,
+                "damage": "2d8",
+                "range": 1.5,
+                "tags": [
+                    "autoHit",
+                    "finesse"
+                ],
+                "description": "Chaîne fluide de coupes qui suit l’élan de l’ennemi."
+            }
+        },
+        {
+            "name": "Eau — Forme 4 : Frappe jaillissante",
+            "type": "technique",
+            "img": "icons/magic/water/spout-splash-jet.webp",
+            "system": {
+                "breath": "Eau",
+                "form": 4,
+                "costE": 3,
+                "damage": "2d8+1",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "gapClose"
+                ],
+                "description": "Bond rapide suivi d’une taille ; comble les espaces."
+            }
+        },
+        {
+            "name": "Eau — Forme 5 : Pluie après la sécheresse",
+            "type": "technique",
+            "img": "icons/magic/water/raindrop-splash-ink.webp",
+            "system": {
+                "breath": "Eau",
+                "form": 5,
+                "costE": 3,
+                "damage": "2d8+3",
+                "range": 1.5,
+                "tags": [
+                    "autoHit",
+                    "precision"
+                ],
+                "description": "Frappe courte, douce et inévitable, pour les finitions."
+            }
+        },
+        {
+            "name": "Eau — Forme 6 : Tourbillon",
+            "type": "technique",
+            "img": "icons/magic/water/vortex-water-spiral-blue.webp",
+            "system": {
+                "breath": "Eau",
+                "form": 6,
+                "costE": 4,
+                "damage": "3d8",
+                "range": 1.5,
+                "tags": [
+                    "autoHit",
+                    "zone"
+                ],
+                "description": "Rotation serrée créant un tourbillon tranchant autour de soi."
+            }
+        },
+        {
+            "name": "Eau — Forme 7 : Goutte perçante",
+            "type": "technique",
+            "img": "icons/magic/water/needle-ice-blue.webp",
+            "system": {
+                "breath": "Eau",
+                "form": 7,
+                "costE": 2,
+                "damage": "2d8",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "piercing"
+                ],
+                "description": "Estoc d’une grande précision, pour percer les défenses."
+            }
+        },
+        {
+            "name": "Eau — Forme 8 : Vague houleuse",
+            "type": "technique",
+            "img": "icons/magic/water/wave-blue.webp",
+            "system": {
+                "breath": "Eau",
+                "form": 8,
+                "costE": 4,
+                "damage": "3d8",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "sweeping"
+                ],
+                "description": "Large balayage ondulant ; bon contre plusieurs cibles rapprochées."
+            }
+        },
+        {
+            "name": "Eau — Forme 9 : Éclaboussure rugissante",
+            "type": "technique",
+            "img": "icons/magic/water/wave-crash.webp",
+            "system": {
+                "breath": "Eau",
+                "form": 9,
+                "costE": 4,
+                "damage": "3d8+1",
+                "range": 6,
+                "tags": [
+                    "autoHit",
+                    "rush"
+                ],
+                "description": "Charge fluide à haute vitesse, suivie d’un coup dévastateur."
+            }
+        },
+        {
+            "name": "Eau — Forme 10 : Le Dragon de l’eau changeant",
+            "type": "technique",
+            "img": "icons/creatures/reptiles/dragon-blue-flying.webp",
+            "system": {
+                "breath": "Eau",
+                "form": 10,
+                "costE": 4,
+                "damage": "3d8+2",
+                "range": 6,
+                "tags": [
+                    "autoHit",
+                    "adaptive"
+                ],
+                "description": "Chaîne adaptable de coupes qui suivent et contournent la garde adverse."
+            }
+        },
+        {
+            "name": "Soleil — Forme 1 : Danse",
+            "type": "technique",
+            "img": "icons/magic/fire/beam-jet-stream-red.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 1,
+                "costE": 3,
+                "damage": "2d10",
+                "range": 1.5,
+                "tags": [
+                    "autoHit",
+                    "searing"
+                ],
+                "description": "Coup initial incandescent, base du Kagura."
+            }
+        },
+        {
+            "name": "Soleil — Forme 2 : Halo bleu du ciel",
+            "type": "technique",
+            "img": "icons/magic/fire/projectile-meteor-salvo.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 2,
+                "costE": 3,
+                "damage": "2d10+1",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "finesse"
+                ],
+                "description": "Arcs rapides chauffés à blanc, précision accrue."
+            }
+        },
+        {
+            "name": "Soleil — Forme 3 : Roue éclatante",
+            "type": "technique",
+            "img": "icons/magic/fire/beam-cannon-flare-yellow.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 3,
+                "costE": 4,
+                "damage": "3d10",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "mobility"
+                ],
+                "description": "Rotation flamboyante, sert à monter en pression."
+            }
+        },
+        {
+            "name": "Soleil — Forme 4 : Vague brûlante",
+            "type": "technique",
+            "img": "icons/magic/fire/flame-wave-barrier.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 4,
+                "costE": 4,
+                "damage": "3d10",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "sweeping"
+                ],
+                "description": "Balayage ardent, neutralise plusieurs lignes d’attaque."
+            }
+        },
+        {
+            "name": "Soleil — Forme 5 : Flamme bienveillante",
+            "type": "technique",
+            "img": "icons/magic/fire/barrier-shield-flaming-triangle.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 5,
+                "costE": 3,
+                "damage": "2d10+2",
+                "range": 1.5,
+                "tags": [
+                    "autoHit",
+                    "guardBreak"
+                ],
+                "description": "Coupe protectrice et punitive, brise-garde."
+            }
+        },
+        {
+            "name": "Soleil — Forme 6 : Tourbillon flamboyant",
+            "type": "technique",
+            "img": "icons/magic/fire/vortex-fire-whirlwind.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 6,
+                "costE": 5,
+                "damage": "3d10+1",
+                "range": 1.5,
+                "tags": [
+                    "autoHit",
+                    "zone"
+                ],
+                "description": "Tourbillon de flammes, excellent au cœur de la mêlée."
+            }
+        },
+        {
+            "name": "Soleil — Forme 7 : Mirage flamboyant",
+            "type": "technique",
+            "img": "icons/magic/fire/explosion-embers-orange.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 7,
+                "costE": 3,
+                "damage": "2d10+1",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "evasion"
+                ],
+                "description": "Feinte brûlante, altère la lecture des mouvements."
+            }
+        },
+        {
+            "name": "Soleil — Forme 8 : Souffle ardent",
+            "type": "technique",
+            "img": "icons/magic/fire/beam-jet-stream-embers.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 8,
+                "costE": 4,
+                "damage": "3d10",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "piercing"
+                ],
+                "description": "Percée incandescente, perce la garde à haute température."
+            }
+        },
+        {
+            "name": "Soleil — Forme 9 : Rayon flamboyant",
+            "type": "technique",
+            "img": "icons/magic/fire/projectile-beam-strike.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 9,
+                "costE": 4,
+                "damage": "3d10+1",
+                "range": 6,
+                "tags": [
+                    "autoHit",
+                    "rush"
+                ],
+                "description": "Allonge le pas pour un impact brûlant à moyenne portée."
+            }
+        },
+        {
+            "name": "Soleil — Forme 10 : Soleil levant",
+            "type": "technique",
+            "img": "icons/magic/fire/projectile-embers-orange.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 10,
+                "costE": 4,
+                "damage": "3d10+2",
+                "range": 1.5,
+                "tags": [
+                    "autoHit",
+                    "execution"
+                ],
+                "description": "Coupe ascendante qui ouvre les défenses."
+            }
+        },
+        {
+            "name": "Soleil — Forme 11 : Danse vespérale",
+            "type": "technique",
+            "img": "icons/magic/fire/projectile-missile-embers.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 11,
+                "costE": 5,
+                "damage": "3d10+3",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "combo"
+                ],
+                "description": "Série de coupes rapides au rythme du Kagura."
+            }
+        },
+        {
+            "name": "Soleil — Forme 12 : Feu continu",
+            "type": "technique",
+            "img": "icons/magic/fire/flame-burning-cinder.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 12,
+                "costE": 6,
+                "damage": "4d10",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "sustained"
+                ],
+                "description": "Pression constante ; consomme davantage d’Endurance."
+            }
+        },
+        {
+            "name": "Soleil — Forme 13 : Cercle parfait",
+            "type": "technique",
+            "img": "icons/magic/fire/beam-circular.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 13,
+                "costE": 8,
+                "damage": "4d10+2",
+                "range": 3,
+                "tags": [
+                    "autoHit",
+                    "antiDemon",
+                    "finisher"
+                ],
+                "description": "Cycle complet des 12 formes en continu ; conçu pour décapiter les Démons les plus puissants."
             }
         }
     ]

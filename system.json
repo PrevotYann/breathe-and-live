@@ -15,10 +15,10 @@
     }
   ],
   "esmodules": [
-    "module/breathe.js"
+    "module/breathe-and-live.mjs"
   ],
   "styles": [
-    "styles/breathe.css"
+    "styles/system.css"
   ],
   "languages": [
     {

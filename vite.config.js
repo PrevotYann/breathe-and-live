@@ -5,7 +5,7 @@ export default {
     outDir: ".",
     emptyOutDir: false,
     rollupOptions: {
-      input: { "module/breathe-live": resolve("src/breathe-live.ts") },
+      input: { "module/breathe-and-live": resolve("src/breathe-and-live.ts") },
       output: { entryFileNames: "module/[name].mjs", format: "es" },
     },
   },

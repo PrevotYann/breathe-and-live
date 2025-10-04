@@ -7,185 +7,81 @@
       "npc"
     ],
     "templates": {
-      "base": {
-        "details": {
-          "name": "",
-          "classe": "",
-          "rang": "",
-          "niveau": 1,
-          "background": ""
-        },
-        "attributes": {
-          "pv": {
-            "value": 0,
-            "max": 0
-          },
-          "endurance": {
-            "value": 0,
-            "max": 0
-          },
-          "ca": 0,
-          "reactions": {
-            "value": 0,
-            "max": 0
+      "common": {
+        "stats": {
+          "base": {
+            "force": 0,
+            "finesse": 0,
+            "courage": 0,
+            "vitesse": 0,
+            "social": 0,
+            "intellect": 0
           }
         },
-        "statsBase": {
-          "force": 0,
-          "finesse": 0,
-          "courage": 0,
-          "vitesse": 0,
-          "social": 0,
-          "intellect": 0
-        },
-        "statsDerivees": {
-          "athletisme": 0,
-          "puissanceBrute": 0,
-          "dexterite": 0,
-          "equilibre": 0,
-          "precision": 0,
-          "mithridatisme": 0,
-          "endurance": 0,
-          "tolerance": 0,
-          "reflexes": 0,
-          "agilite": 0,
-          "rapidite": 0,
-          "ruse": 0,
-          "manipulation": 0,
-          "performance": 0,
-          "intimidation": 0,
-          "perception": 0,
-          "intuition": 0,
-          "medecine": 0,
-          "nature": 0,
-          "sciences": 0,
-          "enquete": 0,
-          "survie": 0
-        },
-        "capacites": {
-          "extrasensorielles": [],
-          "surnaturelles": [],
-          "humaines": []
-        },
-        "souffles": [],
-        "equipement": []
-      },
-      "slayer": {
-        "classType": "slayer",
-        "souffle": "",
-        "pointsCompetence": 0
-      },
-      "demonist": {
-        "classType": "demonist",
-        "souffle": "",
-        "techniquesSanguinaires": [],
-        "pointsCorruption": 0
-      },
-      "demon": {
-        "sangDemoniaque": {
+        "resources": {
+          "hp": {
+            "value": 20,
+            "max": 20
+          },
+          "e": {
+            "value": 0,
+            "max": 0
+          },
+          "rp": {
+            "value": 0,
+            "max": 0
+          },
+          "ca": 10
+        }
+      }
+    },
+    "slayer": {
+      "templates": [
+        "common"
+      ]
+    },
+    "demonist": {
+      "templates": [
+        "common"
+      ],
+      "resources": {
+        "bdp": {
           "value": 0,
           "max": 0
         },
-        "pointsDemonisation": 0,
-        "pouvoirsSanguinaires": []
-      },
-      "npc": {
-        "role": "",
-        "notes": ""
+        "demonisation": 0
+      }
+    },
+    "demon": {
+      "templates": [
+        "common"
+      ],
+      "resources": {
+        "bdp": {
+          "value": 0,
+          "max": 0
+        }
       }
     }
   },
   "Item": {
     "types": [
-      "arme",
-      "souffle",
+      "weapon",
       "technique",
-      "objet",
-      "capacite"
+      "feature",
+      "sense",
+      "bda",
+      "gear"
     ],
-    "templates": {
-      "arme": {
-        "categorie": "melee",
-        "typeArme": "nichirin",
-        "portee": "1.5 m",
-        "degats": "1d6",
-        "modAttaque": "@statsBase.finesse",
-        "modDegats": "@statsBase.force",
-        "proprietes": [],
-        "notes": "",
-        "munitions": {
-          "utilise": false,
-          "charge": 0,
-          "chargeMax": 0,
-          "rechargement": ""
-        }
-      },
-      "souffle": {
-        "nom": "",
-        "resume": "",
-        "prerequis": {
-          "sens": "",
-          "caracteristiques": "",
-          "armes": ""
-        },
-        "special": {
-          "nom": "",
-          "description": ""
-        },
-        "coutEndurance": 0,
-        "effet": "",
-        "formes": []
-      },
-      "technique": {
-        "categorie": "générale",
-        "activation": "passive",
-        "couts": {
-          "endurance": 0,
-          "reactions": 0,
-          "autre": ""
-        },
-        "jets": {
-          "formule": "",
-          "portee": "",
-          "cibles": "1",
-          "degats": ""
-        },
-        "conditions": {
-          "prerequis": "",
-          "etatRequis": ""
-        },
-        "usages": {
-          "par": "combat",
-          "max": 0,
-          "restant": 0,
-          "recharge": ""
-        },
-        "effet": "",
-        "resume": ""
-      },
-      "objet": {
-        "categorie": "",
-        "effet": "",
-        "quantite": 1
-      },
-      "capacite": {
-        "famille": "extrasensorielle",
-        "resume": "",
-        "effet": "",
-        "sens": "odorat",
-        "niveau": 1,
-        "bonus": {
-          "perception": 0,
-          "detection": "",
-          "special": ""
-        },
-        "pointsCout": 0,
-        "bonusPassifs": [],
-        "conditions": "",
-        "automatiser": false,
-        "typeHumaine": "action",
-        "noteRegle": ""
-      }
+    "technique": {
+      "breath": "",
+      "form": 1,
+      "costE": 0,
+      "damage": "1d8",
+      "range": 1.5,
+      "tags": [
+        "autoHit"
+      ]
     }
   }
 }

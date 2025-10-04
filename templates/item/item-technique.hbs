@@ -1,0 +1,45 @@
+<form class="bl item-technique flexcol" autocomplete="off">
+  <header class="sheet-header flexrow">
+    <img class="profile" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <div class="header-fields">
+      <h1><input name="name" type="text" value="{{item.name}}" placeholder="Nom de la Technique"/></h1>
+      <div class="grid meta">
+        <div class="field">
+          <label>Souffle</label>
+          <input type="text" name="system.breath" value="{{system.breath}}" placeholder="Eau, Flamme, ..."/>
+        </div>
+        <div class="field">
+          <label>Forme #</label>
+          <input type="number" name="system.form" value="{{system.form}}" min="1"/>
+        </div>
+        <div class="field">
+          <label>Coût Endurance</label>
+          <input type="number" name="system.costE" value="{{system.costE}}" min="0"/>
+        </div>
+        <div class="field">
+          <label>Dégâts</label>
+          <input type="text" name="system.damage" value="{{system.damage}}" placeholder="1d8, 2d6+2, ..."/>
+        </div>
+        <div class="field">
+          <label>Portée (m)</label>
+          <input type="number" step="0.5" name="system.range" value="{{system.range}}" min="0"/>
+        </div>
+        <div class="field">
+          <label>Tags</label>
+          <input type="text" name="system.tags" value="{{join system.tags ', '}}" placeholder="autoHit, zone, poursuivant"/>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="sheet-body">
+    <div class="field">
+      <label>Description</label>
+      <textarea name="system.description">{{system.description}}</textarea>
+    </div>
+  </section>
+
+  <footer class="sheet-footer flexrow">
+    <button type="button" class="bl-use-technique"><i class="fas fa-burst"></i> Utiliser</button>
+  </footer>
+</form>
