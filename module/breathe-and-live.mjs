@@ -17,20 +17,21 @@ Hooks.once("init", () => {
   });
 });
 
+// module/breathe-live.mjs (ou ta classe Actor dédiée)
 class BLActor extends Actor {
   prepareDerivedData() {
     const b = this.system?.stats?.base ?? {};
     if (this.type !== "demon") {
-      // E = 20 + Courage ; CA = 10 + Vitesse ; RP = 5 + Vitesse + Intellect
-      this.system.resources.e.max = 20 + (b.courage ?? 0);
-      this.system.resources.ca = 10 + (b.vitesse ?? 0);
-      const rp = 5 + (b.vitesse ?? 0) + (b.intellect ?? 0);
+      this.system.resources.e.max = 20 + (b.courage ?? 0); // E = 20 + Courage
+      this.system.resources.ca = 10 + (b.vitesse ?? 0); // CA = 10 + Vitesse
+      const rp = 5 + (b.vitesse ?? 0) + (b.intellect ?? 0); // RP = 5 + Vit + Int
       this.system.resources.rp.max = rp;
-      this.system.resources.rp.value ??= rp;
+      if ((this.system.resources.rp.value ?? 0) === 0)
+        this.system.resources.rp.value = rp;
     } else {
-      // Démons : pas d’Endurance ; PV/BDP/Actions dérivés
       const baseHP = this.system.resources.hp?.base ?? 0;
       this.system.resources.hp.max = baseHP + 5 * (b.force ?? 0);
+      this.system.resources.bdp ??= { value: 0, max: 0 };
       this.system.resources.bdp.max = 10 * (b.courage ?? 0);
       this.system.actions = 1 + Math.floor((b.vitesse ?? 0) / 5);
     }

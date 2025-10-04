@@ -15,6 +15,47 @@ export class BreatheActorSheet extends ActorSheet {
     });
   }
 
+  /** NORMALISATION DES DONNÉES POUR LE TEMPLATE **/
+  async getData(options) {
+    const data = await super.getData(options);
+
+    // Certaines bases "worldbuilding" plus anciennes exposent encore les valeurs dans data.data
+    const rawSys =
+      this.actor.system && Object.keys(this.actor.system).length
+        ? this.actor.system
+        : this.actor.data?.data ?? {}; // compat
+
+    // Valeurs par défaut minimales attendues par le .hbs
+    const defaults = {
+      class: { type: "Pourfendeur", rank: "Mizunoto", level: 1 },
+      stats: {
+        base: {
+          force: 0,
+          finesse: 0,
+          courage: 0,
+          vitesse: 0,
+          social: 0,
+          intellect: 0,
+        },
+        derived: {},
+      },
+      resources: {
+        hp: { value: 20, max: 20 },
+        e: { value: 0, max: 0 },
+        rp: { value: 0, max: 0 },
+        ca: 10,
+      },
+    };
+
+    // On injecte les défauts SANS écraser les vraies valeurs si elles existent
+    data.system = foundry.utils.mergeObject(defaults, rawSys, {
+      inplace: false,
+      insertKeys: true,
+      overwrite: false,
+    });
+    return data;
+  }
+
   activateListeners(html) {
     super.activateListeners(html);
     if (!this.isEditable) return;
