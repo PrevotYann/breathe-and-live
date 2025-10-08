@@ -89,21 +89,76 @@
       "outfit",
       "vehicle"
     ],
-    "templates": {},
+    "templates": {
+      "commonItem": {
+        "tags": [],
+        "description": ""
+      }
+    },
     "weapon": {
+      "templates": [
+        "commonItem"
+      ],
       "damage": "1d8",
-      "range": 1.5,
-      "tags": [],
-      "description": ""
+      "range": 1.5
     },
     "technique": {
+      "templates": [
+        "commonItem"
+      ],
       "breath": "",
       "form": 1,
       "costE": 0,
       "damage": "1d8",
       "range": 1.5,
-      "tags": [],
-      "description": ""
+      "attackStat": ""
+    },
+    "vehicle": {
+      "templates": [
+        "commonItem"
+      ],
+      "speed": 0,
+      "capacity": 0
+    },
+    "gear": {
+      "templates": [
+        "commonItem"
+      ]
+    },
+    "medical": {
+      "templates": [
+        "commonItem"
+      ]
+    },
+    "poison": {
+      "templates": [
+        "commonItem"
+      ]
+    },
+    "food": {
+      "templates": [
+        "commonItem"
+      ]
+    },
+    "outfit": {
+      "templates": [
+        "commonItem"
+      ]
+    },
+    "sense": {
+      "templates": [
+        "commonItem"
+      ]
+    },
+    "feature": {
+      "templates": [
+        "commonItem"
+      ]
+    },
+    "bda": {
+      "templates": [
+        "commonItem"
+      ]
     }
   }
 }

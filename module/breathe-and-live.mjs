@@ -1,8 +1,20 @@
 import { BreatheActorSheet } from "./sheets/actor-slayer-sheet.mjs";
 import { BreatheItemTechniqueSheet } from "./sheets/item-technique-sheet.mjs";
+// --- Item Sheets registration ---
+import { BLTechniqueSheet } from "./item/sheets/technique-sheet.mjs";
+import { BLWeaponSheet } from "./item/sheets/weapon-sheet.mjs";
+import { BLVehicleSheet } from "./item/sheets/vehicle-sheet.mjs";
+import { BLBaseItemSheet } from "./item/sheets/base-item-sheet.mjs";
 
 Hooks.once("init", () => {
   console.log("Breathe & Live | init");
+  // Précharger les templates
+  loadTemplates([
+    "systems/breathe-and-live/templates/item/item-technique.hbs",
+    "systems/breathe-and-live/templates/item/item-weapon.hbs",
+    "systems/breathe-and-live/templates/item/item-vehicle.hbs",
+    "systems/breathe-and-live/templates/item/item-generic.hbs",
+  ]);
 
   // Helpers pour les templates
   Handlebars.registerHelper("eq", (a, b) => a === b);
@@ -17,10 +29,41 @@ Hooks.once("init", () => {
     makeDefault: true,
   });
 
-  // Item Technique (tu peux laisser les autres types sur la sheet core)
-  Items.registerSheet("breathe-and-live", BreatheItemTechniqueSheet, {
+  // On peut laisser les feuilles Core pour certains types, mais on définit les nôtres
+  Items.unregisterSheet("core", ItemSheet);
+
+  Items.registerSheet("breathe-and-live", BLTechniqueSheet, {
     types: ["technique"],
     makeDefault: true,
+    label: "Technique",
+  });
+
+  Items.registerSheet("breathe-and-live", BLWeaponSheet, {
+    types: ["weapon"],
+    makeDefault: true,
+    label: "Arme",
+  });
+
+  Items.registerSheet("breathe-and-live", BLVehicleSheet, {
+    types: ["vehicle"],
+    makeDefault: true,
+    label: "Véhicule",
+  });
+
+  // Fallback générique pour les autres types (gear, outfit, food, medical, poison, sense, feature, bda...)
+  Items.registerSheet("breathe-and-live", BLBaseItemSheet, {
+    types: [
+      "gear",
+      "medical",
+      "poison",
+      "food",
+      "outfit",
+      "sense",
+      "feature",
+      "bda",
+    ],
+    makeDefault: true,
+    label: "Objet (générique)",
   });
 });
 
