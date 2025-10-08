@@ -20,10 +20,10 @@
    =============================== */
 
 /* Tous les input/text dans ta fiche */
-.breathe-and-live.sheet.actor input[type="text"],
-.breathe-and-live.sheet.actor input[type="number"],
-.breathe-and-live.sheet.actor select,
-.breathe-and-live.sheet.actor textarea {
+.breathe-and-live.sheet input[type="text"],
+.breathe-and-live.sheet input[type="number"],
+.breathe-and-live.sheet select,
+.breathe-and-live.sheet textarea {
   color: #fefefe;                
   border: 1px solid #555;       
   border-radius: 4px;
@@ -32,9 +32,9 @@
 }
 
 /* Sur focus */
-.breathe-and-live.sheet.actor input:focus,
-.breathe-and-live.sheet.actor select:focus,
-.breathe-and-live.sheet.actor textarea:focus {
+.breathe-and-live.sheet input:focus,
+.breathe-and-live.sheet select:focus,
+.breathe-and-live.sheet textarea:focus {
   outline: none;
   border-color: var(--bl-accent, #a63232);
   box-shadow: 0 0 4px var(--bl-accent, #a63232);
@@ -42,21 +42,21 @@
 
 
 /* Fenêtre de la fiche (bordures/thème) */
-.breathe-and-live.sheet.actor {
+.breathe-and-live.sheet {
   border: 2px solid #a63232;
   border-radius: 10px;
   box-shadow: 0 0 15px #000;
 }
 
 /* Contenu de la fenêtre : c'est ICI que le fond s'applique en v12 */
-.breathe-and-live.sheet.actor .window-content {
+.breathe-and-live.sheet .window-content {
   background: #1a1a1a url("../assets/bg-paper-dark.jpg") repeat !important;
   color: #f5f5f5;
   font-family: "Noto Serif JP", Georgia, serif;
 }
 
 /* Au cas où un thème override : on force aussi sur le form */
-.breathe-and-live.sheet.actor .window-content form {
+.breathe-and-live.sheet .window-content form {
   background: transparent !important;
   color: inherit;
   height: 100%;

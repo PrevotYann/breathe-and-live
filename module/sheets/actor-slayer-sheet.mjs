@@ -1,11 +1,10 @@
 import { useTechnique } from "../chat/use-technique.mjs";
 
-export class BreatheActorSheet extends ActorSheet {
+export class BLSlayerSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["breathe-and-live", "sheet", "actor"],
-      template: "systems/breathe-and-live/templates/actor/actor-slayer.hbs",
-      width: 700,
+      classes: ["breathe-and-live", "sheet", "actor", "slayer"],
+      width: 720,
       height: 680,
       tabs: [
         {
@@ -15,6 +14,10 @@ export class BreatheActorSheet extends ActorSheet {
         },
       ],
     });
+  }
+
+  get template() {
+    return "systems/breathe-and-live/templates/actor/actor-slayer.hbs";
   }
 
   /** NORMALISATION DES DONNÉES POUR LE TEMPLATE **/

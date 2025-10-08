@@ -1,6 +1,4 @@
-import { BreatheActorSheet } from "./sheets/actor-slayer-sheet.mjs";
-import { BreatheItemTechniqueSheet } from "./sheets/item-technique-sheet.mjs";
-// --- Item Sheets registration ---
+import { BLSlayerSheet } from "./sheets/actor-slayer-sheet.mjs";
 import { BLTechniqueSheet } from "./item/sheets/technique-sheet.mjs";
 import { BLWeaponSheet } from "./item/sheets/weapon-sheet.mjs";
 import { BLVehicleSheet } from "./item/sheets/vehicle-sheet.mjs";
@@ -10,6 +8,7 @@ Hooks.once("init", () => {
   console.log("Breathe & Live | init");
   // Précharger les templates
   loadTemplates([
+    "systems/breathe-and-live/templates/actor/actor-slayer.hbs",
     "systems/breathe-and-live/templates/item/item-technique.hbs",
     "systems/breathe-and-live/templates/item/item-weapon.hbs",
     "systems/breathe-and-live/templates/item/item-vehicle.hbs",
@@ -23,15 +22,13 @@ Hooks.once("init", () => {
   );
 
   // Actor
-  Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("breathe-and-live", BreatheActorSheet, {
-    types: ["slayer", "demonist", "demon", "npc"],
+  Actors.registerSheet("breathe-and-live", BLSlayerSheet, {
+    types: ["slayer"],
     makeDefault: true,
+    label: "Pourfendeur",
   });
 
-  // On peut laisser les feuilles Core pour certains types, mais on définit les nôtres
-  Items.unregisterSheet("core", ItemSheet);
-
+  // Items
   Items.registerSheet("breathe-and-live", BLTechniqueSheet, {
     types: ["technique"],
     makeDefault: true,
@@ -50,7 +47,6 @@ Hooks.once("init", () => {
     label: "Véhicule",
   });
 
-  // Fallback générique pour les autres types (gear, outfit, food, medical, poison, sense, feature, bda...)
   Items.registerSheet("breathe-and-live", BLBaseItemSheet, {
     types: [
       "gear",
