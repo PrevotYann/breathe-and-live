@@ -25,8 +25,10 @@
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="ressources">Ressources</a>
     <a class="item" data-tab="stats">Stats</a>
+    <a class="item" data-tab="breaths">Souffles</a>
     <a class="item" data-tab="techniques">Techniques</a>
     <a class="item" data-tab="inventaire">Inventaire</a>
+    
   </nav>
 
   <section class="sheet-body">
@@ -100,6 +102,34 @@
       </div>
       {{/if}}
     </div>
+
+    {{!-- SOUFFLES --}}
+    <div class="tab" data-group="primary" data-tab="breaths">
+    <h3>Souffles assignés</h3>
+    <div class="grid two-col">
+      {{!-- Un switch par souffle --}}
+      {{#each system.breaths as |b key|}}
+        <div class="field">
+          <label><input type="checkbox" name="system.breaths.{{key}}.enabled" {{checked b.enabled}}/> {{b.name}}</label>
+          {{#if b.enabled}}
+            <div class="small muted">Capacités spéciales :</div>
+            {{#each b.specials as |on sKey|}}
+              <label class="small"><input type="checkbox" name="system.breaths.{{../key}}.specials.{{sKey}}" {{checked on}}/> {{sKey}}</label>
+            {{/each}}
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+
+    <h3>États & maîtrises</h3>
+    <div class="grid two-col">
+      <label><input type="checkbox" name="system.states.tcbPermanent" {{checked system.states.tcbPermanent}}/> TCB : Permanent</label>
+      <label><input type="checkbox" name="system.states.marque" {{checked system.states.marque}}/> Forme Marquée</label>
+      <label><input type="checkbox" name="system.states.mondeTransparent" {{checked system.states.mondeTransparent}}/> Monde Transparent</label>
+      <label><input type="checkbox" name="system.states.lameRouge" {{checked system.states.lameRouge}}/> Lame Rouge</label>
+    </div>
+    <p class="hint">Active uniquement ce que ton perso a vraiment débloqué (voir règles).</p>
+  </div>
 
     {{!-- TECHNIQUES --}}
     <div class="tab" data-group="primary" data-tab="techniques">

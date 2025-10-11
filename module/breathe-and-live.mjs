@@ -3,6 +3,7 @@ import { BLTechniqueSheet } from "./item/sheets/technique-sheet.mjs";
 import { BLWeaponSheet } from "./item/sheets/weapon-sheet.mjs";
 import { BLVehicleSheet } from "./item/sheets/vehicle-sheet.mjs";
 import { BLBaseItemSheet } from "./item/sheets/base-item-sheet.mjs";
+import { BLBreathSheet } from "./sheets/item-breath-sheet.mjs";
 
 Hooks.once("init", () => {
   console.log("Breathe & Live | init");
@@ -60,6 +61,11 @@ Hooks.once("init", () => {
     ],
     makeDefault: true,
     label: "Objet (générique)",
+  });
+
+  Items.registerSheet("breathe-and-live", BLBreathSheet, {
+    types: ["breath"],
+    makeDefault: true,
   });
 });
 

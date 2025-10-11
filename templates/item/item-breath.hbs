@@ -1,0 +1,66 @@
+<form class="bl item-breath flexcol" autocomplete="off">
+  <header class="sheet-header flexrow">
+    <img class="profile" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <div class="header-fields">
+      <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Souffle…"/></h1>
+      <div class="flexrow gap">
+        <div class="field">
+          <label>Clé système</label>
+          <select name="system.key">
+            {{#select system.key}}
+              <option value="sun">sun (Soleil)</option>
+              <option value="water">water (Eau)</option>
+              <option value="flame">flame (Flamme)</option>
+              <option value="wind">wind (Vent)</option>
+              <option value="thunder">thunder (Foudre)</option>
+              <option value="stone">stone (Pierre)</option>
+              <option value="mist">mist (Brume)</option>
+              <option value="serpent">serpent (Serpent)</option>
+              <option value="snow">snow (Neige)</option>
+              <option value="flower">flower (Fleur)</option>
+              <option value="sound">sound (Son)</option>
+              <option value="insect">insect (Insecte)</option>
+              <option value="love">love (Amour)</option>
+              <option value="beast">beast (Bête)</option>
+            {{/select}}
+          </select>
+        </div>
+        <div class="field">
+          <label>Activer pour l’Acteur</label>
+          <input type="checkbox" name="system.enabled" {{checked system.enabled}}/>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="specials">Capacités spéciales</a>
+    <a class="item" data-tab="prereq">Prérequis</a>
+    <a class="item" data-tab="desc">Description</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab" data-group="primary" data-tab="specials">
+      <div class="grid specials">
+        {{#each system.specialsDisplay as |spec key|}}
+          <label class="checkbox">
+            <input type="checkbox" name="system.specials.{{key}}" {{checked spec.enabled}}/>
+            <span>{{spec.label}}</span>
+          </label>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="prereq">
+      <div class="grid prereq">
+        <label>Sens requis</label>      <input type="text" name="system.prereq.sense" value="{{system.prereq.sense}}"/>
+        <label>Caractéristiques</label> <input type="text" name="system.prereq.stats" value="{{system.prereq.stats}}"/>
+        <label>Armes</label>            <input type="text" name="system.prereq.weapons" value="{{system.prereq.weapons}}"/>
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="desc">
+      <textarea name="system.description" rows="12">{{system.description}}</textarea>
+    </div>
+  </section>
+</form>

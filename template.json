@@ -38,6 +38,75 @@
             "max": 0
           },
           "ca": 10
+        },
+        "breaths": {
+          "sun": {
+            "name": "Souffle du Soleil",
+            "enabled": false,
+            "specials": {
+              "elu": false
+            }
+          },
+          "water": {
+            "name": "Souffle de l'Eau",
+            "enabled": false,
+            "specials": {
+              "devierVagues": false
+            }
+          },
+          "flame": {
+            "name": "Souffle de la Flamme",
+            "enabled": false,
+            "specials": {}
+          },
+          "wind": {
+            "name": "Souffle du Vent",
+            "enabled": false,
+            "specials": {
+              "ventsDeGuerre": false
+            }
+          },
+          "thunder": {
+            "name": "Souffle de la Foudre",
+            "enabled": false,
+            "specials": {
+              "vitesseLumiere": false
+            }
+          },
+          "stone": {
+            "name": "Souffle de la Pierre",
+            "enabled": false,
+            "specials": {
+              "masseHache": false
+            }
+          },
+          "mist": {
+            "name": "Souffle de la Brume",
+            "enabled": false,
+            "specials": {
+              "nuagesTrainants": false
+            }
+          },
+          "serpent": {
+            "name": "Souffle du Serpent",
+            "enabled": false,
+            "specials": {
+              "formeLibre": false
+            }
+          },
+          "snow": {
+            "name": "Souffle de la Neige",
+            "enabled": false,
+            "specials": {
+              "dentsDeKatana": false
+            }
+          }
+        },
+        "states": {
+          "marque": false,
+          "tcbPermanent": false,
+          "mondeTransparent": false,
+          "lameRouge": false
         }
       }
     },
@@ -79,6 +148,7 @@
     "types": [
       "weapon",
       "technique",
+      "breath",
       "feature",
       "sense",
       "bda",
