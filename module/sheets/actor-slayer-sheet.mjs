@@ -1,3 +1,4 @@
+// module/sheets/actor-slayer-sheet.mjs
 import { useTechnique } from "../chat/use-technique.mjs";
 
 export class BLSlayerSheet extends ActorSheet {
@@ -63,7 +64,7 @@ export class BLSlayerSheet extends ActorSheet {
       }
     );
 
-    // Seul GM ou Owner peut éditer
+    // Seul GM ou Owner peut éditer (et donc utiliser/supprimer des items)
     const canEdit = game.user?.isGM || this.actor.isOwner;
     data.canEdit = !!canEdit;
 
@@ -77,30 +78,41 @@ export class BLSlayerSheet extends ActorSheet {
     // Si pas d’édition, on bloque les actions destructrices/modificatrices
     if (!canEdit) return;
 
-    // Delete item
+    // Supprimer un item de la liste
     html.find(".item-delete").on("click", (ev) => {
       const li = ev.currentTarget.closest(".item");
       const id = li?.dataset.itemId;
       if (id) this.actor.deleteEmbeddedDocuments("Item", [id]);
     });
 
-    // Use Technique (chat roll + E consumption)
+    // Ouvrir la fiche de l'item (si tu as un bouton .item-edit dans le template)
+    html.find(".item-edit").on("click", (ev) => {
+      const li = ev.currentTarget.closest(".item");
+      const item = li ? this.actor.items.get(li.dataset.itemId) : null;
+      if (item) item.sheet?.render(true);
+    });
+
+    // Utiliser une Technique (bouton .item-chat / .bl-use-technique dans le template)
     html.on("click", ".item-chat, .bl-use-technique", async (ev) => {
-      // Find the technique item
+      ev.preventDefault();
+
       const li = ev.currentTarget.closest(".item");
       const item = li ? this.actor.items.get(li.dataset.itemId) : null;
       if (!item) return;
 
+      // Si c'est une TECHNIQUE → délègue au module (auto-touché, réactions, souffles, etc.)
       if (item.type === "technique") {
-        return useTechnique(this.actor, item); // <-- uses the helper
+        return useTechnique(this.actor, item, {
+          controlledToken: this.actor?.token,
+        });
       }
 
-      // Read cost and current Endurance
+      // Sinon (autres items qui auraient un coût E + dégâts), on applique une routine simple
+      const FU = foundry.utils;
       const cost = Number(item.system?.costE ?? 0) || 0;
       const ePath = "system.resources.e.value";
-      const eVal = getProperty(this.actor, ePath) ?? 0;
+      const eVal = Number(FU.getProperty(this.actor, ePath) ?? 0) || 0;
 
-      // Not enough Endurance?
       if (eVal < cost) {
         ui.notifications.warn(
           `Pas assez d'Endurance (E). Requis: ${cost}, actuel: ${eVal}`
@@ -108,20 +120,20 @@ export class BLSlayerSheet extends ActorSheet {
         return;
       }
 
-      // Consume Endurance first (so a crash mid-roll can't “refund” E)
+      // Consommer l'Endurance d'abord (anti “refund”)
       await this.actor.update({ [ePath]: eVal - cost });
 
-      // Roll damage
+      // Jet de dégâts basique si présent
       const dmg = item.system?.damage || "1d8";
-      const roll = await new Roll(dmg).roll({ async: true });
+      const roll = new Roll(dmg);
+      await roll.evaluate({ async: true });
 
-      // Send to chat (show E spent)
       await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        flavor: `Technique : ${item.name} — E -${cost}`,
+        flavor: `Utilisation : ${item.name} — E -${cost}`,
       });
 
-      // Optional: re-render to reflect the new E immediately on the sheet
+      // Re-render pour rafraîchir l'affichage des ressources
       this.render(false);
     });
   }

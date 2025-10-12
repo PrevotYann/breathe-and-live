@@ -4,6 +4,7 @@ import { BLWeaponSheet } from "./item/sheets/weapon-sheet.mjs";
 import { BLVehicleSheet } from "./item/sheets/vehicle-sheet.mjs";
 import { BLBaseItemSheet } from "./item/sheets/base-item-sheet.mjs";
 import { BLBreathSheet } from "./sheets/item-breath-sheet.mjs";
+import { useTechnique } from "./chat/use-technique.mjs";
 
 Hooks.once("init", () => {
   console.log("Breathe & Live | init");

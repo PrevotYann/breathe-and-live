@@ -214,9 +214,6 @@
           <div class="bl-line"><span>Coût E</span><b>${baseCost}</b></div>
           <div class="bl-line"><span>Dégâts</span><b>${dmgRaw}</b></div>
           <div class="bl-line"><span>Portée</span><b>${baseRangeM} m</b></div>
-          <div class="bl-line"><span>Distance</span><b>${distM.toFixed(
-            1
-          )} m</b></div>
         </div>
       </label>
     `;
