@@ -28,7 +28,6 @@
     <a class="item" data-tab="breaths">Souffles</a>
     <a class="item" data-tab="techniques">Techniques</a>
     <a class="item" data-tab="inventaire">Inventaire</a>
-    
   </nav>
 
   <section class="sheet-body">
@@ -105,31 +104,179 @@
 
     {{!-- SOUFFLES --}}
     <div class="tab" data-group="primary" data-tab="breaths">
-    <h3>Souffles assignés</h3>
-    <div class="grid two-col">
-      {{!-- Un switch par souffle --}}
-      {{#each system.breaths as |b key|}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.{{key}}.enabled" {{checked b.enabled}}/> {{b.name}}</label>
-          {{#if b.enabled}}
-            <div class="small muted">Capacités spéciales :</div>
-            {{#each b.specials as |on sKey|}}
-              <label class="small"><input type="checkbox" name="system.breaths.{{../key}}.specials.{{sKey}}" {{checked on}}/> {{sKey}}</label>
-            {{/each}}
-          {{/if}}
-        </div>
-      {{/each}}
-    </div>
+      <h3>Souffles (toggles d’acteur)</h3>
+      <p class="hint" style="margin-top:-.4rem;">Ces commutateurs activent les effets passifs des Souffles sur cet acteur. Les capacités ci-dessous sont des raccourcis au niveau acteur (alternativement, ajoute un <em>Item Souffle</em> côté droit).</p>
 
-    <h3>États & maîtrises</h3>
-    <div class="grid two-col">
-      <label><input type="checkbox" name="system.states.tcbPermanent" {{checked system.states.tcbPermanent}}/> TCB : Permanent</label>
-      <label><input type="checkbox" name="system.states.marque" {{checked system.states.marque}}/> Forme Marquée</label>
-      <label><input type="checkbox" name="system.states.mondeTransparent" {{checked system.states.mondeTransparent}}/> Monde Transparent</label>
-      <label><input type="checkbox" name="system.states.lameRouge" {{checked system.states.lameRouge}}/> Lame Rouge</label>
+      <div class="grid three-col">
+        {{!-- Liste fixe des souffles pris en charge (créera les clés si absentes) --}}
+        {{!-- Soleil --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.sun.enabled" data-dtype="Boolean" {{checked system.breaths.sun.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle du Soleil
+          </label>
+          <div class="small muted">Capacités :</div>
+          <label class="small">
+            <input type="checkbox" name="system.breaths.sun.specials.elu" data-dtype="Boolean" {{checked system.breaths.sun.specials.elu}} {{#unless canEdit}}disabled{{/unless}}/>
+            Élu
+          </label>
+        </div>
+
+        {{!-- Lune --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.moon.enabled" data-dtype="Boolean" {{checked system.breaths.moon.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle de la Lune
+          </label>
+          <div class="small muted">Capacités :</div>
+          <label class="small">
+            <input type="checkbox" name="system.breaths.moon.specials.bonusSolo" data-dtype="Boolean" {{checked system.breaths.moon.specials.bonusSolo}} {{#unless canEdit}}disabled{{/unless}}/>
+            Frappe de Lune (+1 dé vs démons)
+          </label>
+        </div>
+
+        {{!-- Flamme --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.flame.enabled" data-dtype="Boolean" {{checked system.breaths.flame.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle de la Flamme
+          </label>
+          <div class="small muted">Capacités :</div>
+          <label class="small">
+            <input type="checkbox" name="system.breaths.flame.specials.coeurFlamboyant" data-dtype="Boolean" {{checked system.breaths.flame.specials.coeurFlamboyant}} {{#unless canEdit}}disabled{{/unless}}/>
+            Cœur flamboyant (round)
+          </label>
+        </div>
+
+        {{!-- Eau --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.water.enabled" data-dtype="Boolean" {{checked system.breaths.water.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle de l’Eau
+          </label>
+          <div class="small muted">Capacités :</div>
+          <label class="small">
+            <input type="checkbox" name="system.breaths.water.specials.devierVagues" data-dtype="Boolean" {{checked system.breaths.water.specials.devierVagues}} {{#unless canEdit}}disabled{{/unless}}/>
+            Dévier les vagues (réaction)
+          </label>
+        </div>
+
+        {{!-- Foudre --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.thunder.enabled" data-dtype="Boolean" {{checked system.breaths.thunder.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle de la Foudre
+          </label>
+          <div class="small muted">Capacités :</div>
+          <label class="small">
+            <input type="checkbox" name="system.breaths.thunder.specials.vitesseLumiere" data-dtype="Boolean" {{checked system.breaths.thunder.specials.vitesseLumiere}} {{#unless canEdit}}disabled{{/unless}}/>
+            Vitesse de la lumière (Dash 6 m)
+          </label>
+        </div>
+
+        {{!-- Pierre --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.stone.enabled" data-dtype="Boolean" {{checked system.breaths.stone.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle de la Pierre
+          </label>
+          <div class="small muted">Capacités :</div>
+          <label class="small">
+            <input type="checkbox" name="system.breaths.stone.specials.machoireHache" data-dtype="Boolean" {{checked system.breaths.stone.specials.machoireHache}} {{#unless canEdit}}disabled{{/unless}}/>
+            Mâchoire & Hache (choix à l’usage)
+          </label>
+        </div>
+
+        {{!-- Brume --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.mist.enabled" data-dtype="Boolean" {{checked system.breaths.mist.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle de la Brume
+          </label>
+          <div class="small muted">Capacités :</div>
+          <label class="small">
+            <input type="checkbox" name="system.breaths.mist.specials.nuagesTrainants" data-dtype="Boolean" {{checked system.breaths.mist.specials.nuagesTrainants}} {{#unless canEdit}}disabled{{/unless}}/>
+            Nuages traînants (zone 3 m)
+          </label>
+        </div>
+
+        {{!-- Neige --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.snow.enabled" data-dtype="Boolean" {{checked system.breaths.snow.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle de la Neige
+          </label>
+          <div class="small muted">Capacités :</div>
+          <label class="small">
+            <input type="checkbox" name="system.breaths.snow.specials.dentsDeKatana" data-dtype="Boolean" {{checked system.breaths.snow.specials.dentsDeKatana}} {{#unless canEdit}}disabled{{/unless}}/>
+            Dents de Katana (CA -1d4, fin du round)
+          </label>
+        </div>
+
+        {{!-- Fleur --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.flower.enabled" data-dtype="Boolean" {{checked system.breaths.flower.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle de la Fleur
+          </label>
+          <div class="small muted">Capacités :</div>
+          <label class="small">
+            <input type="checkbox" name="system.breaths.flower.specials.concentrationFlorissante" data-dtype="Boolean" {{checked system.breaths.flower.specials.concentrationFlorissante}} {{#unless canEdit}}disabled{{/unless}}/>
+            Concentration florissante (stacks)
+          </label>
+        </div>
+
+        {{!-- Serpent --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.serpent.enabled" data-dtype="Boolean" {{checked system.breaths.serpent.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle du Serpent
+          </label>
+        </div>
+
+        {{!-- Son --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.sound.enabled" data-dtype="Boolean" {{checked system.breaths.sound.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle du Son
+          </label>
+        </div>
+
+        {{!-- Insecte --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.insect.enabled" data-dtype="Boolean" {{checked system.breaths.insect.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle de l’Insecte
+          </label>
+        </div>
+
+        {{!-- Amour --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.love.enabled" data-dtype="Boolean" {{checked system.breaths.love.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle de l’Amour
+          </label>
+        </div>
+
+        {{!-- Bête --}}
+        <div class="field">
+          <label>
+            <input type="checkbox" name="system.breaths.beast.enabled" data-dtype="Boolean" {{checked system.breaths.beast.enabled}} {{#unless canEdit}}disabled{{/unless}}/>
+            Souffle de la Bête
+          </label>
+        </div>
+      </div>
+
+      <h3 style="margin-top:1rem;">États & maîtrises</h3>
+      <div class="grid two-col">
+        <label><input type="checkbox" name="system.states.tcbPermanent" data-dtype="Boolean" {{checked system.states.tcbPermanent}} {{#unless canEdit}}disabled{{/unless}}/> TCB : Permanent</label>
+        <label><input type="checkbox" name="system.states.marque" data-dtype="Boolean" {{checked system.states.marque}} {{#unless canEdit}}disabled{{/unless}}/> Forme Marquée</label>
+        <label><input type="checkbox" name="system.states.mondeTransparent" data-dtype="Boolean" {{checked system.states.mondeTransparent}} {{#unless canEdit}}disabled{{/unless}}/> Monde Transparent</label>
+        <label><input type="checkbox" name="system.states.lameRouge" data-dtype="Boolean" {{checked system.states.lameRouge}} {{#unless canEdit}}disabled{{/unless}}/> Lame Rouge</label>
+      </div>
+
+      <hr>
     </div>
-    <p class="hint">Active uniquement ce que ton perso a vraiment débloqué (voir règles).</p>
-  </div>
 
     {{!-- TECHNIQUES --}}
     <div class="tab" data-group="primary" data-tab="techniques">
@@ -137,34 +284,31 @@
         <div>Nom</div><div>Souffle</div><div>Forme</div><div>Coût E</div><div>Dégâts</div><div></div>
       </header>
       <ol class="item-list">
-        {{#each actor.items as |it|}}
-          {{#if (eq it.type "technique")}}
-            <li class="item flexrow" data-item-id="{{it.id}}">
-              <div class="name"><a class="item-edit">{{it.name}}</a></div>
-              <div>{{it.system.breath}}</div>
-              <div>{{it.system.form}}</div>
-              <div>{{it.system.costE}}</div>
-              <div>{{it.system.damage}}</div>
-              {{#if canEdit}}
-              <div class="controls">
-                <a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>
-                <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
-              </div>
-              {{/if}}
-            </li>
-          {{/if}}
+        {{#each itemsTech as |it|}}
+          <li class="item flexrow" data-item-id="{{it.id}}">
+            <div class="name"><a class="item-edit">{{it.name}}</a></div>
+            <div>{{it.system.breath}}</div>
+            <div>{{it.system.form}}</div>
+            <div>{{it.system.costE}}</div>
+            <div>{{it.system.damage}}</div>
+            {{#if canEdit}}
+            <div class="controls">
+              <a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>
+              <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+            </div>
+            {{/if}}
+          </li>
         {{/each}}
       </ol>
     </div>
 
-    {{!-- INVENTAIRE (simple) --}}
+    {{!-- INVENTAIRE --}}
     <div class="tab" data-group="primary" data-tab="inventaire">
       <header class="list-header">
         <div>Nom</div><div>Type</div><div></div>
       </header>
       <ol class="item-list">
-        {{#each actor.items as |it|}}
-          {{#unless (eq it.type "technique")}}
+        {{#each itemsOther as |it|}}
           <li class="item flexrow" data-item-id="{{it.id}}">
             <div class="name"><a class="item-edit">{{it.name}}</a></div>
             <div>{{it.type}}</div>
@@ -174,7 +318,6 @@
             </div>
             {{/if}}
           </li>
-          {{/unless}}
         {{/each}}
       </ol>
     </div>

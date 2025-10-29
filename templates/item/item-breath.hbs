@@ -2,22 +2,26 @@
   <header class="sheet-header flexrow">
     <img class="profile" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
     <div class="header-fields">
-      <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Souffle…"/></h1>
+      <h1 class="charname">
+        <input name="name" type="text" value="{{item.name}}" placeholder="Souffle…"/>
+      </h1>
+
       <div class="flexrow gap">
         <div class="field">
           <label>Clé système</label>
           <select name="system.key">
             {{#select system.key}}
               <option value="sun">sun (Soleil)</option>
-              <option value="water">water (Eau)</option>
+              <option value="moon">moon (Lune)</option>
               <option value="flame">flame (Flamme)</option>
+              <option value="water">water (Eau)</option>
               <option value="wind">wind (Vent)</option>
               <option value="thunder">thunder (Foudre)</option>
               <option value="stone">stone (Pierre)</option>
               <option value="mist">mist (Brume)</option>
-              <option value="serpent">serpent (Serpent)</option>
               <option value="snow">snow (Neige)</option>
               <option value="flower">flower (Fleur)</option>
+              <option value="serpent">serpent (Serpent)</option>
               <option value="sound">sound (Son)</option>
               <option value="insect">insect (Insecte)</option>
               <option value="love">love (Amour)</option>
@@ -27,7 +31,7 @@
         </div>
         <div class="field">
           <label>Activer pour l’Acteur</label>
-          <input type="checkbox" name="system.enabled" {{checked system.enabled}}/>
+          <input type="checkbox" name="system.enabled" data-dtype="Boolean" {{checked system.enabled}}/>
         </div>
       </div>
     </div>
@@ -40,25 +44,39 @@
   </nav>
 
   <section class="sheet-body">
+    {{!-- CAPACITÉS SPÉCIALES --}}
     <div class="tab" data-group="primary" data-tab="specials">
       <div class="grid specials">
         {{#each system.specialsDisplay as |spec key|}}
-          <label class="checkbox">
-            <input type="checkbox" name="system.specials.{{key}}" {{checked spec.enabled}}/>
+          <label class="checkbox" title="{{spec.hint}}">
+            <input type="checkbox"
+                   name="system.specials.{{key}}"
+                   data-dtype="Boolean"
+                   {{checked spec.enabled}}/>
             <span>{{spec.label}}</span>
           </label>
         {{/each}}
       </div>
+      {{#unless system.specialsDisplay}}
+        <p class="hint" style="opacity:.8;">Choisis la <b>clé système</b> du Souffle pour voir ses capacités spéciales.</p>
+      {{/unless}}
     </div>
 
+    {{!-- PRÉREQUIS --}}
     <div class="tab" data-group="primary" data-tab="prereq">
       <div class="grid prereq">
-        <label>Sens requis</label>      <input type="text" name="system.prereq.sense" value="{{system.prereq.sense}}"/>
-        <label>Caractéristiques</label> <input type="text" name="system.prereq.stats" value="{{system.prereq.stats}}"/>
-        <label>Armes</label>            <input type="text" name="system.prereq.weapons" value="{{system.prereq.weapons}}"/>
+        <label>Sens requis</label>
+        <input type="text" name="system.prereq.sense" value="{{system.prereq.sense}}"/>
+
+        <label>Caractéristiques</label>
+        <input type="text" name="system.prereq.stats" value="{{system.prereq.stats}}"/>
+
+        <label>Armes</label>
+        <input type="text" name="system.prereq.weapons" value="{{system.prereq.weapons}}"/>
       </div>
     </div>
 
+    {{!-- DESCRIPTION --}}
     <div class="tab" data-group="primary" data-tab="desc">
       <textarea name="system.description" rows="12">{{system.description}}</textarea>
     </div>

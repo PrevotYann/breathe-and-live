@@ -23,6 +23,7 @@ Hooks.once("init", () => {
     "systems/breathe-and-live/templates/item/item-weapon.hbs",
     "systems/breathe-and-live/templates/item/item-vehicle.hbs",
     "systems/breathe-and-live/templates/item/item-generic.hbs",
+    "systems/breathe-and-live/templates/item/item-breath.hbs",
   ]);
 
   // Helpers pour les templates
@@ -71,6 +72,7 @@ Hooks.once("init", () => {
   Items.registerSheet(SYSTEM_ID, BLBreathSheet, {
     types: ["breath"],
     makeDefault: true,
+    label: "Souffle",
   });
 });
 

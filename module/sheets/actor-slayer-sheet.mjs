@@ -68,6 +68,10 @@ export class BLSlayerSheet extends ActorSheet {
     const canEdit = game.user?.isGM || this.actor.isOwner;
     data.canEdit = !!canEdit;
 
+    const allItems = Array.from(this.actor.items ?? []);
+    data.itemsTech = allItems.filter((i) => i.type === "technique");
+    data.itemsOther = allItems.filter((i) => i.type !== "technique");
+
     return data;
   }
 
