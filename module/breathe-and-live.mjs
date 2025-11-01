@@ -7,8 +7,11 @@ import { BLVehicleSheet } from "./item/sheets/vehicle-sheet.mjs";
 import { BLBaseItemSheet } from "./item/sheets/base-item-sheet.mjs";
 import { BLBreathSheet } from "./sheets/item-breath-sheet.mjs";
 import { useTechnique } from "./chat/use-technique.mjs";
+import { registerEffectHooks } from "./rules/effects-engine.mjs";
+import { registerRoundEngineHooks } from "./rules/round-engine.mjs";
 
 const SYSTEM_ID = "breathe-and-live";
+const BL_NS = "breathe-and-live";
 const FU = foundry.utils;
 
 /* ========================= INIT ========================= */
@@ -74,6 +77,8 @@ Hooks.once("init", () => {
     makeDefault: true,
     label: "Souffle",
   });
+
+  registerEffectHooks();
 });
 
 /* ========================= ACTOR DOC ========================= */
@@ -148,6 +153,7 @@ Hooks.once("ready", () => {
       rollBaseCheck, // exposé pour réutilisation éventuelle
     };
   }
+  registerRoundEngineHooks();
 });
 
 /* ========================= ROLLS UTILES ========================= */
@@ -163,78 +169,104 @@ export async function rollBaseCheck(actor, statKey, label = "") {
   });
 }
 
-/* =============== AUTOMATE "E = 0" — repos forcé / KO =============== */
+/* =============== AUTOMATE "E = 0" — repos forcé / Inconscient (v12.343) =============== */
+/** Applique l’état “unconscious” si possible + message chat explicite */
+async function blSetUnconscious(actor, tokenOrCombatant) {
+  const tokenObj =
+    tokenOrCombatant?.object ??
+    tokenOrCombatant?.token?.object ??
+    actor?.getActiveTokens?.()[0];
 
-const BL_FLAGS = SYSTEM_ID;
-
-// Mémorise la dernière valeur d'E (sert à détecter une récupération au cours du round)
-Hooks.on("updateActor", (actor) => {
-  const curE =
-    Number(FU.getProperty(actor, "system.resources.e.value") ?? 0) || 0;
-  actor.setFlag(BL_FLAGS, "lastE", curE).catch(() => {});
-});
-
-// Au changement de tour/round : gère mustRest + KO si 2 rounds consécutifs à 0E sans récup
-Hooks.on("updateCombat", async (combat, changed) => {
-  if (!("turn" in changed) && !("round" in changed)) return;
-
-  for (const c of combat.combatants) {
-    const token = c.token?.object ?? canvas.tokens.get(c.tokenId);
-    const actor = c.actor;
-    if (!actor) continue;
-
-    const eVal =
-      Number(FU.getProperty(actor, "system.resources.e.value") ?? 0) || 0;
-
-    // Si E>0 : on reset tous les marqueurs "0E"
-    if (eVal > 0) {
-      await actor.unsetFlag(BL_FLAGS, "mustRest").catch(() => {});
-      await actor.unsetFlag(BL_FLAGS, "e0Rounds").catch(() => {});
-      await actor.unsetFlag(BL_FLAGS, "recoveredThisRound").catch(() => {});
-      continue;
-    }
-
-    // E == 0 → obligation de repos ce round
-    await actor.setFlag(BL_FLAGS, "mustRest", true).catch(() => {});
-
-    // A-t-il récupéré pendant le round (E > 0 à un moment) ?
-    const lastE = Number(actor.getFlag(BL_FLAGS, "lastE") ?? 0);
-    const recovered = lastE > 0;
-    if (recovered) {
-      await actor.setFlag(BL_FLAGS, "recoveredThisRound", true).catch(() => {});
-      await actor.setFlag(BL_FLAGS, "e0Rounds", 0).catch(() => {});
-      continue;
-    }
-
-    // Sinon on incrémente la durée à 0E
-    const prev = Number(actor.getFlag(BL_FLAGS, "e0Rounds") ?? 0) || 0;
-    const now = prev + 1;
-    await actor.setFlag(BL_FLAGS, "e0Rounds", now).catch(() => {});
-
-    // Au 2e round consécutif sans récup → Inconscient
-    if (now >= 2) {
-      const st = CONFIG.statusEffects?.find(
+  // 1) Toggle status (core) si dispo
+  let ok = false;
+  try {
+    const effect =
+      CONFIG.statusEffects?.find(
         (e) => e.id === "unconscious" || /unconscious/i.test(e?.id ?? "")
-      );
-      if (st && token?.actor) {
-        try {
-          await token.actor.toggleStatusEffect(st, { active: true });
-          ui.notifications.info(
-            `${actor.name} tombe inconscient (0E prolongé).`
-          );
-        } catch (e) {
-          console.warn("BL unconscious toggle failed:", e);
-        }
-      }
+      )?.id || "unconscious";
+    if (tokenObj?.actor?.toggleStatusEffect) {
+      await tokenObj.actor.toggleStatusEffect(effect, { active: true });
+      ok = true;
     }
+  } catch (e) {
+    console.warn("BL | toggleStatusEffect failed:", e);
   }
 
-  // À chaque nouveau round : on efface recoveredThisRound
-  if ("round" in changed) {
-    for (const c of combat.combatants) {
-      const actor = c.actor;
-      if (!actor) continue;
-      await actor.unsetFlag(BL_FLAGS, "recoveredThisRound").catch(() => {});
-    }
+  // 2) Fallback: au moins un message chat
+  const txt = ok
+    ? `${actor.name} <b>tombe inconscient</b> (E=0 prolongé).`
+    : `${actor.name} <b>devrait être inconscient</b> (E=0 prolongé), mais aucun status 'unconscious' n’a pu être appliqué.`;
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<em>${txt}</em>`,
+  });
+}
+
+/**
+ * À chaque début de tour d’un combattant:
+ *  - Si E > 0 → reset des flags 0E
+ *  - Si E = 0 → mustRest=true, incrémente une “streak” par combat
+ *  - Si streak >= 2 → applique Inconscient + message chat
+ */
+Hooks.on("updateCombat", async (combat, changed) => {
+  // On ne traite que les changements de tour (début du tour du nouveau combattant)
+  if (changed.turn === undefined) return;
+
+  const cbt = combat.combatant; // combattant dont le tour COMMENCE
+  const actor = cbt?.actor;
+  if (!actor) return;
+
+  const eVal =
+    Number(FU.getProperty(actor, "system.resources.e.value") ?? 0) || 0;
+  const combatId = combat.id;
+
+  // Flags “scopés” au combat en cours (évite les fuites entre combats)
+  const pathBase = `flags.${BL_NS}.zeroStreakByCombat.${combatId}`;
+
+  if (eVal > 0) {
+    // Récupéré → reset total
+    await actor.update({
+      [`flags.${BL_NS}.mustRest`]: false,
+      [`flags.${BL_NS}.mustRestAnnouncedAt`]: null,
+      [`${pathBase}`]: 0,
+    });
+    return;
+  }
+
+  // E == 0 → repos obligatoire ce round
+  await actor.setFlag(BL_NS, "mustRest", true).catch(() => {});
+
+  // Annonce “doit se reposer” (1 fois / round)
+  const roundNow = combat.round ?? 0;
+  const lastAnn = Number(actor.getFlag(BL_NS, "mustRestAnnouncedAt") ?? 0) || 0;
+  if (roundNow !== lastAnn) {
+    await actor.setFlag(BL_NS, "mustRestAnnouncedAt", roundNow).catch(() => {});
+    ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: `<em>${actor.name} doit se reposer ce round (Endurance = 0).</em>`,
+    });
+  }
+
+  // Incrémente la streak pour CE combat
+  const prev = Number(FU.getProperty(actor, pathBase) ?? 0) || 0;
+  const streak = prev + 1;
+  await actor.update({ [pathBase]: streak });
+
+  // Au 2e tour d’affilée à 0E → Inconscient
+  if (streak >= 2) {
+    await blSetUnconscious(actor, cbt);
+  }
+});
+
+/**
+ * Optionnel : au changement de round, on remet à zéro l’annonce (mais pas la streak).
+ * (La streak se remet déjà à zéro quand E>0 au début d’un tour)
+ */
+Hooks.on("updateCombat", async (combat, changed) => {
+  if (changed.round === undefined) return;
+  for (const c of combat.combatants) {
+    const a = c.actor;
+    if (!a) continue;
+    await a.unsetFlag(BL_NS, "mustRestAnnouncedAt").catch(() => {});
   }
 });

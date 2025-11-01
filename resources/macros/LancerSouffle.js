@@ -106,25 +106,41 @@
   /** Modifie coût E et/ou formule de dégâts selon les souffles de l'attaquant. */
   function applyBreathSpecials(
     attacker,
-    inCost,
+    baseCost,
     inDmgExpr,
     { targetIsDemon = false }
   ) {
-    let cost = inCost;
+    let cost = baseCost; // <- on part du coût de base
     let dmgFormula = inDmgExpr;
     const notes = [];
 
-    // SOLEIL — Élu : coût ÷2 ; si Marque → dégâts ×3
+    // SOLEIL — Élu : coût ÷2 avec clamp
+    // - si baseCost > 1  → floor(baseCost / 2)
+    // - si baseCost === 1 → reste 1
+    // - si baseCost === 0 → reste 0
     if (hasBreath(attacker, "sun") && hasSpecial(attacker, "sun", "elu")) {
-      cost = Math.max(0, Math.floor(cost / 2));
-      notes.push("Soleil/Élu : Coût ÷2");
+      if (baseCost > 1) {
+        cost = Math.floor(baseCost / 2);
+        notes.push("Soleil/Élu : Coût ÷2");
+      } else if (baseCost === 1) {
+        cost = 1;
+        notes.push("Soleil/Élu : Coût reste 1");
+      } else {
+        cost = 0; // base 0 reste 0
+      }
+
+      // Option “Marque” (si tu la veux ici)
       if (isMarque(attacker)) {
         dmgFormula = `3*(${dmgFormula})`;
         notes.push("Soleil/Élu + Marque : Dégâts ×3");
       }
     }
 
-    // LUNE — bonus vs démon : +1 dé (même taille que le plus gros dé trouvé)
+    // Sécurité : jamais <1 si baseCost ≥ 1, sinon autorisé à 0 si baseCost===0
+    if (baseCost >= 1) cost = Math.max(1, Number.isFinite(cost) ? cost : 1);
+    else cost = 0;
+
+    // LUNE — bonus vs démon : +1 dé (même taille que le plus gros dé)
     if (
       hasBreath(attacker, "moon") &&
       hasSpecial(attacker, "moon", "bonusSolo") &&

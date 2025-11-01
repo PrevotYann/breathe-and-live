@@ -1,0 +1,525 @@
+{
+    "name": "Tanjiro (Test Complet des Souffles)",
+    "type": "slayer",
+    "img": "icons/svg/sword.svg",
+    "system": {
+        "class": {
+            "type": "Pourfendeur",
+            "rank": "Mizunoto",
+            "level": 10
+        },
+        "stats": {
+            "base": {
+                "force": 4,
+                "finesse": 5,
+                "courage": 4,
+                "vitesse": 5,
+                "social": 2,
+                "intellect": 3
+            },
+            "derived": {}
+        },
+        "resources": {
+            "hp": {
+                "value": 45,
+                "max": 45
+            },
+            "e": {
+                "value": 28,
+                "max": 28
+            },
+            "rp": {
+                "value": 10,
+                "max": 10
+            },
+            "ca": 15
+        },
+        "states": {
+            "tcbPermanent": false,
+            "marque": false,
+            "mondeTransparent": false,
+            "lameRouge": false
+        },
+        "breaths": {
+            "sun": {
+                "enabled": true,
+                "specials": {
+                    "elu": true
+                }
+            },
+            "water": {
+                "enabled": true,
+                "specials": {
+                    "devierVagues": true
+                }
+            },
+            "flame": {
+                "enabled": true,
+                "specials": {
+                    "coeurFlamboyant": true
+                }
+            },
+            "thunder": {
+                "enabled": true,
+                "specials": {
+                    "vitesseLumiere": true
+                }
+            },
+            "mist": {
+                "enabled": true,
+                "specials": {
+                    "nuagesTrainants": true
+                }
+            },
+            "snow": {
+                "enabled": true,
+                "specials": {
+                    "dentsDeKatana": true
+                }
+            },
+            "flower": {
+                "enabled": true,
+                "specials": {
+                    "concentrationFlorissante": true
+                }
+            },
+            "wind": {
+                "enabled": true,
+                "specials": {}
+            },
+            "stone": {
+                "enabled": true,
+                "specials": {}
+            },
+            "serpent": {
+                "enabled": true,
+                "specials": {}
+            },
+            "sound": {
+                "enabled": true,
+                "specials": {}
+            },
+            "insect": {
+                "enabled": true,
+                "specials": {}
+            },
+            "love": {
+                "enabled": true,
+                "specials": {}
+            },
+            "beast": {
+                "enabled": true,
+                "specials": {}
+            },
+            "moon": {
+                "enabled": true,
+                "specials": {}
+            }
+        }
+    },
+    "items": [
+        {
+            "name": "Souffle du Soleil",
+            "type": "breath",
+            "img": "icons/magic/fire/explosion-flame-blue.webp",
+            "system": {
+                "key": "sun",
+                "enabled": true,
+                "specials": {
+                    "elu": true
+                },
+                "description": "Capacité spéciale : Élu. Réduit le coût d’Endurance des techniques du Soleil de moitié (arrondi à l’inférieur)."
+            }
+        },
+        {
+            "name": "Souffle de l’Eau",
+            "type": "breath",
+            "img": "icons/magic/water/projectile-ice-shard.webp",
+            "system": {
+                "key": "water",
+                "enabled": true,
+                "specials": {
+                    "devierVagues": true
+                },
+                "description": "Capacité spéciale : Dévier les vagues. Réaction possible : annuler/rediriger une attaque en dépensant 1 RP."
+            }
+        },
+        {
+            "name": "Souffle de la Flamme",
+            "type": "breath",
+            "img": "icons/magic/fire/flame-burning-skeleton.webp",
+            "system": {
+                "key": "flame",
+                "enabled": true,
+                "specials": {
+                    "coeurFlamboyant": true
+                },
+                "description": "Capacité : Cœur flamboyant (effets de round/fin de round — placeholder)."
+            }
+        },
+        {
+            "name": "Souffle de la Foudre",
+            "type": "breath",
+            "img": "icons/magic/lightning/bolt-beam-strike-blue.webp",
+            "system": {
+                "key": "thunder",
+                "enabled": true,
+                "specials": {
+                    "vitesseLumiere": true
+                },
+                "description": "Capacité spéciale : Vitesse de la lumière. Permet un Dash de 6 m (réaction/bouton de chat)."
+            }
+        },
+        {
+            "name": "Souffle de la Brume",
+            "type": "breath",
+            "img": "icons/magic/air/fog-gas-smoke-dense-blue.webp",
+            "system": {
+                "key": "mist",
+                "enabled": true,
+                "specials": {
+                    "nuagesTrainants": true
+                },
+                "description": "Capacité : Nuages traînants. Place une zone (3 m) de brume (gabarit) — contrôle de zone."
+            }
+        },
+        {
+            "name": "Souffle de la Neige",
+            "type": "breath",
+            "img": "icons/magic/water/projectile-ice-crystal-blue.webp",
+            "system": {
+                "key": "snow",
+                "enabled": true,
+                "specials": {
+                    "dentsDeKatana": true
+                },
+                "description": "Capacité : Dents de Katana. En cas d’impact, CA de la cible -1d4 jusqu'à fin du round."
+            }
+        },
+        {
+            "name": "Souffle de la Fleur",
+            "type": "breath",
+            "img": "icons/magic/nature/leaf-ivy-vine.webp",
+            "system": {
+                "key": "flower",
+                "enabled": true,
+                "specials": {
+                    "concentrationFlorissante": true
+                },
+                "description": "Capacité : Concentration florissante. Ajoute un bonus léger aux dégâts (déjà injecté dans la pré-résolution)."
+            }
+        },
+        {
+            "name": "Souffle du Vent",
+            "type": "breath",
+            "img": "icons/magic/air/wind-gust-swirl-blue.webp",
+            "system": {
+                "key": "wind",
+                "enabled": true,
+                "specials": {},
+                "description": "Placeholder pour effets avancés (repoussement, etc.)."
+            }
+        },
+        {
+            "name": "Souffle de la Pierre",
+            "type": "breath",
+            "img": "icons/skills/melee/strike-hammer-destructive.webp",
+            "system": {
+                "key": "stone",
+                "enabled": true,
+                "specials": {},
+                "description": "Placeholder pour effets avancés (choix Mâchoire/Hache, etc.)."
+            }
+        },
+        {
+            "name": "Souffle du Serpent",
+            "type": "breath",
+            "img": "icons/creatures/reptiles/snake-fang-bite-green.webp",
+            "system": {
+                "key": "serpent",
+                "enabled": true,
+                "specials": {},
+                "description": "Placeholder."
+            }
+        },
+        {
+            "name": "Souffle du Son",
+            "type": "breath",
+            "img": "icons/magic/sonic/wave-sound-energy.webp",
+            "system": {
+                "key": "sound",
+                "enabled": true,
+                "specials": {},
+                "description": "Placeholder."
+            }
+        },
+        {
+            "name": "Souffle de l’Insecte",
+            "type": "breath",
+            "img": "icons/creatures/invertebrates/wasp.webp",
+            "system": {
+                "key": "insect",
+                "enabled": true,
+                "specials": {},
+                "description": "Placeholder (poisons, etc.)."
+            }
+        },
+        {
+            "name": "Souffle de l’Amour",
+            "type": "breath",
+            "img": "icons/magic/control/hypnosis-mesmerism-pink.webp",
+            "system": {
+                "key": "love",
+                "enabled": true,
+                "specials": {},
+                "description": "Placeholder."
+            }
+        },
+        {
+            "name": "Souffle de la Bête",
+            "type": "breath",
+            "img": "icons/creatures/abilities/bear-roar-bite-brown.webp",
+            "system": {
+                "key": "beast",
+                "enabled": true,
+                "specials": {},
+                "description": "Placeholder."
+            }
+        },
+        {
+            "name": "Souffle de la Lune",
+            "type": "breath",
+            "img": "icons/magic/unholy/strike-body-explode-pink.webp",
+            "system": {
+                "key": "moon",
+                "enabled": true,
+                "specials": {},
+                "description": "Placeholder : bonus contre Démons."
+            }
+        },
+        {
+            "name": "Soleil — Forme 1 : Danse",
+            "type": "technique",
+            "img": "icons/magic/fire/beam-jet-stream-orange.webp",
+            "system": {
+                "breath": "Soleil",
+                "form": 1,
+                "costE": 2,
+                "range": 1.5,
+                "damage": "2d10 + Finesse",
+                "tags": [],
+                "description": "Test Élu (coût ÷2)."
+            }
+        },
+        {
+            "name": "Eau — Forme 2 : Roue d’eau",
+            "type": "technique",
+            "img": "icons/magic/water/wave-water-teal.webp",
+            "system": {
+                "breath": "Eau",
+                "form": 2,
+                "costE": 2,
+                "range": 3,
+                "damage": "2d8 + Force",
+                "tags": [],
+                "description": "Test Dévier les vagues (bouton)."
+            }
+        },
+        {
+            "name": "Flamme — Forme 3 : Univers flamboyant",
+            "type": "technique",
+            "img": "icons/magic/fire/beam-jet-red.webp",
+            "system": {
+                "breath": "Flamme",
+                "form": 3,
+                "costE": 3,
+                "range": 1.5,
+                "damage": "3d10 + Force",
+                "tags": [],
+                "description": "Test Cœur flamboyant (note)."
+            }
+        },
+        {
+            "name": "Foudre — Forme 1 : Coup fulgurant",
+            "type": "technique",
+            "img": "icons/magic/lightning/bolt-forked-large-blue.webp",
+            "system": {
+                "breath": "Foudre",
+                "form": 1,
+                "costE": 2,
+                "range": 3,
+                "damage": "2d8 + Finesse",
+                "tags": [],
+                "description": "Test Vitesse de la lumière (Dash 6 m)."
+            }
+        },
+        {
+            "name": "Brume — Forme 1 : Voile blanc",
+            "type": "technique",
+            "img": "icons/magic/air/fog-gas-smoke-gray.webp",
+            "system": {
+                "breath": "Brume",
+                "form": 1,
+                "costE": 1,
+                "range": 3,
+                "damage": "1d10 + Finesse",
+                "tags": [],
+                "description": "Test zone Brume (3 m)."
+            }
+        },
+        {
+            "name": "Neige — Forme 1 : Morceaux givrés",
+            "type": "technique",
+            "img": "icons/magic/water/projectile-ice-shard-salvo.webp",
+            "system": {
+                "breath": "Neige",
+                "form": 1,
+                "costE": 2,
+                "range": 6,
+                "damage": "2d8 + Force ou Finesse",
+                "tags": [],
+                "description": "Test CA -1d4 sur impact."
+            }
+        },
+        {
+            "name": "Fleur — Forme 1 : Pétales vifs",
+            "type": "technique",
+            "img": "icons/magic/nature/leaf-elm-sparkle-green.webp",
+            "system": {
+                "breath": "Fleur",
+                "form": 1,
+                "costE": 1,
+                "range": 3,
+                "damage": "2d6 + Finesse",
+                "tags": [],
+                "description": "Test bonus dégâts +1 (Concentration florissante)."
+            }
+        },
+        {
+            "name": "Vent — Forme 1 : Rafale rasante",
+            "type": "technique",
+            "img": "icons/magic/air/wind-swirl-gray.webp",
+            "system": {
+                "breath": "Vent",
+                "form": 1,
+                "costE": 1,
+                "range": 3,
+                "damage": "2d6 + Force",
+                "tags": [],
+                "description": "Placeholder Vent."
+            }
+        },
+        {
+            "name": "Pierre — Forme 1 : Impact lourd",
+            "type": "technique",
+            "img": "icons/skills/melee/strike-mace-worn-yellow.webp",
+            "system": {
+                "breath": "Pierre",
+                "form": 1,
+                "costE": 2,
+                "range": 1.5,
+                "damage": "2d8 + Force",
+                "tags": [],
+                "description": "Placeholder Pierre."
+            }
+        },
+        {
+            "name": "Serpent — Forme 1 : Morsure sinueuse",
+            "type": "technique",
+            "img": "icons/creatures/reptiles/serpent-fangs-green.webp",
+            "system": {
+                "breath": "Serpent",
+                "form": 1,
+                "costE": 1,
+                "range": 3,
+                "damage": "2d6 + Finesse",
+                "tags": [],
+                "description": "Placeholder Serpent."
+            }
+        },
+        {
+            "name": "Son — Forme 1 : Onde heurtante",
+            "type": "technique",
+            "img": "icons/magic/sonic/wave-sound-blue.webp",
+            "system": {
+                "breath": "Son",
+                "form": 1,
+                "costE": 2,
+                "range": 6,
+                "damage": "2d8 + Force ou Finesse",
+                "tags": [],
+                "description": "Placeholder Son."
+            }
+        },
+        {
+            "name": "Insecte — Forme 1 : Piqûre toxique",
+            "type": "technique",
+            "img": "icons/consumables/potions/potion-flask-corked-label-pink.webp",
+            "system": {
+                "breath": "Insecte",
+                "form": 1,
+                "costE": 1,
+                "range": 1.5,
+                "damage": "1d8 + Finesse",
+                "tags": [],
+                "description": "Placeholder Insecte (poison)."
+            }
+        },
+        {
+            "name": "Amour — Forme 1 : Élan gracieux",
+            "type": "technique",
+            "img": "icons/magic/air/air-burst-pink.webp",
+            "system": {
+                "breath": "Amour",
+                "form": 1,
+                "costE": 1,
+                "range": 3,
+                "damage": "2d6 + Finesse",
+                "tags": [],
+                "description": "Placeholder Amour."
+            }
+        },
+        {
+            "name": "Bête — Forme 1 : Assaut double",
+            "type": "technique",
+            "img": "icons/skills/melee/strike-swords-double-blue.webp",
+            "system": {
+                "breath": "Bête",
+                "form": 1,
+                "costE": 2,
+                "range": 1.5,
+                "damage": "2d8 + Force",
+                "tags": [],
+                "description": "Placeholder Bête."
+            }
+        },
+        {
+            "name": "Lune — Forme 1 : Fente du croissant",
+            "type": "technique",
+            "img": "icons/magic/unholy/beam-ringed-pink.webp",
+            "system": {
+                "breath": "Lune",
+                "form": 1,
+                "costE": 2,
+                "range": 6,
+                "damage": "2d10 + Force ou Finesse",
+                "tags": [],
+                "description": "Placeholder Lune (bonus vs Démons)."
+            }
+        },
+        {
+            "name": "Katana Nichirin",
+            "type": "weapon",
+            "img": "icons/weapons/swords/sword-guard-gold-red.webp",
+            "system": {
+                "damage": "1d8",
+                "range": 1.5,
+                "tags": [
+                    "nichirin"
+                ],
+                "description": "Arme de base."
+            }
+        }
+    ],
+    "effects": []
+}

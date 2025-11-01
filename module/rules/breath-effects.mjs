@@ -1,264 +1,221 @@
-// Moteur d’effets passifs & "on hit" des Souffles (Foundry v12)
+// module/rules/breath-effects.mjs
+import { applyEffectsList } from "./effects-engine.mjs";
 
 const FU = foundry.utils;
-const MOD_ID = "breathe-and-live";
+const SYSTEM_ID = "breathe-and-live";
+const METERS_PER_SQUARE = 1.5;
 
-/** Récupère les codes de souffles actifs (par items "breath" ou toggles system.breaths.<key>.enabled) */
+/* ------------------ Utils - parsing et stats ------------------ */
+
+function injectStatsInDamage(expr, attacker) {
+  if (!expr || typeof expr !== "string") return "1d8";
+  let out = expr.trim();
+
+  function statVal(k) {
+    const v = Number(FU.getProperty(attacker, `system.stats.base.${k}`) ?? 0);
+    return Number.isFinite(v) ? v : 0;
+  }
+
+  if (/force\s*ou\s*finesse/i.test(out) || /finesse\s*ou\s*force/i.test(out)) {
+    const best = Math.max(statVal("force"), statVal("finesse"));
+    out = out
+      .replace(/force\s*ou\s*finesse/gi, String(best))
+      .replace(/finesse\s*ou\s*force/gi, String(best));
+  }
+
+  out = out.replace(/\bForce\b/gi, String(statVal("force")));
+  out = out.replace(/\bFinesse\b/gi, String(statVal("finesse")));
+  return out;
+}
+
+function normalizeBreathName(raw) {
+  const s = String(raw || "")
+    .trim()
+    .toLowerCase();
+  if (/(soleil|sun)/.test(s)) return "sun";
+  if (/(eau|water)/.test(s)) return "water";
+  if (/(flamme|flame)/.test(s)) return "flame";
+  if (/(vent|wind)/.test(s)) return "wind";
+  if (/(foudre|tonnerre|thunder)/.test(s)) return "thunder";
+  if (/(pierre|stone)/.test(s)) return "stone";
+  if (/(brume|mist)/.test(s)) return "mist";
+  if (/(serpent)/.test(s)) return "serpent";
+  if (/(neige|snow)/.test(s)) return "snow";
+  if (/(fleur|flower)/.test(s)) return "flower";
+  if (/(son|sound)/.test(s)) return "sound";
+  if (/(insecte|insect)/.test(s)) return "insect";
+  if (/(amour|love)/.test(s)) return "love";
+  if (/(bête|beast)/.test(s)) return "beast";
+  if (/(lune|moon)/.test(s)) return "moon";
+  return "";
+}
+
+/** Fusionne toggles d’acteur + items “breath” équipés */
 function getActiveBreaths(actor) {
-  const fromItems = actor.items
-    .filter((i) => i.type === "breath" && i.system?.key)
-    .map((i) => i.system.key);
-  const fromToggles = Object.entries(
-    FU.getProperty(actor, "system.breaths") ?? {}
-  )
-    .filter(([, v]) => v?.enabled)
-    .map(([k]) => k);
-  const set = new Set([...fromItems, ...fromToggles]);
-  return [...set];
+  const res = {};
+  const b = FU.getProperty(actor, "system.breaths") || {};
+  for (const [k, v] of Object.entries(b)) {
+    if (!res[k]) res[k] = { enabled: false, specials: {} };
+    if (v?.enabled) res[k].enabled = true;
+    if (v?.specials && typeof v.specials === "object") {
+      for (const [sk, on] of Object.entries(v.specials)) {
+        res[k].specials[sk] = !!on;
+      }
+    }
+  }
+  for (const it of actor.items ?? []) {
+    if (it.type !== "breath") continue;
+    const key = it.system?.key ? String(it.system.key) : "";
+    if (!key) continue;
+    if (!res[key]) res[key] = { enabled: false, specials: {} };
+    if (it.system?.enabled) res[key].enabled = true;
+    const sp = it.system?.specials || {};
+    for (const [sk, on] of Object.entries(sp)) res[key].specials[sk] = !!on;
+  }
+  return res;
 }
 
-// === helpers =================================================================
-/** Normalise une chaîne en clé de souffle canonique. */
-export function canonicalizeBreathKey(str) {
-  if (!str) return "";
-  const s = String(str)
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .trim();
-  const map = [
-    { k: "sun", rx: /^(sun|soleil|souffle du soleil)/ },
-    { k: "moon", rx: /^(moon|lune|souffle de la lune)/ },
-    { k: "water", rx: /^(water|eau|souffle de l[’']eau)/ },
-    { k: "flame", rx: /^(flame|flamme|souffle de la flamme)/ },
-    { k: "wind", rx: /^(wind|vent|souffle du vent)/ },
-    { k: "thunder", rx: /^(thunder|foudre|souffle de la foudre)/ },
-    { k: "stone", rx: /^(stone|pierre|souffle de la pierre)/ },
-    { k: "mist", rx: /^(mist|brume|souffle de la brume)/ },
-    { k: "snow", rx: /^(snow|neige|souffle de la neige)/ },
-    { k: "flower", rx: /^(flower|fleur|souffle de la fleur)/ },
-    { k: "serpent", rx: /^(serpent|souffle du serpent)/ },
-    { k: "sound", rx: /^(sound|son|souffle du son)/ },
-    { k: "insect", rx: /^(insect|insecte|souffle de l[’']insecte)/ },
-    { k: "love", rx: /^(love|amour|souffle de l[’']amour)/ },
-    {
-      k: "beast",
-      rx: /^(beast|bete|bête|souffle de la bete|souffle de la bête)/,
-    },
-  ];
-  for (const { k, rx } of map) if (rx.test(s)) return k;
-  // Tente aussi si l’item stocke déjà la clé
-  const short = s.replace(/^souffle\s+(du|de la|de l’|de l'|de)\s+/, "");
-  for (const { k } of map) if (short === k) return k;
-  return s; // en dernier recours, renvoie tel quel
-}
+/* ------------------ Effets de Souffles (pré-hit et on-hit) ------------------ */
 
-/** Un souffle est-il activé pour cet acteur (toggle ou Item breath coché) ? */
-export function isBreathEnabled(actor, breathKey) {
-  const fromToggles = !!FU.getProperty(
-    actor,
-    `system.breaths.${breathKey}.enabled`
-  );
-  const fromItem = actor.items.some(
-    (i) =>
-      i.type === "breath" &&
-      i.system?.key === breathKey &&
-      (i.system?.enabled ?? true)
-  );
-  return fromToggles || fromItem;
-}
-
-/** La capacité spéciale d’un souffle est-elle active ? */
-export function hasSpecial(actor, breathKey, specKey) {
-  const fromToggles = !!FU.getProperty(
-    actor,
-    `system.breaths.${breathKey}.specials.${specKey}`
-  );
-  const item = actor.items.find(
-    (i) => i.type === "breath" && i.system?.key === breathKey
-  );
-  const fromItem = !!item?.system?.specials?.[specKey];
-  return fromToggles || fromItem;
-}
-
-/** Petit utilitaire : clamp >= 0, entier. */
-function clampInt(n) {
-  return Math.max(0, Math.round(Number(n) || 0));
-}
-
-// === PRE-HIT: calcul coût & dégâts AVANT jet/roll =================================
-
-/**
- * Calcule le coût final, l’expression de dégâts et les notes, en appliquant
- * uniquement les effets du SOUFFLE de la technique (pas des autres).
- *
- * @returns { cost:number, dmgExpr:string, notes:string[] }
- */
-export function applyPreHit(attacker, target, item, ctx = {}) {
-  const s = item.system ?? {};
+export function applyPreHit(attacker, targetToken, item, ctx = {}) {
+  const breaths = getActiveBreaths(attacker);
+  const itemBreathKey = normalizeBreathName(item.system?.breath);
   const notes = [];
 
-  // base
-  let cost = clampInt(s.costE ?? 0);
-  let dmgExp = (s.damage || "1d8").toString();
+  // Base
+  const baseCost = Number(item.system?.costE ?? 0) || 0;
+  let cost = baseCost;
+  let dmgExpr = injectStatsInDamage(item.system?.damage || "1d8", attacker);
 
-  // 1) Identifie le souffle de la technique (canonique)
-  const techBreath = canonicalizeBreathKey(
-    s.breath || s.breathKey || item.name
-  );
-  if (!techBreath) {
-    return { cost, dmgExpr: dmgExp, notes }; // technique sans souffle → rien à appliquer
+  const ui = { canDeflect: false, canDash: false, canMist: false };
+
+  /* === ÉLU (Soleil) — s'applique à TOUTES les techniques ===
+     - si coût de base > 1 ⇒ floor(base/2)
+     - si coût de base = 1 ⇒ reste 1 (jamais 0)
+     - si coût de base = 0 ⇒ reste 0
+  */
+  if (breaths.sun?.enabled && breaths.sun?.specials?.elu) {
+    if (baseCost > 1) {
+      cost = Math.floor(baseCost / 2);
+      notes.push("Soleil — Élu : coût ÷2");
+    } else if (baseCost === 1) {
+      cost = 1;
+      notes.push("Soleil — Élu : coût reste 1");
+    } // 0 reste 0
   }
 
-  // 2) Le souffle de la technique est-il activé sur l’acteur ?
-  if (!isBreathEnabled(attacker, techBreath)) {
-    return { cost, dmgExpr: dmgExp, notes }; // souffle non actif → aucun effet
+  // Sécurité : si le coût de base était ≥1, on ne permet jamais <1 après modifs
+  if (baseCost >= 1) cost = Math.max(1, Number.isFinite(cost) ? cost : 1);
+  else cost = Math.max(0, Number.isFinite(cost) ? cost : 0);
+
+  // Eau
+  if (itemBreathKey === "water" && breaths.water?.enabled) {
+    if (breaths.water.specials?.devierVagues) {
+      ui.canDeflect = true;
+      notes.push("Eau — Dévier les vagues : réaction possible");
+    }
+  }
+  // Foudre
+  if (itemBreathKey === "thunder" && breaths.thunder?.enabled) {
+    if (breaths.thunder.specials?.vitesseLumiere) {
+      ui.canDash = true;
+      notes.push("Foudre — Vitesse de la lumière : Dash 6 m");
+    }
+  }
+  // Brume
+  if (itemBreathKey === "mist" && breaths.mist?.enabled) {
+    if (breaths.mist.specials?.nuagesTrainants) {
+      ui.canMist = true;
+      notes.push("Brume — Nuages traînants : zone 3 m");
+    }
+  }
+  // Neige
+  if (itemBreathKey === "snow" && breaths.snow?.enabled) {
+    notes.push("Neige — pénalité de CA (appliquée si dégâts subis)");
+  }
+  // Fleur
+  if (itemBreathKey === "flower" && breaths.flower?.enabled) {
+    if (breaths.flower.specials?.concentrationFlorissante) {
+      dmgExpr = `${dmgExpr} + 1`;
+      notes.push("Fleur — Concentration florissante : +1 aux dégâts");
+    }
+  }
+  // Flamme
+  if (itemBreathKey === "flame" && breaths.flame?.enabled) {
+    if (breaths.flame.specials?.coeurFlamboyant) {
+      notes.push("Flamme — Cœur flamboyant (interactions fin de round)");
+    }
   }
 
-  // 3) Applique les effets PROPRES à ce souffle uniquement
-  switch (techBreath) {
-    case "sun": {
-      // Soleil — Élu : coût ÷2 (arrondi inférieur) si actif
-      if (hasSpecial(attacker, "sun", "elu")) {
-        const old = cost;
-        cost = Math.floor(cost / 2);
-        if (old !== cost) notes.push("Soleil — Élu : coût ÷2");
-      }
-      // (autres effets Soleil spécifiques ici si besoin)
-      break;
-    }
+  // Placeholders
+  if (itemBreathKey === "wind" && breaths.wind?.enabled)
+    notes.push("Vent — (placeholder)");
+  if (itemBreathKey === "stone" && breaths.stone?.enabled)
+    notes.push("Pierre — (placeholder)");
+  if (itemBreathKey === "serpent" && breaths.serpent?.enabled)
+    notes.push("Serpent — (placeholder)");
+  if (itemBreathKey === "sound" && breaths.sound?.enabled)
+    notes.push("Son — (placeholder)");
+  if (itemBreathKey === "insect" && breaths.insect?.enabled)
+    notes.push("Insecte — (placeholder)");
+  if (itemBreathKey === "love" && breaths.love?.enabled)
+    notes.push("Amour — (placeholder)");
+  if (itemBreathKey === "beast" && breaths.beast?.enabled)
+    notes.push("Bête — (placeholder)");
+  if (itemBreathKey === "moon" && breaths.moon?.enabled)
+    notes.push("Lune — (placeholder : bonus vs Démons)");
 
-    case "water": {
-      // Eau — Dévier les vagues : effet de RÉACTION (pas de modif pré-hit)
-      if (hasSpecial(attacker, "water", "devierVagues")) {
-        notes.push(
-          "Eau — Dévier les vagues : réaction dispo (annulation/redirection)"
-        );
-      }
-      break;
-    }
-
-    case "snow": {
-      // Neige — Dents de Katana : effet POST-HIT (réduit CA si cible prend dégâts)
-      if (hasSpecial(attacker, "snow", "dentsDeKatana")) {
-        notes.push("Neige — Dents de Katana : CA -1d4 (si dégâts pris)");
-      }
-      break;
-    }
-
-    case "flower": {
-      if (hasSpecial(attacker, "flower", "concentrationFlorissante")) {
-        notes.push(
-          "Fleur — Concentration florissante : bonus progressif (même cible)."
-        );
-        // (le cumul est géré ailleurs via flags si tu l’as implémenté)
-      }
-      break;
-    }
-
-    case "thunder": {
-      if (hasSpecial(attacker, "thunder", "vitesseLumiere")) {
-        notes.push("Foudre — Vitesse de la lumière : Dash 6 m (réaction).");
-      }
-      break;
-    }
-
-    case "stone": {
-      if (hasSpecial(attacker, "stone", "machoireHache")) {
-        notes.push("Pierre — Mâchoire & Hache : variante à choisir (dégâts).");
-        // (si tu gères la variante ici, modifie dmgExp selon le choix)
-      }
-      break;
-    }
-
-    case "mist": {
-      if (hasSpecial(attacker, "mist", "nuagesTrainants")) {
-        notes.push("Brume — Nuages traînants : zone 3 m (réaction/bonus).");
-      }
-      break;
-    }
-
-    case "wind": {
-      if (hasSpecial(attacker, "wind", "ventsDeGuerre")) {
-        notes.push("Vent — Vents de guerre : RP +1d2 si tu achèves un démon.");
-      }
-      break;
-    }
-
-    // Ajoute ici d’autres souffles/effets si tu les branches
-    default:
-      break;
-  }
-
-  return { cost, dmgExpr: dmgExp, notes };
+  return { cost, dmgExpr, ui, notes };
 }
 
-/** Applique les effets APRÈS résolution (sur touche non esquivée) */
 export async function applyOnHit(
   attacker,
   targetToken,
-  tech,
+  item,
   ctx = {},
-  outcome = {}
+  { tookDamage = false } = {}
 ) {
-  const target = targetToken?.actor;
-  if (!target) return;
-  const breaths = getActiveBreaths(attacker);
+  const itemBreathKey = normalizeBreathName(item.system?.breath);
+  if (!tookDamage) return;
 
-  // FLEUR — valider/incrémenter le stack seulement si les dégâts sont pris
-  if (ctx._flowerNextStack && outcome.tookDamage) {
-    await attacker.setFlag(MOD_ID, "flowerStacks", {
-      tid: ctx._flowerNextStack.tid,
-      n: ctx._flowerNextStack.n,
+  // Neige : CA -1d4 fin du round
+  if (itemBreathKey === "snow") {
+    await applyEffectsList({
+      source: attacker,
+      target: targetToken,
+      origin: item.uuid,
+      effects: [
+        {
+          target: "target",
+          path: "system.resources.ca",
+          mode: "add",
+          roll: "1d4",
+          value: -1, // fallback
+          duration: "roundEnd",
+          label: "Neige — CA -1d4 (jusqu'à fin du round)",
+        },
+      ],
     });
   }
 
-  // NEIGE — Dents de Katana : -1d4 CA (fin du round)
-  if (ctx._snowDebuffCA && outcome.tookDamage) {
-    const pen = new Roll("1d4");
-    await pen.evaluate({ async: true });
-    const caPath = "system.resources.ca";
-    const curCA = Number(FU.getProperty(target, caPath) ?? 10) || 10;
-    const newCA = Math.max(0, curCA - pen.total);
-    await target.update({ [caPath]: newCA });
-    ChatMessage.create({
-      content: `<small>Neige — Dents de Katana : CA de ${target.name} ${curCA} → ${newCA} (fin du round).</small>`,
+  // Fleur : exemple buff court (optionnel) — laissé commenté
+  /*
+  if (itemBreathKey === "flower") {
+    await applyEffectsList({
+      source: attacker,
+      target: attacker,
+      origin: item.uuid,
+      effects: [{
+        target: "self",
+        path: "system.bonuses.damageFlat",
+        mode: "add",
+        value: 1,
+        duration: "custom:2",
+        label: "Fleur — Concentration (+1 dmg, 2 tours)"
+      }]
     });
-
-    if (game.combat) {
-      const thisRound = game.combat.round;
-      const restore = async () => {
-        if (game.combat?.round && game.combat.round > thisRound) {
-          Hooks.off("updateCombat", restore);
-          await target.update({ [caPath]: curCA });
-          ChatMessage.create({
-            content: `<small>Neige — Dents de Katana : CA de ${target.name} restaurée (${curCA}).</small>`,
-          });
-        }
-      };
-      Hooks.on("updateCombat", restore);
-    }
   }
-
-  // VENT — Vents de guerre : si démon tombe à 0 PV → attaquant regagne 1d2 RP
-  if (ctx._windRegenOnDemonKill && outcome.tookDamage) {
-    const isDem = target.type === "demon" || /demon/i.test(target?.type ?? "");
-    const hp =
-      Number(FU.getProperty(target, "system.resources.hp.value") ?? 0) || 0;
-    if (isDem && hp <= 0) {
-      const regen = new Roll("1d2");
-      await regen.evaluate({ async: true });
-      const rpPathAtk = "system.resources.rp.value";
-      const curAtkRP = Number(FU.getProperty(attacker, rpPathAtk) ?? 0) || 0;
-      await attacker.update({ [rpPathAtk]: curAtkRP + regen.total });
-      ChatMessage.create({
-        content: `<small>Vent — Vents de guerre : ${attacker.name} regagne ${regen.total} RP.</small>`,
-      });
-    }
-  }
+  */
 }
 
-export const BreathFX = {
-  applyPreHit,
-  applyOnHit,
-};
+export const BreathFX = { applyPreHit, applyOnHit };

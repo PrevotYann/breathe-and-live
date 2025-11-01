@@ -2,6 +2,7 @@
 // Compatible Foundry v12.343
 
 import { BreathFX, applyPreHit, applyOnHit } from "../rules/breath-effects.mjs";
+import { applyEffectsList } from "../rules/effects-engine.mjs";
 
 const FU = foundry.utils;
 const SYSTEM_ID = "breathe-and-live";
@@ -167,6 +168,21 @@ export async function useTechnique(
 
   // Dépense d'E (d'abord)
   await attacker.update({ [ePath]: curE - pre.cost });
+
+  // === Effets "self" au lancement (system.selfEffects) — optionnel ===
+  try {
+    const selfEffects = FU.getProperty(item, "system.selfEffects") || [];
+    if (Array.isArray(selfEffects) && selfEffects.length) {
+      await applyEffectsList({
+        source: attacker,
+        target: atkToken, // l’attaquant lui-même
+        effects: selfEffects,
+        origin: item.uuid,
+      });
+    }
+  } catch (e) {
+    console.error("BL | applyEffectsList (self) failed:", e);
+  }
 
   // Jet de dégâts (formule après injection des stats et effets de souffle)
   const dmgRoll = new Roll(pre.dmgExpr || "1d8");
@@ -341,8 +357,23 @@ export async function useTechnique(
           `<em>${tgtActor.name} prend <b>${dmgTotal}</b> dégâts (PV ${curHP} → ${newHP}).</em>`
         );
 
-      // Notifier les effets “on hit” (Neige, Vent, Fleur…)
+      // Notifier les effets “on hit” déjà codés (Neige/Vent/Fleur…)
       await applyOnHit(attacker, tgtToken, item, ctx, { tookDamage: true });
+
+      // === Effets "on hit" de la Technique (system.effects) ===
+      try {
+        const techEffects = FU.getProperty(item, "system.effects") || [];
+        if (Array.isArray(techEffects) && techEffects.length) {
+          await applyEffectsList({
+            source: attacker,
+            target: tgtToken,
+            effects: techEffects,
+            origin: item.uuid,
+          });
+        }
+      } catch (e) {
+        console.error("BL | applyEffectsList (on-hit) failed:", e);
+      }
 
       // Verrouiller les autres boutons
       $zone
