@@ -14,6 +14,51 @@ const SYSTEM_ID = "breathe-and-live";
 const BL_NS = "breathe-and-live";
 const FU = foundry.utils;
 
+// === Groupes de compétences (répartition de points) ===============
+export const BL_DERIVED_GROUPS = {
+  force: ["athletisme", "puissanceBrute"],
+  finesse: ["dexterite", "equilibre", "precision"],
+  courage: ["mithridatisme", "endurance", "tolerance"],
+  vitesse: ["reflexes", "agilite", "rapidite", "ruse"],
+  social: [
+    "tromperie",
+    "performance",
+    "intimidation",
+    "perception",
+    "intuition",
+  ],
+  intellect: ["medecine", "nature", "sciences", "enquete", "survie"],
+};
+
+export const BL_DERIVED_LABELS = {
+  athletisme: "Athlétisme",
+  puissanceBrute: "Puissance Brute",
+  dexterite: "Dextérité",
+  equilibre: "Équilibre",
+  precision: "Précision",
+  mithridatisme: "Mithridatisme",
+  endurance: "Endurance",
+  tolerance: "Tolérance",
+  reflexes: "Réflexes",
+  agilite: "Agilité",
+  rapidite: "Rapidité",
+  ruse: "Ruse",
+  tromperie: "Tromperie",
+  performance: "Performance",
+  intimidation: "Intimidation",
+  perception: "Perception",
+  intuition: "Intuition",
+  medecine: "Médecine",
+  nature: "Nature",
+  sciences: "Sciences",
+  enquete: "Enquête",
+  survie: "Survie",
+};
+
+CONFIG.breatheAndLive ??= {};
+CONFIG.breatheAndLive.DERIVED_GROUPS = BL_DERIVED_GROUPS;
+CONFIG.breatheAndLive.DERIVED_LABELS = BL_DERIVED_LABELS;
+
 /* ========================= INIT ========================= */
 
 Hooks.once("init", () => {
@@ -93,10 +138,41 @@ class BLActor extends Actor {
     // Par défaut pour tous
     sys.resources ??= {};
 
+    // === Stats dérivées (pools répartis par groupe) ==================
+    sys.stats ??= {};
+    sys.stats.base ??= {};
+    sys.stats.derived ??= {};
+
+    // borne à >= 0 entiers
+    for (const [k, v] of Object.entries(sys.stats.derived)) {
+      const n = Math.max(0, Math.floor(Number(v) || 0));
+      sys.stats.derived[k] = n;
+    }
+
+    // calcule les "restants" par groupe (non sauvegardé, pour l'UI)
+    const groups = CONFIG.breatheAndLive.DERIVED_GROUPS;
+    const base = {
+      force: Number(sys.stats.base.force) || 0,
+      finesse: Number(sys.stats.base.finesse) || 0,
+      courage: Number(sys.stats.base.courage) || 0,
+      vitesse: Number(sys.stats.base.vitesse) || 0,
+      social: Number(sys.stats.base.social) || 0,
+      intellect: Number(sys.stats.base.intellect) || 0,
+    };
+
+    sys.stats.remaining = {};
+    for (const [attr, keys] of Object.entries(groups)) {
+      const spent = keys.reduce(
+        (s, key) => s + (Number(sys.stats.derived[key]) || 0),
+        0
+      );
+      sys.stats.remaining[attr] = Math.max(0, base[attr] - spent); // >0 = points à placer
+    }
+
     if (this.type !== "demon") {
       sys.resources.e ??= { value: 0, max: 0 };
       sys.resources.rp ??= { value: 0, max: 0 };
-      sys.resources.hp ??= { value: 20, max: 20 };
+      sys.resources.hp ??= { value: 20, max: 36 };
       if (!Number.isFinite(sys.resources.hp.value))
         sys.resources.hp.value = sys.resources.hp.max;
 
