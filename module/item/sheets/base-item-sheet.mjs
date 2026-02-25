@@ -40,5 +40,14 @@ export class BLBaseItemSheet extends ItemSheet {
         .filter(Boolean);
       this.item.update({ "system.tags": tags });
     });
+    // Synchronise propertiesText <-> system.properties
+    html.on("change", '[name="system.propertiesText"]', (ev) => {
+      const txt = ev.currentTarget.value ?? "";
+      const properties = txt
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
+      this.item.update({ "system.properties": properties });
+    });
   }
 }

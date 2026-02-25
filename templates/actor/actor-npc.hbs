@@ -1,0 +1,26 @@
+<form class="bl actor-npc flexcol {{#unless canEdit}}bl-readonly{{/unless}}" autocomplete="off">
+  <header class="sheet-header flexrow">
+    <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
+    <div class="header-fields">
+      <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" {{#unless canEdit}}disabled{{/unless}}/></h1>
+      <div class="grid two-col">
+        <div><label>Type</label><input type="text" name="system.class.type" value="{{system.class.type}}" placeholder="PNJ" {{#unless canEdit}}disabled{{/unless}}/></div>
+        <div><label>Niveau menace</label><input type="text" name="system.npc.threat" value="{{system.npc.threat}}" {{#unless canEdit}}disabled{{/unless}}/></div>
+      </div>
+    </div>
+  </header>
+  <section class="sheet-body">
+    <div class="grid two-col">
+      <div>
+        <label>Rôle</label><input type="text" name="system.npc.role" value="{{system.npc.role}}" {{#unless canEdit}}disabled{{/unless}}/>
+        <label>Comportement</label><textarea name="system.npc.behavior" rows="4" {{#unless canEdit}}disabled{{/unless}}>{{system.npc.behavior}}</textarea>
+        <label>Butin</label><textarea name="system.npc.loot" rows="3" {{#unless canEdit}}disabled{{/unless}}>{{system.npc.loot}}</textarea>
+      </div>
+      <div class="grid resources">
+        <div class="res"><label>PV</label><input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" {{#unless canEdit}}disabled{{/unless}}/> / <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" {{#unless canEdit}}disabled{{/unless}}/></div>
+        <div class="res"><label>CA</label><input type="number" name="system.resources.ca" value="{{system.resources.ca}}" {{#unless canEdit}}disabled{{/unless}}/></div>
+        <div class="res"><label>Réactions</label><input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" {{#unless canEdit}}disabled{{/unless}}/> / <input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" {{#unless canEdit}}disabled{{/unless}}/></div>
+      </div>
+    </div>
+  </section>
+</form>

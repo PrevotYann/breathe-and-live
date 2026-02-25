@@ -1,0 +1,27 @@
+<form class="bl actor-demonist flexcol {{#unless canEdit}}bl-readonly{{/unless}}" autocomplete="off">
+  <header class="sheet-header flexrow">
+    <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
+    <div class="header-fields">
+      <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" {{#unless canEdit}}disabled{{/unless}}/></h1>
+      <div class="grid two-col">
+        <div><label>Classe</label><input type="text" name="system.class.type" value="{{system.class.type}}" placeholder="Démoniste" {{#unless canEdit}}disabled{{/unless}}/></div>
+        <div><label>Rang</label><input type="text" name="system.class.rank" value="{{system.class.rank}}" {{#unless canEdit}}disabled{{/unless}}/></div>
+      </div>
+    </div>
+  </header>
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="sheet">Fiche</a><a class="item" data-tab="techniques">Techniques</a><a class="item" data-tab="inventaire">Inventaire</a>
+  </nav>
+  <section class="sheet-body">
+    <div class="tab" data-group="primary" data-tab="sheet">
+      <div class="grid resources">
+        <div class="res"><label>PV</label><input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" {{#unless canEdit}}disabled{{/unless}}/> / <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" {{#unless canEdit}}disabled{{/unless}}/></div>
+        <div class="res"><label>Endurance</label><input type="number" name="system.resources.e.value" value="{{system.resources.e.value}}" {{#unless canEdit}}disabled{{/unless}}/> / <input type="number" name="system.resources.e.max" value="{{system.resources.e.max}}" {{#unless canEdit}}disabled{{/unless}}/></div>
+        <div class="res"><label>Réactions</label><input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" {{#unless canEdit}}disabled{{/unless}}/> / <input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" {{#unless canEdit}}disabled{{/unless}}/></div>
+        <div class="res"><label>Démonisation</label><input type="number" name="system.resources.demonisation" value="{{system.resources.demonisation}}" {{#unless canEdit}}disabled{{/unless}}/></div>
+      </div>
+    </div>
+    <div class="tab" data-group="primary" data-tab="techniques"><ol class="item-list">{{#each itemsTech as |it|}}<li class="item flexrow" data-item-id="{{it.id}}"><div class="name"><a class="item-edit">{{it.name}}</a></div></li>{{/each}}</ol></div>
+    <div class="tab" data-group="primary" data-tab="inventaire"><ol class="item-list">{{#each itemsOther as |it|}}<li class="item flexrow" data-item-id="{{it.id}}"><div class="name"><a class="item-edit">{{it.name}}</a></div><div>{{it.type}}</div></li>{{/each}}</ol></div>
+  </section>
+</form>
