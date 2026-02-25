@@ -18,7 +18,39 @@ export class BLSlayerSheet extends ActorSheet {
   }
 
   get template() {
-    return "systems/breathe-and-live/templates/actor/actor-slayer.hbs";
+    const byType = {
+      slayer: "systems/breathe-and-live/templates/actor/actor-slayer.hbs",
+      demonist: "systems/breathe-and-live/templates/actor/actor-demonist.hbs",
+      demon: "systems/breathe-and-live/templates/actor/actor-demon.hbs",
+      npc: "systems/breathe-and-live/templates/actor/actor-npc.hbs",
+    };
+    return (
+      byType[String(this.actor?.type || "").toLowerCase()] ||
+      "systems/breathe-and-live/templates/actor/actor-slayer.hbs"
+    );
+  }
+
+  _sheetDefaultsByType(type) {
+    const key = String(type || "slayer").toLowerCase();
+    const base = {
+      slayer: {
+        class: { type: "Pourfendeur", rank: "Mizunoto", level: 1 },
+        profile: { characterType: "slayer", combatStyle: "breath" },
+      },
+      demonist: {
+        class: { type: "Démoniste", rank: "Initié", level: 1 },
+        profile: { characterType: "demonist", combatStyle: "demonist" },
+      },
+      demon: {
+        class: { type: "Démon", rank: "Inférieur", level: 1 },
+        profile: { characterType: "demon", combatStyle: "bda" },
+      },
+      npc: {
+        class: { type: "PNJ", rank: "-", level: 1 },
+        profile: { characterType: "npc", combatStyle: "variable" },
+      },
+    };
+    return base[key] ?? base.slayer;
   }
 
   /** Construit un lookup "derivedKey -> baseKey" à partir des groupes CONFIG */
@@ -96,8 +128,7 @@ export class BLSlayerSheet extends ActorSheet {
         ca: 10,
       },
       profile: {
-        characterType: "slayer",
-        combatStyle: "breath",
+        ...this._sheetDefaultsByType(this.actor?.type).profile,
         trainerContext: "",
         partnerContext: "",
         kasugaiCrow: "",
@@ -173,6 +204,11 @@ export class BLSlayerSheet extends ActorSheet {
       { value: "dying", label: "Agonisant" },
       { value: "dead", label: "Mort" },
     ];
+
+    data.isSlayer = this.actor.type === "slayer";
+    data.isDemon = this.actor.type === "demon";
+    data.isDemonist = this.actor.type === "demonist";
+    data.isNpc = this.actor.type === "npc";
 
     return data;
   }

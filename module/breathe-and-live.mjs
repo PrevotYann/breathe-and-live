@@ -67,6 +67,9 @@ Hooks.once("init", () => {
   // Précharger les templates
   loadTemplates([
     "systems/breathe-and-live/templates/actor/actor-slayer.hbs",
+    "systems/breathe-and-live/templates/actor/actor-demonist.hbs",
+    "systems/breathe-and-live/templates/actor/actor-demon.hbs",
+    "systems/breathe-and-live/templates/actor/actor-npc.hbs",
     "systems/breathe-and-live/templates/item/item-technique.hbs",
     "systems/breathe-and-live/templates/item/item-weapon.hbs",
     "systems/breathe-and-live/templates/item/item-vehicle.hbs",
@@ -137,6 +140,21 @@ class BLActor extends Actor {
 
     // Par défaut pour tous
     sys.resources ??= {};
+    sys.class ??= { type: "", rank: "", level: 1 };
+
+    if (this.type === "demon" && (!sys.class.type || sys.class.type === "Pourfendeur")) {
+      sys.class.type = "Démon";
+      sys.class.rank ||= "Inférieur";
+    } else if (this.type === "demonist" && (!sys.class.type || sys.class.type === "Pourfendeur")) {
+      sys.class.type = "Démoniste";
+      sys.class.rank ||= "Initié";
+    } else if (this.type === "npc" && (!sys.class.type || sys.class.type === "Pourfendeur")) {
+      sys.class.type = "PNJ";
+      sys.class.rank ||= "-";
+    } else if (this.type === "slayer" && !sys.class.type) {
+      sys.class.type = "Pourfendeur";
+      sys.class.rank ||= "Mizunoto";
+    }
 
     // === Stats dérivées (pools répartis par groupe) ==================
     sys.stats ??= {};
@@ -212,6 +230,9 @@ class BLActor extends Actor {
 
       sys.resources.bdp ??= { value: 0, max: 0 };
       sys.resources.bdp.max = 10 * (Number(b.courage) || 0);
+      if (!Number.isFinite(sys.resources.bdp.value) || sys.resources.bdp.value <= 0)
+        sys.resources.bdp.value = sys.resources.bdp.max;
+      sys.resources.demonisation ??= 0;
 
       // Actions par tour pour les démons (si c'est bien ce que tu veux)
       sys.actions = 1 + Math.floor((Number(b.vitesse) || 0) / 5);
