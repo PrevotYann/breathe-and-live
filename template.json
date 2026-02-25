@@ -57,7 +57,16 @@
           "flame": {
             "name": "Souffle de la Flamme",
             "enabled": false,
-            "specials": {}
+            "specials": {
+              "coeurFlamboyant": false
+            }
+          },
+          "moon": {
+            "name": "Souffle de la Lune",
+            "enabled": false,
+            "specials": {
+              "bonusSolo": false
+            }
           },
           "wind": {
             "name": "Souffle du Vent",
@@ -77,7 +86,7 @@
             "name": "Souffle de la Pierre",
             "enabled": false,
             "specials": {
-              "masseHache": false
+              "machoireHache": false
             }
           },
           "mist": {
@@ -99,6 +108,41 @@
             "enabled": false,
             "specials": {
               "dentsDeKatana": false
+            }
+          },
+          "flower": {
+            "name": "Souffle de la Fleur",
+            "enabled": false,
+            "specials": {
+              "concentrationFlorissante": false
+            }
+          },
+          "sound": {
+            "name": "Souffle du Son",
+            "enabled": false,
+            "specials": {
+              "partitionFulgurante": false
+            }
+          },
+          "insect": {
+            "name": "Souffle de l'Insecte",
+            "enabled": false,
+            "specials": {
+              "veninLent": false
+            }
+          },
+          "love": {
+            "name": "Souffle de l'Amour",
+            "enabled": false,
+            "specials": {
+              "coeurPassionne": false
+            }
+          },
+          "beast": {
+            "name": "Souffle de la Bête",
+            "enabled": false,
+            "specials": {
+              "instinctSauvage": false
             }
           }
         },

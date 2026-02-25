@@ -77,6 +77,20 @@ function getActiveBreaths(actor) {
 
 /* ------------------ Effets de Souffles (pré-hit et on-hit) ------------------ */
 
+
+function isMeleeRange(attackerToken, targetToken) {
+  try {
+    if (!attackerToken?.center || !targetToken?.center || !canvas?.grid?.size)
+      return false;
+    const gs = canvas.grid.size || 100;
+    const dx = Math.abs(attackerToken.center.x - targetToken.center.x) / gs;
+    const dy = Math.abs(attackerToken.center.y - targetToken.center.y) / gs;
+    return Math.max(dx, dy) * METERS_PER_SQUARE <= METERS_PER_SQUARE;
+  } catch {
+    return false;
+  }
+}
+
 export function applyPreHit(attacker, targetToken, item, ctx = {}) {
   const breaths = getActiveBreaths(attacker);
   const itemBreathKey = normalizeBreathName(item.system?.breath);
@@ -147,23 +161,56 @@ export function applyPreHit(attacker, targetToken, item, ctx = {}) {
     }
   }
 
-  // Placeholders
-  if (itemBreathKey === "wind" && breaths.wind?.enabled)
-    notes.push("Vent — (placeholder)");
-  if (itemBreathKey === "stone" && breaths.stone?.enabled)
-    notes.push("Pierre — (placeholder)");
-  if (itemBreathKey === "serpent" && breaths.serpent?.enabled)
-    notes.push("Serpent — (placeholder)");
-  if (itemBreathKey === "sound" && breaths.sound?.enabled)
-    notes.push("Son — (placeholder)");
-  if (itemBreathKey === "insect" && breaths.insect?.enabled)
-    notes.push("Insecte — (placeholder)");
-  if (itemBreathKey === "love" && breaths.love?.enabled)
-    notes.push("Amour — (placeholder)");
-  if (itemBreathKey === "beast" && breaths.beast?.enabled)
-    notes.push("Bête — (placeholder)");
-  if (itemBreathKey === "moon" && breaths.moon?.enabled)
-    notes.push("Lune — (placeholder : bonus vs Démons)");
+  // Vent
+  if (itemBreathKey === "wind" && breaths.wind?.enabled) {
+    notes.push("Vent — actif");
+  }
+  // Pierre
+  if (itemBreathKey === "stone" && breaths.stone?.enabled) {
+    notes.push("Pierre — actif");
+  }
+  // Serpent
+  if (itemBreathKey === "serpent" && breaths.serpent?.enabled) {
+    if (breaths.serpent.specials?.formeLibre) {
+      const range = Number(item.system?.range ?? METERS_PER_SQUARE) || METERS_PER_SQUARE;
+      const boosted = Number((range + METERS_PER_SQUARE).toFixed(1));
+      ctx.overrideRange = boosted;
+      notes.push(`Serpent — Forme libre : portée ${range}m → ${boosted}m`);
+    }
+  }
+  // Son
+  if (itemBreathKey === "sound" && breaths.sound?.enabled) {
+    if (breaths.sound.specials?.partitionFulgurante) {
+      notes.push("Son — Partition fulgurante : -1 CA sur la cible (fin de round)");
+    }
+  }
+  // Insecte
+  if (itemBreathKey === "insect" && breaths.insect?.enabled) {
+    if (breaths.insect.specials?.veninLent) {
+      notes.push("Insecte — Venin lent : -1 dégâts infligés par la cible (fin de round)");
+    }
+  }
+  // Amour
+  if (itemBreathKey === "love" && breaths.love?.enabled) {
+    if (breaths.love.specials?.coeurPassionne && isMeleeRange(ctx?.attackerToken, targetToken)) {
+      dmgExpr = `${dmgExpr} + 1`;
+      notes.push("Amour — Cœur passionné : +1 dégâts en mêlée");
+    }
+  }
+  // Bête
+  if (itemBreathKey === "beast" && breaths.beast?.enabled) {
+    if (breaths.beast.specials?.instinctSauvage && isMeleeRange(ctx?.attackerToken, targetToken)) {
+      cost = Math.max(baseCost >= 1 ? 1 : 0, cost - 1);
+      notes.push("Bête — Instinct sauvage : coût E -1 en mêlée");
+    }
+  }
+  // Lune
+  if (itemBreathKey === "moon" && breaths.moon?.enabled) {
+    if (breaths.moon.specials?.bonusSolo && ["demon", "demonist"].includes(String(targetToken?.actor?.type || "").toLowerCase())) {
+      dmgExpr = `${dmgExpr} + 1d6`;
+      notes.push("Lune — Frappe de Lune : +1d6 vs démon");
+    }
+  }
 
   return { cost, dmgExpr, ui, notes };
 }
@@ -193,6 +240,44 @@ export async function applyOnHit(
           value: -1, // fallback
           duration: "roundEnd",
           label: "Neige — CA -1d4 (jusqu'à fin du round)",
+        },
+      ],
+    });
+  }
+
+  // Son : CA -1 jusqu'à fin de round
+  if (itemBreathKey === "sound") {
+    await applyEffectsList({
+      source: attacker,
+      target: targetToken,
+      origin: item.uuid,
+      effects: [
+        {
+          target: "target",
+          path: "system.resources.ca",
+          mode: "add",
+          value: -1,
+          duration: "roundEnd",
+          label: "Son — Partition fulgurante : CA -1",
+        },
+      ],
+    });
+  }
+
+  // Insecte : malus simple sur dégâts de la cible jusqu'à fin de round
+  if (itemBreathKey === "insect") {
+    await applyEffectsList({
+      source: attacker,
+      target: targetToken,
+      origin: item.uuid,
+      effects: [
+        {
+          target: "target",
+          path: "system.bonuses.damageFlat",
+          mode: "add",
+          value: -1,
+          duration: "roundEnd",
+          label: "Insecte — Venin lent : dégâts -1",
         },
       ],
     });
