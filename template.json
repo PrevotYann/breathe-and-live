@@ -151,6 +151,53 @@
           "tcbPermanent": false,
           "mondeTransparent": false,
           "lameRouge": false
+        },
+        "profile": {
+          "characterType": "slayer",
+          "combatStyle": "breath",
+          "trainerContext": "",
+          "partnerContext": "",
+          "kasugaiCrow": ""
+        },
+        "combat": {
+          "actionEconomy": {
+            "actionsPerTurn": 1,
+            "bonusActions": 0,
+            "movementMeters": 9,
+            "recoveryBreathRounds": 2
+          },
+          "reactions": {
+            "dodge": true,
+            "counterAttack": true,
+            "draw": true,
+            "medical": true,
+            "special": ""
+          },
+          "injuries": {
+            "severeWounds": 0,
+            "lostLimbs": "",
+            "conditions": ""
+          }
+        },
+        "progression": {
+          "xp": {
+            "value": 0,
+            "next": 100
+          },
+          "training": 0,
+          "rankPoints": 0,
+          "notes": ""
+        },
+        "death": {
+          "state": "alive",
+          "standingDeath": false,
+          "deathNotes": ""
+        },
+        "npc": {
+          "role": "",
+          "threat": "",
+          "behavior": "",
+          "loot": ""
         }
       }
     },
@@ -214,7 +261,18 @@
         "commonItem"
       ],
       "damage": "1d8",
-      "range": 1.5
+      "range": 1.5,
+      "category": "melee",
+      "attackMod": 0,
+      "damageMod": 0,
+      "properties": [],
+      "usesAmmo": false,
+      "ammo": {
+        "value": 0,
+        "max": 0,
+        "reload": ""
+      },
+      "notes": ""
     },
     "technique": {
       "templates": [
@@ -232,7 +290,14 @@
         "commonItem"
       ],
       "speed": 0,
-      "capacity": 0
+      "capacity": 0,
+      "type": "terrestre",
+      "endurance": {
+        "value": 0,
+        "max": 0
+      },
+      "requirements": "",
+      "notes": ""
     },
     "gear": {
       "templates": [

@@ -1,0 +1,3248 @@
+Système JDR
+Demon Slayer 
+
+Créé par - Nautilus 
+Modifié par - SunlightYellow
+Traduit en français par - Rasen
+
+
+V1.1 (28/09/25)
+
+Table des matières
+2
+Création de personnage.……………...…..….3
+Lancers de dés…………………………....….4
+PV, CA & Endurance………………..……….5
+Stats de base………………………..………...6
+Stats dérivées…………………………...……7
+Contexte (Entraîneur)....................................14
+Contexte (Partenaire).....................................15Corbeau Kasugai……………………..……..16
+Compétences…………..……………..……..17
+Compétences extrasensorielles………..……18
+Caractéristiques surhumaines…………..…..19
+Capacités humaines……………………..….21
+Points de réaction………………………..…22
+Attaques de base……………………….…...23
+Choix de classes…………….………….…..24
+Economie d’action……………………….…25
+Effets de combat……………………….…...28Mutilation des membres.……………………30Classe de pourfendeur épéiste………………31
+Techniques de Souffle………………………35	Souffle du Soleil…………………….38
+	Souffle de la Lune…………………...39
+	Souffle de la Flamme………………..40
+	Souffle de l’Eau……………………..41
+	Souffle du Vent……………………...42
+	Souffle de la Foudre…………….…..43
+	Souffle de la Pierre……………...…..44
+	Souffle de la Fleur……………..........45
+	Souffle de la Brume………………….46
+	Souffle du Serpent…...……………….47
+	Souffle du Son..………………………48
+	Souffle de l’Insecte…………………..49
+	Souffle de l’Amour…………………..50
+Souffle de la Bête………………….....51
+	Souffles originaux (Homebrew)
+Souffle de l’Océan…………………...53
+Souffle de l’Ouest…………………....54
+Souffle de la Neige…………………...55
+Créer votre propre technique de Souffle…….56
+Sous-classes du Pourfendeur de Démons……57
+Classe démoniste…………………………….67
+Points de Démonisation……………………..72
+Sous-classes de Démonistes…………………73
+Monter de niveau……………………………75
+Souffle de Concentration Intégral : Constant..85
+Forme Marquée……………………………..86
+Monde Transparent………………………….87
+Lame Rouge…………………………………88
+Outils et Objets……………………………...89
+Attention Médicale………………………….98
+Equipment médical…………………………99
+Transports………………………………….101
+Vêtements………………………………….103
+Nourriture………………………………….104
+Mort………………………………………..106
+Classe de Démons (jouable).........................107
+Supplément 1934…………………………..114
+
+Création de personnage
+Dans Breathe and Live, la création de personnage est simple.
+Tout d'abord, les joueurs doivent déterminer leurs 6 statistiques de base. Il existe plusieurs méthodes pour les trouver, mais elles fonctionnent toutes aussi bien.
+Deuxièmement, les joueurs choisissent leur style de combat. Deux options s'offrent à eux dès le départ : utiliser des techniques de Souffle en tant que pourfendeur ou manger de la chair démoniaque grâce à la classe démoniste. Ce choix peut s'avérer difficile, car il influence le déroulement des combats pour le reste de la campagne.
+Troisièmement, les joueurs ajoutent un texte d'ambiance expliquant le temps passé à s'entraîner. Ces détails ne sont pas essentiels au gameplay, mais ils contribuent grandement à l'écriture des personnages.
+Quatrièmement, et enfin, décidez, en fonction d'un nombre de points défini, si le joueur peut choisir ses capacités extrasensorielles, ses caractéristiques surhumaines ou optimiser l'apprentissage de toutes ses techniques de respiration.
+Une fois ces étapes terminées, la création du personnage est terminée.
+3
+
+Lancers de dés
+Le système de jets de dés Breath & Live est similaire à celui des autres jeux de rôle populaires sur table. Les joueurs utilisent un d20 à chaque fois et ajoutent leurs compétences et aptitudes aux jets appropriés. La seule différence notable réside dans la séparation des compétences de base et des compétences dérivées.
+Les compétences de base sont le plus grand des deux groupes de nombres, composé de six statistiques de base, auxquelles sont associés des modificateurs appliqués par les joueurs lors des jets, égaux au total de la statistique de base moins un. Les seuls bonus accordés à ces jets avec des statistiques de base proviennent généralement de capacités extrasensorielles ou de traits surhumains.
+Les compétences dérivées sont, plus simplement, utilisées pour les scènes de jeu de rôle hors combat. Ces bonus aux jets de d20 d'un joueur proviennent du total de sa compétence dérivée, auquel s'ajoutent les bonus liés aux vêtements, à l'équipement ou à d'autres compétences notables.
+4
+
+Déterminer les PV, la CA et les Réactions
+Les Points de Vie fonctionnent fondamentalement de la même manière pour tous les personnages. Chaque épéiste commence avec 20 points de vie de base. La santé n'augmente de façon permanente que lors des montées de rang ou des améliorations de santé acquises grâce à l'entraînement.
+L'endurance (E) est déterminée par [20 + Courage].
+L'endurance (E) est utilisée pour effectuer des formes de Souffle et utiliser le Souffle de Concentration Intégrale. Si un épéiste atteint 0 d'endurance, il est contraint de récupérer pendant un tour et ne peut pas attaquer. S'il ne peut pas effectuer de Souffle de récupération pendant 2 rounds après avoir atteint 0, il perd connaissance.
+La classe d'armure (CA) du joueur est déterminée par [10 + Vitesse].
+Le nombre initial de Points de Réaction est déterminé par (5 + Vitesse + Intellect). Les Points de Réaction servent de protection contre la mort instantanée. Grâce à ces Points de Réaction, les joueurs peuvent esquiver, attaquer, recharger ou utiliser tout autre moyen débloqué à leur guise pendant le combat. Les Points de Réaction se régénèrent complètement pendant le repos.
+5
+
+Décider des Statistiques de base
+Pour déterminer les statistiques de base d'un joueur, deux méthodes principales permettent d'obtenir rapidement et facilement des valeurs équilibrées.
+La première méthode consiste à tirer aux dés: chaque joueur lance un dé à six faces et attribue le résultat à une statistique de base. Les joueurs peuvent choisir d'attribuer les résultats après avoir lancé six dés, ou bien attribuer un résultat à chaque lancer.
+La seconde méthode consiste à attribuer des valeurs numériques aux statistiques (0, 1, 2, 3, 4, 5). Les joueurs débutant à un niveau plus élevé peuvent ajuster ces valeurs en conséquence. Chaque statistique de base est ensuite modifiée en soustrayant 1 à sa valeur totale.
+6
+Force
+Utilisé comme base pour la force. Tout exercice nécessitant une force physique importante peut nécessiter un test de force.
+Exemples : soulever, lancer, porter, frapper avec force, presser, frapper ou même balancer.
+Finesse
+Utilisé comme base pour la dextérité, l'agilité et la légèreté du corps.
+Exemples : saut en longueur, gymnastique et acrobaties.
+Ceci s'étend au contrôle de l'épée et à la capacité à balancer correctement.
+Courage
+Utilisé comme base pour le bien-être physique et la capacité à ignorer les dégâts.
+Exemples : empoisonnement, ingestion de substances toxiques, adaptation à de nouvelles conditions et coups violents.
+Vitesse
+Utilisé comme base pour la vitesse brute et la réactivité. Une compétence peu utile qui peut s'avérer particulièrement efficace dans certaines conditions.
+Exemples : accélérations, prouesses athlétiques en succession rapide ou déplacement d'une cible à l'autre.
+Social
+Ce guide sert de référence pour tout ce qui requiert un grand talent de persuasion.
+Il aborde des sujets tels que le charme, le mensonge, l'interrogatoire, la capacité à distinguer la vérité du mensonge, ou encore la persuasion.
+Intellect
+Utilisé comme base pour toute activité intellectuellement stimulante.
+Exemples: la perception, la compréhension, l'investigation, la mise en relation des indices, l'éducation générale et médicale, ainsi que la compréhension en général.
+
+Statistiques dérivées
+Bien que non pertinentes pour le combat, les statistiques dérivées offrent de nombreux avantages aux joueurs dans des situations non conflictuelles ou en cas de menace.
+Après avoir défini leurs statistiques de base, les joueurs pourront ensuite attribuer des points à leurs statistiques dérivées.
+Ces dernières sont calculées à partir des statistiques de base : plus le joueur possède de points dans une statistique de base, meilleures seront ses statistiques dérivées.
+Même si elles ne sont pas utilisées pour les jets de dés lors des combats, les statistiques dérivées apportent tout de même un certain avantage ; par exemple, elles permettent d'augmenter les dégâts des attaques de base, comme les coups d'épée ou les tirs à distance.
+7
+
+Force
+(Stats dérivées)
+Athlétisme - Aptitude à effectuer de longs sauts, à courir à grande vitesse, à porter des objets lourds, à pratiquer le parkour, etc.
+Puissance brute - Force physique naturelle du corps, issue de la génétique ou de l'entraînement, et qui se manifeste par la morphologie corporelle.
+
+8
+
+Finesse
+(Stats dérivées)
+Dextérité - Capacité à se déplacer et à agir avec agilité.
+Équilibre - Capacité à maintenir sa stabilité, tant sur le plan physique que mental.
+Précision - Capacité à viser avec précision et à utiliser les outils avec dextérité.
+9
+
+Courage (Stats dérivées)
+Mithridatisme - Capacité à résister aux poisons courants et aux poisons rares.
+Endurance - Capacité à rester ferme dans ses convictions.
+Tolérance - Résistance aux substances non toxiques qui peuvent affecter le corps, telles que les aliments, l'alcool et les drogues.
+10
+
+Vitesse (Stats dérivées)
+Réflexes - Capacité à réagir rapidement à tout stimulus soudain.
+Agilité - Se déplacer, sauter ou plonger avec équilibre et élégance.
+Rapidité - Maîtrise des mouvements rapides et précision des gestes.
+Ruse - Discrétion, furtivité et capacité à se cacher.
+11
+
+Social
+(Stats dérivées)
+Manipulation - Capacité à tromper ou à induire en erreur par le mensonge, la ruse ou la manipulation.
+Performance - Capacité à divertir, à jouer un rôle ou à créer une scène.
+Intimidation - Capacité à inspirer la peur ou à intimider les autres.
+Perception - Sens aigu de l'orientation spatiale et compréhension fine des interactions sociales.
+Intuition - Aptitude innée à comprendre intuitivement les lieux, les personnes ou les situations.
+12
+
+Intellect (Stats dérivées)
+Médecine - Connaissances médicales sur le corps humain et les médicaments.
+Nature - Connaissances en topographie, biologie, géologie, etc.
+Sciences - Connaissances scientifiques en chimie, physique, ingénierie, etc.
+Enquête - Capacité à déceler des indices ou des détails invisibles.
+Survie - Capacité à satisfaire les besoins fondamentaux de l'être humain (nourriture, eau, abri, etc.).
+13
+
+Contexte (Entraîneur)
+14
+Votre entraîneur était…
+Un épéiste ordinaire
+Un ancien Hashira retraité
+Un Hashira en profession
+0pts
+1pt
+2pts
+Pendant votre formation, vous...
+Avez eu des difficultés, celà a pris plus de temps que d'habitude
+Avez eu une année plutôt classique
+Etiez plein de talent
+0pts
+1pt
+2pts
+Votre entraîneur vous a envoyé en Sélection Finale avec…
+Pas de vêtements de reconnaissance
+Un vêtement discret permettant de s'identifier
+Un style immédiatement reconnaissable
+0pts
+1pt
+2pts
+En utilisant 3 nouveaux points, décrivez sous quelle influence votre escrimeur s'est formé, ses performances lors de l'entraînement et les compétences qu'il a acquises.
+
+Contexte (Partenaire)
+15
+Que pense votre corbeau Kasugai de vous…?
+Il ne vous aime pas
+Il vous apprécie
+Il vous adore
+0pts
+1pt
+2pts
+En utilisant 3 points supplémentaires, choisissez quel corbeau Kasugai sera le compagnon de votre pourfendeur et quelles caractéristiques il pourra posséder.
+Il s'agit de votre corbeau… c'est…
+Un vieux corbeau
+C’est un jeune corbeau 
+C’est même pas un corbeau ?!
+0pts
+1pt
+2pts
+Si ce n'est pas un corbeau, c'est un/une… (1d12)
+Moineau
+Grue
+Vautour
+Buse à queue rousse
+Geai bleu
+Canari
+Toucan
+Chouette
+Martin-pêcheur
+Flamant
+Albatros
+Paon
+
+Corbeau Kasugai
+16
+Récupérer un petit objet
+Votre corbeau tentera de récupérer un petit objet correspondant à votre description dans les environs.
+Transmettre un message (court)
+Votre corbeau pourra transmettre presque instantanément un court message ou une note à un destinataire situé à proximité.
+Envoyer un message (long)
+Votre corbeau pourra, au cours d'une seule séance, transporter un message vers une destination, une personne ou une entité située à distance.
+Porter un objet
+Votre corbeau portera un petit objet que vous lui fournissez pendant une durée prédéterminée ou jusqu'à ce que certaines conditions soient remplies.
+Chercher ______
+Votre corbeau cherchera activement l'objet que vous souhaitez et vous l'apportera s'il est assez petit, ou vous guidera vers l'endroit souhaité.
+Les corbeaux de Kasugai, ainsi que d'autres oiseaux affectés par le corps, accompagnent les samouraïs lors de leurs voyages. Voici quelques commandes que les joueurs peuvent donner à ces corbeaux ou autres oiseaux à tout moment. Les corbeaux de Kasugai ont 1 PV, 3 de CA et peuvent effectuer 1 action au combat.
+
+Compétences de départ
+En utilisant un système de points, attribuez à votre pourfendeur 15 points pour lui conférer des talents surnaturels, des formes spéciales et des caractéristiques physiques exceptionnelles !
+17
+Caractéristiques surnaturelles
+Formes de Souffle
+(chacune vaut un point)
+Capacités extrasensorielles
+15 Points
+
+Capacités extrasensorielles
+18
+Sens olfactif :
+Niveau 1 : Les joueurs bénéficient d'un bonus de +3 à tous les tests de perception liés à l'odorat.
+Niveau 2 : Les joueurs bénéficient d'un bonus de +4 aux tests de perception et peuvent détecter les démons à une distance de 9 mètres.
+Niveau 3 : Les joueurs bénéficient d'un bonus de +5 aux tests de perception, d'une portée de détection de 18 mètres et peuvent déterminer le niveau d'un démon lorsqu'ils sont à proximité.
+Sens auditif :
+Niveau 1 : Les joueurs bénéficient d'un bonus de +3 à tous les tests de perception liés à l'ouïe.
+Niveau 2 : Les joueurs bénéficient d'un bonus de +4 aux tests de perception et peuvent détecter les démons à une distance de 9 mètres.
+Niveau 3 : Les joueurs bénéficient d'un bonus de +5 aux tests de perception, d'une portée de détection de 18 mètres et peuvent déterminer les points de vie des humains et des démons lorsqu'ils sont à proximité.
+Vision :
+Niveau 1 : Les joueurs bénéficient d'un bonus de +3 à tous les tests de perception liés à la vue.
+Niveau 2 : Les joueurs bénéficient d'un bonus de +4 aux tests de perception et peuvent détecter les démons à une distance de 9 mètres.
+Niveau 3 : Les joueurs bénéficient d'un bonus de +5 aux tests de perception, d'une portée de détection de 18 mètres et peuvent prédire l'action d'un démon au début de son tour, quel que soit son niveau, à condition d'être à proximité.
+Chaque capacité extrasensorielle coûte 3 points et ne peut être améliorée que par l'étude. Vous pouvez étudier ces capacités jusqu'à deux fois, atteignant ainsi le niveau 3, ce qui vous confère une capacité encore plus grande.
+
+Goût :
+Niveau 1 : Le joueur obtient un bonus de +3 à tous les tests de perception liés au goût.
+Niveau 2 : Le joueur obtient un bonus de +4 aux tests de perception et peut détecter les démons à une distance de 9 mètres.
+Niveau 3 : Le joueur obtient un bonus de +5 aux tests de perception, une portée de détection de 18 mètres et la capacité à déterminer les statistiques de tout démon dont il consomme la chair ou qu'il goûte.
+
+Toucher :
+Niveau 1 : Le joueur obtient un bonus de +3 à tous les tests de perception liés au toucher.
+Niveau 2 : Le joueur obtient un bonus de +4 aux tests de perception et peut détecter les démons à une distance de 9 mètres.
+Niveau 3 : Le joueur obtient un bonus de +5 aux tests de perception, une portée de détection de 18 mètres et la capacité à déterminer les points de vie, de réactivité et de sang d'un démon simplement en le touchant.
+
+Caractéristiques surhumaines
+19
+Parties du corps renforcées : Le joueur choisit une partie du corps qui lui confère une armure naturelle de +2. Cette caractéristique réduit également les dégâts subis sur cette zone de -8.
+Coût en points : 2
+
+Force physique accrue : Le joueur bénéficie d'une augmentation substantielle de sa force physique, lui conférant un bonus de +3 en combat et un bonus de +6 à la puissance brute en permanence.
+Coût en points : 3
+
+Agilité et souplesse accrues : Le joueur bénéficie d'une amélioration considérable de son agilité et de sa souplesse, lui conférant un bonus de +3 à la finesse en combat et un bonus de +6 à la dextérité en permanence.
+Coût en points : 3
+
+Intelligence supérieure : Le joueur bénéficie d'un bonus de +3 aux tests d'intelligence en combat, ainsi que d'un bonus de +3 à toutes ses statistiques dérivées en permanence.
+Coût en points : 3
+
+Connaissances médicales : Le joueur peut soigner automatiquement 1d6+2 points de vie sans avoir besoin de passer un test médical, à condition de disposer de bandages ou d'autre matériel médical.
+Coût en points : 3
+
+Maîtrise des armes à feu : Le joueur maîtrisant les armes à feu peut, lors de son tour, réussir automatiquement une attaque à distance contre une cible qui n'a pas utilisé de point de réaction.
+Coût en points : 3
+
+Esprit : Les joueurs dotés d'un esprit résilient peuvent surpasser leurs limites et utiliser une technique de respiration ultime, même sans la force vitale requise, une fois par combat.
+Coût en points : 1
+
+Sang résistant : Les poisons des disciples de rang inférieur ou égal à celui du joueur sont sans effet.
+Coût en points : 5
+
+Génie : Les joueurs dotés de ce talent peuvent apprendre des techniques de rang supérieur deux niveaux plus tôt que les autres. De plus, ils peuvent pratiquer et maîtriser les techniques de respiration solaire.
+	Coût en points : 6
+
+Estomac d'acier : Permet au joueur d'obtenir un dé supplémentaire de points de sang démoniaque (BDP) en consommant de la chair de démon.
+Prérequis : Le joueur doit être un utilisateur de la technique de démoniste.
+	Coût en points : 4
+
+20
+Capacités humaines
+
+Capacités humaines
+Ce sont des capacités communes à toutes les classes; chaque joueur peut les utiliser.
+
+Attaque : Chaque joueur peut utiliser son action pour attaquer un adversaire avec les compétences disponibles.
+
+Utilisation d'objets : Les joueurs peuvent utiliser des objets pendant leur tour. Certains objets peuvent avoir des prérequis ; tant que ces prérequis ne nécessitent pas plus d'un tour, le joueur peut effectuer les tests nécessaires pendant son tour.
+
+Attendre : Attendre son tour permet au joueur de passer son tour sans action, mais il pourra agir ultérieurement.
+
+Déplacement : Le joueur peut se déplacer à sa vitesse de déplacement maximale pendant son tour, avant ou après avoir utilisé son action.
+
+Sprinter : Les joueurs peuvent choisir de sprinter au lieu d'utiliser leur action, ce qui leur permet de parcourir une distance supplémentaire. La distance parcourue est de 1.5 mètres multipliés par la vitesse de déplacement.
+
+Éviter : Lorsqu'il est visé par une attaque, un joueur peut choisir de ne pas utiliser de point de réaction et tenter un évitement basé sur la finesse. Si l'évitement réussit (en battant le jet d'attaque), le joueur peut se déplacer librement et ne subit aucun dégât. En cas d'échec, le joueur ne pourra pas utiliser de point de réaction contre l'attaque.
+21
+Utilisation des points de réaction : Les joueurs disposent d'un certain nombre de points de réaction. Ces points simulent les réflexes rapides et instinctifs que les chasseurs de démons doivent utiliser pour survivre lors des combats. Les réactions peuvent être utilisées à tout moment, pendant le tour de n'importe quel joueur, et la priorité est accordée à celles utilisées en dernier.
+
+Demande d'assistance : Si un joueur estime que le niveau de menace dépasse largement ses compétences, un code d'urgence spécial lui permettra de solliciter rapidement l'aide de chasseurs de démons plus expérimentés.
+
+Utilisation des corbeaux : Les corbeaux Kasugai ont toujours été d'une grande aide pour les chasseurs de démons. Ces oiseaux sont formés pour répondre à toutes les demandes qu'ils ont apprises (voir leur fiche).
+
+Demande d'objets : Pendant les missions, des créneaux horaires sont prévus lors du briefing. Ces créneaux permettent de commander des objets auprès du quartier général. Les Kakushi livreront alors le nombre d'objets demandés, sous réserve que le chasseur de démons ait le droit de les demander. Certains objets ne peuvent être demandés qu'un certain nombre de fois par mission, en fonction du rang du chasseur.
+
+Conduite : Les joueurs peuvent conduire ou piloter n'importe quel véhicule. La conduite peut impliquer des tests de compétence, nécessitant des jets de dés en fonction du niveau de difficulté.
+
+Repos : Les joueurs peuvent se reposer entre les combats pour récupérer de l'endurance.
+
+22
+Utilisation de Points de Réaction (RP)
+Réaction d'esquive
+1
+Utiliser 1 point vous permettra d'esquiver automatiquement une attaque adverse.
+2
+Utiliser 2 points, et vous pourrez tirer vers vous n'importe quelle cible.
+Réaction d’attaque
+1
+L'utilisation d’ 1 point permet d'effectuer une attaque, même en dehors de son tour, à tout moment.
+2
+Utiliser 2 points garantit un coup assuré, même si l'adversaire utilise un point de parade.
+Réaction de dégainage
+1
+En dépensant 1 point, un joueur pourra changer d'arme sans utiliser d'action.
+2
+En utilisant 2 points, vous pourrez attaquer avec cette arme, puis revenir à votre arme précédente.
+Réaction médicale
+1
+En utilisant 1 point, vous réussissez automatiquement un test de médecine ou vous pouvez activer un objet de soin sur une cible.
+2
+En dépensant 2 points, les joueurs pourront soit récupérer la quantité maximale de points de vie grâce à un objet de soin, soit réussir automatiquement un test de médecine.
+*Démoniste seulement
+*Les joueurs commencent avec l'esquive
+*Débloqué avec des compétences
+
+*Débloqué avec des compétences
+*Débloqué avec des compétences
+
+Points de réaction (RP) : Les points de réaction (RP pour “Reaction Points”) représentent la rapidité de réflexe indispensable aux chasseurs de démons pour survivre et vaincre leurs adversaires. Plusieurs types de réactions peuvent être débloqués au cours de la campagne, mais les joueurs commencent avec l’esquive uniquement.
+Récupération des RP : Les joueurs ne peuvent récupérer leurs points de réaction qu'après 8 heures de repos.
+Utilisation des points : Les joueurs peuvent utiliser un ou deux points pour chaque type de réaction. Un point permet d'activer la réaction, généralement pour un seul personnage (soi-même ou un allié). Deux points sont généralement nécessaires lorsque la réaction est utilisée pour aider un autre joueur ou pour garantir le succès de l'action.
+Réaction de soin
+1
+En dépensant 1 point, vous lancez automatiquement un dé de soin dont la valeur correspond au rang le plus élevé du sang de démon consommé.
+2
+Utiliser 2 points de soin aura un effet similaire à l'utilisation d'un seul point, mais le résultat ne sera pas déterminé par un jet de dé : les points de vie restaurés seront simplement le maximum autorisé par le dé.
+
+23
+Lames
+Lame Nichirin - Standard | 1d6 |
+Portée : 1.5 m
+Lame Nichirin - Courbée | 1d8 |
+Portée : 1.5 m
+Lame Nichirin - Wakizashi | 1d4 |
+Portée : 1.5 m
+Lame Nichirin - À pointe fine | 1d4 |
+Portée : 1.5 m
+*Se recouvre automatiquement de poison à chaque fois qu'elle est rangée.
+Lame Nichirin - À dents de scie | 2d6 |
+Portée : 1.5 m
+Lame Nichirin - Masse | 1d12 |
+Portée : 9 m
+Lame Nichirin - Fouet | 1d10 |
+Portée : 9 m
+Double épée-chaîne Nichirin | 2d10 |
+Portée : 3 m
+
+Armes à feu
+Pistolet | 1d8 |
+Portée : 45 m
+Fusil | 1d12 |
+Portée : 90 m
+Fusil de tranchée | 3d6 |
+Portée : 15 m
+Contrairement aux techniques de Souffle, les attaques de base ne sont pas systématiquement efficaces et nécessitent un jet de dé (d20) pour toucher. Le résultat de ce jet doit être égal ou supérieur à la défense de la cible. Ce jet de dé est affecté par un bonus de force ou de finesse ; le bonus non utilisé est ajouté aux dégâts. Les attaques de base ne consomment aucune endurance. Bien que les dégâts d'une attaque de base semblent faibles comparés à ceux des techniques de respiration, sachez qu'une attaque de base peut instantanément tuer un humain adulte. Les armes à feu nécessitent un jet de finesse pour toucher la cible ; contre des objets, c'est la précision qui compte. En combat, la précision des armes à feu est ajoutée aux dégâts.
+Attaques de base
+Mains nues
+Mains nues | 1d4+Force |  
+Portée: 1.5m
+
+24
+Choisir de la Classe
+Pourfendeur de démon
+Style de combat
+Les joueurs incarnant un épéiste peuvent choisir parmi une variété de styles de combat, offrant de nombreuses options pour les combats à courte, moyenne et longue portée. Cependant, le rôle d'épéiste implique des capacités de guérison très limitées et nécessite des périodes de repos. Bien que les épéistes infligent des dégâts considérables, leur capacité de survie est faible.
+
+Concentration
+Les joueurs de cette classe doivent généralement se concentrer sur la Finesse, la Force ou la Vitesse.
+
+Démoniste
+Style de combat
+Les joueurs qui choisissent la classe de démoniste adoptent un style de combat très agressif et au corps à corps, consommant la chair des démons et affrontant ces créatures sans peur. Leurs capacités de guérison sont exceptionnelles et ils peuvent même survivre à des blessures mortelles. Bien qu'ils infligent moins de dégâts que d'autres classes, leur résistance est incomparable. De plus, la puissance d'un démoniste évolue en fonction de celle de son adversaire : quel que soit le niveau de force de l'ennemi, un démoniste peut rivaliser.
+
+Concentration
+Les joueurs qui choisissent la classe de démoniste doivent se concentrer principalement sur leur Courage et leur Force.
+
+25
+Economie d’action
+
+26
+Action
+En combat, une action représente le cœur du tour de jeu d'un joueur et permet d'effectuer des attaques, des tests de compétence ou d'autres manœuvres. Chaque joueur gagne une action pour chaque tranche de 10 points de son attribut Vitesse.
+
+Réaction
+Les points de réaction permettent aux joueurs de réagir aux situations dynamiques pendant un tour, qu'il s'agisse d'attaquer, d'esquiver ou d'apporter leur aide. Ces points peuvent être utilisés à tout moment pendant le tour, offrant ainsi aux joueurs la flexibilité nécessaire pour se défendre, contre-attaquer ou agir opportunément, tant qu'ils disposent de points de réaction.
+
+Déplacement
+Les joueurs disposent d'une portée de déplacement standard de 30 pieds, utilisable avant ou après leur action. Les attaques ou les actions peuvent être effectuées à tout moment pendant la phase de déplacement, permettant aux joueurs de contrôler pleinement leur positionnement en combat.
+Actions hors attaque
+Il s'agit d'un ensemble d'actions qui ne sont pas des attaques, mais qui nécessitent néanmoins une action complète. 
+Exemples :
+Changer d'arme
+Recharger
+Revêtement d'arme
+Fabrication
+Commander votre corbeau
+Classe de Pourfendeur
+Souffle de Récupération
+Classe de Démonistes
+Amélioration de Compétence
+Consommation de Chair de Démon
+
+Actions bonus
+Actions réalisables à volonté pendant votre tour, affectant votre personnage sans nécessiter d'action complète. Les objets, capacités, etc., seront considérés comme des actions bonus s'ils ne nécessitent pas d'action complète.
+Economie d’action
+
+27
+Combat
+
+28
+Brûlure
+La cible subit 1 point de dégâts de feu par tour.
+
+Saignement
+La cible perd 1d4 points de vie par tour à cause des saignements. Les saignements peuvent être soignés par le Souffle de guérison* ou des bandages. *avec TC/tcb : permanent
+
+Gel
+Un membre ou le corps de la cible devient inutilisable pendant 1d4 tours.
+
+Fureur
+La cible est incapable d'agir de sa propre initiative et attaque toute cible à portée avec des attaques de base.
+
+Ralenti
+La cible ne peut effectuer qu'une action tous les deux tours.
+
+Triste
+La cible affectée par la tristesse est submergée par la culpabilité et doit réussir un test d'endurance (de DC 15).
+
+Emprisonné
+La cible est piégée par une technique de magie sanguine et est incapable de bouger jusqu'à ce qu'elle soit libérée (ou que les conditions de la technique soient remplies).
+
+Équilibre perturbé
+La cible ne peut pas utiliser de points de réaction pour le reste du tour.
+
+Paralysé
+La cible est incapable de bouger, mais peut encore parler.
+
+Contrôlé
+La cible perd le contrôle de son corps à cause d’une technique de magie sanguine.
+
+Empoisonné
+La cible subit une pénalité sur ses caractéristiques ou des dégâts équivalents à la puissance du poison à chaque tour.
+
+Charmé
+Le personnage charmé ne peut pas seulement infliger de dégâts à son charmeur, mais il considère également les ennemis de ce dernier comme ses propres ennemis.
+
+Aveuglé
+La cible échoue automatiquement aux tests de perception nécessitant la vue.
+
+Sourd
+La cible échoue automatiquement aux tests de perception nécessitant l'ouïe.
+
+
+Effets
+
+29
+Anosmie
+La cible échoue automatiquement aux tests de perception nécessitant l'odorat.
+
+Paresthésie
+La cible échoue automatiquement aux tests de perception nécessitant le toucher.
+
+Ageusie
+La cible échoue automatiquement aux tests de perception nécessitant le goût.
+
+Enfumé
+Les personnages affectés par la fumée subissent une perte de 1 point d'endurance par tour et par niveau d'empoisonnement. À 10 niveaux d'empoisonnement, ils perdent connaissance.
+
+Maudit
+Les cibles d'une malédiction sont soumises à ses effets jusqu'à leur mort ou jusqu'à ce que la malédiction soit levée. Ces effets peuvent varier : perte de points de vie, diminution des caractéristiques, voire marquage pour la mort après un certain nombre de tours, selon le démon qui a lancé la malédiction.
+
+30
+Aide à la lecture
+[Membre] [Pourcentage de PV]
+Appendice [Pourcentage]
+
+Démembrements humains
+
+Bras [20% PV totaux]
+Mains
+Doigts
+Jambes [20% PV totaux]
+Orteils
+Démembrement sensoriels
+Oreilles
+Langues
+Yeux
+Nerfs
+
+Démembrements des démons
+
+Bras [20% PV totaux]
+Dégâts des bras infligés divisés par 2.
+Jambes [20% PV totaux]
+Vitesse de déplacement divisée par 2.
+Ailes
+Impossibilité de voler.
+Queues
+Vitesse de déplacement réduite de 3 mètres.
+Tentacules
+Vitesse de déplacement réduite de 10% par tentacule
+
+La mutilation, en tant que mécanisme de jeu, permet aux démons et aux humains de renverser la situation en plein combat. Pour les humains, la capacité à neutraliser les démons est presque indispensable ; c'est l'un des rares moyens de rétablir l'équilibre. Pour les démons, en revanche, c'est un excellent moyen d'humilier leurs adversaires plus faibles et de les faire souffrir.
+
+Enlever un membre ou une partie du corps affecte presque toujours les capacités des démons comme des humains. Pour ce faire, il suffit de cibler une partie spécifique du corps lors d'une attaque et de lui infliger un certain nombre de dégâts en une seule attaque.
+
+Les membres et leurs appendices possèdent généralement une quantité de points de vie équivalente de 10% à 20% des points de vie totaux de l'ennemi. Cela signifie que le joueur doit infliger ce montant de dégâts en une seule attaque pour que le membre soit arraché, mais uniquement pour les démons. Les humains peuvent perdre un membre même si les dégâts sont infligés au fil de plusieurs tours.
+Mutilation des membres
+
+31
+Classe du Pourfendeur de Démons
+
+Niveau 1
+Mizunoto 
+RANG DE DÉPART
+Toutes les capacités et statistiques de départ.
+Niveau 2Mizunoe
++1 à une Stat de Base
++3 PV
++1 Slot d’Etude
++5 Endurance
+Niveau 3
+Kanoto
++1 à une Stat de Base
++3 PV
+Dé de dégâts d’Armes : +1
++5 Endurance
+Niveau 4
+Kanoe
++1 à une Stat de Base
++3 PV
++1 Slot d’Etude
++5 Endurance
+Niveau 5
+Tsuchinoto
++1 à une Stat de Base
++3 PV
+Dé de dégâts d’Armes : +1
++5 Endurance
+Niveau 6
+Tsuchinoe
++1 à une Stat de Base
++3 PV
++1 Slot d’Etude
++5 Endurance
+Niveau 7
+Hinoto
++1 à une Stat de Base
++3 PV
+Dé de dégâts d’Armes : +1
++5 Endurance
+Niveau 8
+Hinoe
++1 à une Stat de Base
++3 PV
++1 Slot d’Etude
++5 Endurance
+Niveau 9
+Kinoto
++1 à une Stat de Base
++3 PV
+Dé de dégâts d’Armes : +1
++5 Endurance
+Niveau 10
+Kinoe
++5 à une Stat de Base
++3 PV
+
++1 Slot d’Etude
+
++5 Endurance
+Niveau 11
+Hashira
++10 Réactions
++3 PV
++2 aux formes de Souffle
++15 Endurance
+Pourfendeur de Démons
+Progression de niveau
+
+Compétences de Classe du Pourfendeur de Démons
+L'endurance (Stamina) agit comme une réserve d'énergie dans laquelle les Pourfendeur puisent pour activer le TCB et les techniques de souffle suivantes, qui sont les principales armes dont disposent les Pourfendeurs contre leurs ennemis démoniaques. Les réserves d'endurance augmentent à chaque niveau et peuvent être encore augmentées avec de la nourriture et des capacités acquises plus tard. Les joueurs peuvent dormir pour récupérer ou prendre des mesures pour utiliser la respiration de récupération.
+Le Souffle de Concentration Intégral (TCB en V.O.) est la clé pour utiliser de nombreuses techniques de classe Pourfendeur de Démons, nécessaires pour utiliser les formes de techniques de souffle.
+Les techniques de Souffle sont des techniques incroyablement difficiles à apprendre qui utilisent le souffle de concentration intégral pour s'activer. Ces attaques touchent automatiquement leur cible à moins d'être esquivées et infligent des dégâts fantastiques, tout en coûtant de l'endurance à activer.
+Le Souffle de récupération est une action qui peut être effectuée au cours d'un tour et qui permet à un joueur de récupérer 1d8 par rang d'endurance. Vous ne pouvez pas le faire en utilisant le Souffle de Concentration Intégral.
+Équipement de départ :
+Arme de Souffle
+Pistolet de votre choix
+(2x) bandages (1x) pansement compressif OU (1x) kit de premiers secours
+33
+Pourfendeur de Démons
+Informations de Classe
+
+34
+Techniques de Souffle
+Techniques de Souffle	Les techniques de Souffle et leurs différentes formes peuvent être apprises dès le début du jeu par n'importe quel personnage. Chaque personnage peut trouver un instructeur ou un praticien spécialisé dans la technique de respiration de son choix. Ces mentors peuvent être des guides imprimés, des personnages réels ou même des PNJ représentant les Hashira présents dans le jeu.
+Les techniques de Souffle touchent toujours l'adversaire, sauf si le démon utilise un point de réaction pour les esquiver. Dans ce cas, il n'est pas nécessaire de vérifier la défense de l'adversaire (CA) ; les techniques de souffle sont toujours efficaces.
+Les techniques de souffle consomment de l'endurance. Si un joueur utilise ces techniques sans précaution, son niveau d'endurance peut rapidement diminuer, et s'il atteint 0 point d'endurance, il risque de s'évanouir ou de devenir incapable d'agir.
+Les techniques de souffle, dans ce système (et non dans le système canonique), produisent effectivement des effets élémentaires, mais cela sert surtout à ajouter du piquant et à enrichir le jeu de rôle.
+Techniques de Souffle (Hors de combats)	Utiliser des techniques hors combat est un excellent moyen de détruire les décombres ou d'éliminer les obstacles.
+Apprendre des techniques (Post Création de Personnage)	Si un joueur décide d'utiliser un point d'apprentissage pour acquérir une nouvelle technique, il devra trouver un moyen de l'apprendre. Qu'il trouve un guide dans un livre, qu'il prenne des cours avec un professeur ou qu'il écoute un enregistrement audio, cela n'a pas d'importance. Cette nouvelle technique sera alors apprise dans son intégralité, avec toutes ses variantes, même si sa maîtrise totale nécessitera du temps.
+
+35
+Techniques de Souffle
+(Canon)
+
+36
+Description générale des styles de danse, leurs mouvements caractéristiques et les traits de personnalité communs à leurs pratiquants.
+Forme de Souffle
+Conditions requises pour ce style
+Sens requis |
+Caractéristiques requises |
+Armes requises |
+Comment lire les données des fiches techniques de souffle
+Compétences spéciales obtenues après avoir maîtrisé toutes les formes de cette technique de souffle.
+1
+Nom de la Forme
+Description de la Forme
+2
+Nom de la Forme
+Description de la Forme
+3
+Nom de la Forme
+Description de la Forme
+4
+Nom de la Forme
+Description de la Forme
+
+37
+Forme #
+Nom de la Forme
+Description de la Forme
+Stat Utilisée
+Coût Endurance
+Portée
+Dégâts
+Lecture des Formes en
+Vue Liste
+La version détaillée des Formes des Différents Souffles est disponible en cliquant sur le lien suivant : 
+
+
+https://docs.google.com/spreadsheets/d/1v1y8eU4frpKhp4zP40G7VzfwJngzwh03hXMGTFEQeo8/edit?usp=sharing
+
+Le Souffle du Soleil est sans aucun doute la technique de Souffle la plus puissante qui existe. Ceux qui maîtrisent cette technique parviennent à exécuter des coups de sabre précis et rapides, et maîtrisent parfaitement toutes les techniques d'épée. Les flammes éclatantes, plus chaudes que le soleil, que cette technique génère, inspirent une telle terreur aux démons qu'elles peuvent les plonger dans la panique. Les utilisateurs de cette technique dégagent souvent une aura d'une intensité rare et, paradoxalement, une grande douceur.
+38
+Souffle du Soleil
+Prérequis du souffle
+Sens | Aucun
+Carac. | Génie
+Armes | Katana Nichirin
+Compétence spéciale | Élu
+
+Ceux qui maîtrisent la technique du Souffle du Soleil voient leur consommation d'endurance divisée par 2 pour toutes les formes, et leurs dégâts triplés en mode « Marque ». En plus de ces avantages, les utilisateurs du Souffle du Soleil n'ont plus besoin de choisir des compétences supplémentaires ; ils apprennent automatiquement la compétence « TCB : Permanent » au début du jeu, la forme « Marque » lors de leur premier combat contre un démon lunaire, et les compétences « Vision pénétrante » et « Lame rouge » lorsqu'ils vainquent seuls un démon lunaire. 
+1
+Valse
+Le joueur effectue un coup de lame vertical descendant en arc de cercle.
+2
+Ciel d'Azur Sans Nuages
+Le joueur effectue un mouvement de rotation et de torsion du buste en cercle, ce qui déclenche une attaque à 360°.
+3
+Soleil Furieux
+Le joueur lance deux coups de lame horizontaux successifs en arc de cercle pour contrer les attaques ennemies.
+4
+Os brûlants, Soleil d'été
+Le joueur effectue une attaque unique à l'aide d'un mouvement en spirale qui s'étend devant lui, lui permettant de se défendre contre les attaques frontales imminentes.
+5
+Transformation du Soleil Couchant
+Le joueur effectue un saut périlleux arrière avant d'exécuter un coup de lame horizontal visant à décapiter la cible.
+6
+Brume de chaleur solaire
+Le joueur fonce en avant, tentant de porter un coup qui semble enveloppé d'une brume de chaleur, masquant ainsi la véritable longueur et la position de la lame pour surprendre l'adversaire.
+7
+Rayonnement bienfaisant
+Le joueur effectue un mouvement de rotation en l'air tout en exécutant une attaque en arc de cercle vers le haut pour atteindre la cible.
+8
+Estoc de la Fleur Solaire
+L'utilisateur effectue un coup de lame précis en utilisant la pointe de sa lame pour atteindre la cible.
+9
+Dragon du Halo Solaire - Tête Dansante
+Le joueur adopte une position de garde élevée, puis déploie une série de coups de lame successifs en un mouvement fluide, évoquant un dragon japonais né des flammes du soleil. Cette technique permet de décapiter plusieurs cibles simultanément.
+10
+Roue de Feu
+Le joueur effectue un saut périlleux en arrière derrière l'adversaire avant de décocher une attaque verticale circulaire rapide qui coupe l'adversaire en deux.
+11
+Arc-En-Ciel Factice
+Le joueur effectue des rotations et des mouvements de torsion à grande vitesse, créant ainsi des images fantomatiques qui servent principalement à esquiver les attaques. Ces images fantomatiques sont particulièrement efficaces contre les ennemis à la vision très perçante.
+12
+Valse enflammée
+Une combinaison de deux coups qui commence par une attaque verticale descendante suivie immédiatement d'une attaque horizontale.
+13
+Treizième Forme
+Le pratiquant exécute successivement et de manière répétée les douze formes de la respiration solaire afin d'améliorer la précision et l'agilité de ses mouvements et de ses attaques.
+Feuille détaillée Sheets
+
+39
+Souffle de la Lune
+Lune
+1
+Lune sombre, Palais du soir
+Lune
+2
+Observation de la Lune avec des Fleurs de Perles
+Lune
+3
+Lune Répugnante, chaînes
+Lune
+4
+Lune Voilée, Poussière Fantomatique
+Lune
+5
+Esprit Lunaire, Tourbillon Calamiteux
+Lune
+6
+Nuit Éternelle, Lune Solitaire - Sans Fin
+Lune
+7
+Miroir de Malheur, Illuminé par la Lune
+Lune
+8
+Dragon à Queue Annelée
+Lune
+9
+Chemin de la Lune Décroissante
+Lune
+10
+Percer la Roche, la Lune Entre les Feuilles de Bambou
+Lune
+11
+Lune Creuse
+Lune
+12
+Sécheresse, Ciel Fendu par la Lune
+Lune
+13
+Enterrement de l'Horizon Immobile
+Lune
+14
+Catastrophe, Tenman Lune Croissante
+Lune
+15
+Voile de la Dernière Lune
+Lune
+16
+Arc-en-ciel Lunaire, Croissant de Lune
+Comme le Souffle du Soleil, le Souffle de la Lune est à la fois magnifique et redoutable. Ses utilisateurs exécutent des mouvements puissants qui imitent la forme d'un croissant de lune. Ils sont généralement des combattants solitaires, même s'ils peuvent parfois combattre en équipe. Cela s'explique par leur nature plutôt réservée et distante.
+
+Compétence spéciale | Non choisi
+
+Les utilisateurs du Souffle de la Lune bénéficient d'un important bonus à leurs capacités lorsqu'ils combattent seuls.
+En cas de combat contre un ou plusieurs démons, les joueurs obtiennent un dé de dégâts supplémentaire pour toutes leurs techniques de souffle.
+Prérequis du souffle
+Sens | Aucun
+Carac. | Aucun
+Armes | Katana Nichirin
+
+Feuille détaillée Sheets
+
+40
+Souffle de la Flamme
+Le souffle de la Flamme est une technique de respiration particulièrement puissante. Ses adeptes privilégient des techniques puissantes, imitant le rugissement du feu. Les épéistes pratiquant cette technique sont généralement francs et audacieux.
+Prérequis du souffle
+Sens | Aucun
+Carac. | Esprit
+Armes | Nichirin Katana
+Capacité spéciale | Cœur flamboyant
+
+Les joueurs peuvent, une fois par jour, doubler les dégâts de toutes les attaques infligées pendant le round de combat choisi. Les joueurs utilisant plusieurs attaques avec points de réaction peuvent utiliser ce bonus, à condition que les attaques soient effectuées lors du même round. Cette capacité entre en recharge immédiatement après utilisation.
+
+1
+Feu Inconscient
+L'épéiste charge son adversaire à grande vitesse et le décapite en un ou plusieurs coups.
+2
+Soleil Levant Brûlant
+L'épéiste utilise une attaque tranchante vers le haut.
+3
+Univers Flamboyant
+L'épéiste frappe son épée d'un coup horizontal qui l'amène près du sol.
+4
+Ondulation de la Flamme en Fleurs
+L'épéiste fait tournoyer son épée, déviant ainsi les attaques de ses ennemis. Tous les dégâts qui vous sont infligés sont déviés et transmis à la cible de votre choix pendant le round.
+5
+Tigre de Flamme
+Une série de coups d'épée prenant la forme d'un tigre. Cette technique grave une profonde empreinte dans le sol.
+6
+Brasier Déchaîné
+L'épéiste abat sa lame du dessus de sa tête dans un coup puissant et complet du corps.
+7
+Flamme Purificatrice
+Une position de repos passive pour regagner de l'endurance égale à la quantité de dégâts infligés par l'ennemi au cours du tour précédent.
+8
+Rafale de Flammes Dansantes
+L'épéiste utilise un modèle de jeu de jambes circulaire pour esquiver et dévier plusieurs attaques ennemies tout en frappant plusieurs fois.
+9
+Rengoku
+Un coup dévastateur lancé depuis une position élevée.
+Feuille détaillée Sheets
+
+41
+Souffle de l'Eau
+Le Souffle de l’Eau est l'une des techniques les plus connues, facilement maîtrisée par de nombreux pratiquants. Les adeptes de cette forme privilégient les frappes simples et glissantes ou les mouvements puissants à coups multiples, rappelant l'eau et son mouvement. Les épéistes pratiquant cette technique ont tendance à être distants et réservés.
+1
+Surface de l'eau coupée
+L'épéiste génère suffisamment d'élan pour créer une seule frappe concentrée et puissante.
+2
+Roue à eau
+L'épéiste saute et tourne verticalement dans les airs tout en lançant une attaque fluide dans un mouvement circulaire.
+3
+Danse du courant rapide
+L'épéiste balance sa lame sur son adversaire d'une manière qui imite le mouvement des vagues à la surface de l'eau.
+4
+Marée battante
+L'épéiste effectue plusieurs entailles consécutives tout en tordant son corps d'une manière fluide, semblable à une marée violente.
+5
+Pluie miséricordieuse par temps sec
+Un « coup d'épée bienveillant » qui tue la cible sans douleur. Utilisé lorsque l'ennemi se rend.
+6
+Tourbillon torsadé
+L'épéiste tord violemment le haut et le bas de son corps, créant un tourbillon qui coupe tout ce qui s'y trouve. Touche toutes les cibles dans la zone d'effet, alliés compris.
+7
+Goutte de pluie perçante
+Un coup rapide et précis. La technique de Souffle d'Eau la plus rapide.
+8
+Bassin de la cascade
+L'épéiste coupe la cible verticalement avec une grande force.
+9
+Éclaboussure d'eau
+Réduit le temps d'atterrissage et la surface nécessaire, permettant à l'utilisateur de se déplacer sans limite. Idéal pour les combats sans appui stable.
+10
+Le dragon du changement
+Une attaque continue qui augmente en puissance à chaque rotation, créant une puissante entaille.
+Prérequis du souffle
+Sens | Aucun
+Carac. | Aucun
+Armes | Nichirin Katana
+Capacité spéciale | Dévier les vagues
+
+Les joueurs acquièrent la possibilité d'utiliser la réaction Dévier qui leur permet de déplacer les attaques à distance au corps à corps de chaque côté d'eux ou de dévier les attaques à distance dans une direction cible égale à la portée des attaques.
+Feuille détaillée Sheets
+
+42
+Souffle du Vent
+Le Souffle du Vent est un ensemble de formes effrayantes, la plupart des épéistes s'écartant de ce style puissant par crainte de son niveau de maîtrise. Les utilisateurs de cette forme maîtrisent une série de coups puissants, simples ou tournoyants, imitant les cyclones et les tornades. Les épéistes de ce style sont connus pour leur caractère sauvage et difficile à aborder, mais déterminés.
+1
+Coupe-tourbillon de poussière
+L'épéiste se précipite en avant dans un cyclone de coups.
+2
+Griffe de Vent Purifiante
+L'épéiste lève l'épée vers le haut, vers la droite, au-dessus de sa tête, et effectue une frappe verticale vers le bas, créant quatre lames de vent qui s'abattent sur l'ennemi comme des griffes.
+3
+Nettoyer l'arbre à vent de tempête
+L'épéiste utilise son bras pour frapper son corps et créer un tourbillon qui déchire tout sur son passage. Touche toutes les cibles dans la zone d'effet, y compris les alliés.
+4
+Tempête de poussière montante
+L'épéiste balance sa lame vers le bas dans plusieurs directions.
+5
+Coup de vent d'hiver
+L'épéiste frappe d'en haut tout en tombant, aiguise sa concentration et, dans une multitude de coups arqués, atteint la cible.
+6
+Brume de la montagne du vent noir
+L'épéiste frappe sur le côté, tout en faisant tourner son corps dans une position pour délivrer un mouvement uppercut, créant une tornade tranchante.
+7
+Gale : rafale soudaine
+L'épéiste saute dans les airs tout en balançant sa lame, ce qui génère des vents violents qui déchiquettent son adversaire.
+8
+Coup de vent primaire
+L'épéiste bondit dans les airs et brandit sa lame, générant des torrents de vent circulaires. Une attaque utilisable à distance.
+9
+Typhon de l'Est
+L'épéiste fait un salto arrière dans les airs et, alors qu'il est à l'envers, balance sa lame pour libérer une rafale de vent circulaire.
+Prérequis du souffle
+Sens | Aucun
+Carac. | Aucun
+Armes | Nichirin Katana
+Capacité spéciale | Vents de guerre
+
+Les joueurs acquièrent la capacité de reconstituer 1d2 points de réaction en décapitant un démon.
+Feuille détaillée Sheets
+
+43
+Souffle de la Foudre
+Le Souffle de la Foudre est l'une des formes les plus difficiles enseignées au sein du Corps des Pourfendeurs de Démons. Les adeptes de ce style apprennent un certain nombre de techniques de coups tranchants et de mouvements tranchants, inspirés de l'iaido, imitant la foudre. Les épéistes pratiquant cette technique sont réputés pour leur comportement étrange et leur immense force de jambes.
+1
+Coup de tonnerre et éclair
+L'utilisateur se précipite en avant et frappe son adversaire avec une vitesse incroyable.
+2
+Boule de foudre
+L'épéiste est capable de générer cinq attaques consécutives autour de l'utilisateur en un seul mouvement. Après avoir porté toutes ces attaques successivement, elles sont précédées d'un choc fulgurant de cinq coups de foudre distincts simultanés.
+3
+Tonnerre de moustiques bourdonnants
+Une attaque rappelant une onde de foudre tourbillonnante dans toutes les directions. Attaque à zone d'effet avec une grande portée. Observe les tirs amis.
+4
+Tonnerre lointain
+L'utilisateur lance plusieurs frappes à distance vers une seule cible.
+5
+Foudre de chaleur
+Une attaque unique, concentrée et tranchante.
+6
+Pluie d'éclairs électriques
+Une série d'attaques puissantes comme des éclairs fourchus.
+Prérequis du souffle
+Sens | Aucun
+Carac. | Aucun
+Armes | Nichirin Katana
+
+Capacité spéciale | Vitesse de la lumière
+
+Les joueurs acquièrent la possibilité d'utiliser le Dash de réaction qui leur permet de se déplacer à pleine vitesse (6m) dans n'importe quelle direction.
+Feuille détaillée Sheets
+
+44
+Souffle de la Pierre
+Le Souffle de la Pierre est l'une des techniques les plus extravagantes enseignées. Ses utilisateurs s'entraînent notamment avec un maillet et une hache enchaînés, les projetant au sol avec la force d'éboulements et de tremblements de terre. Les épéistes ou les utilisateurs de chaînes (?) de ces techniques sont réputés pour leur force immense et leur stoïcisme.
+1
+Serpentine bipolaire
+Un mouvement conçu pour traverser un ennemi en utilisant une technique de rotation entourant l'utilisateur.
+2
+Smash supérieur
+Un mouvement en deux étapes qui lance une attaque vers le bas, suivie de près par une attaque ascendante brutale avec une arme ou soi-même.
+3
+Réflexion ignée
+Un mouvement défensif qui permet à l'utilisateur de dévier les attaques ennemies avec son arme, renvoyant les attaques vers leur source.
+4
+Roche volcanique
+Un mouvement dans lequel l'utilisateur fait tourner son arme à bout de bras pour frapper violemment à longue distance.
+5
+Roue de pierre de la justice
+Une attaque verticale puissante et chargée qui peut infliger de gros dégâts.
+Prérequis du souffle
+Sens | Aucun
+Carac. | Aucun
+Armes | Nichirin Maul
+Capacité spéciale | Mâchoire et hache
+
+Les joueurs peuvent permuter entre l'extrémité masse et l'extrémité hache de leur arme. Permuter ne nécessite aucune action. Mutilation : les attaques effectuées avec la masse infligent leurs dégâts et ajoutent force + 6 mais ne peuvent pas décapiter. Hache : les attaques effectuées avec la hache infligent leurs dégâts et ajoutent finesse + 2 et peuvent décapiter.
+Basculer entre ces extrémités de chaîne est considéré comme une action bonus.
+Feuille détaillée Sheets
+
+45
+Souffle de la Fleur
+Le Souffle de la Fleur est l'une des techniques de respiration les plus gracieuses que l'on puisse maîtriser au sein du corps. Les pratiquants de cette technique pratiquent et maîtrisent des frappes et des mouvements précis, oscillant et poignardant comme des fleurs qui s'épanouissent. Ils sont réputés pour leur sang-froid exceptionnel et leur éloquence élégante.
+
+Prérequis du souffle
+Sens | Aucun
+Carac. | Aucun
+Armes | Nichirin Katana
+
+Capacité spéciale | Concentration Florissante
+
+Attaquer une cible unique vous permet de cumuler un bonus cumulable. Chaque fois que les joueurs attaquent une cible unique de manière continue, ils gagnent +2 aux jets de dégâts et d'esquive liés à la cible.
+
+1
+Floraison
+L'épéiste tourbillonne pour créer une large spirale ascendante avec sa lame. Touche toutes les cibles dans la zone d'effet, y compris les alliés.
+2
+Esprit de prune
+Une technique défensive qui dévie les attaques à l'aide de coups d'épée rotatifs.
+3
+Robe de carthame
+Un seul coup d'épée qui se courbe et se tord
+4
+Pivoine de la Futilité
+Une gracieuse série de neuf attaques consécutives qui s'enchaînent et se tissent sur elles-mêmes.
+5
+Pêche tourbillonnante
+Une technique utilisée après ou pendant une esquive, où l'utilisateur pivote en se déplaçant avec le poids de son corps pour porter une attaque. Une attaque effectuée après une chute ou une rotation,
+6
+Chute de Sakura
+Une attaque élégante lancée d'en haut. L'utilisateur s'abat sur l'ennemi, sa lame prête à le poignarder. Dégâts doublés, plus finesse.
+Feuille détaillée Sheets
+
+46
+Souffle de la Brume
+Le Souffle de la Brume est réputée pour ses formes de destruction d'une beauté indescriptible, exigeant souvent une telle perfection de forme et de vitesse qu'elles sont presque irrémédiablement réduites à néant. Les pratiquants de ce style perfectionnent la plupart de leurs capacités de destruction pour maîtriser cette technique. De ce fait, ils sont réputés pour leur sens de l'isolement et de la réclusion.
+Prérequis du souffle
+Sens | Aucun
+Carac. | Aucun
+Armes | Nichirin Katana
+
+Capacité spéciale | Nuages ​​traînants
+
+Lorsqu'un joueur utilise une technique de respiration, il recouvre toutes les cases qu'il traverse d'un voile brumeux. Les respirateurs de brume peuvent à leur tour se cacher dans ces voiles brumeux pour doubler leur bonus de CA.
+Ces voiles disparaissent après la fin d’une rencontre.
+1
+Ciel suspendu, brume lointaine
+Une attaque directe qui laisse une traînée de brume derrière l'épéiste.
+2
+Brume à huit couches
+L'épéiste déclenche plusieurs coups les uns après les autres en succession rapide.
+3
+Explosion de désembuage
+Une seule entaille circulaire pouvant infliger des dégâts ou repousser des attaques. L'épéiste doit choisir l'effet qu'il souhaite utiliser lors de ce coup.
+4
+Barre oblique d'advection
+Un coup rapide depuis le fourreau, rappelant une technique d'Iaidō. Le mouvement est élégant et discipliné.
+5
+Mer de nuages ​​et de brume
+L'épéiste charge une attaque ennemie à grande vitesse et déclenche une rafale de coups.
+6
+Brume au clair de lune
+L'épéiste saute haut dans les airs et envoie une série d'innombrables coups à distance vers le bas.
+Feuille détaillée Sheets
+
+47
+Souffle du Serpent
+Le Souffle du Serpent est réputée pour ses mouvements rapides et ondulants, l'une des plus connues pour décapiter. Les utilisateurs pratiquent des mouvements rapides et agiles pour atteindre facilement le cou, frappant avec une rapidité comparable à celle d'un serpent. Les personnes qui respirent le serpent sont surtout connues pour leur comportement étrange, se mettant à l'écart des grands groupes.
+Prérequis du souffle
+Sens | Aucun
+Carac. | Aucun
+Armes |  Katana torsadé Nichirin
+Capacité spéciale | Forme libre
+
+Les serpents respirateurs ne subissent pas les inconvénients des terrains difficiles, des grappins ou des restrictions visant à les ralentir ou à les arrêter. Toute tentative d'un démon visant à leur imposer ces inconvénients permet à l'utilisateur de riposter librement par une attaque ou une esquive.
+1
+Serpent sinueux Slash
+L'épéiste tourne et lance une frappe circulaire devant lui
+2
+Crocs venimeux à tête étroite
+L'épéiste se précipite derrière l'adversaire et le frappe au cou. Son endurance se régénère à hauteur des dégâts infligés.
+3
+starter à bobine
+L'épéiste enroule son épée autour du cou ou de l'appendice et tranche avec une grande précision.
+4
+Reptile à deux têtes
+L'épéiste bondit en avant et frappe horizontalement la cible tout en volant vers elle.
+5
+Serpent rampant
+L'épéiste, utilisant son épée courbée, la courbe de droite à gauche à une vitesse incroyable. Cette technique est capable de décapiter plusieurs cibles à la fois.
+Feuille détaillée Sheets
+
+48
+Souffle du Son
+Le Souffle du Son, bien que extrêmement difficile à pratiquer et à maîtriser, est l'une des plus belles formes de respiration. Les pratiquants pratiquent des mouvements fous, calculés avec précision, ainsi que l'art des explosifs de combat… Ils sont réputés pour leur personnalité débridée et leur sens aigu des arts.
+Prérequis du souffle
+Sens | Ouïe
+Carac. | Flexibilité
+Armes | Épée tronçonneuse double Nichirin
+Capacité spéciale | Score de combat
+
+Lorsqu'un joueur entre en combat, il lance un
+1d4 pour chaque rang du démon qu'il combat et retire un nombre de points égal à son Intelligence. Le nombre final est converti en rounds et le joueur subit un désavantage sur ses jets d'attaque et de dégâts jusqu'à la fin de ses rounds. Après ces rounds, il bénéficie d'un avantage sur tous ses jets d'attaque et de dégâts.
+1
+Rugissement
+L'épéiste claque les deux lames ensemble devant lui, provoquant une explosion massive et infligeant des dégâts considérables.
+2
+Ballade des arcs brisés
+L'épéiste les tranche dans une rotation circulaire, coupant tout ce qui se trouve dans un rayon de 10 pieds autour d'eux.
+3
+Prélude d'un cauchemar
+Le tueur frappe rapidement et rétracte son épée avec sa chaîne dans un mouvement de fouet qui tranche immédiatement la cible.
+4
+Des coups retentissants et constants
+Les lames des tueurs se déplacent dans un flou de mouvement, créant une symphonie de sons tranchants tandis qu'ils déchaînent un déluge de coups rapides et incessants. Chaque coup résonne avec une intensité assourdissante, créant des ondes de choc qui fracassent l'air environnant et désorientent leurs adversaires.
+5
+Performance des cordes
+Les lames du Tueur deviennent une extension de son corps grâce à leur fluidité. Les chaînes métalliques qui les relient vibrent au rythme d'une musique, produisant des sons résonnants qui subliment les mouvements et les frappes du Tueur. Ses attaques sont une symphonie de coups harmonieux.
+6
+Requiem
+Les lames du Tueur se déplacent avec solennité et mesure, tranchant tout dans un rayon de 4,5 mètres autour de lui. Chaque coup est lourd de sens, produisant des échos lugubres qui résonnent sur le champ de bataille. Les mouvements du Tueur sont gracieux et puissants, car il canalise son chagrin et sa détermination dans ses attaques.
+Feuille détaillée Sheets
+
+49
+Souffle de l'Insecte 
+Le Souffle de l’Insecte est quelque peu controversée en raison de ses méthodes de mise à mort peu orthodoxes et, de ce fait, ses coups sont très rarement puissants. Bien que ce soit vrai, les estocs des utilisateurs du souffle des insectes sont incroyablement puissants car ils pratiquent intensivement les poussées et les coups d'estoc. Les utilisateurs de la respiration des insectes sont considérés comme certains des épéistes les plus froids et calculateurs de tous les corps d'élite.
+Prérequis du souffle
+Sens | Aucun
+Carac. | Aucun
+Armes | Pointe d'Aiguille Nichirin
+Capacité spéciale | Écraser sous le pied
+
+Les attaques portées contre des cibles empoisonnées ont l'avantage pour toucher ainsi que pour infliger des dégâts. Les jets d'esquive effectués contre des cibles empoisonnées sont également doublés.
+1
+Danse du Papillon : Caprice
+L'épéiste saute en avant vers l'adversaire, le piquant plusieurs fois avec la lame pour injecter du poison.
+2
+Danse du Dard de l'Abeille : Vrai Battement
+L'épéiste fonce vers la cible avec une vitesse incroyable et assène une unique poussée renforcée par l'élan pour injecter le poison.
+3
+Danse de la Libellule : Hexagone de l'Œil Composé
+Une attaque basée sur six frappes où l'utilisateur attaque la cible à six endroits différents du corps afin d'injecter du poison mortel à chaque zone, augmentant ainsi les chances que la cible succombe au poison.
+4
+Danse du Mille-pattes : Zigzag aux Cent Pattes
+L'épéiste court à pleine vitesse en un motif en zigzag pour générer assez d'élan, créant une puissante poussée unique qui injecte simultanément du poison dans la victime ciblée. La vitesse aveuglante et le motif erratique servent également à semer la confusion chez l'adversaire et à créer une ouverture adéquate.
+Feuille détaillée Sheets
+
+50
+Souffle de l'Amour 
+Ceux qui assistent au Souffle de l’Amour ne seront peut-être pas surpris de sentir leur cœur s'emballer. Les balancements de leur lame-fouet portent une force astronomique ainsi que de l'amour, filant sans effort dans les airs comme des rubans métalliques. Les utilisateurs sont connus pour une force divine ainsi qu'une chaleur bienveillante.
+Prérequis du souffle
+Sens | Aucun
+Carac. | Muscles à 8 plis, Corps flexible
+Armes | Lame-fouet Nichirin
+Capacité spéciale | Balancements Amoureux
+
+Toutes les attaques portées contre des cibles activent une sphère tranchante autour du joueur dans leur portée d'attaque qui les entoure. Cela n'affecte pas les alliés, ce qui signifie que les utilisateurs du Souffle d'Amour ne peuvent pas causer de tirs amis accidentels avec leurs armes.
+1
+Frissons du Premier Amour
+Le bretteur fonce en avant avec une série de coups tranchants.
+2
+Douleurs d'Amour
+Le bretteur envoie une longue fente fouettée.
+3
+Douche de Chat
+Le bretteur saute et déclenche une série d'attaques arquées à distance en rapide succession.
+4
+Réclusion du Cœur Brisé
+Le bretteur fait tourner son épée-fouet en cercle, déviant toutes les attaques entrantes et infligeant des dégâts en zone à toutes les cibles.
+5
+Amour Ondulant - Griffe Sauvage
+Le bretteur fait une roulade arrière dans les airs, créant une longue série d'attaques semblables à un fouet, avant d'enrouler son épée autour du cou de son adversaire.
+6
+Vents d'Amour à Pattes de Chat
+Le bretteur tourne la tête en bas et crée une fente hélicoïdale avec son épée, déviant les attaques entrantes.
+7
+Amour à Longue Distance
+L'utilisateur utilise son épée-fouet longue pour grappiner ou saisir quelque chose à la distance maximale de l'épée, à partir de là il peut choisir de tenir ou tirer vers l'arrière ou décapiter sa cible.
+Feuille détaillée Sheets
+
+51
+Souffle de la Bête
+Le souffle de la Bête est une forme sauvage, grossière et incroyablement dangereuse, non seulement à observer, mais aussi à observer. Les pratiquants pratiquent des coups violents, des directs imprudents et des clivages perfides. Les adeptes de ce style sont réputés pour leur folie.
+Exigences de style
+Sens | Toucher
+Carac. | Corps flexible
+Armes | Lames dentelées Nichirin
+Capacité spéciale | Dislocation
+
+Si un démon tente de réagir pour échapper à une attaque, le joueur peut choisir de lui disloquer un bras pour garantir son efficacité. Cela nécessite de le remettre en place au tour suivant, par une action bonus.
+1
+Premier croc : Pierce
+L'utilisateur poignarde le cou de la cible avec les deux lames.
+2
+Second Fang : Déchirer et déchirer
+Une double barre oblique avec les deux lames de l'utilisateur dans les deux diagonales (comme un X)
+3
+Troisième Croc : Dévorer
+Coups horizontaux simultanés vers la gorge de la cible.
+4
+Quatrième Croc : Trancher et Découper
+Un double coup diagonal multiple avec les deux épées.
+5
+Cinquième Croc : Coupe folle
+Une technique qui tranche tout dans tous les sens.
+6
+Sixième Croc : Morsure de Palisade
+Une décapitation simultanée avec les deux épées des utilisateurs dans les deux directions.
+7
+Septième année : Conscience spatiale
+L'utilisateur peut identifier la position des ennemis en ressentant de petites perturbations dans l'air.
+8
+Huitième Croc : Ruée explosive
+L'utilisateur charge son adversaire en utilisant deux armes, puis balance ses lames pour décapiter la cible.
+9
+Neuvième Croc : Extension de Bendy Slash
+L’utilisateur disloque les articulations de son bras pour augmenter la portée de son attaque.
+10
+Dixième Croc : Crocs tourbillonnants
+L'utilisateur fait tourner ses épées dans un mouvement circulaire, déviant les attaques ennemies.
+Feuille détaillée Sheets
+
+52
+Techniques de Souffle
+(Homebrew)
+
+53
+Souffle de l'Océan
+Le Souffle de l’Océan est une forme de combat quelque peu nouvelle, inventée récemment. Les utilisateurs de cette technique constatent qu'ils sont à leur meilleur non pas sur terre, mais en fait dans l'eau. Les pratiquants exécutent des mouvements d'épée étranges qui semblent nager dans l'air. L'utilisateur ou... L'utilisateur... Est étrange, insouciant et affranchi de toute responsabilité. 
+Prérequis du souffle
+Sens | Aucun
+Carac. | Corps flexible
+Armes | Katana Nichirin
+Capacité Spéciale | Jambes de la Mer
+
+Sur terre, les joueurs constatent que leur forme de respiration inflige des dégâts réduits de moitié. Cependant, lorsqu'ils combattent également dans l'eau, ils infligent 1.5 fois les dégâts normaux.
+Océan
+1
+Mer des Épées
+Océan
+2
+Saut du Carpe Chagrin
+Océan
+3
+Brèche
+Océan
+4
+Raie emportée par le vent, gracieux vol
+Océan
+5
+Blocus des Récifs en Larmes
+Océan
+6
+Plongeuse Ama en Surface
+Océan
+7
+Fracas de l’Umibozu
+Feuille détaillée Sheets
+
+54
+Souffle de l'Ouest
+Prérequis du souffle
+Sens | Aucun
+Carac. | Corps Fort
+Armes | Katana Nichirin, pistolet de côté
+Capacité spéciale | Six-coups
+
+Chaque fois que les joueurs effectuent une attaque avec une forme de respiration, ils peuvent également tirer avec un pistolet comme une attaque gratuite. Cette attaque ne touche pas automatiquement.
+Ouest
+1
+Diable de poussière mercuriel
+Ouest
+2
+Pionnier
+Ouest
+3
+Prospection aurifère en bord de rivière
+Ouest
+4
+Siffleur bleu volant de nuit
+Ouest
+5
+Coupe-corne du Taureau en charge
+Ouest
+6
+Saluer le verger d'os
+Ouest
+7
+Appât corbeau vermillon
+Ouest
+8
+Tonnerre de la rouille d'acier
+Ouest
+9
+Baston des infidèles
+Ouest
+10
+Appel du chœur
+Ouest
+11
+Mort debout
+Ouest
+12
+Maison du Soleil levant.
+Ouest
+13
+Dégainé rapide du Pied agile
+Le Souffle de l’Ouest reste encore inconnu, ses maîtres étant trop uniques dans leurs pratiques pour déchiffrer ce qui est la perfection de ses formes et ce qui est unique aux deux tueurs. Les utilisateurs de cette forme se tiennent assurément et agissent uniquement avec une confiance parfaite. Les utilisateurs pratiquent des attaques parfaites à un seul coup suivies d’un mouvement rapide de pistolet unique à chaque individu.
+Feuille détaillée Sheets
+
+55
+Souffle de la Neige
+Prérequis du souffle
+Sens | Aucun
+Carac. | Aucun
+Armes | Katana Nichirin
+Le Souffle de la Neige est un style d'une grâce glacial, avec des mouvements doux et fluides comme une bourrasque. Bien qu'elle puisse sembler délicate, ce n'est qu'un malentendu, car chaque coup dissimule une précision tranchante et mordante. Les utilisateurs de ce style de respiration sont connus pour leur calme serein et leur attitude froide.
+Neige
+1
+Pas Léger
+L’utilisateur se précipite en avant, s'enveloppant de neige et devenant indétectable jusqu'à la fin du round. Cette technique facilite également les terrains difficiles, et réussit automatiquement les tests de dissimulation.
+Neige
+2
+Blizzard Nocturne Infini
+L'utilisateur bondit en avant, tournant et tranchant en plein air tout en avançant. Le sabreur déchaîne une violente démonstration de coups devant lui.
+Neige
+3
+Grêle de Cendres d'Argent
+L'utilisateur donne un coup de pied vers le haut dans une rotation aérienne ascendante, dispersant des coups d'épée dans toutes les directions comme une tourmente de flocons de neige.
+Neige
+4
+Gelée Soudain, Avalanche
+Au son des arbres gelés qui craquent, l'utilisateur avance et abaisse sa lame avec un poids soudain et écrasant. L'attaque imite une montée en puissance rappelant les frappes iai.
+Neige
+5
+Femme de Neige
+Le sabreur prend une posture immobile comme possédé. Son prochain coup est trompeusement rapide, élégant et inévitable, comme un fantôme glissant à travers le givre.
+Neige
+6
+Tranche Fendante du Flocon
+Une rafale rapide de mouvements d'épée qui vise les points faibles, divisant les projectiles, armes ou membres entrants comme des flocons de neige se séparant au contact.
+Neige
+7
+Forêt de Juhyo en Marche
+Le sabreur se déplace à travers ses ennemis, frappant dans un rythme lent mais imparable. Son souffle laisse une traînée visible, ressemblant à une forêt enneigée d'arbres couverts de glace de la forêt Juhyo.
+Neige
+8
+Enterrement Silencieux
+L'utilisateur canalise son souffle et glisse en avant en silence complet, la lame raclant le sol. Une explosion retardée de pression gelée propulse la lame dans une tranche multi-coupante.
+Capacité Spéciale | Dents de Katana
+Quand une attaque d'un pratiquant de la respiration de la neige touche une cible, le corps de la cible est déchiré et perd temporairement 1d4 CA jusqu'à la fin du round.
+
+
+Feuille détaillée Sheets
+
+56
+Construire Vos Propres Formes de Respiration
+
+Ratio Endurance/Dégâts
+1d6
+-1
+1d8
+0
+1d10
+1
+1d12
+2
+2d8
+3
+3d6
+5
+1d20
+6
+3d8
+9
+4d8
+12
+2d20
+13
+3d20
+16
+Comme les épées nichirin de base infligent un 1d6 de dégâts au corps à corps, les formes de Souffle doivent aller au-delà de cela comme référence. La création des formes doit prendre en compte les dégâts, la distance et tout effet sous-jacent comme si c’est inévitable ou une attaque directe. Certains effets peuvent être modifiés ou inversés dans certains cas, avec des coûts variables.
+Ratio Endurance/Distance
+1.5m/CàC
+-3
+3m
+1
+4.5m
+2
+6m
+3
+7.5m
+4
+9m
+5
+Ratio Endurance/Effet
+ Souvent limité à 1 effet par forme.
+Direct
+*Doit se déplacer dans une seule direction
+-3
+Temps de Charge
+*Requiert 1 tour pour charger
+**Être attaqué interrompt la charge
+-5
+À distance
+*Peut être utilisé de la portée corps à corps jusqu’à la distance autorisée
+3
+Régénérateur
+*Régénère l’endurance
+3
+Déflecteur / Négateur
+*Supprime les dégâts entrants
+4
+Affliction
+*Cause un effet de statut
+3
+Poursuivant
+*Ne peut pas être évité ou esquivé
+3
+Fauchage
+*Frappe tous les ennemis dans la portée
+2
+Les pourfendeurs utilisant des armes nichirin à distance, telles que la masse, le fouet ou la chaîne-lame, qui ont déjà une portée, ne dépensent pas d’endurance jusqu’à la portée de base de leurs armes.
+
+57
+Sous-Classes du Pourfendeur de Démons
+
+58
+Choix des Sous-Classes
+Les sous-classes ne sont pas de nouvelles techniques de Souffle, mais des techniques d'épée uniques développées en dehors des styles traditionnels des Pourfendeurs de Démons.
+Elles n'ont pas été conçues à l'origine pour combattre les démons, mais ont été perfectionnées pour les duels, la guerre ou des philosophies de combat personnelles. Bien qu'elles ne possèdent pas les pouvoirs surnaturels des techniques de respiration, elles offrent différentes attaques et capacités qui diversifient le style de combat d'un épéiste, rendant chaque combattant distinct même au sein de la même école de respiration.
+Les sous-classes montent de niveau tous les trois rangs, à partir de la création du personnage et s'améliorent au Rang Kanoe, au Rang Hinoto, et enfin au Rang Kinoe.
+
+
+Sous-classes des Pourfendeurs
+Katana | Voie de l'Eau Broyeuse
+Katana | Voie de la Pierre Sculptée
+Katana | Voie du Vent Perçant
+Katana | Voie du Feu Protecteur
+Dentelée | Croc du Sanglier
+Dentelée | Croc de l'Ours
+Tordue | Lame Orochi
+Tordue | Lame Tsuchinoko
+Pointue | École du Scarabée
+Pointue | École de la Guêpe
+Masse et Chaîne | Étoile du Matin
+Masse et Chaîne | Épée Lourde
+Épée Fouet | Don de Cadeaux
+Épée Fouet | Actes de Service
+Double Tronçonneuse | Style Kabuki
+Double Tronçonneuse | Style Nihon Buyō
+
+Sous-classes de Démoniste
+Épée | Sculpteur de Chair
+Wakizashi | Tireur d'Elite
+
+
+
+59
+Nichirin Katana - Standard | 1d6 |
+La lame Nichirin standard est une épée longue avec une lame tranchante et courbée qui peut infliger des coupures et des entailles dévastatrices aux démons. La lame est faite d'un métal spécial qui absorbe une grande quantité de lumière solaire pendant sa formation, permettant à la lame de blesser le corps d'un démon et même de le tuer. Le pommeau de la lame est enveloppé d'une poignée confortable, avec une garde circulaire à la base pour protéger la main de l'utilisateur. C'est l'arme standard utilisée par les pourfendeurs de démons.
+
+
+
+
+
+
+Utilisé dans : Souffle du Soleil, Souffle de l'Eau, Souffle de la Flamme, Souffle de la Foudre, Souffle de la Fleur, Souffle de la Brume, Souffle de l'Océan
+Katana | Voie de l'Eau Écrasante
+Un style de combat impitoyable et fluide qui submerge les ennemis par la force brute et la pression.
+Début : +2 Puissance brute | Posture de l'Eau Écrasante : Perdez 3 m de vitesse de déplacement pour +2 au toucher et +4 dégâts aux attaques de base.
+Kanoe : +2 Endurance | +2 Agilité
+Hinoto : [Réaction] Fendeur de Rivière : Avec un test de dextérité égal ou supérieur au jet d'attaque, tranchez et détruisez tout projectile et évitez les dégâts.
+Kinoe : +2 Force
+[Attaque] Tsunami : (1/jour) Si vous réussissez une attaque de base, effectuez une autre attaque de base, cela se répète jusqu'à ce que vous manquiez une attaque.
+
+Nichirin Katana
+
+60
+Katana | Voie de la Sculpture de la Pierre
+Une technique puissante et lourde qui privilégie la pénétration d'armure et la rupture des défenses.
+Début : +2 Dextérité | Position Sculpture de la Pierre : Les ennemis touchés par des attaques basiques perdent -2 CA. (cumulatif)
+Kanoe : +2 Tolérance | +2 Perception
+Hinoto : [Réaction] Suppression : Faites un jet d'attaque contre un membre ennemi ; en cas de réussite, l'utilisateur coupe ce membre /
+Kinoe : +2 Puissance brute
+[Attaque] Coupe-Pierre : (1/rencontre) Le joueur peut automatiquement réussir une attaque basique si l'ennemi a une CA inférieure à la sienne.
+
+Katana | Voie du Vent Percé
+Un style de combat rapide et agile qui met l'accent sur la précision, la mobilité et les frappes rapides.
+Début : +2 Rapidité | Position Vent Percé : Gagnez une attaque gratuite avec votre attaque basique si un ennemi rate son attaque contre vous.
+Kanoe : +2 Agilité | +2 Intuition
+
+Hinoto : [Réaction] Vents Froids : Déplacez-vous jusqu'à la moitié de votre vitesse de déplacement, infligeant aux ennemis traversés des dégâts égaux à votre Vitesse.
+Kinoe : +2 Finesse
+[Attaque] Vents de Guerre : (3/jour) Lorsqu'une attaque touche un ennemi placé après vous dans l'ordre d'initiative, ajoutez votre niveau de Vitesse en dés de dégâts à votre attaque basique.
+
+Katana | Voie du Feu Protecteur
+Un style d'escrime défensif et discipliné qui excelle dans les positions défensives.
+Début : +2 Endurance | Position du Feu Protecteur : Gagnez +4 CA après avoir utilisé une attaque basique.
+Kanoe : +2 Réflexes | +2 Survie
+Hinoto : [Réaction] Reflux Brutal : Infligez à une cible à portée la moitié des dégâts que vous venez de subir.
+Kinoe : +2 Force
+[Attaque] Flammes Étourdissantes : (1/rencontre) Lorsque vous touchez un ennemi, opposez un test de Finesse avec lui ; en cas de réussite, il est étourdi jusqu'à la fin du tour, en cas d'échec, il ne l'est pas.
+
+61
+Lames Dentelées Nichirin
+Lame Nichirin - Dentelée | 2d6 |
+Les Lames Dentelées Nichirin sont une paire d’armes redoutables, chacune constituée de katanas Nichirin de taille standard avec une touche unique. Les lames sont ébréchées avec de nombreuses entailles le long du tranchant, leur donnant un aspect dentelé. La couleur indigo-gris des lames indique aux autres que ce tueur n’est pas quelqu’un avec qui il faut plaisanter. Notamment, ces lames n’ont pas de garde-main, permettant des mouvements rapides et agiles au combat, mais exigeant également une compétence et une précision exceptionnelles pour être maniées efficacement.
+Réservé à : Utilisateurs du Souffle de la Bête
+Dentelée | Croc de l’Ours
+Un style de combat brutal et écrasant qui mise sur une force et une endurance impressionnantes.
+Départ : +2 Endurance | Posture Ursine : Si vous réussissez une attaque de base, gagnez des PV temporaires égaux à la moitié des dégâts infligés (arrondis à l’inférieur).
+Kanoe : +2 Puissance Brute | +2 Endurance
+Hinoto : [Réaction] Contre-Morsure : Quand un ennemi vous attaque à moins de 5 pieds, effectuez immédiatement une contre-attaque.
+Kinoe : +2 Force
+[Attaque] Briseur d’Os : (1/jour) Effectuez un coup puissant vers le bas. Si l’attaque touche, la cible doit réussir un jet de sauvegarde d’Endurance ou voir sa vitesse de déplacement réduite à 0 pour un round.
+Dentelée | Croc du Sanglier
+Un style de combat téméraire et agressif qui prospère sur une offensive implacable.
+Départ : +2 Puissance Brute | Posture Suidae : Vous pouvez attaquer deux fois pendant votre tour, mais toutes les attaques contre vous gagnent +3 pour toucher jusqu’à votre prochain tour.
+Kanoe : +2 Athlétisme | +2 Mithridatisme
+Hinoto : [Réaction] Ruée Sauvage : Quand un ennemi vous attaque, vous pouvez immédiatement vous déplacer de 20 pieds et attaquer tout ennemi traversé.
+Kinoe : +2 Force
+[Attaque] Charge Frénétique : (1/jour) Déplacez-vous jusqu’à 20 pieds en ligne droite. Si vous touchez, inflige 1d8 dégâts supplémentaires et renversez la cible au sol.
+
+62
+Lame torsadée Nichirin
+Lame Nichirin - Torsadée | 1d8  |
+La lame torsadée est un katana fascinant, doté d'une lame Nichirin aux courbes sinueuses et élégantes, teintée d'une magnifique couleur lavande. Sa lame, qui se déploie et frappe avec une agilité semblable à celle d'un serpent, reflète le courage et la détermination de son utilisateur. Le fourreau, tout aussi original, reproduit la fluidité de la lame, créant ainsi un ensemble harmonieux et esthétique. Grâce à cette lame exceptionnelle, les utilisateurs de la technique de respiration du serpent parviennent à vaincre leurs adversaires avec une facilité déconcertante.
+Réservé à :
+Utilisateurs du Souffle du Serpent
+Torsadé | Lame Tsuchinoko
+Un style opportuniste qui profite des erreurs et des faiblesses de l'adversaire.
+Début : +2 Ruse | Position de combat mystérieuse : La première attaque de base inflige des dégâts doublés.
+Kanoe : +Athlétisme | +2 Intuition
+Hinoto : [Réaction] Piège de diversion : Lorsque vous êtes visé, faites un jet de tromperie contre la perception de l'attaquant. En cas de succès, vous infligez un désavantage à l'attaque.
+Kinoe : +2 Force
+[Attaque] Dents invisibles : (1/ jour) Effectuez une attaque, puis retirez-vous immédiatement derrière le point de couverture le plus proche, devenant ainsi invisible.
+Torsadé | Lame Orochi
+Un style d'escrime qui met l'accent sur des attaques fluides et imprévisibles, exécutées sous différents angles, permettant de prendre le dessus sur l'adversaire.
+Début : +2 Puissance brute | Position des huit têtes : après avoir manqué une attaque de base, vous gagnez un avantage pour la prochaine attaque.
+Kanoe : +2 Agilité | +2 Tromperie
+Hinoto : [Réaction] 
+Kinoe : +2 Finesse
+[Attaque] Attaque des huit crocs : (1/jour) Effectuez quatre attaques simultanément. Si toutes les attaques réussissent, la cible doit réussir un jet de sauvegarde de Force de volonté, sinon elle sera assommée pendant un tour.
+
+63
+Pointe acérée Nichirin 
+Lame Nichirin - Pointe acérée | 1d4 |
+La lame Nichirin à pointe acérée est une arme redoutable de précision. Sa lame fine, de couleur bleu lavande, possède une pointe en forme d'aiguille capable de infliger des coups mortels. Le fourreau de cette lame est spécialement conçu pour contenir du poison, qui peut être appliqué sur la pointe afin de contaminer les démons avec un venin puissant lors du combat. 
+De plus, le fourreau contient une quantité importante de poison, qui recouvre automatiquement la lame à chaque fois qu'elle est replacée dans son fourreau.
+Réservé à :
+Utilisateurs du Souffle de L’Insecte
+Pointe acérée | École du Scarabée
+Un style défensif rigide et impénétrable qui transforme la résistance en force offensive.
+Début : +2 Endurance | Atlas impavide : Si vous ne vous déplacez pas lors de votre tour, vous gagnez +4 à votre armure jusqu'à la fin de votre tour.
+Kanoe : +2 Mithridatisme | +2 Puissance brute
+Hinoto : [Réaction] En cas d'attaque subie, lancez un dé pour le test d'endurance et réduisez les dégâts du montant obtenu.
+Kinoe : +2 Force
+[Attaque] Charge souterraine : (1/jour) Déplacez-vous jusqu'à 6m en ligne droite. Le premier ennemi rencontré sur votre chemin est mis à terre jusqu'au prochain tour.
+Pointe acérée  | École de la Guêpe
+Une technique agile et déroutante qui frappe avec rapidité et précision les points faibles de l'adversaire.
+Début : +2 Ruse | Guêpe en essaim : Après avoir effectué une attaque de base, réactivez tous les effets de poison.
+Kanoe : +2 Agilité | +2 Perception
+Hinoto : [Réaction] Réflexe d'esquive : En cas d'attaque, lancez un jet de compétence Acrobatie pour esquiver. En cas de succès, vous pouvez riposter avec une action.
+Kinoe : +2 Speed
+[Attaque] Danse perforante : (1/jour)
+Attaque trois cibles différentes en un seul tour.
+Ruse = Cunning
+
+64
+Masse Nichirin
+Nichirin Blade - Masse| 1d12 |
+La Masse Nichirin, une arme redoutable, est composée d'une masse à pointes et d'une hache de guerre reliées par une longue chaîne. Sa couleur grise austère cache son immense puissance. La masse et la hache sont extrêmement lourdes et nécessitent une force considérable pour être utilisées efficacement. Grâce à son impact dévastateur et à sa puissance destructrice, la Nichirin Blade est capable de infliger des coups mortels aux démons au combat.
+Réservé à :
+Les utilisateurs de la technique du Souffle de Pierre
+Masse et Chaîne | Étoile du Matin
+Un style de combat brutal et très percutant, qui repose sur une offensive sans relâche.
+Début : +2 Puissance Brute | Étoile du matin: Les attaques de base infligent 4 points de dégâts supplémentaires, mais réduisent votre CA de 2 points.
+Kanoe : +2 Endurance | +2 Force
+Hinoto : [Réaction] Coup de météore : Effectuez un mouvement circulaire avec votre arme ; toutes les cibles à portée doivent réussir un test de finesse (DC 16) ; en cas de échec, elles subissent 12 points de dégâts, et en cas de réussite, 0 dégât.
+Kinoe : +2 Force | [Attaque] Coup de foudre : (1/jour) Sautez jusqu'à 4,5 m de hauteur et frappez le sol avec votre arme ; toute créature située à moins de 6 m doit réussir un jet de sauvegarde de Force, sinon elle sera assommée jusqu'à la fin du tour.
+Masse et Chaîne  | Grande Épée
+Un style de combat équilibré et redoutable qui permet de contrôler le champ de bataille grâce à la force.
+Début : +2 Balance | Grande épée: Vous gagnez +2 au bonus de précision et +4 aux dégâts infligés aux ennemis dont la force est inférieure à la vôtre.
+Kanoe : +2 Athletics | +2 Reaction
+Hinoto : [Réaction] Rideau de fer : En réaction, vous pouvez accorder un bonus de +10 à la classe d'armure d'un allié situé à portée visuelle, jusqu'à la fin du tour ou jusqu'à ce qu'il soit attaqué.
+Kinoe : +2 Finesse | [Attaque] Coup de hache en arc de cercle : (1 fois par jour) Lancez une attaque de dégâts de zone qui peut toucher jusqu'à trois ennemis devant vous, infligeant des dégâts maximaux.
+Les sous-classes de Masses n'ont pas de « postures », mais elles bénéficient de passifs permanents accordés par leurs techniques de fin de combo.
+
+65
+Lame Fouet Nichirin
+Lame Nichirin - Fouet | 1d10 |
+La lame-fouet Nichirin est une arme unique et polyvalente du jeu, ressemblant à une longue épée flexible, presque comme un fouet. Sa couleur rose distinctive est très originale et confère une touche d'élégance à cette arme redoutable. Cependant, contrairement aux épées traditionnelles, la lame-fouet Nichirin doit être enroulée dans son fourreau plutôt que simplement insérée, en raison de sa flexibilité. Cela permet des mouvements rapides et fluides, ce qui en fait une arme redoutable entre les mains d'un chasseur de démons expérimenté.
+Réservé à :
+Utilisateurs du Souffle de l’Amour
+Lame fouet  | Actes de service
+Un style de combat axé sur la défense et le contrôle du champ de bataille.
+Début : +2 Tolérance | Plaisir de servir : Si un ennemi situé à moins de 1.5m de vous cible un allié, vous pouvez échanger de place avec lui et repousser l'attaque.
+Kanoe : +2 Endurance | +2 Intuition
+Hinoto : [Réaction] Pacte de contrôle mental : Si une cible esquive ou se détourne d'une attaque d'un allié, vous pouvez neutraliser cet effet en la immobilisant grâce à un test de Puissance brute (DD 15).
+Kinoe : +2 Force | [Attaque] Exécution coordonnée : (1/jour) Après qu'un allié ait effectué une attaque, lancez immédiatement votre propre attaque. Si celle-ci touche, les dégâts seront doublés.
+Lame fouet  | Dons de cadeaux
+Un style astucieux et opportuniste qui déstabilise les adversaires grâce à des angles d'attaque inattendus.
+Début : +2 Intuition | Arrêt cardiaque : Si un ennemi rate son attaque, vous gagnez un avantage pour votre prochaine attaque contre lui.
+Kanoe : +2 Rapidité | +2 Précision
+Hinoto : [Réaction] Attaque enveloppante: Lancez une attaque qui inflige un désavantage à toute attaque effectuée à une distance inférieure à 9m.
+Kinoe : +2 Force | [Attaque] Laceration enchaînée : (1/jour) Effectuez deux attaques; si les deux attaques réussissent, vous pouvez arracher un membre choisi à la cible.
+
+66
+Épées-chaînes jumelles Nichirin
+Lame Nichirin - Épées-chaînes jumelles | 2d10 |
+Les épées-chaînes jumelles Nichirin sont un ensemble unique de lames métalliques imposantes. Ces lames de couleur ambre, qui mesurent plusieurs pieds de long, nécessitent une force considérable, non seulement pour les manier, mais aussi pour les faire tourner et les lancer. Contrairement aux épées traditionnelles, les lames Nichirin doivent être enveloppées de tissu plutôt que rangées dans un fourreau, en raison de leur taille considérable. Cela permet de les dégainer rapidement. Ces lames offrent une portée accrue, atteignant jusqu'à 1.5m lors des attaques.
+Réservé à : Utilisateurs du Souffle du Son
+Épées-chaînes jumelles | Style Nihon Buyō
+Un style de combat raffiné qui combine les mouvements fluides et rythmés de la danse traditionnelle japonaise avec des attaques précises et mortelles.
+Début : +2 Performance | Gracieux : Pendant le premier round de combat, vous gagnez +2 à votre CA et infligez 1d6 de dégâts supplémentaires aux ennemis qui échouent leurs attaques contre vous.
+Kanoe : +2 Réflexes | +2 Précision
+Hinoto : [Réaction] Évasion rythmique : Déplacez-vous instantanément sur une distance de 9m avec des mouvements fluides et gracieux. Les alliés traversés par ce mouvement bénéficient d'une prime de +2 à leur prochaine attaque, tandis que les ennemis subissent une pénalité de -2.
+Kinoe : +2 Force | [Attaque] Élégance lunaire : (1/jour) Frappez un ennemi deux fois. Chaque attaque inflige +3 dégâts, et si les deux attaques portent, la cible doit réussir un jet de sauvegarde de Force de volonté, sinon elle perd un membre.
+Épées-chaînes jumelles | Style Kabuki 
+Un style de combat audacieux et théâtral qui écrase les ennemis grâce à des mouvements exagérés et des attaques extrêmement agressives.
+Début : +2 Puissance Brute | Puissance : Si vous attaquez plusieurs ennemis au cours d'un même tour, vous gagnez +2 au jet de précision et +2 aux dégâts pour chaque ennemi touché (max +6).
+Kanoe : +2 Équilibre | +2 Agilité
+Hinoto : [Réaction] Exploit : Permutez instantanément votre position avec celle d'un allié situé à moins de 4.5m. Ce mouvement ne provoque pas d'attaque d'opportunité et vous permet d'utiliser vos épées à chaîne pour effectuer une attaque supplémentaire contre un ennemi désormais à portée.
+Kinoe : +2 Force | [Attaque] Typhon tourbillonnant : (1/jour) Exécutez une attaque tourbillonnante spectaculaire contre tous les ennemis situés à moins de 3m. Chaque cible doit effectuer un jet de sauvegarde de Vigueur, sinon elle subit 2d8 points de dégâts et est projetée au sol.
+
+67
+Classe Démoniste
+
+Niveau 1
+Mizunoto 
+RANG DE DÉPART
+Toutes les capacités et statistiques de départ.
+Niveau 2Mizunoe
++1 à une Stat de Base
++3 PV
++1 Slot d’Etude
+Points de sang démoniaque (BDP) gagnés +2
+Niveau 3
+Kanoto
++1 à une Stat de Base
++3 PV
++3 Dégâts infligés avec l'épée Nichirin
+Action répétée +2
+Niveau 4
+Kanoe
++1 à une Stat de Base
++3 PV
++1 Slot d’Etude
+Points de sang démoniaque (BDP) gagnés +4
+Niveau 5
+Tsuchinoto
++1 à une Stat de Base
++3 PV
+Épée Nishirin passent à 2d6
+Action répétée +3
+Niveau 6
+Tsuchinoe
++1 à une Stat de Base
++3 PV
++1 Slot d’Etude
+Points de sang démoniaque (BDP) gagnés +4
+Niveau 7
+Hinoto
++1 à une Stat de Base
++3 PV
+Épée Nishirin passent à 3d6
+Action répétée +4
+Niveau 8
+Hinoe
++1 à une Stat de Base
++3 PV
++1 Slot d’Etude
+Points de sang démoniaque (BDP) gagnés +6
+Niveau 9
+Kinoto
++1 à une Stat de Base
++3 PV
+Épée Nishirin passent à 4d6
+Action répétée +5
+Niveau 10
+Kinoe
++5 à une Stat de Base
++3 PV
+
++1 Slot d’Etude
+
+Points de sang démoniaque (BDP) gagnés +8
+Niveau 11
+Hashira
++10 Réactions
++3 PV
++1 au dé de dégât de toutes les Formes 
+Action répétée +6
+Démoniste
+Progression de niveaux
+
+Compétences de la classe Démoniste
+Les points de sang démoniaque (BDP : “Blood Demon Points”) constituent une nouvelle ressource à la disposition des chasseurs de démons, et ils ne peuvent être obtenus qu'en consommant la chair de démons. Consommer la chair de démons puissants permet d'obtenir un plus grand nombre de points, qui seront ensuite utilisés pour acquérir des pouvoirs démoniaques.
+La capacité de stockage de points de sang est de : 10 + Courage.
+L’action répétée est une attaque qui peut être utilisée plusieurs fois de suite, ses dégâts augmentant à chaque utilisation. À chaque tour où cette attaque est utilisée, les dégâts de base augmentent de +1. Ce bonus s'additionne également à la Force de l'utilisateur.	Remplacer les augmentations d'endurance est naturel pour les utilisateurs de démonisation lorsqu'ils montent en grade, plutôt que de recevoir plus d'endurance à chaque changement de rang des utilisateurs de démonification entre l'obtention d'un autre bonus +1 à l'action répétée et l'obtention de +2 à chaque morceau de chair de démon consommé.	La guérison démoniaque est une capacité que l'on pensait réservée aux démons, mais grâce aux points de sang, les joueurs peuvent désormais soigner des blessures telles que les hémorragies internes, les membres manquants et même les organes endommagés.
+Objets de départ :Fusil de tranchéeWakizashi 
+69
+Démoniste
+Informations de Classe
+
+BDP obtenus à partir de la chair par niveau
+
+Rang faible - 1d4+1 BDP
+
+Rang élevé - 2d4+2 BDP
+
+Disciple de Lune Inférieure - 1d10+3 BDP
+
+Lune Inférieure - 2d6+4 BDP
+
+Disciple de Lune Supérieure - 3d6+5 BDP
+
+Lune Supérieure - 1d20+8 BDP
+
+70
+Démoniste
+Guérison
+Guérison démoniaque par Rangs
+
+Rang faible - 1d10 PV
+
+Rang Elevé - 2d10 PV
+
+Disciple de Lune Inférieure - 1d20 PV
+
+Lune Inférieure  - 1d20 PV
+
+Disciple de Lune Supérieure - 1d100  PV
+
+Lune Supérieure  - 1d100 PV
+
+Une fois que la chair d'un démon est séparée de son corps, le joueur peut en consommer un morceau et gagner des points de démon, dont le nombre dépend du rang du démon. Pour utiliser la capacité de guérison « Guérison démoniaque », le joueur utilise le rang du démon le plus puissant qu'il a consommé récemment.
+Réaction de soin
+1
+En dépensant 1 point, vous lancez automatiquement un dé de soin dont la valeur correspond au rang le plus élevé de sang de démon consommé récemment.
+2
+L'utilisation de 2 points soignera de la même manière qu'une utilisation d'un seul point, bien qu'il ne soit pas lancé car la guérison sera le montant maximum autorisé par le dé.
+Réactions de la Classe Démoniste
+Réaction d’amélioration
+1
+L'utilisation d'un point permet automatiquement d'améliorer la Force ou la Vitesse du joueur au niveau du démon récemment dévoré.
+2
+En utilisant 2 points, le joueur peut automatiquement améliorer sa Vitesse et sa Force au même niveau que celui du démon qu'il a absorbé récemment.
+
+71
+La transformation en démon comporte un certain risque : l'utilisation de points de sang transforme progressivement le personnage en un démon à part entière. Le niveau de démonisation, exprimé en points, augmente à chaque point de sang utilisé.
+Le seuil maximal de démonisation pour un épéiste se calcule ainsi :
+10 + (COURAGE DE BASE)
+Les points de démonisation sont remis à zéro après un repos prolongé. De plus, ce nombre diminue de 2 points toutes les heures.
+
+
+Démoniste
+Médecine
+Les médicaments sont disponibles uniquement dans les installations de la compagnie de chasseurs de démons. Vous pouvez les stocker dans votre sac avant une mission ou les demander lors des livraisons de ravitaillement. Les médicaments contre la possession démoniaque fonctionnent selon deux mécanismes spécifiques.
+	Médecine Active Démoniste
+Réduit activement l'accumulation de démonisation par 50 % pendant le combat, l'effet s'arrêtant une fois le combat terminé.
+Médecine de Réparation Démoniste
+Réduit de moitié la démonisation actuelle.
+	
+	D'autres méthodes de purification contre la possession démoniaque consistent à apprendre la compétence « Expulsion » par le biais de l'étude. Cette compétence permet de réduire le niveau de possession démoniaque, mais au prix de la santé du pratiquant.
+
+
+Points de Démonisation
+NOM DU MOUVEMENT
+DESCRIPTION DU MOUVEMENT
+COÛT
+DÉMONISATION
+Force démoniaque
+Gagnez une force équivalente à celle du démon que vous combattez.
+3
+1
+Vitesse démoniaque
+Gagnez une vitesse équivalente à celle du démon que vous combattez.
+3
+1
+Soin
+démoniaque
+Soins proportionnels au rang du démon.
+4
+2
+Régénération de membre
+Recouvrez un membre perdu lors de la bataille.
+6
+2
+Art de Sang Démoniaque - Petit
+Utilisez une version miniature du système Art de Sang Démoniaque (BDA) de Démons.
+6
+3
+Art de Sang Démoniaque - Grand
+Utilisez une méthode d’Art de Sang Démoniaque (BDA) à pleine échelle.
+10
+4
+Attaques apprises grâce à la formation spéciale des Tueurs de Démons.
+Régénération continue des membres
+Une régénération lente mais constante des membres manquants.
+0
+1 par tour
+Stockage d’Art Démoniaque
+Permet de stocker un Art Démoniaque utilisé précédemment pour un autre usage lors d'un autre combat.
+10
+5
+Expulsion
+Supprimez tous les points de démonisation, ce qui coûte la moitié des points de vie de base du joueur.
+0
+Supprime ½ du total de la démonisation
+Utilisation des points de démonisation en combat
+
+73
+Sous-classes Démonistes
+
+74
+Wakizashi Nichirin
+Lame Nichirin - Wakizashi | 1d4 |
+Le wakizashi est une version plus courte de la lame Nichirin standard, sa lame mesurant environ la moitié de celle de la lame standard. Il est conçu pour les combats à courte distance ou comme arme secondaire. La lame est fabriquée avec le même métal spécial qui réagit au sang des démons et est suffisamment tranchante pour infliger des blessures mortelles aux démons. Le manche du wakizashi est recouvert d'un revêtement antidérapant pour une prise en main confortable, et il possède une garde circulaire à sa base pour protéger la main du combattant.
+Wakizashi | Tireur d’élite
+Un style de combat précis et calculé qui combine maîtrise des armes blanches et des armes à feu, garantissant que chaque tir soit efficace.
+Début : +2 Précision | Tir en position stable : Le joueur vise avec précision, ce qui immobilise son personnage mais lui confère un bonus de +8 au tir.
+Kanoe : +2 Perception | +2 Survie
+Hinoto : [Réaction] Correction : En réaction, vous pouvez relancer un jet de tir raté pour toucher la cible avec votre arme à feu.
+Kinoe : +2 Finesse | [Attaque] Double-tap : (1/combat) Reproduire parfaitement l'attaque effectuée précédemment.
+Épée | Couteau à viande
+Un style de combat brutal et sadique qui trouve son plaisir à infliger des blessures à ses adversaires et tire sa force de la douleur.
+Début : +2 Tolérance | Chasseur vorace : Lorsque vous subissez des dégâts d'un ennemi situé à portée de mêlée, lancez immédiatement une attaque contre lui.
+Kanoe : +2 Puissance Brute | +2 Mithridatisme
+Hinoto : [Réaction] Concentration démoniaque : Gagnez une action supplémentaire au coût de la moitié de votre BDP actuel.
+Kinoe : +2 Courage | [Attaque] Fureur sanguinaire : (1/jour) Pendant les 3 prochaines attaques, si votre cible saigne ou a moins de 50 % de PV, inflige 1d6 points de dégâts supplémentaires par attaque.
+
+75
+Monter de Niveau
+
+76
+
+Augmenter les compétences	Lorsqu'un joueur monte de niveau, vous remarquerez qu'il gagne un point supplémentaire dans la section « Compétences à maîtriser », située sur la deuxième page de sa fiche de personnage. Ces compétences représentent des aptitudes ou des actions que le joueur peut choisir d'apprendre et d'ajouter à son arsenal. Lorsqu'un joueur obtient un nouveau point de compétence, il peut choisir parmi la liste des compétences disponibles dans la section « Compétences de progression de niveau » du guide. Ces compétences sont classées par niveaux : Mizunoe (niveau 2), Kanoe (niveau 4), Tsuchinoe (niveau 6), Hinoe (niveau 8) et Kinoe (niveau 10). Le joueur peut choisir n'importe quelle compétence correspondant à son niveau, ainsi que celles des niveaux inférieurs. Chaque compétence ne peut être choisie qu'une seule fois.
+	Compétences avancées
+Les compétences avancées, comme les appelle le corps des Chasseurs de Démons dans ses registres et journaux de formation, constituent des étapes cruciales pour devenir un grand chasseur de démons, voire un Hashira. Elles représentent un jalon important dans la maîtrise des techniques de Souffle et du Souffle de Concentration Intégral. Ces compétences apparaissent sur la fiche de personnage une fois les prérequis remplis, et sont considérées comme des compétences bonus. Les joueurs sont encouragés à décrire leurs séances d'entraînement et à évoquer les difficultés rencontrées, afin de mettre en scène leur progression. Ces compétences permettent également d'enrichir le personnage et de refléter son évolution. 
+Monter de Niveau
+Améliorer le niveau des compétences et les emplacements de compétences
+
+77
+Les joueurs obtiennent de nouvelles compétences lorsqu'ils montent de niveau, mais ce n'est pas le seul moyen d'acquérir de nouvelles compétences.
+
+Entraînement de Hashira
+Il se peut, lors de certaines sessions et missions, que les joueurs rencontrent et interagissent avec les Hashira (ou piliers, selon la terminologie utilisée). Les Hashira ont la capacité de transmettre leurs connaissances aux jeunes chasseurs de démons et même de les entraîner. Lorsqu'un Hashira propose un entraînement, il s'agit d'une opportunité unique d'acquérir une nouvelle compétence à ajouter à votre arsenal, même si vous ne pouvez pas choisir la compétence en question.
+
+Conquérir les démons lunaires
+Une autre excellente méthode pour obtenir des emplacements de compétences supplémentaires consiste à affronter et vaincre des démons extrêmement puissants. Si un joueur parvient à vaincre un démon de niveau lunaire sans l'aide d'autres joueurs, il obtient alors un emplacement de compétence gratuit. Cette règle s'applique aux démons de rang « Disciple de Lune Inférieure », « Lune Inférieure », « Disciple de Lune Supérieure » et « Lune Supérieure ». Ce nouvel emplacement de compétence pourra ensuite être utilisé librement.
+Monter de Niveau
+Méthodes de Slot d'Étude complémentaires
+
+78
+Liste des compétences de progression de niveau
+Compétences de Pourfendeurs de Démons (Tous niveaux confondus)
+Augmentation des dégâts de forme :
+Effet : Toutes les techniques de respiration maîtrisées gagnent un dé de dégâts.
+
+Commencez à pratiquer un Souffle secondaire :
+Effet : Commencez à vous entraîner à un nouveau style de combat contre les démons. Une nouvelle technique sera ajoutée après chaque mission réussie, jusqu'à ce que vous maîtrisiez parfaitement ce style.
+
+
+
+
+
+
+
+
+
+
+Compétences de Démonistes (Tous niveaux confondus)
+
+79
+Liste des compétences de progression de niveau
+
+
+Formation à la guérison :
+	Effet : Les utilisateurs de la compétence « Démonisation » apprennent à utiliser leur capacité de guérison grâce aux points de réaction.
+Le palais raffiné du démon :
+Effet : Les utilisateurs de la capacité « Démonisation » gagnent un dé supplémentaire de points de sang démoniaque pour chaque morceau de chair de démon consommé.
+
+Formation au combat à mains nues :
+Effet : Les attaques à mains nues infligent 1d8 +  Force de base en dégâts, au lieu de 1d4 + Force.
+Amélioration d'armes :
+	Effet : Les joueurs peuvent ajouter un total de 2 personnalisations à leurs armes à feu.
+Amélioration de la santé :
+Effet : Augmente les PV de base de +10. Cette compétence ne peut être choisie qu'une seule fois.
+Entraînement d'endurance :
+Effet : Augmente l'endurance de base de +15. Cette compétence ne peut être choisie qu'une seule fois.
+Utilisation de deux armes :
+Effet : Permet de manier deux armes simultanément au combat sans subir d'inconvénients.
+Améliorer capacités extrasensorielles :
+[Niveau 2 | Niveau 3]
+Effet : Améliore le niveau du pouvoir « Sens surhumain ».
+
+
+
+
+80
+Liste des compétences de progression de niveau
+
+Rang Mizunoe 
+
+81
+Liste des compétences de progression de niveau
+
+Entraînement au combat :
+Effet : Permet d'effectuer des attaques en utilisant des points de réaction.
+Entraînement cardio :
+Effets : Gagnez une vitesse de déplacement supplémentaire de 4.5m lors des tours de combat.
+Permis de conduire:
+Effet : Lors de la conduite, les joueurs n'ont plus besoin de passer de tests de compétences, sauf en cas de situation dangereuse.
+Spécialiste des poisons :
+Effet : Les joueurs peuvent créer des poisons simples et des antidotes sans avoir besoin de faire de test. Le kit de préparation de poisons et le kit de remèdes contre les poisons restent néanmoins nécessaires.
+
+
+
+
+
+
+
+Formation de tireur d'élite :
+Effet : Les fusils équipés d'une lunette de visée offrent un avantage pour les jets de tir et les jets de dégâts.
+Maîtrise des compétences sociales :
+	Effet : Gagnez un bonus de +5 aux tests Sociaux effectués auprès de personnes extérieures au groupe, telles que les commerçants, les civils et les policiers.
+Rang Kanoe
+
+82
+Liste des compétences de progression de niveau
+
+Changement d’arme rapide :
+Effet : Permet de changer d'arme en utilisant des points de réaction.
+Formation médicale :
+Effet : Permet d'utiliser des équipements médicaux en consommant des points de réaction.
+
+
+
+
+
+Augmentation des statistiques de base :
+Effet : Augmente les caractéristiques de base grâce à un bonus de 5 points.
+Entraînement à la flexibilité :
+Effet : Se référer aux exploits surhumains
+
+
+
+
+
+
+
+Rang Tsuchinoe
+
+83
+Liste des compétences de progression de niveau
+
+Maniement parfait :
+Effet : Les attaques de base à l'arme de mêlée réussissent automatiquement.
+Formation à l'utilisation des armes à feu :
+Effet : Vous pouvez choisir que vos attaques à l'arme à feu réussissent automatiquement, sans possibilité de coup critique.
+Bourreau:
+Effet : Tue instantanément tout démon dont les PV de base sont de 50 points ou moins.
+
+
+
+
+
+
+
+
+
+
+
+Rang Hinoe
+
+84
+Liste des compétences de progression de niveau
+
+Guillotine:
+Effet : Tue instantanément tout démon dont la santé de base est de 100 points ou moins.
+L'ombre de la mort :
+Effet : Les attaques effectuées de manière discrète infligent 3d10 points de dégâts supplémentaires.
+
+
+
+
+
+
+
+
+
+Rang Kinoe
+
+85
+Souffle de Concentration Intégral : Constant
+Votre pourfendeur…
+A eu des difficultés
+S’est bien débrouillé
+A excellé
+0pts
+1pt
+2pts
+Vous avez perfectionné…
+Courir des kilomètres
+Le Souffle en dormant
+L’explosion de bouteilles
+0pts
+1pt
+2pts
+Et après la formation, vous avez acquis…
+Un corps plus en forme
+Une nouv. fonctionnalité
+De nouveaux vêtements
+0pts
+1pt
+2pts
+Le Souffle de Concentration Intégral : Constant (TCB:C “Total Concentration Breath: Constant”) consiste à dilater les poumons pour aspirer le plus d'air possible, ce qui accélère le rythme cardiaque et la circulation sanguine tout en augmentant la température corporelle. La formation à cette technique est rigoureuse, éprouvante et exige une discipline de fer.
+
+Effets de la Maîtrise du Souffle de Concentration Intégral : Constant
+Le Souffle de Concentration ne nécessite plus d'énergie pour être maintenu.
+Les joueurs récupèrent 1 point d'endurance par tour tant que TCB:C est actif.
+Les joueurs voient leurs saignements s'arrêter automatiquement lorsqu'ils utilisent le Souffle de récupération.
+
+Cette compétence est automatiquement ajoutée à votre liste de compétences au rang Kanoto.
+Contexte de la formation (3pts)
+Pendant la formation du Souffle Constant
+*Compétence supérieure
+
+86
+Forme Marquée
+Votre marque apparaît…
+Sur votre corps
+Sur vos bras
+Sur votre visage
+0pts
+1pt
+2pts
+Votre marque est…
+Petite
+Moyenne
+Grande
+0pts
+1pt
+2pts
+Contexte de la Forme Marquée (3pts)
+Quand votre marque se manifeste
+Après la formation, vous avez acquis…
+Un corps plus en forme
+Une nouv. fonctionnalité
+De nouveaux vêtements
+0pts
+1pt
+2pts
+Le terme « marqué » utilisé dans « forme marquée » fait généralement référence à la marque qui apparaît sur le visage ou sur une autre partie visible du corps des chasseurs de démons. Chaque chasseur de démons possède une marque unique, dont le motif semble être lié à la technique de Souffle qu'il utilise, et qui signale généralement une augmentation considérable de sa puissance. Entrer dans cet état est comparable à un pic d'adrénaline. 
+
+Effets lors d’un passage en Forme Marquée
+Tous les dégâts infligés aux cibles grâce aux techniques de souffle sont calculés avec un avantage, ce qui signifie que les joueurs devront lancer leurs dés de dégâts deux fois et retenir le résultat le plus élevé.
+Le Souffle de récupération permet de récupérer deux fois plus d'endurance que d'habitude.
+
+Cette compétence est automatiquement ajoutée à votre liste de talents au rang Tsuchinoe.
+*Compétence supérieure
+
+87
+Monde Transparent
+Vos yeux…
+Grossissent
+S'affutent
+Changent de couleur
+0pts
+1pt
+2pts
+Le Monde autour de vous…
+Devient silencieux
+Ralentit
+Se fige
+0pts
+1pt
+2pts
+Votre esprit…
+Vide complètement vos pensées
+Atteint son apogée
+Ressent le poids du Monde
+0pts
+1pt
+2pts
+Contexte de formation (3pts)
+Lors de l'activation du Monde Transparent
+En activant le mode Monde Transparent, les joueurs peuvent analyser en détail le corps de leur adversaire et visualiser parfaitement ses organes, ses os et ses muscles. Cette capacité de visualisation accrue leur permet de cibler les points faibles clés du corps de leur adversaire.
+
+
+Effets de la vision du Monde Transparent
+Toutes les techniques qui ne nécessitent pas de Souffle infligent automatiquement des dégâts critiques en cas de réussite.
+Les attaques visant votre personnage ont un désavantage.
+
+Cette compétence est automatiquement ajoutée à votre liste de compétences au rang Hinoe.
+*Compétence supérieure
+
+88
+Lame Rouge
+Votre Lame…
+Rayonne de chaleur
+Émet un bruit léger
+Brille intensément
+0pts
+1pt
+2pts
+Votre Corps…
+Se sent calme
+Se sent léger
+Se sent brûlant
+0pts
+1pt
+2pts
+Votre Âme…
+S’agite d’anticipation
+Se remplit d’énergie
+Est en feu
+0pts
+1pt
+2pts
+Contexte d’entraînement
+Lors de l’activation d’une Lame Rouge
+La Technique de la Lame Rouge, autrefois considérée perdue dans le temps, est l’un des sommets de l’extermination des démons. En atteignant un niveau de compétence que presque personne n’atteint, les chasseurs gagnent la capacité de chauffer et manier leur lame à une température extrême, infligeant bien plus de dégâts aux démons qu’auparavant. Ces lames sont incroyablement dangereuses et la raison pour laquelle il faut une telle maîtrise est qu’avec une forme ou un soin inadéquat, la lame peut brûler ou blesser son utilisateur voire se casser si elle est mal utilisée.
+
+Effets de l’obtention d’une Lame Rouge
+Les démons frappés par une arme avec l’effet de la lame rouge ne peuvent plus se guérir pendant le tour en cours.
+Les attaques de la Lame Rouge infligent le double de dégâts à tous les démons et entités démoniaques.
+
+Cette compétence est automatiquement ajoutée à votre liste de compétences au Rang : Kinoe
+
+*Compétence supérieure
+
+89
+Outils & Objets
+
+90
+Armes Principales Alternatives
+Aide à la lecture :
+Nom de l'Arme | Description Avantage : (Positif) Inconvénient : (Négatif) 
+Odachi | 1d12
+ Une immense grande épée courbée, capable de fendre l'armure, la chair et les os.
+Avantage : Ajoute +1 dé de dégâts aux dégâts infligés et +1.5m de portée avec un Odachi.
+Inconvénient : Toutes les attaques ont un temps de charge supplémentaire de +1 pour s'activer. 
+
+Naginata | TBD
+
+Cimeterre | TBD
+
+Patta | TBD
+
+Épée à Crochet | TBD
+
+	En raison d'un afflux de minerai de nichirin, le Corps des Pourfendeurs de Démons, dans une tentative d'augmenter les taux de réussite, tente de forger de nouvelles armes qui pourraient mieux s'harmoniser avec certains pourfendeurs. Ces armes sont appelées "armes alternatives" et bien que oui, elles puissent être utilisées pour les techniques de respiration, elles demandent un certain temps d'adaptation.
+
+	Les armes alternatives, tout en infligeant des dégâts variés, nécessitent également que les techniques de respiration soient désormais lancées. Inclus dans cela, elles comportent aussi un effet bonus et un effet négatif ! Certaines peuvent augmenter les dégâts, la portée, etc., bien que chacune comporte aussi un désavantage.
+
+
+91
+Armes à feu 
+
+
+Arme à feu - Pistolet | Une arme de poing standard pour l'usage militaire et policier, ce pistolet utilise une cartouche de 9mm et est un choix fiable pour ceux qui recherchent un équilibre entre précision et puissance d'arrêt.
+Portée : 18m (1d8+Précision)
+ Mauser C96 | Un pistolet semi-automatique tirant des cartouches 7,63x25mm Mauser, avec une poignée distinctive en forme de balai et un chargeur amovible. (10 cartouches)
+Nambu Type 14 | Un pistolet semi-automatique japonais tirant des cartouches 8mm Nambu, connu pour son action fluide et son design simple.
+(8 cartouches)
+Colt M1911 | Un pistolet semi-automatique américain tirant des cartouches .45 ACP, largement reconnu pour sa fiabilité et sa puissance d'arrêt.
+(7 cartouches)
+Arme à feu - Fusil | Un fusil à verrou chambré en .30-06, cette arme est idéale pour les engagements à longue portée où la précision est primordiale. Portée : 36m (1d12+Précision)
+Type 38 Arisaka | Ce fusil à verrou est l'arme standard des chasseurs de démons de l'ère Taisho, avec un calibre 6,5mm, un magasin interne de cinq cartouches, et un anneau pour baïonnette pour le combat rapproché. (5 cartouches)
+Winchester Model 1895 | Ce fusil à levier, chambré en .30-06 Springfield, est apprécié des chasseurs de démons pour sa capacité de tir rapide, sa robustesse et sa polyvalence. (4 cartouches)
+Mauser Karabiner 98k | Ce fusil à verrou chambré en 7,92x57mm Mauser est une arme puissante et précise.
+(5 cartouches)
+
+92
+Tirer : Tirer avec une arme à feu en combat nécessite un test de Finesse pour toucher les cibles. Les joueurs ajouteront également leur Précision aux jets de dégâts. En dehors du combat cependant, les joueurs doivent utiliser la Précision pour effectuer un jet d'attaque.
+Acheter des armes à feu : Les armes à feu sont facilement achetables dans les domaines ou les magasins de chasse situés en ville. Ces armes sont généralement coûteuses mais très durables et difficiles à casser.
+Recharger les armes à feu : Recharger une arme à feu prend une action complète en combat. Certains accessoires peuvent être disponibles pour certaines armes afin d'atténuer ce temps, comme les chargeurs rapides, mais toutes les armes à feu ne disposent pas de cette option.
+
+Armes à feu
+Achat, Utilisation, Personnalisation
+Personnalisation des armes à feu : Les armes à feu peuvent recevoir une option de personnalisation unique qui peut modifier certaines caractéristiques ou ajouter des bonus. Les joueurs peuvent ajouter d'autres personnalisations plus tard s'ils apprennent des compétences telles que l'armurerie. Peu importe le nombre de personnalisations, elles peuvent être interchangées entre les combats tant que les joueurs disposent des moyens nécessaires pour les réaliser.
+
+93
+Munitions 
+Standard - Munitions pour pistolet : Il s'agit d'une balle de plomb basique couramment utilisée pour les pistolets, offrant une bonne précision et une pénétration décente. (Dégâts standards pour pistolet)
+
+Pointe Creuse - Munitions pour pistolet : Cette munition a une pointe creuse qui s'élargit à l'impact, causant de graves dégâts aux tissus mous et aux organes. (Ajoute +3 de dégâts aux pistolets)
+
+Standard - Munitions pour fusil à pompe : Il s'agit d'une cartouche de fusil à pompe avec de petits plombs, utile pour les combats à moyenne portée et offrant une dispersion correcte. (Dégâts standards pour fusil à pompe) 
+
+Souffle du Dragon - Munitions pour fusil à pompe : Cette cartouche contient un composé à base de magnésium qui s'enflamme à l'impact et crée un flash de feu, idéal pour éliminer des groupes d'ennemis. (Ajoute un effet d'étourdissement aux dégâts du fusil à pompe)
+
+Standard - Munitions pour fusil : Il s'agit d'une balle de plomb basique couramment utilisée pour les fusils, offrant une bonne précision et une pénétration décente. (Dégâts standards pour fusil)
+Armes à feu
+
+Modifications d'armes à feu
+Silencieux : Atténue le bruit de l'arme, réduisant les sons et rendant les tirs plus difficiles à détecter. Le tir ne révèle pas votre position et confère un bonus de +2 aux tests de Discrétion après avoir tiré.
+
+Chargeur étendu : Augmente la capacité de munitions de l'arme, permettant plus de tirs avant de recharger. Double la taille du chargeur de l'arme, réduisant la fréquence de rechargement.
+
+Lunette : Améliore la Précision à longue portée en fournissant une vue agrandie des cibles éloignées. Étend la portée de l'arme de 50% et confère un bonus de +1 aux tests de Finesse pour les tirs visés.
+
+Baïonnette : Fixe une lame à l'arme, permettant des attaques de mêlée au corps à corps. Ajoute une option d'attaque de mêlée infligeant 1d8 dégâts et utilisant la statistique de Force ou de Finesse.
+
+Crosse : Stabilise l'arme, améliorant la précision et réduisant le recul pour des tirs précis. Confère un bonus de +1 aux jets de Précision et réduit les pénalités lors des tirs en mouvement.
+Munitions et modifications
+
+94
+Armes auxiliaires
+
+Grenades
+Grenades Type-97 : Une grenade à fragmentation japonaise infligeant 20 dégâts lors de la détonation dans un rayon de 3m.
+Grenades US MK2 : Une grenade ananas américaine classique infligeant 25 dégâts dans un rayon de 3m.
+Cocktail Molotov : Une arme incendiaire infligeant 1d8 dégâts de feu par round dans un rayon de 4,5m pendant 3 tours.
+Autres
+Lance-flammes : Une arme dévastatrice à courte portée qui libère un cône de feu infligeant 3d6 dégâts de feu à toutes les cibles dans un cône de 6m; les cibles touchées doivent réussir un test de Dextérité (DC 14) ou un état de brûlure, subissant 1d6 dégâts de feu au début de leur tour pendant 3 tours. (10 utilisations)
+Projectiles à effet secondaire
+
+Bombes à lancer : Ces petits explosifs portatifs sont un outil courant pour le corps de Pourfendeurs de Démons. Ces bombes peuvent être lancées comme une action bonus avant une attaque et nécessitent un test de dextérité pour s'enflammer réellement.
+(1d4 à 10d4)*Chaque fois que des bombes sont utilisées, lancez un d10 et ajoutez votre dextérité de base pour déterminer le nombre de lancers de 1d4 de dégâts
+
+Kunai de Glycine : Une arme spécialisée utilisée par les pourfendeurs de démons, ce kunai est imprégné de poison de glycine qui peut s'avérer mortel pour les démons. Sa pointe acérée et son poids équilibré en font un outil polyvalent pour le combat rapproché et le lancer.
+(1d6)
+*Inflige un poison affaiblissant à une cible causant -1 en FORCE et DEXTÉRITÉ.)
+
+95
+ Projectiles simples & Application de poison
+Projectiles
+Arbalète : Une arme compacte et mortelle appréciée des chasseurs et assassins, l'arbalète tire des carreaux avec une force significative, offrant une attaque rapide et létale contre les cibles.
+Portée : 18m [1d12 + Précision]
+
+Arc : Une arme classique utilisée par les archers habiles, l'arc est un outil polyvalent qui lance des flèches avec précision et puissance, permettant à son utilisateur de frapper les ennemis à distance.
+Portée : 12m [1d8 + Précision]
+
+Kunai : Un outil polyvalent à la fois pour le combat et l'utilité, le kunai est une arme en forme de poignard qui peut être lancée avec précision ou utilisée au corps à corps pour des attaques tranchantes et d'estoc.
+Portée : 1.5m x Force [1d6 + Précision]
+
+Shuriken : Une arme agile et furtive, les shurikens sont de petits projectiles en forme d'étoile qui peuvent être lancés ou utilisés au corps à corps pour porter des coups rapides et précis.
+Portée : 9m [1d4 + Précision]
+
+
+Utilisation des Projectiles Simples
+Pour utiliser ces armes ainsi que pour affecter les projectiles en combat, les joueurs peuvent utiliser la Dextérité pour les lancer ou les projeter, ajoutant leur Précision au jet de dégâts.
+Application de Poison
+L'empoisonnement est une pratique courante parmi les chasseurs de démons. L'acte consiste à enduire une arme quelconque du poison liquide de glycine fourni par le corps de chasseurs. Appliquer du poison nécessite une action et peut être fait sur presque toutes les armes ayant une lame ou une pointe. Les poisons existent sous deux formes de base.
+
+Poison Affaiblissant : Enlève un niveau complet à chaque statistique de base du démon cible empoisonné.
+
+Poison Nuisible : Inflige un d10 de dégâts à chaque tour de combat tant que le démon cible est empoisonné.
+
+
+Poison et Culture
+96
+Poison de Glycine fourni par le
+Corps de Chasseurs uniquement
+
+Poison de Glycine : Affaiblissant | Ce poison est dérivé de la plante de glycine et mélangé à d'autres ingrédients naturels pour créer une toxine puissante. Lorsqu'il est appliqué sur une lame, il provoque une sensation légère de brûlure au contact de la chair démoniaque et pénètre dans leur circulation sanguine, les affaiblissant avec le temps.
+Effet : -1 à la Force et à la Dextérité d’un démon à chaque tour où il a été infecté.
+
+Poison de Glycine : Endommageant | Ce poison puissant est créé avec les mêmes ingrédients naturels que la variante faible, mais avec une concentration plus élevée d'extrait de glycine. Lorsqu'il est appliqué sur une lame, il se propage rapidement dans la circulation sanguine du démon, provoquant une douleur intense et handicapant ses mouvements tout en lui infligeant des dégâts à chaque tour.
+Effet : -10% de PV à chaque tour pour tout démon infecté par le poison.
+**N'affecte pas les démons de niveau lune
+Culture de Poison
+
+
+Kit de Culture de Poison : Ce kit comprend tous les matériaux nécessaires à la création de divers poisons, tels que des fioles de différents produits chimiques, un ensemble de balances, ainsi qu’un mortier et un pilon. Il est également fourni avec un manuel détaillé expliquant comment mélanger et manipuler correctement les substances en toute sécurité.
+Nécessite un test de science.
+
+
+Kit de Remède contre le Poison des Démons :
+Ce kit est conçu pour aider à soigner ceux affectés par les poisons démoniaques. Il inclut divers antidotes et herbes médicinales, ainsi qu’un ensemble d’aiguilles et de fil pour fermer les plaies. Il est également livré avec un petit manuel contenant des instructions détaillées sur l’utilisation de chaque article du kit pour soigner différents types de poison démoniaque.
+Nécessite un test de médecine.
+Accumulation de Poisons
+Empoisonner un démon, pour certains pourfendeurs, n’est que le début. Des poisons de toutes sortes peuvent s’accumuler jusqu'à ce que le démon soit vaincu, infligeant des dégâts ou des effets négatifs cumulés à chaque tour où le démon est touché par une nouvelle dose.
+
+Fabrication
+97
+La fabrication est une capacité unique où, si les bons composants sont trouvés, un nouvel objet peut être créé. L'utilisation de ces objets et des capacités qui leur sont conférées relève entièrement de la discrétion du MJ.
+
+Par exemple, un joueur crée un cocktail Molotov à partir d'une (Bouteille de Sake) et d'un (Tissu) en réussissant un test d'intelligence avec un résultat de 6 grâce à deux composants. Le MJ indique que les cocktails Molotov peuvent être lancés à une distance égale à la Force et explosent en infligeant 3d8 de dégâts et en appliquant un effet de feu dans une zone définie.
+
+Lors d'un test de fabrication, un nombre spécifique de composants est requis avant que la fabrication puisse avoir lieu. La difficulté de la fabrication dépend entièrement du nombre de composants, plus le nombre de composants est élevé, plus le test sera difficile.
+Nombre de composants
+Difficulté
+1
+4
+2
+6
+3
+8
+4
+10
+5
+12
+6
+14
+
+Attention médicale
+98
+Ce petit guide explique comment déterminer le seuil de blessure de certaines attaques, plus les dégâts sont élevés, plus la blessure est grave.
+
+
+Types de blessures physiques
+Blessures graves - 13-20 dégâts 
+Organe contusionné ou os fracturés.
+Blessures quasi mortelles - 20+ dégâts 
+Membres perdus ou organes perforés
+
+
+À partir des blessures graves, les joueurs ne peuvent plus guérir jusqu'à 100% PV. Recevoir une blessure grave ou quasi mortelle enlève 10 % de la santé totale maximale d'un joueur jusqu'à ce qu'il reçoive une aide médicale d'un chirurgien ou d'un médecin. Plusieurs types de fournitures médicales sont disponibles à différents endroits et magasins, y compris les épiceries générales et les cabinets médicaux. Les joueurs qui reçoivent des blessures graves ou quasi mortelles doivent trouver un lieu avec un médecin où ils peuvent recevoir un traitement médical. Une fois dans ces lieux, les joueurs peuvent parler à des médecins kakushi ou réguliers qui effectueront des traitements de guérison et même des chirurgies. Lorsqu'ils sont suffisamment proches de ces lieux, les joueurs peuvent également contacter ces médecins par radio pour les appeler, bien qu'ils puissent prendre du temps pour se rendre à l'endroit souhaité et seront sans la plupart des outils nécessaires pour des soins plus intensifs.
+
+Équipement médical
+
+99
+
+Bandage : Un rouleau de pansement stérile utilisé pour envelopper les coupures et égratignures mineures afin d'éviter tout saignement supplémentaire.
+Soigne 1d4 points de dégâts. [1d4 + Médecine]
+
+Pansement compressif : Un bandage en tissu épais utilisé pour envelopper les plaies et coupures plus larges afin de favoriser la guérison.
+Soigne 1d8 points de dégâts. [1d8 + Médecine]
+
+Attelle : Support rigide utilisé pour stabiliser les os cassés jusqu'à ce qu'ils puissent être traités correctement.
+Ne guérit aucun dégât, mais empêche que d'autres dégâts ne soient infligés.
+[Stabilise les os cassés]
+
+Trousse de premiers secours : une trousse complète contenant diverses fournitures et équipements médicaux pour traiter une gamme de blessures et d’affections.
+Soigne 1d20 points de dégâts. [1d20 + Médecine]
+
+Équipement chirurgical : un ensemble spécialisé d’équipements médicaux utilisés pour effectuer des interventions chirurgicales et d’autres procédures médicales avancées.
+Peut soigner tous les dégâts et restaurer la santé complète d'un personnage.
+Nécessite un test de médecine extrêmement élevé. Un échec critique peut entraîner une mort instantanée. [Soins complets]
+
+L'équipement médical, quelle que soit sa capacité, nécessite une action complète, à moins que les joueurs n'aient débloqué la réaction [Formation médicale].
+
+Premiers secours
+
+Équipement médical
+
+100
+
+Aide expérimentale
+Seringue de sang de démon : 
+Une seringue remplie de sang de démon guéri, permettant de guérir instantanément les fractures, les lacérations et autres blessures graves. Cependant, elle présente des effets secondaires et ne peut être utilisée que trois fois avant de provoquer des dégâts importants tels que des crises cardiaques ou des convulsions. 
+Nécessite un test Médical et prend un tour complet pour administrer. [Soins complets]
+
+Injecteur de jet de sang de démoniaque : 
+L’injecteur de jet de sang démoniaque est un appareil élégant et futuriste avec une finition métallique et des accents rouges brillants, capable d'administrer instantanément une puissante dose de guérison de sang de démon guéri en appuyant sur un bouton.
+Cet appareil est conçu pour administrer rapidement et efficacement du sang de démon guéri afin de guérir instantanément les fractures, les lacérations et autres blessures graves. Il peut être utilisé instantanément sans nécessiter de test Médical, mais comme la seringue, il ne peut être utilisé que 3 fois avant de provoquer des dégâts importants. L'injecteur à jet est plus cher que la seringue, mais il permet une guérison plus rapide et nécessite moins de compétences. 
+[Soins complets]
+
+Aides secondaires
+Analgésiques : de petits comprimés blancs qui soulagent temporairement la douleur et augmentent légèrement la santé de l'utilisateur lorsqu'ils sont consommés. Ils sont donc indispensables à tout pourfendeur de démons cherchant un moyen rapide et efficace de se soigner au combat. Ces petits pouvoirs secondaires procurent un bonus temporaire d'un quart de la santé totale. Leurs effets disparaissent au bout d'une heure et, si le joueur n'a pas reçu d'aide depuis, les dégâts infligés sont maintenus.
+
+L'injecteur de jet de sang démoniaque
+
+Aide expérimentale
+
+
+101
+
+La conduite dans le jeu
+
+Conduire peut être un moyen de transport pratique et stimulant dans l'univers du jeu. Les joueurs peuvent choisir d'appeler un Kakushi pour se déplacer ou d'économiser les gains des missions pour acheter une voiture chez un concessionnaire. Une fois en possession d'une voiture, ils peuvent l'utiliser pour la conduite décontractée ou pour se déplacer dans des situations dangereuses.
+
+Conduite décontractée : En conditions normales de conduite, sans danger immédiat, les joueurs peuvent effectuer un test de Finesse pour évaluer leur maniabilité. Le DD de ce test peut varier en fonction de facteurs tels que l'état de la route, la météo et la visibilité. Si le test de finesse est réussi, le personnage du joueur conduira le véhicule en toute sécurité jusqu'à sa destination.
+
+Dangers sur la route : 
+Cependant, il peut arriver que des dangers inattendus surviennent en conduisant, comme des animaux ou des humains sautant sur la route, des obstacles ou des changements soudains de circulation. Dans de telles situations, les joueurs devront effectuer un test de Réflexes pour réagir rapidement et éviter le danger. Le DD de ce test dépend de la gravité et de la soudaineté du danger.
+
+Appel à l'aide : Les joueurs qui ne possèdent pas de voiture ou préfèrent ne pas conduire peuvent appeler un Kakushi pour obtenir un transport. Ils peuvent utiliser une radio ou un corbeau pour contacter un Kakushi, qui se rendra à leur emplacement et leur fournira un service de transport.
+
+Acheter une voiture : 
+Les joueurs peuvent économiser les gains des missions pour acheter une voiture chez un concessionnaire. Le prix de la voiture dépend de la marque, du modèle et de son état. Les joueurs doivent contacter le MJ pour déterminer le prix de la voiture et ses éventuels bonus ou fonctionnalités supplémentaires.
+
+Ford modèle T | 600 ¥
+Datsun Type 10 | 1 200 ¥
+Mitsubishi modèle A | 3 000 ¥
+
+N'oubliez pas de consulter votre MJ pour toute règle ou directive spécifique à la conduite dans votre monde de jeu, et privilégiez toujours la sécurité et la prudence lorsque vous conduisez un véhicule. Bonne route !
+
+Transports
+
+
+Transport
+
+102
+
+Ford Modèle T
+Description : Une voiture américaine classique réputée pour sa durabilité et son prix abordable. Elle présente une carrosserie noire avec des rayons en bois sur les roues et un intérieur spacieux.
+Bonus : +1 aux tests de Dextérité grâce à son ingénierie fiable.
+Coût : environ 600 yens, ce qui équivaut à environ 20 000 yens en 1934.
+
+Datsun Type 10
+Description : Une petite voiture japonaise produite par Datsun Motor Company, réputée pour son design élégant et sa maniabilité. Sa carrosserie bleu foncé présente une silhouette aérodynamique.
+Bonus : +2 aux tests de Dextérité grâce à sa maniabilité agile.
+Coût : environ 1 200 yens, ce qui équivaut à environ 40 000 yens en 1934.
+
+Mitsubishi modèle A
+Description : Une voiture de luxe produite par Mitsubishi Motors Corporation, réputée pour son élégance et ses équipements haut de gamme. Elle arbore un extérieur noir et argent avec des sièges en cuir et des boiseries polies.
+Bonus : +1 à tous les tests de Véhicule grâce à son ingénierie avancée et à son confort.
+Coût : environ 3 000 yens, ce qui équivaut à environ 100 000 yens en 1934.
+
+
+Vêtements
+
+103
+
+Vêtements [Civil]
+Vêtements civils : Vêtements simples et pratiques portés par les gens ordinaires pour un usage quotidien, conçus pour le confort et la durabilité.
+
+Vêtements élégants : Vêtements luxueux et raffinés fabriqués à partir de matériaux de haute qualité, adaptés aux événements formels et aux occasions spéciales.
+
+Vêtements flashy : vêtements audacieux et accrocheurs conçus pour faire une déclaration, souvent ornés de couleurs vives, de motifs complexes et d'accessoires décoratifs.
+
+Vêtements de nuit : Vêtements confortables et douillets portés pour dormir ou se détendre à la maison, conçus pour un maximum de confort et de détente.
+
+Vêtements agricoles : Vêtements durables et fonctionnels conçus pour travailler à la ferme, dotés de tissus robustes et de coutures renforcées pour résister aux rigueurs du travail manuel.
+
+Vêtements [Professionnel]
+Uniforme de tueur de démons : Un uniforme spécialisé porté par les membres du Corps des tueurs de démons, fabriqué dans un matériau spécial résistant au sang acide des démons. Donne +1 à la CA.
+
+Uniforme de police : Un uniforme standard porté par les forces de l'ordre, conçu pour être durable et fonctionnel. Il confère un bonus de +1 à l'intimidation lors des interrogatoires de suspects et donne accès aux ressources et informations policières.
+
+Uniforme de garde : Uniforme porté par les gardes et le personnel de sécurité, conçu pour la protection et la défense. Permet d'accéder aux lieux fortifiés et aux installations sécurisées.
+
+Uniforme des artistes : Un uniforme tape-à-l'œil et sophistiqué, porté par les artistes et les animateurs, conçu pour captiver et divertir le public. Donne accès aux coulisses et à des événements exclusifs.
+
+Les vêtements offrent un camouflage instantané dans les situations appropriées. Les joueurs ne peuvent être capturés que si le PNJ réussit un test d'intuition, ou démasqués.
+
+
+Nourriture
++5 Endurance
+Sushi : Un plat composé de riz vinaigré et de diverses garnitures telles que du poisson cru ou des légumes.
+Nigiri Sushi : Sushi traditionnel composé d'une petite boule de riz garnie d'une tranche de poisson cru ou d'autres fruits de mer.
+Makis-Sushis : Sushi roulé, souvent enveloppé d'algues, garni de riz, de légumes et/ou de poisson cru ou d'autres fruits de mer.
+Sushi Temaki : Un type de sushi roulé à la main, en forme de cône, garni de riz, de légumes et/ou de poisson cru ou d'autres fruits de mer.
+
+Exemples de plats de récupération
+Rechargent  l'Endurance, mais n’en donnent pas en bonus.
++10 Endurance 
+Boîte à bento : Un panier-repas contenant généralement du riz, de la viande ou du poisson et des légumes, qui peut donner un petit coup de pouce à l'endurance. C'est le seul repas qui peut être emporté et consommé plus tard, car il est conçu pour être transporté.
+Riz au curry : Un plat composé de riz japonais et de sauce au curry, souvent servi avec de la viande ou des légumes.
+Yakitori : Brochettes de poulet grillé, souvent assaisonnées de sauce soja ou d'autres assaisonnements.
+Don Buri : Un plat de riz japonais, souvent garni de viande, de fruits de mer ou de légumes.
+
+104
+
+Ces repas peuvent être achetés dans les restaurants ou les food trucks du jeu, et peuvent être appréciés par certains PNJ ou personnages. Manger procure un léger bonus d'endurance, crucial avant des combats intenses ou autres situations difficiles.
+
+Exemples de plats bonus
+Ajoute de l’Endurance temporaire qui disparaît lorsqu'elle est utilisée.
++10 Endurance
+Ramen : Un plat de soupe de nouilles japonais populaire, souvent servi avec de la viande ou des légumes.
+Tonkotsu Ramen :Un bouillon riche et crémeux à base de porc, souvent servi avec des nouilles fines et des garnitures telles que du porc tranché, des oignons verts et des œufs à la coque.
+Miso Ramen : Un bouillon copieux et savoureux à base de pâte de soja fermentée, souvent servi avec des nouilles plus épaisses et des garnitures telles que du porc haché, des germes de soja et du maïs.
+Tsukemen : Un type de ramen dans lequel les nouilles sont servies séparément du bouillon, épais et souvent servi froid. Les nouilles sont trempées dans le bouillon avant d'être dégustées, et peuvent être garnies de tranches de porc, d'oignons verts et d'algues.
+
+
+105
+
+Ces en-cas peuvent être consommés sans aucun bénéfice, ou offerts aux PNJ pour améliorer leur humeur ou renforcer leurs relations avec eux. Certains PNJ peuvent avoir des préférences particulières parmi ces en-cas, et leur offrir le bon en-cas au bon moment pourrait permettre au joueur de gagner des faveurs ou des récompenses supplémentaires.
+Bonbons
+Dango : un type de ravioli sucré japonais à base de mochi (farine de riz gluant) et généralement servi sur des brochettes par groupes de trois ou quatre.
+Coût : 4 yens
+
+Manju : Une confiserie japonaise traditionnelle à base de pâte de haricots sucrée enveloppée dans une pâte à base de farine.
+Coût : 5 yens
+
+Senbei : Un type de cracker de riz japonais, généralement aromatisé avec de la sauce soja ou d'autres assaisonnements.
+Coût : 3 yens
+
+Street Food
+
+Taiyaki : Un gâteau en forme de poisson traditionnellement fourré de pâte de haricots rouges sucrée, mais également disponible avec d'autres garnitures comme le chocolat ou la crème anglaise.
+Coût : 8 yens
+
+
+Okonomiyaki : Une crêpe salée à base de farine, d'œufs et de chou râpé, garnie de viande ou de fruits de mer, de sauce et de mayonnaise.
+Coût : 10 yens 
+
+
+Takoyaki : Petites boules de pâte farcies de poulpe, d'oignon vert et de gingembre mariné, généralement servies avec une sauce savoureuse et de la mayonnaise.
+Coût : 10 yens pour
+6 Takoyaki
+
+Collations
+
+
+106
+Il est indéniable que la mort est injuste.
+
+Comme mentionné précédemment, ce système de jeu met en exergue les principes fondamentaux de la série Kimetsu no Yaiba, une série où les héros sont habitués aux épreuves et aux pertes. Mourir dans ce système est facile, plus facile que de vivre même, et peut survenir à tout moment. Perdre tous ses PV signifie que le corps n'a plus assez de sang, d'oxygène ni de force vitale pour maintenir l'âme en vie.
+
+À 0 PV, vous pouvez sauvegarder, ressusciter ou abandonner votre personnage, car vous êtes mort. Certaines capacités, médicaments et objets peuvent vous empêcher de descendre à 0 PV, mais sans soins immédiats, vous mourrez. Bien sûr, cette règle peut être modifiée si le maître du jeu décide de vous accorder une seconde chance !
+Mort
+"Le vieillissement et la mort sont ce qui confèrent sens et beauté à la courte existence humaine. C'est précisément parce que nous vieillissons et mourons que notre vie prend de la valeur et de la noblesse. La force physique n'a guère d'importance face à la fragilité de la condition humaine." 
+Rengoku Kyojiro
+
+107
+Démons
+(Classe jouable)
+
+À quoi ressemble ton corps de démon ? (PV)
+Principalement humain
+Ressemblant à un animal
+Monstrueux
+(20 PV de départ)
+(40 PV de départ)
+(60 PV de départ)
+0pts
+1 pt
+2 points
+Comment vous déplacez-vous ? (Bouger)
+Sur mes deux jambes
+A 4 pattes
+Autre (définir)
+(9m par tour)
+(13.5m par tour)
+(18m par tour)
+0pts
+1 pt
+2 points
+À quel point êtes-vous dangereux ? (Attaque de base)
+Modérément
+Anormalement
+Incroyablement
+1d4 dégâts de base
+1d6 Dégâts de base
+1d8 Dégâts de base
+0pts
+1 pt
+2 points
+108
+
+Construisez votre corps démoniaque
+
+En utilisant 3 nouveaux points, décidez ce que votre nouveau sang de démon fait à votre corps.
+
+
+Rangs démoniaques
+109
+Niveau
+Nom
+1
+Rang faible
+2
+Rang élevé
+3
+Disciple de Lune Inférieure
+4
+Lune Inférieure
+5
+Disciple de Lune Supérieure
+6
+Lune Supérieure
+À cette époque, la hiérarchie des démons suit un système de pouvoir assez complexe, avec l'existence de différentes « lunes », bien que leur rôle soit différent de celui qu'elles avaient sous le règne de Muzan Kibutsuji. Les titres de « Lune Supérieure » ou « Lune Inférieure » n'existent plus. Les 12 démons les plus puissants portent tous le titre de « Lune », chacun avec son propre surnom distinctif, car leurs pouvoirs sont très similaires. Les rangs ci-dessous servent simplement à classer leur puissance selon un ancien système de classification.
+
+110
+Pour définir les caractéristiques de base d'un démon, les joueurs doivent commencer par la configuration standard de création de personnage, avec les valeurs suivantes : (0, 1, 2, 3, 3, 5).
+
+Après avoir établi ces valeurs de base, les joueurs peuvent ensuite choisir un autre ensemble de valeurs à ajouter, en fonction du rang qu'ils souhaitent attribuer à leur démon.
+
+Les Points de Vie sont calculés comme suit : (PV de base) + (5 x Force)
+
+Les démons n'ont pas besoin de points d'endurance, leur nature démoniaque leur permet de ne pas ressentir la fatigue. Le total de leurs points de sang démoniaque se calcule quant à lui ainsi :
+10 x Courage
+Rang faible
+(4,3,2,1,1,1)
+Rang élevé
+(4,4,3,3,2,1)
+Disciple de Lune Inférieure
+(5,5,4,3,3,2)
+Lune Inférieure
+(6,6,5,5,4,4)
+Disciple de Lune Supérieure
+(9,7,6,6,6,5)
+Lune Supérieure
+(10,10,10,9,9,8)
+Statistiques démoniaques
+
+Art de  Sang Démoniaque
+Selon la lignée du démon, les démons ont accès à quelques arts de démon de sang communément partagés, ainsi qu'aux leurs.
+Guérison
+(2 BDP)
+Les démons, selon leur rang, peuvent soigner une quantité importante de santé en utilisant l'une de leurs actions pour le faire pendant leur tour.
+Repousse
+(4 BDP)
+En utilisant une action, les démons peuvent choisir, en fonction de la force de leur rang, de faire repousser les parties du corps qui leur ont été retirées à des vitesses variables.
+Purification
+En utilisant une action, les démons peuvent purifier 1 stack de poison par niveau de rang.
+Infecter
+Les Lunes Inférieures ou Supérieures sont capables d'infecter les êtres humains, leur conférant la capacité de se transformer en démons 4 rangs inférieurs à leur donateur.
+SOS
+Les démons d'une même branche peuvent appeler les démons voisins de la même lignée. Les démons de lignées différentes n'ont aucun lien entre eux et ne peuvent pas s'appeler à l'aide.
+Exécuter
+Si un Démon est de rang Disciple de  Lune Inférieure ou de Lune Supérieure, il acquiert la capacité d'exécuter un humain de 5 PV ou moins. Il est impossible d'esquiver les exécutions, mais il est possible d'y réagir.
+Attaquer
+En utilisant un point d'action ou de réaction, les démons peuvent attaquer en utilisant des attaques préalablement définies et communes à tous les démons.
+Bloquer
+En réaction à une attaque ou par mesure préventive, les démons peuvent se préparer à une attaque et tenter de la bloquer.
+Esquiver
+En utilisant une réaction ou un point de réaction commun, les démons peuvent éviter toutes les attaques qui les attaquent.
+111
+
+Actions du démon
+
+Les démons ont, selon leur niveau, la capacité d'effectuer plusieurs actions par tour. Identifier comment utiliser ces actions est essentiel à leur survie, qu'il s'agisse de privilégier les soins, les attaques ou même l'activation de leur art du sang démoniaque. Tout comme les humains, ils peuvent se déplacer à chaque tour, même si leurs mouvements peuvent varier considérablement selon leurs capacités et leur morphologie.
+Les démons ont des actions égales à :
+1 + (Vitesse / 5)
+
+112
+Stats de démons ennemis
+Puissance
+Finesse
+Courage
+Vitesse
+Intellect
+Social
+4
+6
+5
+4
+6
+2
+PV
+CA
+20
+14
+Attaques
+Morsure : 1d4+2
+Griffure : 3
+Démon de rang faible
+Puissance
+Finesse
+Courage
+Vitesse
+Intellect
+Social
+6
+8
+7
+6
+8
+4
+PV
+CA
+50
+16
+Attaques
+Morsure : 1d4+3
+Griffure : 4
+BDA : 1d6+3 
+Démon de rang élevé
+Puissance
+Finesse
+Courage
+Vitesse
+Intellect
+Social
+8
+10
+9
+8
+10
+6
+PV
+CA
+80
+18
+Attaques
+Morsure : 1d6+4
+Griffure : 5-8
+BDA:  1d8+4
+Démon Disciple de Lune Inf.
+Points de Réaction
+4
+Différence de points de Réaction
+Les points de Réaction sont calculés normalement, mais leur valeur est ensuite divisée par deux.
+Points de Réaction
+9
+Points de Réaction
+14
+Ajout de dégâts réduits de moitié
+Lorsque les démons ajoutent des points de Puissance et de Finesse à leurs attaques, ils ajoutent la moitié de la valeur totale au lieu de la valeur de base (-1).
+
+113
+Puissance
+Finesse
+Courage
+Vitesse
+Intellect
+Social
+12
+14
+11
+10
+13
+9
+PV
+CA
+200
+20
+Attaques
+Morsure : 1d8+6
+Griffure : 7-11
+BDA :  1d12+6
+Lune inférieure
+Puissance
+Finesse
+Courage
+Vitesse
+Intellect
+Social
+14
+16
+13
+12
+15
+12
+PV
+CA
+350
+25
+Attaques
+Morsure : 1d10+8
+Griffure : 10-15
+BDA :  1d20
+
+Disciple de Lune Sup.
+Puissance
+Finesse
+Courage
+Vitesse
+Intellect
+Social
+18
+18
+16
+16
+18
+16
+Health
+AC
+600
+30
+Attaques
+Morsure : 1d20+10
+Griffure : 13-20
+BDA :  2d12
+
+Lune Supérieure
+Points de Réaction
+25
+Points de Réaction
+32
+Points de Réaction
+50
+
+114
+Breathe and Live
+
+Supplément 1934
+
+Recueil d'informations
+
+L’état du Corps de Chasseurs de Démons
+115
+Nous sommes en 1934, plusieurs années après la mort de Muzan Kibutsuji. Durant cette période de paix, le Corps des Chasseurs de Démons a pu enfin se reposer. Cependant, environ dix ans après sa mort, des démons réapparaissent pour une raison inconnue. Bien que la famille Ubuyashiki ne soit plus aussi riche qu'autrefois, elle a repris son rôle de protectrice du Japon. Elle a rassemblé le plus grand nombre possible de chasseurs de démons pour combattre les démons et leur nouveau chef, mais cette lutte semble vaine, les démons étant plus discrets que jamais. Jusqu'à l'arrivée des protagonistes. Kaisho Ubayashiki, le nouveau chef du Corps, un prodige de 17 ans, même pour la famille Ubayashiki, commande les troupes. Dix Hashira constituent sa dernière ligne de défense, déployés face aux forces démoniaques en pleine expansion.
+Ce qui suit contient des spoilers de Demon Slayer. Veuillez en prendre note.
+
+Pourfendeurs et Kakushi
+116
+Depuis la défaite de Muzan Kibutsuji, les Chasseurs de Démons poursuivent leur lutte acharnée contre les démons, perpétuant ainsi leur mission de protéger l'humanité des forces obscures qui rôdent dans l'ombre. Grâce aux radios et aux avancées technologiques des années 1920 et 1930, les Chasseurs disposent désormais de moyens de communication et d'outils plus performants pour mener à bien leur mission. Le monde évoluant, le rôle des Kakushi a également changé. Plus seulement limités à la reconnaissance et au renseignement, les Kakushi assument désormais des responsabilités supplémentaires. Ils servent de chauffeurs, conduisant des voitures, des avions et des bateaux pour transporter rapidement les Chasseurs de Démons vers différents lieux. Ils pratiquent également des techniques médicales avancées, soignent les blessés et mènent des recherches pour développer de nouvelles technologies permettant de combattre les démons.
+Grâce aux nouvelles inventions et aux découvertes scientifiques, le Corps des Chasseurs de Démons a su adapter ses techniques ancestrales et intégrer les outils et les méthodes modernes à ses pratiques. Cependant, la menace des démons demeure omniprésente, et les chasseurs de démons comme les Kakushi doivent constamment perfectionner leurs compétences, utiliser toutes les ressources à leur disposition et collaborer étroitement pour protéger l'humanité des ténèbres qui la menacent. La lutte contre les démons se poursuit, et le Corps des Chasseurs de Démons reste fidèle à sa mission : défendre l'humanité contre cette menace démoniaque.
+
+Le Maître
+Kaisho Ubuyashiki
+117
+Photo : Ubuyashiki Kaisho, chef du Corps des Chasseurs de Démons (17 ans)
+
+Les Hashira actuels
+118
+Pilier de la Bête
+
+Okubo
+The Ocean Pillar
+Yosuke Wokuo
+Pilier de la Foudre
+
+Kasumi Satsuka
+Pilier du Son
+
+Haruka Minami
+Pilier de l’Eau
+
+Aki Takumi
+Pilier de la Flamme
+
+Hakka-Gu Shintan
+Pilier de l’Ouest
+
+Gai Ongoku
+The Wind Pillar
+Yoshiko Asagao
+Pilier de la Brume
+
+Michi Toshinobu
+Pilier de l’Amour
+
+Katashi Noboru
+Pilier de l’Océan
+
+Yosuke Wōkuo
+Pilier du Vent
+
+Yoshiko Asagao
+
+Hashira de l’Océan
+Yosuke Wōkuo
+119
+PV : 100
+Endurance : 120
+Points de Réaction : 25
+Compétences : 
+Force : 9
+Finesse : 13
+Courage : 7
+Vitesse : 12
+Intellect : 8
+Social : 4
+
+
+-----------------------------------------------------------------------------------
+Attaques
+
+Basic Slash : (+9/+12) pour toucher, 7d6 + (+9/+12)
+
+Formes du Souffle de l’Océan
+Forme 1 : Océan d’épées |
+Forme 2 : Les carpes tristes sautent |
+Forme 3 : Brèche |
+Forme 4 : Manta portée par le vent, troupeau gracieux |
+Forme 5 : Blocage des rochers par les pêcheurs en larmes |
+Forme 6 : Plongeuse Ama émergeant à la surface |
+Forme 7 : Naufrage du navire Umibozu |
+-----------------------------------------------------------------------------------
+Capacités
+
+Maîtrise des mers : À terre, les dégâts infligés par les attaques à distance sont réduits de moitié. En revanche, lorsque les joueurs sont en combat dans l'eau, les dégâts infligés sont 1,5 fois supérieurs à la normale.
+
+
+
+120
+Nouvelle Ère Démoniaque
+Les démons ont longtemps tourmenté l'humanité, et après la destruction de Muzan Kibutsuji, on pensait enfin que le danger était passé. Cependant, par des moyens insondables, le mal a triomphé. Aujourd'hui, les démons réapparaissent, ravageant l'espoir des vivants et adoptant une stratégie radicalement différente. Le chef de l'armée des démons reste inconnu du Corps des Chasseurs de Démons, bien que ses 12 commandants tentent de se faire remarquer chaque fois que les Hashira mènent une mission. Ces 12 commandants portent le titre de « Lunes », mais sans hiérarchie précise. Cette fois-ci, ils adoptent des noms caractérisant leur trait le plus distinctif, probablement attribués par leur maître. Ces noms sont connus aussi bien des démons que des humains, et les 12 commandants sont désormais tous identifiés.
+Tous ces commandants démoniaques constituent ce que le Corps appelle désormais « L'Arbre du Mal », leurs différentes factions représentant les « racines » ou les « branches » de cet arbre. La nouvelle mission du Corps des Chasseurs de Démons est d'éradiquer définitivement cet arbre du mal.
+
+121
+Variants démoniaques
+Les démons de cette nouvelle ère ont acquis une capacité terrifiante qui pourrait bien signifier la fin de l'humanité. Ils sont désormais capables de se multiplier de manière autonome. Cependant, si un démon est trop faible, ses copies disparaissent dès sa mort. Pour sécuriser son pouvoir, la reine des démons a créé une armée de 12 démons de haut rang.
+Ces 12 démons se font rarement voir et commandent des troupes plus petites. Grâce à leur immense pouvoir, tous leurs subordonnés acquièrent progressivement les caractéristiques de leur chef. Localiser ces démons pourrait permettre aux joueurs de retrouver leurs chefs. Les éliminer réduirait la population totale d'un tiers, ce qui constituerait une victoire majeure pour l'humanité.
+Les 12 Lunes Magnifiques
+Préfixe de Lune
+Caractéristiques distinctives
+Lune d’Or
+Vêtements dorés.
+Lune Brûlante
+Flammes, traces de brûlures, cicatrices, cendres.
+Lune Enragée
+Poils, crocs acérés, regard d'animal.
+Lune Mécanique
+Engrenages, horloges, pignons, pièces mécaniques ou armures métalliques.
+Lune Ancienne
+Des os… Juste… Des os…
+Lune Miroir
+Sérides miroirs ou surfaces réfléchissantes
+Lune Ombragée
+Aucun signe distinctif connu.
+Lune Endeuillée
+Tenue de cérémonie, déchirure partielle, traces de larmes.
+Lune Jardin
+Fleurs, plantes, flore, fruits ou légumes.
+Lune Artisane
+Outils artistiques qu'ils portent.
+Lune Submergée
+La vie marine, les crustacés, la faune aquatique et les outils de pêche.
+Lune Patchwork
+Tissus, notamment la toile de coton ou autres morceaux de tissu ordinaire
+
+122
+Variantes | Arts Sanguinaires Démoniaques
+Niveau 1 | Rang faible
+	Attaque
+
+	Capacité
+Niveau 4 | Lune Inférieure
+Attaque
+
+	Capacité
+Niveau 2 | Rang élevé
+Attaque
+
+	Capacité
+Niveau 3 | Disciple de Lune Inf.
+	Attaque
+
+	Capacité
+Niveau 5 | Disciple de Lune Sup.
+	Attaque
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque
+
+	Capacité
+Parmi les 12 types de démons, 12 classes différentes sont disponibles pour ceux qui… souhaitent devenir des démons ? Qui voudrait donc devenir un démon ?!
+Les variantes sont les suivantes.
+Or
+Brûlant
+Enragé
+Mécanique
+Ancien
+Miroir
+Ombragé
+Endeuillé
+Jardin
+Artisan
+Submergé
+Patchwork
+	
+	Chacune de ces variantes possède un ensemble d'aptitudes distinct, hérité de sa version précédente.
+Vous pouvez consulter la liste des compétences pour la création de personnage comme suit : commencez par la première colonne à gauche (les trois premiers niveaux), puis descendez jusqu'en bas, puis remontez en haut de la colonne de droite.
+
+123
+Art Sanguinaire Démoniaque | Lune d’Or
+Niveau 1 | Rang faible
+	Attaque
+
+	Capacité
+Niveau 4 | Lune Inférieure
+Attaque
+
+	Capacité
+Niveau 2 | Rang élevé
+Attaque
+
+	Capacité
+Niveau 3 | Disciple Lune I.
+	Attaque
+
+	Capacité
+Niveau 5 | Disciple Lune S.
+	Attaque
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque
+
+	Capacité
+
+124
+Art Sanguinaire Démoniaque | Lune Brûlante
+Niveau 1 | Rang faible
+	Attaque: Brûlure
+Les disciples de la lune ardente peuvent toujours lancer des sorts de feu infligeant un minimum de 1d4 points de dégâts plus leur bonus de force. En cas de réussite, ce sort inflige également une accumulation de dégâts de brûlure.
+
+	Capacité: Peau brûlante
+Le corps d'un disciple de la lune ardente reste toujours en partie en flammes. Recevoir un coup physique (à mains nues) inflige systématiquement un effet de brûlure.
+Niveau 4 | Lune Inférieure
+Attaque: Embrasement
+Permet au démon de marquer une cible (personne ou lieu) avec un marqueur d'explosion. Ce marqueur est impossible à éviter, mais peut être éliminé par des moyens tels que l'eau. Au bout d'un tour, la cible subit des dégâts équivalents à 1d10+Courage.
+	Capacité: Allûme-feu
+Invoquez x(1d6) serviteurs démoniaques enflammés possédant les caractéristiques suivantes. (6, 6, 6, 7, 7, 8)
+Niveau 2 | Rang élevé
+Attaque: Flamme Ardente
+Le sort « Flamme ardente » permet au joueur de infliger des dégâts de brûlure à plusieurs cibles simultanément, ou de les infliger plusieurs fois à une même cible (3 cibles + 1 par niveau au-delà du niveau 2).
+
+	Capacité: 
+Niveau 3 | Disciple Lune I.
+	Attaque: Flamme Dévastatrice
+Permet au démon de cibler une zone avec une explosion de flammes, dans un carré ou un cercle d'un rayon de 4.5m. Cette explosion inflige des dégâts de 1d8+Courage à tous les cibles présentes dans la zone au tour suivant.
+	Capacité: Porte des Cendres
+Les démons de la lune ardente peuvent se téléporter vers les tas de cendres des cibles qu'ils brûlent actuellement ou qu'ils ont brûlées auparavant.
+Niveau 5 | Disciple Lune S.
+	Attaque: Incinération
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque: Crémation
+
+	Capacité: 
+
+125
+Art Sanguinaire Démoniaque | Lune Enragée
+Niveau 1 | Rang faible
+	Attaque
+
+	Capacité
+Niveau 4 | Lune Inférieure
+Attaque
+
+	Capacité
+Niveau 2 | Rang élevé
+Attaque
+
+	Capacité
+Niveau 3 | Disciple Lune I.
+	Attaque
+
+	Capacité
+Niveau 5 | Disciple Lune S.
+	Attaque
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque
+
+	Capacité
+
+126
+Art Sanguinaire Démoniaque | Lune Mécanique
+Niveau 1 | Rang faible
+	Attaque
+
+	Capacité
+Niveau 4 | Lune Inférieure
+Attaque
+
+	Capacité
+Niveau 2 | Rang élevé
+Attaque
+
+	Capacité
+Niveau 3 | Disciple Lune I.
+	Attaque
+
+	Capacité
+Niveau 5 | Disciple Lune S.
+	Attaque
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque
+
+	Capacité
+
+127
+Art Sanguinaire Démoniaque | Lune Ancienne
+Niveau 1 | Rang faible
+	Attaque
+
+	Capacité
+Niveau 4 | Lune Inférieure
+Attaque
+
+	Capacité
+Niveau 2 | Rang élevé
+Attaque
+
+	Capacité
+Niveau 3 | Disciple Lune I.
+	Attaque
+
+	Capacité
+Niveau 5 | Disciple Lune S.
+	Attaque
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque
+
+	Capacité
+
+128
+Art Sanguinaire Démoniaque | Lune Miroir
+Niveau 1 | Rang faible
+	Attaque
+
+	Capacité
+Niveau 4 | Lune Inférieure
+Attaque
+
+	Capacité
+Niveau 2 | Rang élevé
+Attaque
+
+	Capacité
+Niveau 3 | Disciple Lune I.
+	Attaque
+
+	Capacité
+Niveau 5 | Disciple Lune S.
+	Attaque
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque
+
+	Capacité
+
+129
+Art Sanguinaire Démoniaque | Lune Ombragée
+Niveau 1 | Rang faible
+	Attaque
+
+	Capacité
+Niveau 4 | Lune Inférieure
+Attaque
+
+	Capacité
+Niveau 2 | Rang élevé
+Attaque
+
+	Capacité
+Niveau 3 | Disciple Lune I.
+	Attaque
+
+	Capacité
+Niveau 5 | Disciple Lune S.
+	Attaque
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque
+
+	Capacité
+
+130
+Art Sanguinaire Démoniaque | Lune Endeuillée
+Niveau 1 | Low Ranking
+	Attaque: Enveloppe Noire
+	Capacité
+Niveau 4 | Lower Moon
+Attaque: Enveloppe Rouge
+	Capacité
+Niveau 2 | High Ranking
+Attaque: Enveloppe Rose
+	Capacité
+Niveau 3 | LM Disciple
+	Attaque: Enveloppe Bleue
+	Capacité
+Niveau 5 | UM Disciple
+	Attaque: Bouquet 
+
+	Capacité
+Niveau 6 | Upper Moon
+	Attaque: Anneau
+
+	Capacité
+
+131
+Art Sanguinaire Démoniaque | Lune Jardin
+Niveau 1 | Rang faible
+	Attaque
+
+	Capacité
+Niveau 4 | Lune Inférieure
+Attaque
+
+	Capacité
+Niveau 2 | Rang élevé
+Attaque
+
+	Capacité
+Niveau 3 | Disciple Lune I.
+	Attaque
+
+	Capacité
+Niveau 5 | Disciple Lune S.
+	Attaque
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque
+
+	Capacité
+
+132
+Art Sanguinaire Démoniaque | Lune Artisane
+Niveau 1 | Rang faible
+	Attaque
+
+	Capacité
+Niveau 4 | Lune Inférieure
+Attaque
+
+	Capacité
+Niveau 2 | Rang élevé
+Attaque
+
+	Capacité
+Niveau 3 | Disciple Lune I.
+	Attaque
+
+	Capacité
+Niveau 5 | Disciple Lune S.
+	Attaque
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque
+
+	Capacité
+
+133
+Art Sanguinaire Démoniaque | Lune Submergée
+Niveau 1 | Rang faible
+	Attaque
+
+	Capacité
+Niveau 4 | Lune Inférieure
+Attaque
+
+	Capacité
+Niveau 2 | Rang élevé
+Attaque
+
+	Capacité
+Niveau 3 | Disciple Lune I.
+	Attaque
+
+	Capacité
+Niveau 5 | Disciple Lune S.
+	Attaque
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque
+
+	Capacité
+
+134
+Art Sanguinaire Démoniaque | Lune Patchwork
+Niveau 1 | Rang faible
+	Attaque
+
+	Capacité
+Niveau 4 | Lune Inférieure
+Attaque
+
+	Capacité
+Niveau 2 | Rang élevé
+Attaque
+
+	Capacité
+Niveau 3 | Disciple Lune I.
+	Attaque
+
+	Capacité
+Niveau 5 | Disciple Lune S.
+	Attaque
+
+	Capacité
+Niveau 6 | Lune Supérieure
+	Attaque
+
+	Capacité
+
+Annexes PNJ
+135
+
+136
+
+137

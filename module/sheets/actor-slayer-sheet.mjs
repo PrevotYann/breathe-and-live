@@ -95,6 +95,50 @@ export class BLSlayerSheet extends ActorSheet {
         rp: { value: 0, max: 0 },
         ca: 10,
       },
+      profile: {
+        characterType: "slayer",
+        combatStyle: "breath",
+        trainerContext: "",
+        partnerContext: "",
+        kasugaiCrow: "",
+      },
+      combat: {
+        actionEconomy: {
+          actionsPerTurn: 1,
+          bonusActions: 0,
+          movementMeters: 9,
+          recoveryBreathRounds: 2,
+        },
+        reactions: {
+          dodge: true,
+          counterAttack: true,
+          draw: true,
+          medical: true,
+          special: "",
+        },
+        injuries: {
+          severeWounds: 0,
+          lostLimbs: "",
+          conditions: "",
+        },
+      },
+      progression: {
+        xp: { value: 0, next: 100 },
+        training: 0,
+        rankPoints: 0,
+        notes: "",
+      },
+      death: {
+        state: "alive",
+        standingDeath: false,
+        deathNotes: "",
+      },
+      npc: {
+        role: "",
+        threat: "",
+        behavior: "",
+        loot: "",
+      },
     };
 
     // Fusion : on laisse PRÉVALOIR les vraies données (rawSys)
@@ -122,6 +166,13 @@ export class BLSlayerSheet extends ActorSheet {
 
     // Calcule les “restants” à afficher
     data.system.stats.remaining = this._computeRemaining(data.system);
+
+    data.deathStates = [
+      { value: "alive", label: "Vivant" },
+      { value: "critical", label: "Critique" },
+      { value: "dying", label: "Agonisant" },
+      { value: "dead", label: "Mort" },
+    ];
 
     return data;
   }
