@@ -82,9 +82,9 @@ Hooks.once("init", () => {
 
   // Actor sheets
   Actors.registerSheet(SYSTEM_ID, BLSlayerSheet, {
-    types: ["slayer"],
+    types: ["slayer", "demonist", "demon", "npc"],
     makeDefault: true,
-    label: "Pourfendeur",
+    label: "Breathe & Live Actor",
   });
 
   // Item sheets
@@ -181,6 +181,10 @@ class BLActor extends Actor {
       sys.resources.ca = 10 + (Number(b.vitesse) || 0); // CA = 10 + Vitesse
       const rpMax = 5 + (Number(b.vitesse) || 0) + (Number(b.intellect) || 0);
       sys.resources.rp.max = rpMax;
+      sys.combat ??= {};
+      sys.combat.actionEconomy ??= {};
+      sys.combat.actionEconomy.actionsPerTurn =
+        1 + Math.floor((Number(b.vitesse) || 0) / 5);
 
       // Remplissage safe si value invalide
       if (!Number.isFinite(sys.resources.e.value) || sys.resources.e.value <= 0)

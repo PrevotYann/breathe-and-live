@@ -392,3 +392,13 @@
 
 .bl .group label { display:block; font-size:12px; opacity:.9; margin-top:.25rem; }
 .bl .group input[type="number"] { width: 64px; }
+
+
+.bl .grid.three-col { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.bl .tab[data-tab="regles"] .field {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #5a2c2c;
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+.bl .tab[data-tab="regles"] textarea { width: 100%; }

@@ -27,6 +27,7 @@
     <a class="item" data-tab="breaths">Souffles</a>
     <a class="item" data-tab="techniques">Techniques</a>
     <a class="item" data-tab="inventaire">Inventaire</a>
+    <a class="item" data-tab="regles">Règles avancées</a>
   </nav>
 
   <section class="sheet-body">
@@ -276,6 +277,91 @@
         <label><input type="checkbox" name="system.states.marque" data-dtype="Boolean" {{checked system.states.marque}} {{#unless canEdit}}disabled{{/unless}}/> Forme Marquée</label>
         <label><input type="checkbox" name="system.states.mondeTransparent" data-dtype="Boolean" {{checked system.states.mondeTransparent}} {{#unless canEdit}}disabled{{/unless}}/> Monde Transparent</label>
         <label><input type="checkbox" name="system.states.lameRouge" data-dtype="Boolean" {{checked system.states.lameRouge}} {{#unless canEdit}}disabled{{/unless}}/> Lame Rouge</label>
+      </div>
+    </div>
+
+
+    {{!-- RÈGLES AVANCÉES --}}
+    <div class="tab" data-group="primary" data-tab="regles">
+      <div class="grid two-col">
+        <div class="field">
+          <h3>Type de personnage & classe</h3>
+          <label>Type de personnage</label>
+          <input type="text" name="system.profile.characterType" value="{{system.profile.characterType}}" placeholder="slayer / demonist / demon / npc" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Style de combat</label>
+          <input type="text" name="system.profile.combatStyle" value="{{system.profile.combatStyle}}" placeholder="Souffle, Démoniste, BDA..." {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Contexte (Entraîneur)</label>
+          <textarea name="system.profile.trainerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.trainerContext}}</textarea>
+          <label>Contexte (Partenaire)</label>
+          <textarea name="system.profile.partnerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.partnerContext}}</textarea>
+          <label>Corbeau Kasugai</label>
+          <input type="text" name="system.profile.kasugaiCrow" value="{{system.profile.kasugaiCrow}}" {{#unless canEdit}}disabled{{/unless}}/>
+        </div>
+
+        <div class="field">
+          <h3>Économie d'action & réactions</h3>
+          <label>Actions / tour</label>
+          <input type="number" name="system.combat.actionEconomy.actionsPerTurn" value="{{system.combat.actionEconomy.actionsPerTurn}}" min="1" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Actions bonus</label>
+          <input type="number" name="system.combat.actionEconomy.bonusActions" value="{{system.combat.actionEconomy.bonusActions}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Déplacement (m/tour)</label>
+          <input type="number" name="system.combat.actionEconomy.movementMeters" value="{{system.combat.actionEconomy.movementMeters}}" min="0" step="0.5" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Rounds max sans souffle de récupération</label>
+          <input type="number" name="system.combat.actionEconomy.recoveryBreathRounds" value="{{system.combat.actionEconomy.recoveryBreathRounds}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+          <label><input type="checkbox" name="system.combat.reactions.dodge" data-dtype="Boolean" {{checked system.combat.reactions.dodge}} {{#unless canEdit}}disabled{{/unless}}/> Réaction : Esquive</label>
+          <label><input type="checkbox" name="system.combat.reactions.counterAttack" data-dtype="Boolean" {{checked system.combat.reactions.counterAttack}} {{#unless canEdit}}disabled{{/unless}}/> Réaction : Attaque</label>
+          <label><input type="checkbox" name="system.combat.reactions.draw" data-dtype="Boolean" {{checked system.combat.reactions.draw}} {{#unless canEdit}}disabled{{/unless}}/> Réaction : Dégainage</label>
+          <label><input type="checkbox" name="system.combat.reactions.medical" data-dtype="Boolean" {{checked system.combat.reactions.medical}} {{#unless canEdit}}disabled{{/unless}}/> Réaction : Médicale</label>
+          <label>Réactions spéciales</label>
+          <textarea name="system.combat.reactions.special" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.combat.reactions.special}}</textarea>
+        </div>
+      </div>
+
+      <div class="grid three-col" style="margin-top: 1rem;">
+        <div class="field">
+          <h3>Progression & expérience</h3>
+          <label>XP</label>
+          <input type="number" name="system.progression.xp.value" value="{{system.progression.xp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>XP palier suivant</label>
+          <input type="number" name="system.progression.xp.next" value="{{system.progression.xp.next}}" min="1" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Points d'entraînement</label>
+          <input type="number" name="system.progression.training" value="{{system.progression.training}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Points de rang</label>
+          <input type="number" name="system.progression.rankPoints" value="{{system.progression.rankPoints}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Notes de progression</label>
+          <textarea name="system.progression.notes" rows="3" {{#unless canEdit}}disabled{{/unless}}>{{system.progression.notes}}</textarea>
+        </div>
+
+        <div class="field">
+          <h3>Mort & blessures</h3>
+          <label>État vital</label>
+          <select name="system.death.state" {{#unless canEdit}}disabled{{/unless}}>
+            {{#each deathStates as |st|}}
+              <option value="{{st.value}}" {{#if (eq ../system.death.state st.value)}}selected{{/if}}>{{st.label}}</option>
+            {{/each}}
+          </select>
+          <label><input type="checkbox" name="system.death.standingDeath" data-dtype="Boolean" {{checked system.death.standingDeath}} {{#unless canEdit}}disabled{{/unless}}/> Mort debout</label>
+          <label>Blessures sévères</label>
+          <input type="number" name="system.combat.injuries.severeWounds" value="{{system.combat.injuries.severeWounds}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Membres mutilés</label>
+          <textarea name="system.combat.injuries.lostLimbs" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.combat.injuries.lostLimbs}}</textarea>
+          <label>Conditions de combat</label>
+          <textarea name="system.combat.injuries.conditions" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.combat.injuries.conditions}}</textarea>
+          <label>Notes de mort</label>
+          <textarea name="system.death.deathNotes" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.death.deathNotes}}</textarea>
+        </div>
+
+        <div class="field">
+          <h3>NPC / PNJ</h3>
+          <label>Rôle</label>
+          <input type="text" name="system.npc.role" value="{{system.npc.role}}" placeholder="Civil, démon mineur, soutien..." {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Niveau de menace</label>
+          <input type="text" name="system.npc.threat" value="{{system.npc.threat}}" placeholder="Faible, Modéré, Élevé" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Comportement</label>
+          <textarea name="system.npc.behavior" rows="3" {{#unless canEdit}}disabled{{/unless}}>{{system.npc.behavior}}</textarea>
+          <label>Butin / récompenses</label>
+          <textarea name="system.npc.loot" rows="3" {{#unless canEdit}}disabled{{/unless}}>{{system.npc.loot}}</textarea>
+        </div>
       </div>
     </div>
 
