@@ -143,19 +143,20 @@ export async function useTechnique(
   const targetActor = targetToken.actor;
   if (!targetActor) return ui.notifications.warn("La cible n’a pas d’acteur.");
 
+  // Pré-calcul (Souffles) : coût, dégâts, autoHit + drapeaux UI
+  const ctx = { attackerToken: atkToken };
+  let pre = applyPreHit(attacker, targetToken, item, ctx);
+
   // Vérifier la portée (mètres) vs distance (Chebyshev * 1.5 m)
   const distM = distMetersChebyshev(atkToken, targetToken);
   const rangeM =
-    Number(item.system?.range ?? METERS_PER_SQUARE) || METERS_PER_SQUARE;
+    Number(ctx.overrideRange ?? item.system?.range ?? METERS_PER_SQUARE) ||
+    METERS_PER_SQUARE;
   if (rangeM < distM) {
     return ui.notifications.warn(
       `Portée insuffisante : ${rangeM} m < ${distM.toFixed(1)} m.`
     );
   }
-
-  // Pré-calcul (Souffles) : coût, dégâts, autoHit + drapeaux UI
-  const ctx = {};
-  let pre = applyPreHit(attacker, targetToken, item, ctx);
 
   // Consulter l'Endurance
   const ePath = "system.resources.e.value";

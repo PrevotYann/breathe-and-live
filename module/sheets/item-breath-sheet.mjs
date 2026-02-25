@@ -89,12 +89,36 @@ export class BLBreathSheet extends ItemSheet {
           hint: "RP +1d2 si tu achèves un démon.",
         },
       },
-      // TODO : serpent, sound, insect, love, beast... (ajoute ici et dans breath-effects.mjs)
-      serpent: {},
-      sound: {},
-      insect: {},
-      love: {},
-      beast: {},
+      serpent: {
+        formeLibre: {
+          label: "Forme libre",
+          hint: "Allonge serpentiforme : +1,5 m de portée sur la technique.",
+        },
+      },
+      sound: {
+        partitionFulgurante: {
+          label: "Partition fulgurante",
+          hint: "Le son de la lame déstabilise : -1 CA à la cible jusqu'à fin de round.",
+        },
+      },
+      insect: {
+        veninLent: {
+          label: "Venin lent",
+          hint: "Applique un venin léger : -1 dégât infligé par la cible jusqu'à fin de round.",
+        },
+      },
+      love: {
+        coeurPassionne: {
+          label: "Cœur passionné",
+          hint: "Dégâts +1 quand la cible est à portée de mêlée (≤ 1,5 m).",
+        },
+      },
+      beast: {
+        instinctSauvage: {
+          label: "Instinct sauvage",
+          hint: "Si la cible est proche (≤ 1,5 m), le coût en E est réduit de 1 (min 1).",
+        },
+      },
     };
 
     // Fabrique l’affichage en fonction de la clé de souffle
