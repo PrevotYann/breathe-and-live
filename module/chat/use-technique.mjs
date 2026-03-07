@@ -1,7 +1,7 @@
 // Lancer une Technique de Souffle (auto-hit) avec réactions et effets de Souffles.
 // Compatible Foundry v12.343
 
-import { BreathFX, applyPreHit, applyOnHit } from "../rules/breath-effects.mjs";
+import { applyPreHit, applyOnHit } from "../rules/breath-effects.mjs";
 import { applyEffectsList } from "../rules/effects-engine.mjs";
 
 const FU = foundry.utils;
@@ -359,7 +359,10 @@ export async function useTechnique(
         );
 
       // Notifier les effets “on hit” déjà codés (Neige/Vent/Fleur…)
-      await applyOnHit(attacker, tgtToken, item, ctx, { tookDamage: true });
+      await applyOnHit(attacker, tgtToken, item, ctx, {
+        tookDamage: true,
+        wasKilled: newHP === 0,
+      });
 
       // === Effets "on hit" de la Technique (system.effects) ===
       try {

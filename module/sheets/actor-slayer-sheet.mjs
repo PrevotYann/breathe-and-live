@@ -11,7 +11,7 @@ export class BLSlayerSheet extends ActorSheet {
         {
           navSelector: ".sheet-tabs",
           contentSelector: ".sheet-body",
-          initial: "ressources",
+          initial: "sheet",
         },
       ],
     });
@@ -125,6 +125,9 @@ export class BLSlayerSheet extends ActorSheet {
         hp: { value: 20, max: 20 },
         e: { value: 0, max: 0 },
         rp: { value: 0, max: 0 },
+        bdp: { value: 0, max: 0 },
+        demonisation: 0,
+        demonisationMax: 0,
         ca: 10,
       },
       profile: {
@@ -134,6 +137,7 @@ export class BLSlayerSheet extends ActorSheet {
         kasugaiCrow: "",
       },
       combat: {
+        damageFlat: 0,
         actionEconomy: {
           actionsPerTurn: 1,
           bonusActions: 0,

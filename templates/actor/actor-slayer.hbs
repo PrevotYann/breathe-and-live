@@ -306,6 +306,8 @@
           <input type="number" name="system.combat.actionEconomy.bonusActions" value="{{system.combat.actionEconomy.bonusActions}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
           <label>Déplacement (m/tour)</label>
           <input type="number" name="system.combat.actionEconomy.movementMeters" value="{{system.combat.actionEconomy.movementMeters}}" min="0" step="0.5" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Mod. dégâts temporaires</label>
+          <input type="number" name="system.combat.damageFlat" value="{{system.combat.damageFlat}}" {{#unless canEdit}}disabled{{/unless}}/>
           <label>Rounds max sans souffle de récupération</label>
           <input type="number" name="system.combat.actionEconomy.recoveryBreathRounds" value="{{system.combat.actionEconomy.recoveryBreathRounds}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
           <label><input type="checkbox" name="system.combat.reactions.dodge" data-dtype="Boolean" {{checked system.combat.reactions.dodge}} {{#unless canEdit}}disabled{{/unless}}/> Réaction : Esquive</label>

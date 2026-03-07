@@ -2,26 +2,165 @@
   <header class="sheet-header flexrow">
     <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
     <div class="header-fields">
-      <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" {{#unless canEdit}}disabled{{/unless}}/></h1>
-      <div class="grid two-col">
-        <div><label>Classe</label><input type="text" name="system.class.type" value="{{system.class.type}}" placeholder="Démoniste" {{#unless canEdit}}disabled{{/unless}}/></div>
-        <div><label>Rang</label><input type="text" name="system.class.rank" value="{{system.class.rank}}" {{#unless canEdit}}disabled{{/unless}}/></div>
+      <h1 class="charname">
+        <input name="name" type="text" value="{{actor.name}}" {{#unless canEdit}}disabled{{/unless}}/>
+      </h1>
+      <div class="grid three-col">
+        <div class="field small">
+          <label>Classe</label>
+          <input type="text" name="system.class.type" value="{{system.class.type}}" placeholder="Demoniste" {{#unless canEdit}}disabled{{/unless}}/>
+        </div>
+        <div class="field small">
+          <label>Rang</label>
+          <input type="text" name="system.class.rank" value="{{system.class.rank}}" {{#unless canEdit}}disabled{{/unless}}/>
+        </div>
+        <div class="field small">
+          <label>Niveau</label>
+          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" {{#unless canEdit}}disabled{{/unless}}/>
+        </div>
       </div>
     </div>
   </header>
+
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="sheet">Fiche</a><a class="item" data-tab="techniques">Techniques</a><a class="item" data-tab="inventaire">Inventaire</a>
+    <a class="item" data-tab="sheet">Fiche</a>
+    <a class="item" data-tab="techniques">Techniques</a>
+    <a class="item" data-tab="inventaire">Inventaire</a>
+    <a class="item" data-tab="regles">Regles</a>
   </nav>
+
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="sheet">
-      <div class="grid resources">
-        <div class="res"><label>PV</label><input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" {{#unless canEdit}}disabled{{/unless}}/> / <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" {{#unless canEdit}}disabled{{/unless}}/></div>
-        <div class="res"><label>Endurance</label><input type="number" name="system.resources.e.value" value="{{system.resources.e.value}}" {{#unless canEdit}}disabled{{/unless}}/> / <input type="number" name="system.resources.e.max" value="{{system.resources.e.max}}" {{#unless canEdit}}disabled{{/unless}}/></div>
-        <div class="res"><label>Réactions</label><input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" {{#unless canEdit}}disabled{{/unless}}/> / <input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" {{#unless canEdit}}disabled{{/unless}}/></div>
-        <div class="res"><label>Démonisation</label><input type="number" name="system.resources.demonisation" value="{{system.resources.demonisation}}" {{#unless canEdit}}disabled{{/unless}}/></div>
+      <div class="grid two-col">
+        <div>
+          <h3>Caracteristiques de base</h3>
+          <div class="grid stats-base">
+            <label>Force</label><input type="number" name="system.stats.base.force" value="{{system.stats.base.force}}" {{#unless canEdit}}disabled{{/unless}}/>
+            <label>Finesse</label><input type="number" name="system.stats.base.finesse" value="{{system.stats.base.finesse}}" {{#unless canEdit}}disabled{{/unless}}/>
+            <label>Courage</label><input type="number" name="system.stats.base.courage" value="{{system.stats.base.courage}}" {{#unless canEdit}}disabled{{/unless}}/>
+            <label>Vitesse</label><input type="number" name="system.stats.base.vitesse" value="{{system.stats.base.vitesse}}" {{#unless canEdit}}disabled{{/unless}}/>
+            <label>Social</label><input type="number" name="system.stats.base.social" value="{{system.stats.base.social}}" {{#unless canEdit}}disabled{{/unless}}/>
+            <label>Intellect</label><input type="number" name="system.stats.base.intellect" value="{{system.stats.base.intellect}}" {{#unless canEdit}}disabled{{/unless}}/>
+          </div>
+        </div>
+
+        <div>
+          <h3>Ressources</h3>
+          <div class="grid resources">
+            <div class="res">
+              <label>PV</label>
+              <div class="pair">
+                <input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+                <span>/</span>
+                <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+              </div>
+            </div>
+            <div class="res">
+              <label>Endurance (E)</label>
+              <div class="pair">
+                <input type="number" name="system.resources.e.value" value="{{system.resources.e.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+                <span>/</span>
+                <input type="number" name="system.resources.e.max" value="{{system.resources.e.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+              </div>
+            </div>
+            <div class="res">
+              <label>Points de Reaction (RP)</label>
+              <div class="pair">
+                <input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+                <span>/</span>
+                <input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+              </div>
+            </div>
+            <div class="res">
+              <label>BDP</label>
+              <div class="pair">
+                <input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+                <span>/</span>
+                <input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+              </div>
+            </div>
+            <div class="res">
+              <label>Demonisation</label>
+              <div class="pair">
+                <input type="number" name="system.resources.demonisation" value="{{system.resources.demonisation}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+                <span>/</span>
+                <input type="number" name="system.resources.demonisationMax" value="{{system.resources.demonisationMax}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="tab" data-group="primary" data-tab="techniques"><ol class="item-list">{{#each itemsTech as |it|}}<li class="item flexrow" data-item-id="{{it.id}}"><div class="name"><a class="item-edit">{{it.name}}</a></div></li>{{/each}}</ol></div>
-    <div class="tab" data-group="primary" data-tab="inventaire"><ol class="item-list">{{#each itemsOther as |it|}}<li class="item flexrow" data-item-id="{{it.id}}"><div class="name"><a class="item-edit">{{it.name}}</a></div><div>{{it.type}}</div></li>{{/each}}</ol></div>
+
+    <div class="tab" data-group="primary" data-tab="techniques">
+      <header class="list-header">
+        <div>Nom</div><div>Souffle</div><div>Forme</div><div>Cout E</div><div>Degats</div><div></div>
+      </header>
+      <ol class="item-list">
+        {{#each itemsTech as |it|}}
+          <li class="item" data-item-id="{{it.id}}">
+            <div class="name"><a class="item-edit">{{it.name}}</a></div>
+            <div>{{it.system.breath}}</div>
+            <div>{{it.system.form}}</div>
+            <div>{{it.system.costE}}</div>
+            <div>{{it.system.damage}}</div>
+            {{#if ../canEdit}}
+            <div class="controls">
+              <a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>
+              <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+              <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+            </div>
+            {{/if}}
+          </li>
+        {{/each}}
+      </ol>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="inventaire">
+      <header class="list-header">
+        <div>Nom</div><div>Type</div><div></div>
+      </header>
+      <ol class="item-list">
+        {{#each itemsOther as |it|}}
+          <li class="item" data-item-id="{{it.id}}">
+            <div class="name"><a class="item-edit">{{it.name}}</a></div>
+            <div>{{it.type}}</div>
+            {{#if ../canEdit}}
+            <div class="controls">
+              <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+              <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+            </div>
+            {{/if}}
+          </li>
+        {{/each}}
+      </ol>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="regles">
+      <div class="grid two-col">
+        <div class="field">
+          <h3>Contexte</h3>
+          <label>Style de combat</label>
+          <input type="text" name="system.profile.combatStyle" value="{{system.profile.combatStyle}}" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Contexte (Entraineur)</label>
+          <textarea name="system.profile.trainerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.trainerContext}}</textarea>
+          <label>Contexte (Partenaire)</label>
+          <textarea name="system.profile.partnerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.partnerContext}}</textarea>
+          <label>Corbeau Kasugai</label>
+          <input type="text" name="system.profile.kasugaiCrow" value="{{system.profile.kasugaiCrow}}" {{#unless canEdit}}disabled{{/unless}}/>
+        </div>
+        <div class="field">
+          <h3>Combat</h3>
+          <label>Actions / tour</label>
+          <input type="number" name="system.combat.actionEconomy.actionsPerTurn" value="{{system.combat.actionEconomy.actionsPerTurn}}" min="1" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Actions bonus</label>
+          <input type="number" name="system.combat.actionEconomy.bonusActions" value="{{system.combat.actionEconomy.bonusActions}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Deplacement (m/tour)</label>
+          <input type="number" name="system.combat.actionEconomy.movementMeters" value="{{system.combat.actionEconomy.movementMeters}}" min="0" step="0.5" {{#unless canEdit}}disabled{{/unless}}/>
+          <label>Mod. degats temporaires</label>
+          <input type="number" name="system.combat.damageFlat" value="{{system.combat.damageFlat}}" {{#unless canEdit}}disabled{{/unless}}/>
+        </div>
+      </div>
+    </div>
   </section>
 </form>

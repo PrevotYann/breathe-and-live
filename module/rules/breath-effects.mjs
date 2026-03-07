@@ -2,10 +2,9 @@
 import { applyEffectsList } from "./effects-engine.mjs";
 
 const FU = foundry.utils;
-const SYSTEM_ID = "breathe-and-live";
 const METERS_PER_SQUARE = 1.5;
 
-/* ------------------ Utils - parsing et stats ------------------ */
+/* ------------------ Utils ------------------ */
 
 function injectStatsInDamage(expr, attacker) {
   if (!expr || typeof expr !== "string") return "1d8";
@@ -28,10 +27,15 @@ function injectStatsInDamage(expr, attacker) {
   return out;
 }
 
+function appendFlatModifier(expr, mod) {
+  const n = Number(mod) || 0;
+  if (!n) return expr;
+  const sign = n >= 0 ? "+" : "-";
+  return `${expr} ${sign} ${Math.abs(n)}`;
+}
+
 function normalizeBreathName(raw) {
-  const s = String(raw || "")
-    .trim()
-    .toLowerCase();
+  const s = String(raw || "").trim().toLowerCase();
   if (/(soleil|sun)/.test(s)) return "sun";
   if (/(eau|water)/.test(s)) return "water";
   if (/(flamme|flame)/.test(s)) return "flame";
@@ -45,15 +49,16 @@ function normalizeBreathName(raw) {
   if (/(son|sound)/.test(s)) return "sound";
   if (/(insecte|insect)/.test(s)) return "insect";
   if (/(amour|love)/.test(s)) return "love";
-  if (/(bête|beast)/.test(s)) return "beast";
+  if (/(bete|bête|beast)/.test(s)) return "beast";
   if (/(lune|moon)/.test(s)) return "moon";
   return "";
 }
 
-/** Fusionne toggles d’acteur + items “breath” équipés */
+/** Merge actor toggles + equipped breath items */
 function getActiveBreaths(actor) {
   const res = {};
   const b = FU.getProperty(actor, "system.breaths") || {};
+
   for (const [k, v] of Object.entries(b)) {
     if (!res[k]) res[k] = { enabled: false, specials: {} };
     if (v?.enabled) res[k].enabled = true;
@@ -63,6 +68,7 @@ function getActiveBreaths(actor) {
       }
     }
   }
+
   for (const it of actor.items ?? []) {
     if (it.type !== "breath") continue;
     const key = it.system?.key ? String(it.system.key) : "";
@@ -72,11 +78,9 @@ function getActiveBreaths(actor) {
     const sp = it.system?.specials || {};
     for (const [sk, on] of Object.entries(sp)) res[key].specials[sk] = !!on;
   }
+
   return res;
 }
-
-/* ------------------ Effets de Souffles (pré-hit et on-hit) ------------------ */
-
 
 function isMeleeRange(attackerToken, targetToken) {
   try {
@@ -91,125 +95,117 @@ function isMeleeRange(attackerToken, targetToken) {
   }
 }
 
+/* ------------------ Breath effects ------------------ */
+
 export function applyPreHit(attacker, targetToken, item, ctx = {}) {
   const breaths = getActiveBreaths(attacker);
   const itemBreathKey = normalizeBreathName(item.system?.breath);
   const notes = [];
 
-  // Base
   const baseCost = Number(item.system?.costE ?? 0) || 0;
   let cost = baseCost;
   let dmgExpr = injectStatsInDamage(item.system?.damage || "1d8", attacker);
 
+  // Generic temporary damage modifier path (used by effects engine)
+  const attackerFlatDamage =
+    Number(FU.getProperty(attacker, "system.combat.damageFlat") ?? 0) || 0;
+  dmgExpr = appendFlatModifier(dmgExpr, attackerFlatDamage);
+
   const ui = { canDeflect: false, canDash: false, canMist: false };
 
-  /* === ÉLU (Soleil) — s'applique à TOUTES les techniques ===
-     - si coût de base > 1 ⇒ floor(base/2)
-     - si coût de base = 1 ⇒ reste 1 (jamais 0)
-     - si coût de base = 0 ⇒ reste 0
-  */
+  // Soleil - Elu : half E cost, but never below 1 when base >= 1
   if (breaths.sun?.enabled && breaths.sun?.specials?.elu) {
     if (baseCost > 1) {
       cost = Math.floor(baseCost / 2);
-      notes.push("Soleil — Élu : coût ÷2");
+      notes.push("Soleil - Elu : cout divise par 2");
     } else if (baseCost === 1) {
       cost = 1;
-      notes.push("Soleil — Élu : coût reste 1");
-    } // 0 reste 0
+      notes.push("Soleil - Elu : cout minimum conserve");
+    }
   }
 
-  // Sécurité : si le coût de base était ≥1, on ne permet jamais <1 après modifs
   if (baseCost >= 1) cost = Math.max(1, Number.isFinite(cost) ? cost : 1);
   else cost = Math.max(0, Number.isFinite(cost) ? cost : 0);
 
-  // Eau
-  if (itemBreathKey === "water" && breaths.water?.enabled) {
-    if (breaths.water.specials?.devierVagues) {
-      ui.canDeflect = true;
-      notes.push("Eau — Dévier les vagues : réaction possible");
-    }
-  }
-  // Foudre
-  if (itemBreathKey === "thunder" && breaths.thunder?.enabled) {
-    if (breaths.thunder.specials?.vitesseLumiere) {
-      ui.canDash = true;
-      notes.push("Foudre — Vitesse de la lumière : Dash 6 m");
-    }
-  }
-  // Brume
-  if (itemBreathKey === "mist" && breaths.mist?.enabled) {
-    if (breaths.mist.specials?.nuagesTrainants) {
-      ui.canMist = true;
-      notes.push("Brume — Nuages traînants : zone 3 m");
-    }
-  }
-  // Neige
-  if (itemBreathKey === "snow" && breaths.snow?.enabled) {
-    notes.push("Neige — pénalité de CA (appliquée si dégâts subis)");
-  }
-  // Fleur
-  if (itemBreathKey === "flower" && breaths.flower?.enabled) {
-    if (breaths.flower.specials?.concentrationFlorissante) {
-      dmgExpr = `${dmgExpr} + 1`;
-      notes.push("Fleur — Concentration florissante : +1 aux dégâts");
-    }
-  }
-  // Flamme
-  if (itemBreathKey === "flame" && breaths.flame?.enabled) {
-    if (breaths.flame.specials?.coeurFlamboyant) {
-      notes.push("Flamme — Cœur flamboyant (interactions fin de round)");
-    }
+  if (itemBreathKey === "water" && breaths.water?.enabled && breaths.water.specials?.devierVagues) {
+    ui.canDeflect = true;
+    notes.push("Eau - Devier les vagues : reaction possible");
   }
 
-  // Vent
-  if (itemBreathKey === "wind" && breaths.wind?.enabled) {
-    notes.push("Vent — actif");
+  if (itemBreathKey === "thunder" && breaths.thunder?.enabled && breaths.thunder.specials?.vitesseLumiere) {
+    ui.canDash = true;
+    notes.push("Foudre - Vitesse de la lumiere : Dash 6m");
   }
-  // Pierre
-  if (itemBreathKey === "stone" && breaths.stone?.enabled) {
-    notes.push("Pierre — actif");
+
+  if (itemBreathKey === "mist" && breaths.mist?.enabled && breaths.mist.specials?.nuagesTrainants) {
+    ui.canMist = true;
+    notes.push("Brume - Nuages trainants : zone 3m");
   }
-  // Serpent
-  if (itemBreathKey === "serpent" && breaths.serpent?.enabled) {
-    if (breaths.serpent.specials?.formeLibre) {
-      const range = Number(item.system?.range ?? METERS_PER_SQUARE) || METERS_PER_SQUARE;
-      const boosted = Number((range + METERS_PER_SQUARE).toFixed(1));
-      ctx.overrideRange = boosted;
-      notes.push(`Serpent — Forme libre : portée ${range}m → ${boosted}m`);
-    }
+
+  if (itemBreathKey === "snow" && breaths.snow?.enabled && breaths.snow.specials?.dentsDeKatana) {
+    notes.push("Neige - Dents de Katana : malus de CA a l'impact");
   }
-  // Son
-  if (itemBreathKey === "sound" && breaths.sound?.enabled) {
-    if (breaths.sound.specials?.partitionFulgurante) {
-      notes.push("Son — Partition fulgurante : -1 CA sur la cible (fin de round)");
-    }
+
+  if (itemBreathKey === "flower" && breaths.flower?.enabled && breaths.flower.specials?.concentrationFlorissante) {
+    dmgExpr = `${dmgExpr} + 1`;
+    notes.push("Fleur - Concentration : +1 degats");
   }
-  // Insecte
-  if (itemBreathKey === "insect" && breaths.insect?.enabled) {
-    if (breaths.insect.specials?.veninLent) {
-      notes.push("Insecte — Venin lent : -1 dégâts infligés par la cible (fin de round)");
-    }
+
+  if (itemBreathKey === "flame" && breaths.flame?.enabled && breaths.flame.specials?.coeurFlamboyant) {
+    notes.push("Flamme - Coeur flamboyant actif");
   }
-  // Amour
-  if (itemBreathKey === "love" && breaths.love?.enabled) {
-    if (breaths.love.specials?.coeurPassionne && isMeleeRange(ctx?.attackerToken, targetToken)) {
-      dmgExpr = `${dmgExpr} + 1`;
-      notes.push("Amour — Cœur passionné : +1 dégâts en mêlée");
-    }
+
+  if (itemBreathKey === "wind" && breaths.wind?.enabled && breaths.wind.specials?.ventsDeGuerre) {
+    notes.push("Vent - Vents de guerre : +1d2 RP si demon acheve");
   }
-  // Bête
-  if (itemBreathKey === "beast" && breaths.beast?.enabled) {
-    if (breaths.beast.specials?.instinctSauvage && isMeleeRange(ctx?.attackerToken, targetToken)) {
-      cost = Math.max(baseCost >= 1 ? 1 : 0, cost - 1);
-      notes.push("Bête — Instinct sauvage : coût E -1 en mêlée");
-    }
+
+  if (itemBreathKey === "stone" && breaths.stone?.enabled && breaths.stone.specials?.machoireHache) {
+    notes.push("Pierre - Machoire et hache active");
   }
-  // Lune
-  if (itemBreathKey === "moon" && breaths.moon?.enabled) {
-    if (breaths.moon.specials?.bonusSolo && ["demon", "demonist"].includes(String(targetToken?.actor?.type || "").toLowerCase())) {
-      dmgExpr = `${dmgExpr} + 1d6`;
-      notes.push("Lune — Frappe de Lune : +1d6 vs démon");
-    }
+
+  if (itemBreathKey === "serpent" && breaths.serpent?.enabled && breaths.serpent.specials?.formeLibre) {
+    const range = Number(item.system?.range ?? METERS_PER_SQUARE) || METERS_PER_SQUARE;
+    const boosted = Number((range + METERS_PER_SQUARE).toFixed(1));
+    ctx.overrideRange = boosted;
+    notes.push(`Serpent - Forme libre : portee ${range}m -> ${boosted}m`);
+  }
+
+  if (itemBreathKey === "sound" && breaths.sound?.enabled && breaths.sound.specials?.partitionFulgurante) {
+    notes.push("Son - Partition fulgurante : CA -1 cible fin de round");
+  }
+
+  if (itemBreathKey === "insect" && breaths.insect?.enabled && breaths.insect.specials?.veninLent) {
+    notes.push("Insecte - Venin lent : degats cibles -1 fin de round");
+  }
+
+  if (
+    itemBreathKey === "love" &&
+    breaths.love?.enabled &&
+    breaths.love.specials?.coeurPassionne &&
+    isMeleeRange(ctx?.attackerToken, targetToken)
+  ) {
+    dmgExpr = `${dmgExpr} + 1`;
+    notes.push("Amour - Coeur passionne : +1 degats melee");
+  }
+
+  if (
+    itemBreathKey === "beast" &&
+    breaths.beast?.enabled &&
+    breaths.beast.specials?.instinctSauvage &&
+    isMeleeRange(ctx?.attackerToken, targetToken)
+  ) {
+    cost = Math.max(baseCost >= 1 ? 1 : 0, cost - 1);
+    notes.push("Bete - Instinct sauvage : cout E -1 en melee");
+  }
+
+  if (
+    itemBreathKey === "moon" &&
+    breaths.moon?.enabled &&
+    breaths.moon.specials?.bonusSolo &&
+    ["demon", "demonist"].includes(String(targetToken?.actor?.type || "").toLowerCase())
+  ) {
+    dmgExpr = `${dmgExpr} + 1d6`;
+    notes.push("Lune - Frappe de lune : +1d6 vs demon");
   }
 
   return { cost, dmgExpr, ui, notes };
@@ -220,13 +216,21 @@ export async function applyOnHit(
   targetToken,
   item,
   ctx = {},
-  { tookDamage = false } = {}
+  { tookDamage = false, wasKilled = false } = {}
 ) {
-  const itemBreathKey = normalizeBreathName(item.system?.breath);
   if (!tookDamage) return;
 
-  // Neige : CA -1d4 fin du round
-  if (itemBreathKey === "snow") {
+  const itemBreathKey = normalizeBreathName(item.system?.breath);
+  const breaths = getActiveBreaths(attacker);
+
+  // Neige : CA -1d4 until round end
+  if (
+    itemBreathKey === "snow" &&
+    breaths.snow?.enabled &&
+    breaths.snow?.specials?.dentsDeKatana
+  ) {
+    const caLossRoll = await new Roll("1d4").evaluate({ async: true });
+    const loss = Math.max(1, Number(caLossRoll.total) || 1);
     await applyEffectsList({
       source: attacker,
       target: targetToken,
@@ -236,17 +240,20 @@ export async function applyOnHit(
           target: "target",
           path: "system.resources.ca",
           mode: "add",
-          roll: "1d4",
-          value: -1, // fallback
+          value: -loss,
           duration: "roundEnd",
-          label: "Neige — CA -1d4 (jusqu'à fin du round)",
+          label: `Neige - CA -${loss} (fin de round)`,
         },
       ],
     });
   }
 
-  // Son : CA -1 jusqu'à fin de round
-  if (itemBreathKey === "sound") {
+  // Son : CA -1 until round end
+  if (
+    itemBreathKey === "sound" &&
+    breaths.sound?.enabled &&
+    breaths.sound?.specials?.partitionFulgurante
+  ) {
     await applyEffectsList({
       source: attacker,
       target: targetToken,
@@ -258,14 +265,18 @@ export async function applyOnHit(
           mode: "add",
           value: -1,
           duration: "roundEnd",
-          label: "Son — Partition fulgurante : CA -1",
+          label: "Son - Partition fulgurante : CA -1",
         },
       ],
     });
   }
 
-  // Insecte : malus simple sur dégâts de la cible jusqu'à fin de round
-  if (itemBreathKey === "insect") {
+  // Insecte : target damage -1 until round end
+  if (
+    itemBreathKey === "insect" &&
+    breaths.insect?.enabled &&
+    breaths.insect?.specials?.veninLent
+  ) {
     await applyEffectsList({
       source: attacker,
       target: targetToken,
@@ -273,34 +284,39 @@ export async function applyOnHit(
       effects: [
         {
           target: "target",
-          path: "system.bonuses.damageFlat",
+          path: "system.combat.damageFlat",
           mode: "add",
           value: -1,
           duration: "roundEnd",
-          label: "Insecte — Venin lent : dégâts -1",
+          label: "Insecte - Venin lent : degats -1",
         },
       ],
     });
   }
 
-  // Fleur : exemple buff court (optionnel) — laissé commenté
-  /*
-  if (itemBreathKey === "flower") {
-    await applyEffectsList({
-      source: attacker,
-      target: attacker,
-      origin: item.uuid,
-      effects: [{
-        target: "self",
-        path: "system.bonuses.damageFlat",
-        mode: "add",
-        value: 1,
-        duration: "custom:2",
-        label: "Fleur — Concentration (+1 dmg, 2 tours)"
-      }]
+  // Vent : +1d2 RP when killing a demon target
+  if (
+    itemBreathKey === "wind" &&
+    wasKilled &&
+    breaths.wind?.enabled &&
+    breaths.wind?.specials?.ventsDeGuerre &&
+    String(targetToken?.actor?.type || "").toLowerCase() === "demon"
+  ) {
+    const rpPath = "system.resources.rp.value";
+    const rpMaxPath = "system.resources.rp.max";
+    const curRp = Number(FU.getProperty(attacker, rpPath) ?? 0) || 0;
+    const rpMax = Number(FU.getProperty(attacker, rpMaxPath) ?? curRp) || curRp;
+
+    const gainRoll = await new Roll("1d2").evaluate({ async: true });
+    const gain = Math.max(1, Number(gainRoll.total) || 1);
+    const newRp = Math.min(rpMax, curRp + gain);
+    await attacker.update({ [rpPath]: newRp });
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: attacker }),
+      content: `<em>Vents de guerre : ${attacker.name} recupere ${gain} RP (${curRp} -> ${newRp}).</em>`,
     });
   }
-  */
 }
 
 export const BreathFX = { applyPreHit, applyOnHit };

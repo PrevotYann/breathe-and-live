@@ -160,6 +160,7 @@
           "kasugaiCrow": ""
         },
         "combat": {
+          "damageFlat": 0,
           "actionEconomy": {
             "actionsPerTurn": 1,
             "bonusActions": 0,

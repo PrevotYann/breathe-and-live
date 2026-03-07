@@ -8,7 +8,6 @@ import { BLBaseItemSheet } from "./item/sheets/base-item-sheet.mjs";
 import { BLBreathSheet } from "./sheets/item-breath-sheet.mjs";
 import { useTechnique } from "./chat/use-technique.mjs";
 import { registerEffectHooks } from "./rules/effects-engine.mjs";
-import { registerRoundEngineHooks } from "./rules/round-engine.mjs";
 
 const SYSTEM_ID = "breathe-and-live";
 const BL_NS = "breathe-and-live";
@@ -137,6 +136,9 @@ class BLActor extends Actor {
 
     const sys = this.system ?? {};
     const b = sys?.stats?.base ?? {};
+    const toNum = (v, fallback = 0) =>
+      Number.isFinite(Number(v)) ? Number(v) : fallback;
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
     // Par défaut pour tous
     sys.resources ??= {};
@@ -156,12 +158,11 @@ class BLActor extends Actor {
       sys.class.rank ||= "Mizunoto";
     }
 
-    // === Stats dérivées (pools répartis par groupe) ==================
+    // Stats derivées (pools répartis par groupe)
     sys.stats ??= {};
     sys.stats.base ??= {};
     sys.stats.derived ??= {};
 
-    // borne à >= 0 entiers
     for (const [k, v] of Object.entries(sys.stats.derived)) {
       const n = Math.max(0, Math.floor(Number(v) || 0));
       sys.stats.derived[k] = n;
@@ -184,62 +185,97 @@ class BLActor extends Actor {
         (s, key) => s + (Number(sys.stats.derived[key]) || 0),
         0
       );
-      sys.stats.remaining[attr] = Math.max(0, base[attr] - spent); // >0 = points à placer
+      sys.stats.remaining[attr] = Math.max(0, base[attr] - spent);
     }
+
+    sys.combat ??= {};
+    sys.combat.actionEconomy ??= {};
+    sys.combat.damageFlat = Number(sys.combat.damageFlat) || 0;
 
     if (this.type !== "demon") {
       sys.resources.e ??= { value: 0, max: 0 };
       sys.resources.rp ??= { value: 0, max: 0 };
-      sys.resources.hp ??= { value: 20, max: 36 };
-      if (!Number.isFinite(sys.resources.hp.value))
-        sys.resources.hp.value = sys.resources.hp.max;
+      sys.resources.hp ??= { value: 20, max: 20 };
 
       // Max/CA calculés (source of truth)
       sys.resources.e.max = 20 + (Number(b.courage) || 0); // E = 20 + Courage
       sys.resources.ca = 10 + (Number(b.vitesse) || 0); // CA = 10 + Vitesse
-      const rpMax = 5 + (Number(b.vitesse) || 0) + (Number(b.intellect) || 0);
-      sys.resources.rp.max = rpMax;
-      sys.combat ??= {};
-      sys.combat.actionEconomy ??= {};
+      sys.resources.rp.max =
+        5 + (Number(b.vitesse) || 0) + (Number(b.intellect) || 0);
       sys.combat.actionEconomy.actionsPerTurn =
         1 + Math.floor((Number(b.vitesse) || 0) / 5);
 
-      // Remplissage safe si value invalide
-      if (!Number.isFinite(sys.resources.e.value) || sys.resources.e.value <= 0)
-        sys.resources.e.value = sys.resources.e.max;
-      if (
-        !Number.isFinite(sys.resources.rp.value) ||
-        sys.resources.rp.value <= 0
-      )
-        sys.resources.rp.value = rpMax;
-      if (
-        !Number.isFinite(sys.resources.hp.value) ||
-        sys.resources.hp.value <= 0
-      )
-        sys.resources.hp.value = sys.resources.hp.max;
+      // Clamp only. Do not refill when value reaches 0.
+      const hpMax = Math.max(0, toNum(sys.resources.hp.max, 20));
+      const eMax = Math.max(0, toNum(sys.resources.e.max, 0));
+      const rpMax = Math.max(0, toNum(sys.resources.rp.max, 0));
+      sys.resources.hp.max = hpMax;
+      sys.resources.e.max = eMax;
+      sys.resources.rp.max = rpMax;
+      sys.resources.hp.value = clamp(toNum(sys.resources.hp.value, hpMax), 0, hpMax);
+      sys.resources.e.value = clamp(toNum(sys.resources.e.value, eMax), 0, eMax);
+      sys.resources.rp.value = clamp(toNum(sys.resources.rp.value, rpMax), 0, rpMax);
+
+      if (this.type === "demonist") {
+        sys.resources.bdp ??= { value: 0, max: 0 };
+        const bdpMax = Math.max(0, 10 * (Number(b.courage) || 0));
+        sys.resources.bdp.max = bdpMax;
+        sys.resources.bdp.value = clamp(
+          toNum(sys.resources.bdp.value, bdpMax),
+          0,
+          bdpMax
+        );
+        sys.resources.demonisation = Math.max(
+          0,
+          Math.floor(toNum(sys.resources.demonisation, 0))
+        );
+        // Règle livre : seuil = 10 + Courage
+        sys.resources.demonisationMax = 10 + (Number(b.courage) || 0);
+      }
     } else {
-      // Branche Démon (en te basant sur ce que tu avais déjà)
-      const baseHP = Number(sys.resources?.hp?.base ?? 0) || 0;
+      // Branche Démon
+      const baseHP = Math.max(0, toNum(sys.resources?.hp?.base, 20));
       sys.resources.hp ??= { value: 0, max: 0, base: baseHP };
+      sys.resources.hp.base = baseHP;
       sys.resources.hp.max = baseHP + 5 * (Number(b.force) || 0);
-      if (
-        !Number.isFinite(sys.resources.hp.value) ||
-        sys.resources.hp.value <= 0
-      )
-        sys.resources.hp.value = sys.resources.hp.max;
+      sys.resources.hp.value = clamp(
+        toNum(sys.resources.hp.value, sys.resources.hp.max),
+        0,
+        sys.resources.hp.max
+      );
+
+      sys.resources.ca = 10 + (Number(b.vitesse) || 0);
+      sys.resources.rp ??= { value: 0, max: 0 };
+      sys.resources.rp.max = Math.max(
+        0,
+        Math.floor(
+          (5 + (Number(b.vitesse) || 0) + (Number(b.intellect) || 0)) / 2
+        )
+      );
+      sys.resources.rp.value = clamp(
+        toNum(sys.resources.rp.value, sys.resources.rp.max),
+        0,
+        sys.resources.rp.max
+      );
 
       sys.resources.bdp ??= { value: 0, max: 0 };
       sys.resources.bdp.max = 10 * (Number(b.courage) || 0);
-      if (!Number.isFinite(sys.resources.bdp.value) || sys.resources.bdp.value <= 0)
-        sys.resources.bdp.value = sys.resources.bdp.max;
-      sys.resources.demonisation ??= 0;
+      sys.resources.bdp.value = clamp(
+        toNum(sys.resources.bdp.value, sys.resources.bdp.max),
+        0,
+        sys.resources.bdp.max
+      );
+      sys.resources.demonisation = Math.max(
+        0,
+        Math.floor(toNum(sys.resources.demonisation, 0))
+      );
 
-      // Actions par tour pour les démons (si c'est bien ce que tu veux)
-      sys.actions = 1 + Math.floor((Number(b.vitesse) || 0) / 5);
+      // Actions par tour démon = 1 + (Vitesse / 5)
+      sys.combat.actionEconomy.actionsPerTurn =
+        1 + Math.floor((Number(b.vitesse) || 0) / 5);
     }
   }
 }
-
 Hooks.once("setup", () => {
   CONFIG.Actor.documentClass = BLActor;
 });
@@ -254,7 +290,6 @@ Hooks.once("ready", () => {
       rollBaseCheck, // exposé pour réutilisation éventuelle
     };
   }
-  registerRoundEngineHooks();
 });
 
 /* ========================= ROLLS UTILES ========================= */
@@ -316,6 +351,8 @@ Hooks.on("updateCombat", async (combat, changed) => {
   const cbt = combat.combatant; // combattant dont le tour COMMENCE
   const actor = cbt?.actor;
   if (!actor) return;
+  if (String(actor.type).toLowerCase() === "demon") return;
+  if (!FU.hasProperty(actor, "system.resources.e.value")) return;
 
   const eVal =
     Number(FU.getProperty(actor, "system.resources.e.value") ?? 0) || 0;
