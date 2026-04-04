@@ -2,8 +2,8 @@ export class BLBreathSheet extends ItemSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["breathe-and-live", "sheet", "item", "breath"],
-      width: 560,
-      height: 520,
+      width: 840,
+      height: 760,
       tabs: [
         {
           navSelector: ".sheet-tabs",
@@ -117,6 +117,24 @@ export class BLBreathSheet extends ItemSheet {
         instinctSauvage: {
           label: "Instinct sauvage",
           hint: "Si la cible est proche (≤ 1,5 m), le coût en E est réduit de 1 (min 1).",
+        },
+      },
+      ocean: {
+        courantMobile: {
+          label: "Courant mobile",
+          hint: "TODO-RULEBOOK-AMBIGUITY: structure passive pour le Souffle de l'Ocean.",
+        },
+      },
+      west: {
+        tirParfait: {
+          label: "Tir parfait",
+          hint: "TODO-RULEBOOK-AMBIGUITY: passif de duel et arme a feu pour le Souffle de l'Ouest.",
+        },
+      },
+      custom: {
+        customPassive: {
+          label: "Passif personnalise",
+          hint: "Reserve a un Souffle original cree via les regles homebrew.",
         },
       },
     };

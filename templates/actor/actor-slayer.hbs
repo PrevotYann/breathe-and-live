@@ -1,416 +1,404 @@
 <form class="bl actor-slayer flexcol {{#unless canEdit}}bl-readonly{{/unless}}" autocomplete="off">
   <header class="sheet-header flexrow">
-    <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
+    <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
     <div class="header-fields">
+      <div class="hero-topline">
+        <div class="eyebrow">{{system.class.type}} • {{system.class.rank}}</div>
+        <div class="eyebrow">Arme: {{system.profile.primaryWeapon}} • Souffle: {{system.profile.favoredBreath}}</div>
+      </div>
       <h1 class="charname">
-        <input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" {{#unless canEdit}}disabled{{/unless}}/>
+        <input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" {{#unless canEdit}}disabled{{/unless}} />
       </h1>
-      <div class="flexrow gap">
+      <div class="grid four-col summary-grid">
         <div class="field small">
           <label>Classe</label>
-          <input type="text" name="system.class.type" value="{{system.class.type}}" placeholder="Pourfendeur" {{#unless canEdit}}disabled{{/unless}}/>
+          <input type="text" name="system.class.type" value="{{system.class.type}}" {{#unless canEdit}}disabled{{/unless}} />
         </div>
         <div class="field small">
           <label>Rang</label>
-          <input type="text" name="system.class.rank" value="{{system.class.rank}}" placeholder="Mizunoto" {{#unless canEdit}}disabled{{/unless}}/>
+          <select name="system.class.rank" {{#unless canEdit}}disabled{{/unless}}>
+            {{#each rankOptions as |rank|}}
+              <option value="{{rank}}" {{#if (eq ../system.class.rank rank)}}selected{{/if}}>{{rank}}</option>
+            {{/each}}
+          </select>
         </div>
         <div class="field small">
           <label>Niveau</label>
-          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" {{#unless canEdit}}disabled{{/unless}}/>
+          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" {{#unless canEdit}}disabled{{/unless}} />
+        </div>
+        <div class="field small">
+          <label>Sous-classe</label>
+          <input type="text" name="system.class.subclass" value="{{system.class.subclass}}" placeholder="Voie / posture" {{#unless canEdit}}disabled{{/unless}} />
         </div>
       </div>
     </div>
   </header>
 
+  <section class="field action-strip">
+    <div class="grid five-col">
+      <button type="button" class="bl-action-basic-attack">Attaque de base</button>
+      <button type="button" class="bl-action-recovery">Souffle de recuperation</button>
+      <button type="button" class="bl-action-sprint">Sprinter</button>
+      <button type="button" class="bl-action-wait">Attendre</button>
+      <button type="button" class="bl-action-rest">Repos</button>
+    </div>
+  </section>
+
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="sheet">Fiche (Stats & Ressources)</a>
+    <a class="item" data-tab="sheet">Fiche</a>
     <a class="item" data-tab="breaths">Souffles</a>
     <a class="item" data-tab="techniques">Techniques</a>
     <a class="item" data-tab="inventaire">Inventaire</a>
-    <a class="item" data-tab="regles">Règles avancées</a>
+    <a class="item" data-tab="regles">Regles avancees</a>
   </nav>
 
   <section class="sheet-body">
-    {{!-- FICHE = Stats + Ressources --}}
     <div class="tab" data-group="primary" data-tab="sheet">
+      <div class="grid four-col">
+        <div class="res core-resource">
+          <label>PV</label>
+          <div class="pair">
+            <input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+            <span>/</span>
+            <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          </div>
+          <small>Cap de soin: {{system.resources.hp.healableMax}}</small>
+        </div>
+        <div class="res core-resource">
+          <label>Endurance</label>
+          <div class="pair">
+            <input type="number" name="system.resources.e.value" value="{{system.resources.e.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+            <span>/</span>
+            <input type="number" name="system.resources.e.max" value="{{system.resources.e.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          </div>
+        </div>
+        <div class="res core-resource">
+          <label>RP</label>
+          <div class="pair">
+            <input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+            <span>/</span>
+            <input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          </div>
+        </div>
+        <div class="res core-resource">
+          <label>CA</label>
+          <input type="number" name="system.resources.ca" value="{{system.resources.ca}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          <small>Arme: {{system.profile.primaryWeapon}}</small>
+        </div>
+      </div>
+
       <div class="grid two-col">
         <div>
-          <h3>Caractéristiques de base</h3>
+          <h3>Caracteristiques de base</h3>
           <div class="grid stats-base">
-            <label>Force</label>     <input type="number" name="system.stats.base.force"     value="{{system.stats.base.force}}"     {{#unless canEdit}}disabled{{/unless}}/>
-            <label>Finesse</label>   <input type="number" name="system.stats.base.finesse"   value="{{system.stats.base.finesse}}"   {{#unless canEdit}}disabled{{/unless}}/>
-            <label>Courage</label>   <input type="number" name="system.stats.base.courage"   value="{{system.stats.base.courage}}"   {{#unless canEdit}}disabled{{/unless}}/>
-            <label>Vitesse</label>   <input type="number" name="system.stats.base.vitesse"   value="{{system.stats.base.vitesse}}"   {{#unless canEdit}}disabled{{/unless}}/>
-            <label>Social</label>    <input type="number" name="system.stats.base.social"    value="{{system.stats.base.social}}"    {{#unless canEdit}}disabled{{/unless}}/>
-            <label>Intellect</label> <input type="number" name="system.stats.base.intellect" value="{{system.stats.base.intellect}}" {{#unless canEdit}}disabled{{/unless}}/>
+            <label>Force</label><input type="number" name="system.stats.base.force" value="{{system.stats.base.force}}" {{#unless canEdit}}disabled{{/unless}} />
+            <label>Finesse</label><input type="number" name="system.stats.base.finesse" value="{{system.stats.base.finesse}}" {{#unless canEdit}}disabled{{/unless}} />
+            <label>Courage</label><input type="number" name="system.stats.base.courage" value="{{system.stats.base.courage}}" {{#unless canEdit}}disabled{{/unless}} />
+            <label>Vitesse</label><input type="number" name="system.stats.base.vitesse" value="{{system.stats.base.vitesse}}" {{#unless canEdit}}disabled{{/unless}} />
+            <label>Social</label><input type="number" name="system.stats.base.social" value="{{system.stats.base.social}}" {{#unless canEdit}}disabled{{/unless}} />
+            <label>Intellect</label><input type="number" name="system.stats.base.intellect" value="{{system.stats.base.intellect}}" {{#unless canEdit}}disabled{{/unless}} />
           </div>
+        </div>
 
-          {{#if system.stats.derived}}
-          <h3>Compétences dérivées (répartition par carac)</h3>
-
-            <div class="grid six-col">
-              {{!-- FORCE --}}
-              <div class="group">
-                <h4>Force <small>(restants: {{system.stats.remaining.force}} / {{system.stats.base.force}})</small></h4>
-                {{#each derived.groups.force as |k|}}
-                  <label>{{lookup ../derived.labels k}}</label>
-                  <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}}/>
-                {{/each}}
+        <div>
+          <h3>Creation & progression</h3>
+          <div class="grid two-col">
+            <div class="field">
+              <label>Entraineur</label>
+              <textarea name="system.profile.trainerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.trainerContext}}</textarea>
+              <label>Partenaire</label>
+              <textarea name="system.profile.partnerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.partnerContext}}</textarea>
+              <label>Corbeau Kasugai</label>
+              <input type="text" name="system.profile.kasugaiCrow" value="{{system.profile.kasugaiCrow}}" {{#unless canEdit}}disabled{{/unless}} />
+            </div>
+            <div class="field">
+              <label>XP</label>
+              <div class="pair">
+                <input type="number" name="system.progression.xp.value" value="{{system.progression.xp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+                <span>/</span>
+                <input type="number" name="system.progression.xp.next" value="{{system.progression.xp.next}}" min="1" {{#unless canEdit}}disabled{{/unless}} />
               </div>
-
-              {{!-- FINESSE --}}
-              <div class="group">
-                <h4>Finesse <small>(restants: {{system.stats.remaining.finesse}} / {{system.stats.base.finesse}})</small></h4>
-                {{#each derived.groups.finesse as |k|}}
-                  <label>{{lookup ../derived.labels k}}</label>
-                  <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}}/>
-                {{/each}}
+              <label>Points d'entrainement</label>
+              <input type="number" name="system.progression.training" value="{{system.progression.training}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+              <label>Emplacements d'etude</label>
+              <div class="pair">
+                <input type="number" name="system.progression.studySlots.value" value="{{system.progression.studySlots.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+                <span>/</span>
+                <input type="number" name="system.progression.studySlots.max" value="{{system.progression.studySlots.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
               </div>
-
-              {{!-- COURAGE --}}
-              <div class="group">
-                <h4>Courage <small>(restants: {{system.stats.remaining.courage}} / {{system.stats.base.courage}})</small></h4>
-                {{#each derived.groups.courage as |k|}}
-                  <label>{{lookup ../derived.labels k}}</label>
-                  <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}}/>
-                {{/each}}
-              </div>
-
-              {{!-- VITESSE --}}
-              <div class="group">
-                <h4>Vitesse <small>(restants: {{system.stats.remaining.vitesse}} / {{system.stats.base.vitesse}})</small></h4>
-                {{#each derived.groups.vitesse as |k|}}
-                  <label>{{lookup ../derived.labels k}}</label>
-                  <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}}/>
-                {{/each}}
-              </div>
-
-              {{!-- SOCIAL --}}
-              <div class="group">
-                <h4>Social <small>(restants: {{system.stats.remaining.social}} / {{system.stats.base.social}})</small></h4>
-                {{#each derived.groups.social as |k|}}
-                  <label>{{lookup ../derived.labels k}}</label>
-                  <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}}/>
-                {{/each}}
-              </div>
-
-              {{!-- INTELLECT --}}
-              <div class="group">
-                <h4>Intellect <small>(restants: {{system.stats.remaining.intellect}} / {{system.stats.base.intellect}})</small></h4>
-                {{#each derived.groups.intellect as |k|}}
-                  <label>{{lookup ../derived.labels k}}</label>
-                  <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}}/>
-                {{/each}}
+              <label>Emplacements de competence</label>
+              <div class="pair">
+                <input type="number" name="system.progression.skillSlots.value" value="{{system.progression.skillSlots.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+                <span>/</span>
+                <input type="number" name="system.progression.skillSlots.max" value="{{system.progression.skillSlots.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
               </div>
             </div>
+          </div>
+        </div>
+      </div>
 
+      <h3>Competences derivees</h3>
+      <div class="grid six-col">
+        <div class="group">
+          <h4>Force <small>({{system.stats.remaining.force}} / {{system.stats.base.force}} restants)</small></h4>
+          {{#each derived.groups.force as |k|}}
+            <label>{{lookup ../derived.labels k}}</label>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Finesse <small>({{system.stats.remaining.finesse}} / {{system.stats.base.finesse}} restants)</small></h4>
+          {{#each derived.groups.finesse as |k|}}
+            <label>{{lookup ../derived.labels k}}</label>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Courage <small>({{system.stats.remaining.courage}} / {{system.stats.base.courage}} restants)</small></h4>
+          {{#each derived.groups.courage as |k|}}
+            <label>{{lookup ../derived.labels k}}</label>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Vitesse <small>({{system.stats.remaining.vitesse}} / {{system.stats.base.vitesse}} restants)</small></h4>
+          {{#each derived.groups.vitesse as |k|}}
+            <label>{{lookup ../derived.labels k}}</label>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Social <small>({{system.stats.remaining.social}} / {{system.stats.base.social}} restants)</small></h4>
+          {{#each derived.groups.social as |k|}}
+            <label>{{lookup ../derived.labels k}}</label>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Intellect <small>({{system.stats.remaining.intellect}} / {{system.stats.base.intellect}} restants)</small></h4>
+          {{#each derived.groups.intellect as |k|}}
+            <label>{{lookup ../derived.labels k}}</label>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="breaths">
+      <div class="grid two-col">
+        <div class="field">
+          <h3>Souffles possedes</h3>
+          {{#if ownedBreathItems.length}}
+            <div class="breath-card-list">
+              {{#each ownedBreathItems as |it|}}
+                <article class="breath-card item" data-item-id="{{it.id}}">
+                  <img class="breath-card__img" src="{{it.img}}" alt="{{it.name}}" />
+                  <div class="breath-card__body">
+                    <div class="breath-card__topline">
+                      <strong><a class="item-edit">{{it.name}}</a></strong>
+                      <span>{{#if it.actorEnabled}}Actif{{else}}Inactif{{/if}}</span>
+                    </div>
+                    {{#if it.sourceSection}}<small>{{it.sourceSection}}</small>{{/if}}
+                    {{#if it.prereqText}}<p>Prerequis: {{it.prereqText}}</p>{{/if}}
+                    {{#if it.description}}<p>{{it.description}}</p>{{/if}}
+                    {{#if it.itemSpecials.length}}
+                      <div class="tag-row">
+                        {{#each it.itemSpecials as |special|}}
+                          <span class="tag">{{special}}</span>
+                        {{/each}}
+                      </div>
+                    {{/if}}
+                  </div>
+                  <div class="controls">
+                    <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+                    <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+                  </div>
+                </article>
+              {{/each}}
+            </div>
+          {{else}}
+            <p class="hint">Aucun objet de type souffle n'est encore ajoute a l'acteur.</p>
           {{/if}}
         </div>
 
-        <div>
-          <h3>Ressources</h3>
-          <div class="grid resources">
-            <div class="res">
-              <label>PV</label>
-              <div class="pair">
-                <input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-                <span>/</span>
-                <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+        <div class="field">
+          <h3>Activation & passifs</h3>
+          <div class="grid two-col breath-toggle-grid">
+            {{#each breathEntries as |entry|}}
+              <div class="field">
+                <label>
+                  <input type="checkbox" name="system.breaths.{{entry.key}}.enabled" data-dtype="Boolean" {{checked entry.enabled}} {{#unless ../canEdit}}disabled{{/unless}} />
+                  {{entry.label}}
+                </label>
+                {{#if entry.specials}}
+                  <div class="small muted">Passifs d'acteur</div>
+                  {{#each entry.specials as |enabled specialKey|}}
+                    <label class="small">
+                      <input type="checkbox" name="system.breaths.{{../key}}.specials.{{specialKey}}" data-dtype="Boolean" {{checked enabled}} {{#unless ../../canEdit}}disabled{{/unless}} />
+                      {{specialKey}}
+                    </label>
+                  {{/each}}
+                {{/if}}
               </div>
-            </div>
-
-            <div class="res">
-              <label>Endurance (E)</label>
-              <div class="pair">
-                <input type="number" name="system.resources.e.value" value="{{system.resources.e.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-                <span>/</span>
-                <input type="number" name="system.resources.e.max" value="{{system.resources.e.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-              </div>
-            </div>
-
-            <div class="res">
-              <label>Points de Réaction (RP)</label>
-              <div class="pair">
-                <input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-                <span>/</span>
-                <input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-              </div>
-            </div>
-
-            <div class="res">
-              <label>Classe d’Armure (CA)</label>
-              <input type="number" name="system.resources.ca" value="{{system.resources.ca}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-            </div>
-
-            {{#if system.resources.bdp}}
-            <div class="res">
-              <label>BDP</label>
-              <div class="pair">
-                <input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-                <span>/</span>
-                <input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-              </div>
-            </div>
-            {{/if}}
+            {{/each}}
           </div>
         </div>
       </div>
-    </div>
 
-    {{!-- SOUFFLES --}}
-    <div class="tab" data-group="primary" data-tab="breaths">
-      <h3>Souffles (toggles d’acteur)</h3>
-      <p class="hint" style="margin-top:-.4rem;">
-        Active les effets passifs. Tu peux aussi ajouter des <em>Items Souffle</em> (supprimables dans l’onglet Inventaire).
-      </p>
-
-      <div class="grid three-col">
-        {{!-- Soleil --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.sun.enabled" data-dtype="Boolean" {{checked system.breaths.sun.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle du Soleil</label>
-          <div class="small muted">Capacités :</div>
-          <label class="small"><input type="checkbox" name="system.breaths.sun.specials.elu" data-dtype="Boolean" {{checked system.breaths.sun.specials.elu}} {{#unless canEdit}}disabled{{/unless}}/> Élu</label>
-        </div>
-
-        {{!-- Eau --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.water.enabled" data-dtype="Boolean" {{checked system.breaths.water.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle de l’Eau</label>
-          <div class="small muted">Capacités :</div>
-          <label class="small"><input type="checkbox" name="system.breaths.water.specials.devierVagues" data-dtype="Boolean" {{checked system.breaths.water.specials.devierVagues}} {{#unless canEdit}}disabled{{/unless}}/> Dévier les vagues</label>
-        </div>
-
-        {{!-- Flamme --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.flame.enabled" data-dtype="Boolean" {{checked system.breaths.flame.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle de la Flamme</label>
-          <div class="small muted">Capacités :</div>
-          <label class="small"><input type="checkbox" name="system.breaths.flame.specials.coeurFlamboyant" data-dtype="Boolean" {{checked system.breaths.flame.specials.coeurFlamboyant}} {{#unless canEdit}}disabled{{/unless}}/> Cœur flamboyant</label>
-        </div>
-
-        {{!-- Vent --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.wind.enabled" data-dtype="Boolean" {{checked system.breaths.wind.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle du Vent</label>
-          <div class="small muted">Capacités :</div>
-          <label class="small"><input type="checkbox" name="system.breaths.wind.specials.ventsDeGuerre" data-dtype="Boolean" {{checked system.breaths.wind.specials.ventsDeGuerre}} {{#unless canEdit}}disabled{{/unless}}/> Vents de guerre</label>
-        </div>
-
-        {{!-- Foudre --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.thunder.enabled" data-dtype="Boolean" {{checked system.breaths.thunder.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle de la Foudre</label>
-          <div class="small muted">Capacités :</div>
-          <label class="small"><input type="checkbox" name="system.breaths.thunder.specials.vitesseLumiere" data-dtype="Boolean" {{checked system.breaths.thunder.specials.vitesseLumiere}} {{#unless canEdit}}disabled{{/unless}}/> Vitesse de la lumière</label>
-        </div>
-
-        {{!-- Pierre --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.stone.enabled" data-dtype="Boolean" {{checked system.breaths.stone.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle de la Pierre</label>
-          <div class="small muted">Capacités :</div>
-          <label class="small"><input type="checkbox" name="system.breaths.stone.specials.machoireHache" data-dtype="Boolean" {{checked system.breaths.stone.specials.machoireHache}} {{#unless canEdit}}disabled{{/unless}}/> Mâchoire & Hache</label>
-        </div>
-
-        {{!-- Brume --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.mist.enabled" data-dtype="Boolean" {{checked system.breaths.mist.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle de la Brume</label>
-          <div class="small muted">Capacités :</div>
-          <label class="small"><input type="checkbox" name="system.breaths.mist.specials.nuagesTrainants" data-dtype="Boolean" {{checked system.breaths.mist.specials.nuagesTrainants}} {{#unless canEdit}}disabled{{/unless}}/> Nuages traînants</label>
-        </div>
-
-        {{!-- Serpent --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.serpent.enabled" data-dtype="Boolean" {{checked system.breaths.serpent.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle du Serpent</label>
-          <div class="small muted">Capacités :</div>
-          <span class="small muted">—</span>
-        </div>
-
-        {{!-- Neige --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.snow.enabled" data-dtype="Boolean" {{checked system.breaths.snow.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle de la Neige</label>
-          <div class="small muted">Capacités :</div>
-          <label class="small"><input type="checkbox" name="system.breaths.snow.specials.dentsDeKatana" data-dtype="Boolean" {{checked system.breaths.snow.specials.dentsDeKatana}} {{#unless canEdit}}disabled{{/unless}}/> Dents de Katana</label>
-        </div>
-
-        {{!-- Fleur --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.flower.enabled" data-dtype="Boolean" {{checked system.breaths.flower.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle de la Fleur</label>
-          <div class="small muted">Capacités :</div>
-          <label class="small"><input type="checkbox" name="system.breaths.flower.specials.concentrationFlorissante" data-dtype="Boolean" {{checked system.breaths.flower.specials.concentrationFlorissante}} {{#unless canEdit}}disabled{{/unless}}/> Concentration florissante</label>
-        </div>
-
-        {{!-- Son --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.sound.enabled" data-dtype="Boolean" {{checked system.breaths.sound.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle du Son</label>
-          <div class="small muted">Capacités :</div>
-          <span class="small muted">—</span>
-        </div>
-
-        {{!-- Insecte --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.insect.enabled" data-dtype="Boolean" {{checked system.breaths.insect.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle de l’Insecte</label>
-          <div class="small muted">Capacités :</div>
-          <span class="small muted">—</span>
-        </div>
-
-        {{!-- Amour --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.love.enabled" data-dtype="Boolean" {{checked system.breaths.love.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle de l’Amour</label>
-          <div class="small muted">Capacités :</div>
-          <span class="small muted">—</span>
-        </div>
-
-        {{!-- Bête --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.beast.enabled" data-dtype="Boolean" {{checked system.breaths.beast.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle de la Bête</label>
-          <div class="small muted">Capacités :</div>
-          <span class="small muted">—</span>
-        </div>
-
-        {{!-- Lune --}}
-        <div class="field">
-          <label><input type="checkbox" name="system.breaths.moon.enabled" data-dtype="Boolean" {{checked system.breaths.moon.enabled}} {{#unless canEdit}}disabled{{/unless}}/> Souffle de la Lune</label>
-          <div class="small muted">Capacités :</div>
-          <label class="small"><input type="checkbox" name="system.breaths.moon.specials.bonusSolo" data-dtype="Boolean" {{checked system.breaths.moon.specials.bonusSolo}} {{#unless canEdit}}disabled{{/unless}}/> +1 dé vs Démons</label>
-        </div>
-      </div>
-
-      <h3 style="margin-top:1rem;">États & maîtrises</h3>
+      <h3>Maitrises avancees</h3>
       <div class="grid two-col">
-        <label><input type="checkbox" name="system.states.tcbPermanent" data-dtype="Boolean" {{checked system.states.tcbPermanent}} {{#unless canEdit}}disabled{{/unless}}/> TCB : Permanent</label>
-        <label><input type="checkbox" name="system.states.marque" data-dtype="Boolean" {{checked system.states.marque}} {{#unless canEdit}}disabled{{/unless}}/> Forme Marquée</label>
-        <label><input type="checkbox" name="system.states.mondeTransparent" data-dtype="Boolean" {{checked system.states.mondeTransparent}} {{#unless canEdit}}disabled{{/unless}}/> Monde Transparent</label>
-        <label><input type="checkbox" name="system.states.lameRouge" data-dtype="Boolean" {{checked system.states.lameRouge}} {{#unless canEdit}}disabled{{/unless}}/> Lame Rouge</label>
+        {{#each advancedStateEntries as |state|}}
+          <label class="field">
+            <input type="checkbox" name="system.states.{{state.key}}" data-dtype="Boolean" {{checked state.active}} {{#unless ../canEdit}}disabled{{/unless}} />
+            <strong>{{state.label}}</strong>
+            <small>{{state.note}}</small>
+          </label>
+        {{/each}}
       </div>
     </div>
 
-
-    {{!-- RÈGLES AVANCÉES --}}
-    <div class="tab" data-group="primary" data-tab="regles">
-      <div class="grid two-col">
-        <div class="field">
-          <h3>Type de personnage & classe</h3>
-          <label>Type de personnage</label>
-          <input type="text" name="system.profile.characterType" value="{{system.profile.characterType}}" placeholder="slayer / demonist / demon / npc" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Style de combat</label>
-          <input type="text" name="system.profile.combatStyle" value="{{system.profile.combatStyle}}" placeholder="Souffle, Démoniste, BDA..." {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Contexte (Entraîneur)</label>
-          <textarea name="system.profile.trainerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.trainerContext}}</textarea>
-          <label>Contexte (Partenaire)</label>
-          <textarea name="system.profile.partnerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.partnerContext}}</textarea>
-          <label>Corbeau Kasugai</label>
-          <input type="text" name="system.profile.kasugaiCrow" value="{{system.profile.kasugaiCrow}}" {{#unless canEdit}}disabled{{/unless}}/>
-        </div>
-
-        <div class="field">
-          <h3>Économie d'action & réactions</h3>
-          <label>Actions / tour</label>
-          <input type="number" name="system.combat.actionEconomy.actionsPerTurn" value="{{system.combat.actionEconomy.actionsPerTurn}}" min="1" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Actions bonus</label>
-          <input type="number" name="system.combat.actionEconomy.bonusActions" value="{{system.combat.actionEconomy.bonusActions}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Déplacement (m/tour)</label>
-          <input type="number" name="system.combat.actionEconomy.movementMeters" value="{{system.combat.actionEconomy.movementMeters}}" min="0" step="0.5" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Mod. dégâts temporaires</label>
-          <input type="number" name="system.combat.damageFlat" value="{{system.combat.damageFlat}}" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Rounds max sans souffle de récupération</label>
-          <input type="number" name="system.combat.actionEconomy.recoveryBreathRounds" value="{{system.combat.actionEconomy.recoveryBreathRounds}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-          <label><input type="checkbox" name="system.combat.reactions.dodge" data-dtype="Boolean" {{checked system.combat.reactions.dodge}} {{#unless canEdit}}disabled{{/unless}}/> Réaction : Esquive</label>
-          <label><input type="checkbox" name="system.combat.reactions.counterAttack" data-dtype="Boolean" {{checked system.combat.reactions.counterAttack}} {{#unless canEdit}}disabled{{/unless}}/> Réaction : Attaque</label>
-          <label><input type="checkbox" name="system.combat.reactions.draw" data-dtype="Boolean" {{checked system.combat.reactions.draw}} {{#unless canEdit}}disabled{{/unless}}/> Réaction : Dégainage</label>
-          <label><input type="checkbox" name="system.combat.reactions.medical" data-dtype="Boolean" {{checked system.combat.reactions.medical}} {{#unless canEdit}}disabled{{/unless}}/> Réaction : Médicale</label>
-          <label>Réactions spéciales</label>
-          <textarea name="system.combat.reactions.special" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.combat.reactions.special}}</textarea>
-        </div>
-      </div>
-
-      <div class="grid three-col" style="margin-top: 1rem;">
-        <div class="field">
-          <h3>Progression & expérience</h3>
-          <label>XP</label>
-          <input type="number" name="system.progression.xp.value" value="{{system.progression.xp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>XP palier suivant</label>
-          <input type="number" name="system.progression.xp.next" value="{{system.progression.xp.next}}" min="1" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Points d'entraînement</label>
-          <input type="number" name="system.progression.training" value="{{system.progression.training}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Points de rang</label>
-          <input type="number" name="system.progression.rankPoints" value="{{system.progression.rankPoints}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Notes de progression</label>
-          <textarea name="system.progression.notes" rows="3" {{#unless canEdit}}disabled{{/unless}}>{{system.progression.notes}}</textarea>
-        </div>
-
-        <div class="field">
-          <h3>Mort & blessures</h3>
-          <label>État vital</label>
-          <select name="system.death.state" {{#unless canEdit}}disabled{{/unless}}>
-            {{#each deathStates as |st|}}
-              <option value="{{st.value}}" {{#if (eq ../system.death.state st.value)}}selected{{/if}}>{{st.label}}</option>
-            {{/each}}
-          </select>
-          <label><input type="checkbox" name="system.death.standingDeath" data-dtype="Boolean" {{checked system.death.standingDeath}} {{#unless canEdit}}disabled{{/unless}}/> Mort debout</label>
-          <label>Blessures sévères</label>
-          <input type="number" name="system.combat.injuries.severeWounds" value="{{system.combat.injuries.severeWounds}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Membres mutilés</label>
-          <textarea name="system.combat.injuries.lostLimbs" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.combat.injuries.lostLimbs}}</textarea>
-          <label>Conditions de combat</label>
-          <textarea name="system.combat.injuries.conditions" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.combat.injuries.conditions}}</textarea>
-          <label>Notes de mort</label>
-          <textarea name="system.death.deathNotes" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.death.deathNotes}}</textarea>
-        </div>
-
-        <div class="field">
-          <h3>NPC / PNJ</h3>
-          <label>Rôle</label>
-          <input type="text" name="system.npc.role" value="{{system.npc.role}}" placeholder="Civil, démon mineur, soutien..." {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Niveau de menace</label>
-          <input type="text" name="system.npc.threat" value="{{system.npc.threat}}" placeholder="Faible, Modéré, Élevé" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Comportement</label>
-          <textarea name="system.npc.behavior" rows="3" {{#unless canEdit}}disabled{{/unless}}>{{system.npc.behavior}}</textarea>
-          <label>Butin / récompenses</label>
-          <textarea name="system.npc.loot" rows="3" {{#unless canEdit}}disabled{{/unless}}>{{system.npc.loot}}</textarea>
-        </div>
-      </div>
-    </div>
-
-    {{!-- TECHNIQUES --}}
     <div class="tab" data-group="primary" data-tab="techniques">
+      <div class="field">
+        <label>Recherche</label>
+        <input type="text" data-tech-filter placeholder="Nom, souffle, forme, tag..." />
+      </div>
       <header class="list-header">
-        <div>Nom</div><div>Souffle</div><div>Forme</div><div>Coût E</div><div>Dégâts</div><div></div>
+        <div>Nom</div><div>Famille</div><div>Forme</div><div>Cout</div><div>Degats</div><div></div>
       </header>
       <ol class="item-list">
         {{#each itemsTech as |it|}}
-          <li class="item flexrow" data-item-id="{{it.id}}">
+          <li class="item technique-item" data-item-id="{{it.id}}" data-search="{{it.name}} {{it.type}} {{it.system.breath}} {{it.system.tags}}">
             <div class="name"><a class="item-edit">{{it.name}}</a></div>
-            <div>{{it.system.breath}}</div>
+            <div>{{#if it.system.breath}}{{it.system.breath}}{{else}}{{it.type}}{{/if}}</div>
             <div>{{it.system.form}}</div>
-            <div>{{it.system.costE}}</div>
-            <div>{{it.system.damage}}</div>
-            {{#if ../canEdit}}
+            <div>{{it.system.costE}}{{#if it.system.costRp}} / RP {{it.system.costRp}}{{/if}}{{#if it.system.costBdp}} / BDP {{it.system.costBdp}}{{/if}}</div>
+            <div>{{#if it.system.damage}}{{it.system.damage}}{{else}}-{{/if}}</div>
             <div class="controls">
               <a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>
               <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
               <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
             </div>
-            {{/if}}
           </li>
         {{/each}}
       </ol>
     </div>
 
-    {{!-- INVENTAIRE (tout le reste, y compris 'breath', 'weapon', etc.) --}}
     <div class="tab" data-group="primary" data-tab="inventaire">
+      <h3>Armes</h3>
       <header class="list-header">
         <div>Nom</div><div>Type</div><div></div>
       </header>
       <ol class="item-list">
-        {{#each itemsOther as |it|}}
-          <li class="item flexrow" data-item-id="{{it.id}}">
+        {{#each itemsWeapons as |it|}}
+          <li class="item" data-item-id="{{it.id}}">
             <div class="name"><a class="item-edit">{{it.name}}</a></div>
             <div>{{it.type}}</div>
-            {{#if ../canEdit}}
+            <div class="controls">
+              <a class="item-control bl-weapon-attack" title="Attaque"><i class="fas fa-swords"></i></a>
+              <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+              <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+            </div>
+          </li>
+        {{/each}}
+      </ol>
+
+      <h3>Medical & soutien</h3>
+      <header class="list-header">
+        <div>Nom</div><div>Type</div><div></div>
+      </header>
+      <ol class="item-list">
+        {{#each itemsMedical as |it|}}
+          <li class="item" data-item-id="{{it.id}}">
+            <div class="name"><a class="item-edit">{{it.name}}</a></div>
+            <div>{{it.type}}</div>
+            <div class="controls">
+              <a class="item-control bl-use-medical" title="Utiliser"><i class="fas fa-kit-medical"></i></a>
+              <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+              <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+            </div>
+          </li>
+        {{/each}}
+      </ol>
+
+      <h3>Autres objets</h3>
+      <header class="list-header">
+        <div>Nom</div><div>Type</div><div></div>
+      </header>
+      <ol class="item-list">
+        {{#each itemsInventory as |it|}}
+          <li class="item" data-item-id="{{it.id}}">
+            <div class="name"><a class="item-edit">{{it.name}}</a></div>
+            <div>{{it.type}}</div>
             <div class="controls">
               <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
               <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
             </div>
-            {{/if}}
           </li>
         {{/each}}
       </ol>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="regles">
+      <div class="grid three-col">
+        <div class="field">
+          <h3>Economies d'action</h3>
+          <label>Actions / tour</label>
+          <input type="number" name="system.combat.actionEconomy.actionsPerTurn" value="{{system.combat.actionEconomy.actionsPerTurn}}" min="1" {{#unless canEdit}}disabled{{/unless}} />
+          <label>Actions bonus</label>
+          <input type="number" name="system.combat.actionEconomy.bonusActions" value="{{system.combat.actionEconomy.bonusActions}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          <label>Deplacement (m)</label>
+          <input type="number" name="system.combat.actionEconomy.movementMeters" value="{{system.combat.actionEconomy.movementMeters}}" min="0" step="0.5" {{#unless canEdit}}disabled{{/unless}} />
+          <label>Reaction medicale</label>
+          <input type="checkbox" name="system.support.medicalTraining" data-dtype="Boolean" {{checked system.support.medicalTraining}} {{#unless canEdit}}disabled{{/unless}} />
+          <label>Degats temporaires</label>
+          <input type="number" name="system.combat.damageFlat" value="{{system.combat.damageFlat}}" {{#unless canEdit}}disabled{{/unless}} />
+        </div>
+
+        <div class="field">
+          <h3>Conditions</h3>
+          <div class="condition-list">
+            {{#each conditionEntries as |entry|}}
+              <div class="condition-row">
+                <label>
+                  <input type="checkbox" name="system.conditions.{{entry.key}}.active" data-dtype="Boolean" {{checked entry.state.active}} {{#unless ../canEdit}}disabled{{/unless}} />
+                  {{entry.label}}
+                </label>
+                <input type="number" name="system.conditions.{{entry.key}}.intensity" value="{{entry.state.intensity}}" min="0" placeholder="Niv." {{#unless ../canEdit}}disabled{{/unless}} />
+                <input type="number" name="system.conditions.{{entry.key}}.duration" value="{{entry.state.duration}}" min="0" placeholder="Tours" {{#unless ../canEdit}}disabled{{/unless}} />
+              </div>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="field">
+          <h3>Mutilation & mort</h3>
+          <label>Etat vital</label>
+          <select name="system.death.state" {{#unless canEdit}}disabled{{/unless}}>
+            {{#each deathStates as |st|}}
+              <option value="{{st.value}}" {{#if (eq ../system.death.state st.value)}}selected{{/if}}>{{st.label}}</option>
+            {{/each}}
+          </select>
+          <label>Blessures severes</label>
+          <input type="number" name="system.combat.injuries.severeWounds" value="{{system.combat.injuries.severeWounds}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          <label>Mort debout</label>
+          <input type="checkbox" name="system.death.standingDeath" data-dtype="Boolean" {{checked system.death.standingDeath}} {{#unless canEdit}}disabled{{/unless}} />
+          <label>Notes</label>
+          <textarea name="system.death.deathNotes" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.death.deathNotes}}</textarea>
+        </div>
+      </div>
+
+      <h3>Etats des membres</h3>
+      <div class="grid three-col">
+        {{#each limbEntries as |entry|}}
+          <div class="field">
+            <strong>{{entry.label}}</strong>
+            <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.injured" data-dtype="Boolean" {{checked entry.state.injured}} {{#unless ../canEdit}}disabled{{/unless}} /> Blesse</label>
+            <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.broken" data-dtype="Boolean" {{checked entry.state.broken}} {{#unless ../canEdit}}disabled{{/unless}} /> Casse</label>
+            <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.severed" data-dtype="Boolean" {{checked entry.state.severed}} {{#unless ../canEdit}}disabled{{/unless}} /> Sectionne</label>
+            <textarea name="system.combat.injuries.limbs.{{entry.key}}.notes" rows="2" placeholder="Notes" {{#unless ../canEdit}}disabled{{/unless}}>{{entry.state.notes}}</textarea>
+          </div>
+        {{/each}}
+      </div>
     </div>
   </section>
 </form>

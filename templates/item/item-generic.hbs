@@ -1,20 +1,60 @@
 <form class="bl item-generic flexcol" autocomplete="off">
   <header class="sheet-header flexrow">
-    <img class="profile" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <img class="profile" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
     <div class="header-fields">
       <h1 class="charname">
-        <input name="name" type="text" value="{{item.name}}" placeholder="Nom de l’objet"/>
+        <input name="name" type="text" value="{{item.name}}" placeholder="Nom de l'objet" />
       </h1>
       <div class="muted"><small>Type: {{item.type}}</small></div>
     </div>
   </header>
 
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="stats">Donnees</a>
+    <a class="item" data-tab="tags">Tags</a>
+    <a class="item" data-tab="desc">Description</a>
+  </nav>
+
   <section class="sheet-body">
-    <div class="grid">
-      <label>Tags</label>
-      <input type="text" name="system.tagsText" value="{{join system.tags ", "}}" placeholder="tags, séparés, par, virgules"/>
+    <div class="tab" data-group="primary" data-tab="stats">
+      <div class="grid two-col">
+        <label>Source</label>
+        <input type="text" name="system.sourceSection" value="{{system.sourceSection}}" placeholder="Section du livre" />
+
+        <label>Activation</label>
+        <input type="text" name="system.activation" value="{{system.activation}}" placeholder="action / reaction / passive" />
+
+        <label>Quantite</label>
+        <input type="number" name="system.quantity" value="{{system.quantity}}" min="0" />
+
+        <label>Utilisations</label>
+        <div class="pair">
+          <input type="number" name="system.uses.value" value="{{system.uses.value}}" min="0" />
+          <span>/</span>
+          <input type="number" name="system.uses.max" value="{{system.uses.max}}" min="0" />
+        </div>
+
+        <label>Periode</label>
+        <input type="text" name="system.uses.per" value="{{system.uses.per}}" placeholder="combat / jour / scene" />
+
+        <label>Soin / gain</label>
+        <input type="text" name="system.healing" value="{{system.healing}}" placeholder="ex: 1d4" />
+
+        <label>Endurance / ressource</label>
+        <input type="text" name="system.enduranceGain" value="{{system.enduranceGain}}" placeholder="ex: 1d6 E" />
+
+        <label>Note d'usage</label>
+        <textarea name="system.usageNote" rows="3">{{system.usageNote}}</textarea>
+      </div>
     </div>
-    <hr/>
-    {{editor system.description target="system.description" button=true owner=owner editable=editable}}
+
+    <div class="tab" data-group="primary" data-tab="tags">
+      <label>Tags</label>
+      <input type="text" name="system.tagsText" value="{{join system.tags ", "}}" placeholder="tags, separes, par, virgules" />
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="desc">
+      {{editor system.description target="system.description" button=true owner=owner editable=editable}}
+    </div>
   </section>
 </form>

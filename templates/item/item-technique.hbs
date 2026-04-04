@@ -1,49 +1,80 @@
 <form class="bl item-technique flexcol" autocomplete="off">
   <header class="sheet-header flexrow">
-    <img class="profile" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <img class="profile" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
     <div class="header-fields">
       <h1 class="charname">
-        <input name="name" type="text" value="{{item.name}}" placeholder="Nom de la Technique"/>
+        <input name="name" type="text" value="{{item.name}}" placeholder="Nom de la technique" />
       </h1>
       <div class="flexrow gap">
         <div class="field small">
-          <label>Souffle</label>
-          <input type="text" name="system.breath" value="{{system.breath}}" placeholder="Eau / Soleil..."/>
+          <label>Famille / souffle</label>
+          <input type="text" name="system.breath" value="{{system.breath}}" placeholder="Souffle, BDA, sous-classe..." />
         </div>
         <div class="field tiny">
           <label>Forme</label>
-          <input type="number" name="system.form" value="{{system.form}}" min="1"/>
+          <input type="number" name="system.form" value="{{system.form}}" min="0" />
         </div>
       </div>
     </div>
   </header>
 
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="stats">Données</a>
+    <a class="item" data-tab="stats">Donnees</a>
+    <a class="item" data-tab="flags">Effets</a>
     <a class="item" data-tab="tags">Tags</a>
     <a class="item" data-tab="desc">Description</a>
   </nav>
 
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="stats">
-      <div class="grid">
-        <label>Coût Endurance (E)</label>
-        <input type="number" name="system.costE" value="{{system.costE}}" min="0"/>
+      <div class="grid two-col">
+        <label>Cout Endurance</label>
+        <input type="number" name="system.costE" value="{{system.costE}}" min="0" />
 
-        <label>Dégâts</label>
-        <input type="text" name="system.damage" value="{{system.damage}}" placeholder="ex: 2d8+2"/>
+        <label>Cout RP</label>
+        <input type="number" name="system.costRp" value="{{system.costRp}}" min="0" />
 
-        <label>Portée (m)</label>
-        <input type="number" name="system.range" value="{{system.range}}" min="0" step="0.5"/>
+        <label>Cout BDP</label>
+        <input type="number" name="system.costBdp" value="{{system.costBdp}}" min="0" />
 
-        <label>Stat d’attaque (optionnel)</label>
-        <input type="text" name="system.attackStat" value="{{system.attackStat}}" placeholder="vitesse / finesse ..."/>
+        <label>Degats</label>
+        <input type="text" name="system.damage" value="{{system.damage}}" placeholder="ex: 2d8 + Force" />
+
+        <label>Portee (m)</label>
+        <input type="number" name="system.range" value="{{system.range}}" min="0" step="0.5" />
+
+        <label>Stat d'attaque</label>
+        <input type="text" name="system.attackStat" value="{{system.attackStat}}" placeholder="force / finesse / precision" />
+
+        <label>Auto-hit</label>
+        <input type="checkbox" name="system.autoHit" data-dtype="Boolean" {{checked system.autoHit}} />
+
+        <label>Source</label>
+        <input type="text" name="system.sourceSection" value="{{system.sourceSection}}" placeholder="Regle / section du livre" />
+
+        <label>Activation</label>
+        <input type="text" name="system.activation" value="{{system.activation}}" placeholder="action / reaction / passive" />
+
+        <label>Note d'usage</label>
+        <textarea name="system.usageNote" rows="3">{{system.usageNote}}</textarea>
       </div>
     </div>
 
+    <div class="tab" data-group="primary" data-tab="flags">
+      <div class="grid two-col">
+        <label><input type="checkbox" name="system.flags.aoe" data-dtype="Boolean" {{checked system.flags.aoe}} /> Zone</label>
+        <label><input type="checkbox" name="system.flags.antiFriendlyFire" data-dtype="Boolean" {{checked system.flags.antiFriendlyFire}} /> Pas de tir ami</label>
+        <label><input type="checkbox" name="system.flags.mobility" data-dtype="Boolean" {{checked system.flags.mobility}} /> Mobilite</label>
+        <label><input type="checkbox" name="system.flags.decapitation" data-dtype="Boolean" {{checked system.flags.decapitation}} /> Decapitation</label>
+        <label>Charge (tours)</label>
+        <input type="number" name="system.flags.charge" value="{{system.flags.charge}}" min="0" />
+      </div>
+      <p class="hint">Les tableaux <code>system.effects</code> et <code>system.selfEffects</code> restent editables via JSON/compendium pour les cas avances.</p>
+    </div>
+
     <div class="tab" data-group="primary" data-tab="tags">
-      <textarea name="system.tagsText" rows="3" placeholder="tags séparés par des virgules (auto-sync dans system.tags)">{{join system.tags ", "}}</textarea>
-      <p class="hint">Les tags saisis ici sont synchronisés avec <code>system.tags</code>.</p>
+      <label>Tags</label>
+      <textarea name="system.tagsText" rows="3" placeholder="tags separes par des virgules">{{join system.tags ", "}}</textarea>
     </div>
 
     <div class="tab" data-group="primary" data-tab="desc">

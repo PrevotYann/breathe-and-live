@@ -1,0 +1,1 @@
+{"_id":"supp1934Ocean01","name":"Souffle de l\u0027Ocean","type":"breath","img":"icons/svg/wave.svg","system":{"key":"ocean","enabled":false,"specials":{"courantMobile":false},"prereq":{"sense":"Aucun","stats":"Finesse","weapons":"Katana Nichirin"},"sourceSection":"Supplement 1934","description":"Forme de combat recente, plus efficace dans l\u0027eau."}}

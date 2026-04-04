@@ -50,6 +50,9 @@ function normalizeBreathName(raw) {
   if (/(insecte|insect)/.test(s)) return "insect";
   if (/(amour|love)/.test(s)) return "love";
   if (/(bete|bête|beast)/.test(s)) return "beast";
+  if (/(ocean|oc[eé]an)/.test(s)) return "ocean";
+  if (/(ouest|west)/.test(s)) return "west";
+  if (/(original|custom|homebrew)/.test(s)) return "custom";
   if (/(lune|moon)/.test(s)) return "moon";
   return "";
 }
@@ -105,6 +108,7 @@ export function applyPreHit(attacker, targetToken, item, ctx = {}) {
   const baseCost = Number(item.system?.costE ?? 0) || 0;
   let cost = baseCost;
   let dmgExpr = injectStatsInDamage(item.system?.damage || "1d8", attacker);
+  let damageMultiplier = 1;
 
   // Generic temporary damage modifier path (used by effects engine)
   const attackerFlatDamage =
@@ -202,10 +206,34 @@ export function applyPreHit(attacker, targetToken, item, ctx = {}) {
     itemBreathKey === "moon" &&
     breaths.moon?.enabled &&
     breaths.moon.specials?.bonusSolo &&
-    ["demon", "demonist"].includes(String(targetToken?.actor?.type || "").toLowerCase())
+    ["demon", "demonist", "npcdemon"].includes(String(targetToken?.actor?.type || "").toLowerCase())
   ) {
     dmgExpr = `${dmgExpr} + 1d6`;
     notes.push("Lune - Frappe de lune : +1d6 vs demon");
+  }
+
+  if (
+    attacker.system?.states?.lameRouge &&
+    ["demon", "npcdemon"].includes(String(targetToken?.actor?.type || "").toLowerCase())
+  ) {
+    damageMultiplier *= 2;
+    notes.push("Lame Rouge : degats x2 contre demon");
+  }
+
+  if (attacker.system?.states?.marque) {
+    notes.push("Forme Marquee : degats avec avantage");
+    if (
+      itemBreathKey === "sun" &&
+      breaths.sun?.enabled &&
+      breaths.sun?.specials?.elu
+    ) {
+      damageMultiplier *= 3;
+      notes.push("Soleil - Elu : degats x3 en Marque");
+    }
+  }
+
+  if (damageMultiplier !== 1) {
+    dmgExpr = `(${dmgExpr}) * ${damageMultiplier}`;
   }
 
   return { cost, dmgExpr, ui, notes };

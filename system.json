@@ -1,7 +1,7 @@
 {
   "id": "breathe-and-live",
-  "title": "Breathe and Live – Demon Slayer RPG",
-  "description": "Adaptation du système JDR Breathe and Live (Demon Slayer) pour Foundry VTT.",
+  "title": "Breathe and Live - Demon Slayer RPG",
+  "description": "Adaptation du systeme JDR Breathe and Live (Demon Slayer) pour Foundry VTT.",
   "version": "0.1.0",
   "compatibility": {
     "minimum": "12",
@@ -23,44 +23,86 @@
   "languages": [
     {
       "lang": "fr",
-      "name": "Français",
+      "name": "Francais",
       "path": "lang/fr.json"
     }
   ],
   "packs": [
     {
-      "name": "bl-souffles",
-      "label": "Breathe – Souffles",
-      "path": "packs/bl-souffles.db",
-      "type": "Item",
-      "system": "breathe-and-live"
-    },
-    {
-      "name": "bl-techniques",
-      "label": "Breathe – Techniques",
-      "path": "packs/bl-techniques.db",
-      "type": "Item",
-      "system": "breathe-and-live"
-    },
-    {
-      "name": "bl-capacites",
-      "label": "Breathe – Capacités",
-      "path": "packs/bl-capacites.db",
-      "type": "Item",
-      "system": "breathe-and-live"
-    },
-    {
-      "name": "bl-armes",
-      "label": "Breathe – Armes",
-      "path": "packs/bl-armes.db",
-      "type": "Item",
-      "system": "breathe-and-live"
-    },
-    {
-      "name": "bl-acteurs",
-      "label": "Breathe – Acteurs",
-      "path": "packs/bl-acteurs.db",
+      "name": "actors-slayers",
+      "label": "Acteurs - Slayers",
+      "path": "packs/actors-slayers.db",
       "type": "Actor",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "actors-demonists",
+      "label": "Acteurs - Demonists",
+      "path": "packs/actors-demonists.db",
+      "type": "Actor",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "actors-demons",
+      "label": "Acteurs - Demons",
+      "path": "packs/actors-demons.db",
+      "type": "Actor",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "items-weapons",
+      "label": "Items - Weapons",
+      "path": "packs/items-weapons.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "items-medical-utility",
+      "label": "Items - Medical & Utility",
+      "path": "packs/items-medical-utility.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "breaths-styles",
+      "label": "Souffles - Styles",
+      "path": "packs/breaths-styles.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "techniques-breaths",
+      "label": "Techniques - Souffles",
+      "path": "packs/techniques-breaths.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "techniques-subclasses",
+      "label": "Techniques - Subclasses",
+      "path": "packs/techniques-subclasses.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "abilities-demons",
+      "label": "Abilities - Demons",
+      "path": "packs/abilities-demons.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "supplement-1934-breaths",
+      "label": "Supplement 1934 - Souffles",
+      "path": "packs/supplement-1934-breaths.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "supplement-1934-techniques",
+      "label": "Supplement 1934 - Techniques",
+      "path": "packs/supplement-1934-techniques.db",
+      "type": "Item",
       "system": "breathe-and-live"
     }
   ],

@@ -2,8 +2,8 @@ export class BLBaseItemSheet extends ItemSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["breathe-and-live", "sheet", "item"],
-      width: 560,
-      height: 420,
+      width: 760,
+      height: 720,
       tabs: [
         {
           navSelector: ".sheet-tabs",

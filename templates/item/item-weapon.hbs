@@ -1,15 +1,15 @@
 <form class="bl item-weapon flexcol" autocomplete="off">
   <header class="sheet-header flexrow">
-    <img class="profile" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <img class="profile" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
     <div class="header-fields">
       <h1 class="charname">
-        <input name="name" type="text" value="{{item.name}}" placeholder="Nom de l’Arme"/>
+        <input name="name" type="text" value="{{item.name}}" placeholder="Nom de l'arme" />
       </h1>
     </div>
   </header>
 
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="stats">Données</a>
+    <a class="item" data-tab="stats">Donnees</a>
     <a class="item" data-tab="munitions">Munitions</a>
     <a class="item" data-tab="tags">Tags</a>
     <a class="item" data-tab="desc">Description</a>
@@ -18,26 +18,35 @@
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="stats">
       <div class="grid two-col">
-        <label>Catégorie</label>
+        <label>Categorie</label>
         <select name="system.category">
-          <option value="melee" {{#if (eq system.category "melee")}}selected{{/if}}>Mêlée</option>
+          <option value="melee" {{#if (eq system.category "melee")}}selected{{/if}}>Melee</option>
           <option value="distance" {{#if (eq system.category "distance")}}selected{{/if}}>Distance</option>
         </select>
 
-        <label>Dégâts</label>
-        <input type="text" name="system.damage" value="{{system.damage}}" placeholder="ex: 1d8"/>
+        <label>Famille</label>
+        <input type="text" name="system.weaponFamily" value="{{system.weaponFamily}}" placeholder="nichirin / firearm / speciale" />
 
-        <label>Portée (m)</label>
-        <input type="number" name="system.range" value="{{system.range}}" min="0" step="0.5"/>
+        <label>Degats</label>
+        <input type="text" name="system.damage" value="{{system.damage}}" placeholder="ex: 1d8 + Force" />
+
+        <label>Portee (m)</label>
+        <input type="number" name="system.range" value="{{system.range}}" min="0" step="0.5" />
 
         <label>Mod. Attaque</label>
-        <input type="number" name="system.attackMod" value="{{system.attackMod}}"/>
+        <input type="number" name="system.attackMod" value="{{system.attackMod}}" />
 
-        <label>Mod. Dégâts</label>
-        <input type="number" name="system.damageMod" value="{{system.damageMod}}"/>
+        <label>Mod. Degats</label>
+        <input type="number" name="system.damageMod" value="{{system.damageMod}}" />
 
-        <label>Propriétés (csv)</label>
-        <input type="text" name="system.propertiesText" value="{{join system.properties ", "}}" placeholder="décapitation, écarlate, saignement"/>
+        <label>Proprietes</label>
+        <input type="text" name="system.propertiesText" value="{{join system.properties ", "}}" placeholder="decapitation, ecarlate, saignement" />
+
+        <label>Nichirin</label>
+        <input type="checkbox" name="system.isNichirin" data-dtype="Boolean" {{checked system.isNichirin}} />
+
+        <label>Peut decapiter</label>
+        <input type="checkbox" name="system.canDecapitate" data-dtype="Boolean" {{checked system.canDecapitate}} />
 
         <label>Notes</label>
         <textarea name="system.notes" rows="3">{{system.notes}}</textarea>
@@ -46,22 +55,25 @@
 
     <div class="tab" data-group="primary" data-tab="munitions">
       <div class="grid two-col">
-        <label><input type="checkbox" name="system.usesAmmo" data-dtype="Boolean" {{checked system.usesAmmo}}/> Utilise des munitions</label>
+        <label><input type="checkbox" name="system.usesAmmo" data-dtype="Boolean" {{checked system.usesAmmo}} /> Utilise des munitions</label>
         <span></span>
 
         <label>Charge</label>
-        <input type="number" name="system.ammo.value" value="{{system.ammo.value}}" min="0"/>
+        <input type="number" name="system.ammo.value" value="{{system.ammo.value}}" min="0" />
 
         <label>Charge max</label>
-        <input type="number" name="system.ammo.max" value="{{system.ammo.max}}" min="0"/>
+        <input type="number" name="system.ammo.max" value="{{system.ammo.max}}" min="0" />
 
-        <label>Règle de rechargement</label>
+        <label>Type de munition</label>
+        <input type="text" name="system.ammoType" value="{{system.ammoType}}" placeholder="balles, cartouches..." />
+
+        <label>Regle de rechargement</label>
         <textarea name="system.ammo.reload" rows="3">{{system.ammo.reload}}</textarea>
       </div>
     </div>
 
     <div class="tab" data-group="primary" data-tab="tags">
-      <textarea name="system.tagsText" rows="3" placeholder="tags séparés par des virgules">{{join system.tags ", "}}</textarea>
+      <textarea name="system.tagsText" rows="3" placeholder="tags separes par des virgules">{{join system.tags ", "}}</textarea>
     </div>
 
     <div class="tab" data-group="primary" data-tab="desc">

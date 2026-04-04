@@ -1,87 +1,229 @@
 <form class="bl actor-demon flexcol {{#unless canEdit}}bl-readonly{{/unless}}" autocomplete="off">
   <header class="sheet-header flexrow">
-    <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
+    <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
     <div class="header-fields">
+      <div class="hero-topline">
+        <div class="eyebrow">Classe jouable • Demon</div>
+        <div class="eyebrow">Actions: {{system.combat.actionEconomy.actionsPerTurn}} • Deplacement: {{system.combat.actionEconomy.movementMeters}} m</div>
+      </div>
       <h1 class="charname">
-        <input name="name" type="text" value="{{actor.name}}" {{#unless canEdit}}disabled{{/unless}}/>
+        <input name="name" type="text" value="{{actor.name}}" {{#unless canEdit}}disabled{{/unless}} />
       </h1>
-      <div class="grid three-col">
-        <div class="field small">
-          <label>Classe</label>
-          <input type="text" name="system.class.type" value="{{system.class.type}}" placeholder="Demon" {{#unless canEdit}}disabled{{/unless}}/>
-        </div>
+      <div class="grid four-col summary-grid">
         <div class="field small">
           <label>Rang</label>
-          <input type="text" name="system.class.rank" value="{{system.class.rank}}" {{#unless canEdit}}disabled{{/unless}}/>
+          <select name="system.class.rank" {{#unless canEdit}}disabled{{/unless}}>
+            {{#each rankOptions as |rank|}}
+              <option value="{{rank}}" {{#if (eq ../system.class.rank rank)}}selected{{/if}}>{{rank}}</option>
+            {{/each}}
+          </select>
         </div>
         <div class="field small">
           <label>Niveau</label>
-          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" {{#unless canEdit}}disabled{{/unless}}/>
+          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" {{#unless canEdit}}disabled{{/unless}} />
+        </div>
+        <div class="field small">
+          <label>Lignee</label>
+          <input type="text" name="system.demonology.sharedBloodline" value="{{system.demonology.sharedBloodline}}" placeholder="Branche / lune" {{#unless canEdit}}disabled{{/unless}} />
+        </div>
+        <div class="field small">
+          <label>Style</label>
+          <input type="text" name="system.profile.combatStyle" value="{{system.profile.combatStyle}}" {{#unless canEdit}}disabled{{/unless}} />
         </div>
       </div>
     </div>
   </header>
 
+  <section class="field action-strip">
+    <div class="grid four-col">
+      <button type="button" class="bl-action-basic-attack">Attaque de base</button>
+      <button type="button" class="bl-action-sprint">Sprinter</button>
+      <button type="button" class="bl-action-wait">Attendre</button>
+      <button type="button" class="bl-action-rest">Repos</button>
+    </div>
+  </section>
+
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="sheet">Stats & Ressources</a>
-    <a class="item" data-tab="techniques">Techniques</a>
+    <a class="item" data-tab="sheet">Fiche</a>
+    <a class="item" data-tab="techniques">Arts demoniaques</a>
     <a class="item" data-tab="inventaire">Inventaire</a>
-    <a class="item" data-tab="regles">Regles Demon</a>
+    <a class="item" data-tab="regles">Corps & regles</a>
   </nav>
 
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="sheet">
+      <div class="grid four-col">
+        <div class="res core-resource">
+          <label>PV</label>
+          <div class="pair">
+            <input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+            <span>/</span>
+            <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          </div>
+          <small>Base corps: {{system.resources.hp.base}}</small>
+        </div>
+        <div class="res core-resource">
+          <label>BDP</label>
+          <div class="pair">
+            <input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+            <span>/</span>
+            <input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          </div>
+          <small>10 x Courage</small>
+        </div>
+        <div class="res core-resource">
+          <label>RP</label>
+          <div class="pair">
+            <input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+            <span>/</span>
+            <input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          </div>
+          <small>Regle demon: RP calcules puis divises par 2</small>
+        </div>
+        <div class="res core-resource">
+          <label>CA</label>
+          <input type="number" name="system.resources.ca" value="{{system.resources.ca}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          <small>Attaque de base: {{system.demonology.basicDamage}}</small>
+        </div>
+      </div>
+
       <div class="grid two-col">
-        <div>
-          <h3>Caracteristiques de base</h3>
+        <div class="field">
+          <h3>Caracteristiques</h3>
           <div class="grid stats-base">
-            <label>Force</label><input type="number" name="system.stats.base.force" value="{{system.stats.base.force}}" {{#unless canEdit}}disabled{{/unless}}/>
-            <label>Finesse</label><input type="number" name="system.stats.base.finesse" value="{{system.stats.base.finesse}}" {{#unless canEdit}}disabled{{/unless}}/>
-            <label>Courage</label><input type="number" name="system.stats.base.courage" value="{{system.stats.base.courage}}" {{#unless canEdit}}disabled{{/unless}}/>
-            <label>Vitesse</label><input type="number" name="system.stats.base.vitesse" value="{{system.stats.base.vitesse}}" {{#unless canEdit}}disabled{{/unless}}/>
-            <label>Social</label><input type="number" name="system.stats.base.social" value="{{system.stats.base.social}}" {{#unless canEdit}}disabled{{/unless}}/>
-            <label>Intellect</label><input type="number" name="system.stats.base.intellect" value="{{system.stats.base.intellect}}" {{#unless canEdit}}disabled{{/unless}}/>
+            <label>Force</label><input type="number" name="system.stats.base.force" value="{{system.stats.base.force}}" {{#unless canEdit}}disabled{{/unless}} />
+            <label>Finesse</label><input type="number" name="system.stats.base.finesse" value="{{system.stats.base.finesse}}" {{#unless canEdit}}disabled{{/unless}} />
+            <label>Courage</label><input type="number" name="system.stats.base.courage" value="{{system.stats.base.courage}}" {{#unless canEdit}}disabled{{/unless}} />
+            <label>Vitesse</label><input type="number" name="system.stats.base.vitesse" value="{{system.stats.base.vitesse}}" {{#unless canEdit}}disabled{{/unless}} />
+            <label>Social</label><input type="number" name="system.stats.base.social" value="{{system.stats.base.social}}" {{#unless canEdit}}disabled{{/unless}} />
+            <label>Intellect</label><input type="number" name="system.stats.base.intellect" value="{{system.stats.base.intellect}}" {{#unless canEdit}}disabled{{/unless}} />
+          </div>
+
+          <h3>Competences derivees</h3>
+          <div class="grid two-col compact-groups">
+            <div class="group">
+              <h4>Force</h4>
+              {{#each derived.groups.force as |k|}}
+                <label>{{lookup ../derived.labels k}}</label>
+                <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+              {{/each}}
+            </div>
+            <div class="group">
+              <h4>Finesse</h4>
+              {{#each derived.groups.finesse as |k|}}
+                <label>{{lookup ../derived.labels k}}</label>
+                <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+              {{/each}}
+            </div>
+            <div class="group">
+              <h4>Courage</h4>
+              {{#each derived.groups.courage as |k|}}
+                <label>{{lookup ../derived.labels k}}</label>
+                <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+              {{/each}}
+            </div>
+            <div class="group">
+              <h4>Vitesse</h4>
+              {{#each derived.groups.vitesse as |k|}}
+                <label>{{lookup ../derived.labels k}}</label>
+                <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+              {{/each}}
+            </div>
+            <div class="group">
+              <h4>Social</h4>
+              {{#each derived.groups.social as |k|}}
+                <label>{{lookup ../derived.labels k}}</label>
+                <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+              {{/each}}
+            </div>
+            <div class="group">
+              <h4>Intellect</h4>
+              {{#each derived.groups.intellect as |k|}}
+                <label>{{lookup ../derived.labels k}}</label>
+                <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+              {{/each}}
+            </div>
           </div>
         </div>
 
-        <div>
-          <h3>Ressources</h3>
-          <div class="grid resources">
-            <div class="res">
-              <label>PV</label>
-              <div class="pair">
-                <input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-                <span>/</span>
-                <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-              </div>
+        <div class="field">
+          <h3>Corps demoniaque</h3>
+          <div class="grid two-col">
+            <div>
+              <label>Type de corps</label>
+              <select name="system.demonology.bodyType" {{#unless canEdit}}disabled{{/unless}}>
+                {{#each demonBodyOptions as |opt|}}
+                  <option value="{{opt.key}}" {{#if (eq ../system.demonology.bodyType opt.key)}}selected{{/if}}>{{opt.label}}</option>
+                {{/each}}
+              </select>
+              <label>PV de depart du corps</label>
+              <input type="number" name="system.demonology.baseHpChoice" value="{{system.demonology.baseHpChoice}}" min="1" {{#unless canEdit}}disabled{{/unless}} />
+
+              <label>Deplacement</label>
+              <select name="system.demonology.movementType" {{#unless canEdit}}disabled{{/unless}}>
+                {{#each demonMovementOptions as |opt|}}
+                  <option value="{{opt.key}}" {{#if (eq ../system.demonology.movementType opt.key)}}selected{{/if}}>{{opt.label}}</option>
+                {{/each}}
+              </select>
+              <label>Base mouvement (m)</label>
+              <input type="number" name="system.demonology.movementBase" value="{{system.demonology.movementBase}}" min="0" step="0.5" {{#unless canEdit}}disabled{{/unless}} />
             </div>
-            <div class="res">
-              <label>BDP</label>
-              <div class="pair">
-                <input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-                <span>/</span>
-                <input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-              </div>
+            <div>
+              <label>Dangerosite</label>
+              <select name="system.demonology.dangerLevel" {{#unless canEdit}}disabled{{/unless}}>
+                {{#each demonDangerOptions as |opt|}}
+                  <option value="{{opt.key}}" {{#if (eq ../system.demonology.dangerLevel opt.key)}}selected{{/if}}>{{opt.label}}</option>
+                {{/each}}
+              </select>
+              <label>Degats de base</label>
+              <input type="text" name="system.demonology.basicDamage" value="{{system.demonology.basicDamage}}" {{#unless canEdit}}disabled{{/unless}} />
+
+              <label><input type="checkbox" name="system.demonology.canInfect" data-dtype="Boolean" {{checked system.demonology.canInfect}} {{#unless canEdit}}disabled{{/unless}} /> Peut infecter</label>
+              <label><input type="checkbox" name="system.demonology.canExecute" data-dtype="Boolean" {{checked system.demonology.canExecute}} {{#unless canEdit}}disabled{{/unless}} /> Peut executer un humain a 5 PV</label>
+              <label>Notes</label>
+              <textarea name="system.progression.notes" rows="3" {{#unless canEdit}}disabled{{/unless}}>{{system.progression.notes}}</textarea>
             </div>
-            <div class="res">
-              <label>Points de Reaction (RP)</label>
-              <div class="pair">
-                <input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-                <span>/</span>
-                <input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-              </div>
+          </div>
+
+          <h3>Palier du rang</h3>
+          {{#if demonRankPackage}}
+            <div class="stat-benchmark-grid">
+              {{#each demonRankPackageLabels as |row|}}
+                <div class="benchmark-chip">
+                  <span>{{row.label}}</span>
+                  <strong>+{{row.value}}</strong>
+                </div>
+              {{/each}}
             </div>
-            <div class="res">
-              <label>Classe d'Armure (CA)</label>
-              <input type="number" name="system.resources.ca" value="{{system.resources.ca}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+          {{else}}
+            <p class="hint">Aucun paquet de rang connu pour ce demon.</p>
+          {{/if}}
+
+          <h3>Rappels de regles</h3>
+          <div class="rule-pills">
+            <div class="rule-pill">
+              <span>Creation</span>
+              <strong>0 / 1 / 2 / 3 / 3 / 5 + rang</strong>
             </div>
-            <div class="res">
-              <label>Demonisation</label>
-              <input type="number" name="system.resources.demonisation" value="{{system.resources.demonisation}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
+            <div class="rule-pill">
+              <span>PV</span>
+              <strong>Corps + (5 x Force)</strong>
             </div>
-            <div class="res">
-              <label>Actions / tour</label>
-              <input type="number" name="system.combat.actionEconomy.actionsPerTurn" value="{{system.combat.actionEconomy.actionsPerTurn}}" min="1" {{#unless canEdit}}disabled{{/unless}}/>
+            <div class="rule-pill">
+              <span>BDP</span>
+              <strong>10 x Courage</strong>
+            </div>
+            <div class="rule-pill">
+              <span>RP</span>
+              <strong>(5 + Vit + Int) / 2</strong>
+            </div>
+            <div class="rule-pill">
+              <span>Endurance</span>
+              <strong>Aucune pour les demons</strong>
+            </div>
+            <div class="rule-pill">
+              <span>Degats stat</span>
+              <strong>Force / Finesse a moitie</strong>
             </div>
           </div>
         </div>
@@ -89,24 +231,26 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="techniques">
+      <div class="field">
+        <label>Recherche</label>
+        <input type="text" data-tech-filter placeholder="Nom, type, art sanguinaire..." />
+      </div>
       <header class="list-header">
-        <div>Nom</div><div>Souffle</div><div>Forme</div><div>Cout</div><div>Degats</div><div></div>
+        <div>Nom</div><div>Famille</div><div>Portee</div><div>Cout</div><div>Degats</div><div></div>
       </header>
       <ol class="item-list">
         {{#each itemsTech as |it|}}
-          <li class="item" data-item-id="{{it.id}}">
+          <li class="item technique-item" data-item-id="{{it.id}}" data-search="{{it.name}} {{it.type}} {{it.system.breath}}">
             <div class="name"><a class="item-edit">{{it.name}}</a></div>
-            <div>{{it.system.breath}}</div>
-            <div>{{it.system.form}}</div>
-            <div>{{it.system.costE}}</div>
-            <div>{{it.system.damage}}</div>
-            {{#if ../canEdit}}
+            <div>{{it.type}}</div>
+            <div>{{it.system.range}}</div>
+            <div>{{#if it.system.costBdp}}BDP {{it.system.costBdp}}{{else}}{{it.system.costE}}{{/if}}</div>
+            <div>{{#if it.system.damage}}{{it.system.damage}}{{else}}-{{/if}}</div>
             <div class="controls">
               <a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>
               <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
               <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
             </div>
-            {{/if}}
           </li>
         {{/each}}
       </ol>
@@ -117,46 +261,76 @@
         <div>Nom</div><div>Type</div><div></div>
       </header>
       <ol class="item-list">
-        {{#each itemsOther as |it|}}
+        {{#each itemsInventory as |it|}}
           <li class="item" data-item-id="{{it.id}}">
             <div class="name"><a class="item-edit">{{it.name}}</a></div>
             <div>{{it.type}}</div>
-            {{#if ../canEdit}}
             <div class="controls">
               <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
               <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
             </div>
-            {{/if}}
           </li>
         {{/each}}
       </ol>
     </div>
 
     <div class="tab" data-group="primary" data-tab="regles">
-      <div class="grid two-col">
+      <div class="grid three-col">
         <div class="field">
-          <h3>Blessures</h3>
-          <label>Blessures severes</label>
-          <input type="number" name="system.combat.injuries.severeWounds" value="{{system.combat.injuries.severeWounds}}" min="0" {{#unless canEdit}}disabled{{/unless}}/>
-          <label>Membres mutiles</label>
-          <textarea name="system.combat.injuries.lostLimbs" rows="3" {{#unless canEdit}}disabled{{/unless}}>{{system.combat.injuries.lostLimbs}}</textarea>
-          <label>Conditions</label>
-          <textarea name="system.combat.injuries.conditions" rows="3" {{#unless canEdit}}disabled{{/unless}}>{{system.combat.injuries.conditions}}</textarea>
+          <h3>Stats de reference du rang</h3>
+          <div class="benchmark-table">
+            {{#each demonBenchmarkRows as |row|}}
+              <div class="benchmark-row">
+                <span>{{row.label}}</span>
+                <strong>{{row.value}}</strong>
+              </div>
+            {{/each}}
+          </div>
+          <div class="benchmark-table benchmark-attacks">
+            <div class="benchmark-row"><span>PV / CA</span><strong>{{system.demonology.benchmark.hp}} / {{system.demonology.benchmark.ca}}</strong></div>
+            <div class="benchmark-row"><span>Morsure</span><strong>{{system.demonology.benchmark.bite}}</strong></div>
+            <div class="benchmark-row"><span>Griffure</span><strong>{{system.demonology.benchmark.claw}}</strong></div>
+            <div class="benchmark-row"><span>BDA</span><strong>{{system.demonology.benchmark.bda}}</strong></div>
+            <div class="benchmark-row"><span>RP repere</span><strong>{{system.demonology.benchmark.rp}}</strong></div>
+          </div>
         </div>
 
         <div class="field">
-          <h3>Etat vital</h3>
-          <label>Etat</label>
-          <select name="system.death.state" {{#unless canEdit}}disabled{{/unless}}>
-            {{#each deathStates as |st|}}
-              <option value="{{st.value}}" {{#if (eq ../system.death.state st.value)}}selected{{/if}}>{{st.label}}</option>
+          <h3>Actions demoniaques</h3>
+          <div class="shared-actions">
+            {{#each demonSharedActions as |action|}}
+              <div class="shared-action">
+                <div>
+                  <strong>{{action.label}}</strong>
+                  <small>{{action.note}}</small>
+                </div>
+                <span>{{action.cost}}</span>
+              </div>
             {{/each}}
-          </select>
-          <label><input type="checkbox" name="system.death.standingDeath" data-dtype="Boolean" {{checked system.death.standingDeath}} {{#unless canEdit}}disabled{{/unless}}/> Mort debout</label>
-          <label>Notes de mort</label>
-          <textarea name="system.death.deathNotes" rows="4" {{#unless canEdit}}disabled{{/unless}}>{{system.death.deathNotes}}</textarea>
-          <label>Mod. degats temporaires</label>
-          <input type="number" name="system.combat.damageFlat" value="{{system.combat.damageFlat}}" {{#unless canEdit}}disabled{{/unless}}/>
+          </div>
+        </div>
+
+        <div class="field">
+          <h3>Conditions & mutilation</h3>
+          <div class="condition-list">
+            {{#each conditionEntries as |entry|}}
+              <div class="condition-row">
+                <label><input type="checkbox" name="system.conditions.{{entry.key}}.active" data-dtype="Boolean" {{checked entry.state.active}} {{#unless ../canEdit}}disabled{{/unless}} /> {{entry.label}}</label>
+                <input type="number" name="system.conditions.{{entry.key}}.intensity" value="{{entry.state.intensity}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+                <input type="number" name="system.conditions.{{entry.key}}.duration" value="{{entry.state.duration}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+              </div>
+            {{/each}}
+          </div>
+          <div class="grid two-col panel-stack">
+            {{#each limbEntries as |entry|}}
+              <div class="field">
+                <strong>{{entry.label}}</strong>
+                <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.injured" data-dtype="Boolean" {{checked entry.state.injured}} {{#unless ../canEdit}}disabled{{/unless}} /> Blesse</label>
+                <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.broken" data-dtype="Boolean" {{checked entry.state.broken}} {{#unless ../canEdit}}disabled{{/unless}} /> Casse</label>
+                <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.severed" data-dtype="Boolean" {{checked entry.state.severed}} {{#unless ../canEdit}}disabled{{/unless}} /> Sectionne</label>
+              </div>
+            {{/each}}
+          </div>
         </div>
       </div>
     </div>

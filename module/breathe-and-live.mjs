@@ -1,5 +1,19 @@
-// module/breathe-and-live.mjs
-
+import {
+  ADVANCED_STATES,
+  BREATH_KEYS,
+  CONDITION_DEFINITIONS,
+  DEMON_BODY_OPTIONS,
+  DEMON_DANGER_OPTIONS,
+  DEMON_MOVEMENT_OPTIONS,
+  DEMON_RANK_PACKAGES,
+  DEMON_SHARED_ACTIONS,
+  DEMONIST_RANKS,
+  DEMON_RANKS,
+  LIMB_DEFINITIONS,
+  NPC_RANKS,
+  SLAYER_RANKS,
+  SYSTEM_ID,
+} from "./config/rule-data.mjs";
 import { BLSlayerSheet } from "./sheets/actor-slayer-sheet.mjs";
 import { BLTechniqueSheet } from "./item/sheets/technique-sheet.mjs";
 import { BLWeaponSheet } from "./item/sheets/weapon-sheet.mjs";
@@ -8,62 +22,162 @@ import { BLBaseItemSheet } from "./item/sheets/base-item-sheet.mjs";
 import { BLBreathSheet } from "./sheets/item-breath-sheet.mjs";
 import { useTechnique } from "./chat/use-technique.mjs";
 import { registerEffectHooks } from "./rules/effects-engine.mjs";
+import {
+  registerActionHooks,
+  rollBasicAttack,
+  runRecoveryBreath,
+  runRestRefresh,
+  runSprint,
+  runWait,
+  setConditionState,
+  setLimbState,
+  useMedicalItem,
+} from "./rules/action-engine.mjs";
 
-const SYSTEM_ID = "breathe-and-live";
-const BL_NS = "breathe-and-live";
+const BL_NS = SYSTEM_ID;
 const FU = foundry.utils;
 
-// === Groupes de compétences (répartition de points) ===============
 export const BL_DERIVED_GROUPS = {
   force: ["athletisme", "puissanceBrute"],
   finesse: ["dexterite", "equilibre", "precision"],
   courage: ["mithridatisme", "endurance", "tolerance"],
   vitesse: ["reflexes", "agilite", "rapidite", "ruse"],
-  social: [
-    "tromperie",
-    "performance",
-    "intimidation",
-    "perception",
-    "intuition",
-  ],
+  social: ["tromperie", "performance", "intimidation", "perception", "intuition"],
   intellect: ["medecine", "nature", "sciences", "enquete", "survie"],
 };
 
 export const BL_DERIVED_LABELS = {
-  athletisme: "Athlétisme",
+  athletisme: "Athletisme",
   puissanceBrute: "Puissance Brute",
-  dexterite: "Dextérité",
-  equilibre: "Équilibre",
-  precision: "Précision",
+  dexterite: "Dexterite",
+  equilibre: "Equilibre",
+  precision: "Precision",
   mithridatisme: "Mithridatisme",
   endurance: "Endurance",
-  tolerance: "Tolérance",
-  reflexes: "Réflexes",
-  agilite: "Agilité",
-  rapidite: "Rapidité",
+  tolerance: "Tolerance",
+  reflexes: "Reflexes",
+  agilite: "Agilite",
+  rapidite: "Rapidite",
   ruse: "Ruse",
   tromperie: "Tromperie",
   performance: "Performance",
   intimidation: "Intimidation",
   perception: "Perception",
   intuition: "Intuition",
-  medecine: "Médecine",
+  medecine: "Medecine",
   nature: "Nature",
   sciences: "Sciences",
-  enquete: "Enquête",
+  enquete: "Enquete",
   survie: "Survie",
 };
 
 CONFIG.breatheAndLive ??= {};
 CONFIG.breatheAndLive.DERIVED_GROUPS = BL_DERIVED_GROUPS;
 CONFIG.breatheAndLive.DERIVED_LABELS = BL_DERIVED_LABELS;
+CONFIG.breatheAndLive.CONDITIONS = CONDITION_DEFINITIONS;
+CONFIG.breatheAndLive.LIMBS = LIMB_DEFINITIONS;
+CONFIG.breatheAndLive.BREATH_KEYS = BREATH_KEYS;
+CONFIG.breatheAndLive.ADVANCED_STATES = ADVANCED_STATES;
+CONFIG.breatheAndLive.DEMON_BODY_OPTIONS = DEMON_BODY_OPTIONS;
+CONFIG.breatheAndLive.DEMON_MOVEMENT_OPTIONS = DEMON_MOVEMENT_OPTIONS;
+CONFIG.breatheAndLive.DEMON_DANGER_OPTIONS = DEMON_DANGER_OPTIONS;
+CONFIG.breatheAndLive.DEMON_RANK_PACKAGES = DEMON_RANK_PACKAGES;
+CONFIG.breatheAndLive.DEMON_SHARED_ACTIONS = DEMON_SHARED_ACTIONS;
+CONFIG.breatheAndLive.RANKS = {
+  slayer: SLAYER_RANKS,
+  demonist: DEMONIST_RANKS,
+  demon: DEMON_RANKS,
+  npc: NPC_RANKS,
+};
 
-/* ========================= INIT ========================= */
+function toNumber(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function buildStatusEffects() {
+  const existing = Array.isArray(CONFIG.statusEffects) ? CONFIG.statusEffects : [];
+  const mapped = CONDITION_DEFINITIONS.map((definition) => ({
+    id: `bl-${definition.key}`,
+    name: definition.label,
+    img: "icons/svg/aura.svg",
+  }));
+
+  const byId = new Map(existing.map((entry) => [entry.id, entry]));
+  for (const entry of mapped) {
+    if (!byId.has(entry.id)) byId.set(entry.id, entry);
+  }
+  CONFIG.statusEffects = Array.from(byId.values());
+}
+
+function ensureConditionData(sys) {
+  sys.conditions ??= {};
+  for (const definition of CONDITION_DEFINITIONS) {
+    sys.conditions[definition.key] ??= {
+      active: false,
+      intensity: definition.trackIntensity ? 1 : 0,
+      duration: 0,
+      notes: "",
+    };
+  }
+}
+
+function ensureLimbData(sys) {
+  sys.combat ??= {};
+  sys.combat.injuries ??= {};
+  sys.combat.injuries.limbs ??= {};
+  for (const limb of LIMB_DEFINITIONS) {
+    sys.combat.injuries.limbs[limb.key] ??= {
+      injured: false,
+      severed: false,
+      broken: false,
+      notes: "",
+    };
+  }
+}
+
+function defaultClassForType(type) {
+  const normalized = String(type || "slayer");
+  if (normalized === "demonist") {
+    return { type: "Demoniste", rank: DEMONIST_RANKS[0] || "Initie" };
+  }
+  if (["demon", "npcDemon"].includes(normalized)) {
+    return { type: "Demon", rank: DEMON_RANKS[0] || "Demon faible" };
+  }
+  if (normalized === "companion") {
+    return { type: "Compagnon", rank: "Soutien" };
+  }
+  if (["npc", "npcHuman"].includes(normalized)) {
+    return { type: "PNJ", rank: NPC_RANKS[0] || "Civil" };
+  }
+  return { type: "Pourfendeur", rank: SLAYER_RANKS[0] || "Mizunoto" };
+}
+
+function calculateRemaining(sys) {
+  sys.stats ??= {};
+  sys.stats.base ??= {};
+  sys.stats.derived ??= {};
+  sys.stats.remaining ??= {};
+
+  for (const [key, entries] of Object.entries(BL_DERIVED_GROUPS)) {
+    const baseValue = toNumber(sys.stats.base[key], 0);
+    const spent = entries.reduce(
+      (sum, derivedKey) => sum + toNumber(sys.stats.derived[derivedKey], 0),
+      0
+    );
+    sys.stats.remaining[key] = Math.max(0, baseValue - spent);
+  }
+}
 
 Hooks.once("init", () => {
   console.log("Breathe & Live | init");
 
-  // Précharger les templates
+  buildStatusEffects();
+
   loadTemplates([
     "systems/breathe-and-live/templates/actor/actor-slayer.hbs",
     "systems/breathe-and-live/templates/actor/actor-demonist.hbs",
@@ -76,48 +190,60 @@ Hooks.once("init", () => {
     "systems/breathe-and-live/templates/item/item-breath.hbs",
   ]);
 
-  // Helpers pour les templates
   Handlebars.registerHelper("eq", (a, b) => a === b);
   Handlebars.registerHelper("join", (arr, sep) =>
     Array.isArray(arr) ? arr.join(sep ?? ", ") : arr
   );
+  Handlebars.registerHelper("contains", (arr, value) =>
+    Array.isArray(arr) ? arr.includes(value) : false
+  );
 
-  // Actor sheets
+  game.settings.register(SYSTEM_ID, "enableSupplement1934", {
+    name: "Activer le supplement 1934",
+    hint: "Expose les options et packs lies au supplement 1934.",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   Actors.registerSheet(SYSTEM_ID, BLSlayerSheet, {
-    types: ["slayer", "demonist", "demon", "npc"],
+    types: ["slayer", "demonist", "demon", "npc", "npcHuman", "npcDemon", "companion"],
     makeDefault: true,
     label: "Breathe & Live Actor",
   });
 
-  // Item sheets
   Items.registerSheet(SYSTEM_ID, BLTechniqueSheet, {
-    types: ["technique"],
+    types: ["technique", "subclassTechnique", "bda", "demonAbility"],
     makeDefault: true,
     label: "Technique",
   });
   Items.registerSheet(SYSTEM_ID, BLWeaponSheet, {
-    types: ["weapon"],
+    types: ["weapon", "firearm"],
     makeDefault: true,
     label: "Arme",
   });
   Items.registerSheet(SYSTEM_ID, BLVehicleSheet, {
-    types: ["vehicle"],
+    types: ["vehicle", "transport"],
     makeDefault: true,
-    label: "Véhicule",
+    label: "Transport",
   });
   Items.registerSheet(SYSTEM_ID, BLBaseItemSheet, {
     types: [
       "gear",
+      "utility",
       "medical",
       "poison",
       "food",
+      "consumable",
       "outfit",
+      "clothing",
       "sense",
       "feature",
-      "bda",
+      "ammunition",
     ],
     makeDefault: true,
-    label: "Objet (générique)",
+    label: "Objet",
   });
   Items.registerSheet(SYSTEM_ID, BLBreathSheet, {
     types: ["breath"],
@@ -126,178 +252,245 @@ Hooks.once("init", () => {
   });
 
   registerEffectHooks();
+  registerActionHooks();
 });
-
-/* ========================= ACTOR DOC ========================= */
 
 class BLActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData();
 
     const sys = this.system ?? {};
-    const b = sys?.stats?.base ?? {};
-    const toNum = (v, fallback = 0) =>
-      Number.isFinite(Number(v)) ? Number(v) : fallback;
-    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-
-    // Par défaut pour tous
     sys.resources ??= {};
     sys.class ??= { type: "", rank: "", level: 1 };
-
-    if (this.type === "demon" && (!sys.class.type || sys.class.type === "Pourfendeur")) {
-      sys.class.type = "Démon";
-      sys.class.rank ||= "Inférieur";
-    } else if (this.type === "demonist" && (!sys.class.type || sys.class.type === "Pourfendeur")) {
-      sys.class.type = "Démoniste";
-      sys.class.rank ||= "Initié";
-    } else if (this.type === "npc" && (!sys.class.type || sys.class.type === "Pourfendeur")) {
-      sys.class.type = "PNJ";
-      sys.class.rank ||= "-";
-    } else if (this.type === "slayer" && !sys.class.type) {
-      sys.class.type = "Pourfendeur";
-      sys.class.rank ||= "Mizunoto";
-    }
-
-    // Stats derivées (pools répartis par groupe)
     sys.stats ??= {};
     sys.stats.base ??= {};
     sys.stats.derived ??= {};
+    sys.profile ??= {};
+    sys.progression ??= {};
+    sys.progression.studySlots ??= { value: 0, max: 0 };
+    sys.progression.skillSlots ??= { value: 0, max: 0 };
+    sys.support ??= {};
+    sys.demonology ??= {};
+    sys.states ??= {};
+    sys.creation ??= {};
+    sys.supplement1934 ??= {};
+    sys.combat ??= {};
+    sys.combat.basicAttack ??= {};
+    sys.combat.actionEconomy ??= {};
+    sys.combat.reactions ??= {};
+    sys.combat.injuries ??= {};
+    sys.resources.hp ??= { value: 20, max: 20, base: 20, healableMax: 20 };
+    sys.resources.e ??= { value: 0, max: 0 };
+    sys.resources.rp ??= { value: 0, max: 0 };
+    sys.resources.bdp ??= { value: 0, max: 0 };
 
-    for (const [k, v] of Object.entries(sys.stats.derived)) {
-      const n = Math.max(0, Math.floor(Number(v) || 0));
-      sys.stats.derived[k] = n;
-    }
+    const defaults = defaultClassForType(this.type);
+    sys.class.type ||= defaults.type;
+    sys.class.rank ||= defaults.rank;
+    sys.class.level = Math.max(1, toNumber(sys.class.level, 1));
 
-    // calcule les "restants" par groupe (non sauvegardé, pour l'UI)
-    const groups = CONFIG.breatheAndLive.DERIVED_GROUPS;
+    ensureConditionData(sys);
+    ensureLimbData(sys);
+    calculateRemaining(sys);
+
+    sys.demonology.bodyType ||= "humanoid";
+    sys.demonology.baseHpChoice = Math.max(
+      1,
+      toNumber(
+        sys.demonology.baseHpChoice,
+        DEMON_BODY_OPTIONS.find((entry) => entry.key === sys.demonology.bodyType)?.baseHp ?? 20
+      )
+    );
+    sys.demonology.movementType ||= "biped";
+    sys.demonology.movementBase = Math.max(
+      0,
+      toNumber(
+        sys.demonology.movementBase,
+        DEMON_MOVEMENT_OPTIONS.find((entry) => entry.key === sys.demonology.movementType)?.movement ?? 9
+      )
+    );
+    sys.demonology.dangerLevel ||= "moderate";
+    sys.demonology.basicDamage ||=
+      DEMON_DANGER_OPTIONS.find((entry) => entry.key === sys.demonology.dangerLevel)?.baseDamage ??
+      "1d4";
+    sys.demonology.rankPackage ||= sys.class.rank;
+    sys.demonology.benchmark ??= {};
+
     const base = {
-      force: Number(sys.stats.base.force) || 0,
-      finesse: Number(sys.stats.base.finesse) || 0,
-      courage: Number(sys.stats.base.courage) || 0,
-      vitesse: Number(sys.stats.base.vitesse) || 0,
-      social: Number(sys.stats.base.social) || 0,
-      intellect: Number(sys.stats.base.intellect) || 0,
+      force: toNumber(sys.stats.base.force, 0),
+      finesse: toNumber(sys.stats.base.finesse, 0),
+      courage: toNumber(sys.stats.base.courage, 0),
+      vitesse: toNumber(sys.stats.base.vitesse, 0),
+      social: toNumber(sys.stats.base.social, 0),
+      intellect: toNumber(sys.stats.base.intellect, 0),
     };
 
-    sys.stats.remaining = {};
-    for (const [attr, keys] of Object.entries(groups)) {
-      const spent = keys.reduce(
-        (s, key) => s + (Number(sys.stats.derived[key]) || 0),
-        0
+    sys.combat.damageFlat = toNumber(sys.combat.damageFlat, 0);
+    sys.combat.actionEconomy.actionsPerTurn = Math.max(
+      1,
+      1 + Math.floor(base.vitesse / 5)
+    );
+    sys.combat.actionEconomy.bonusActions = toNumber(
+      sys.combat.actionEconomy.bonusActions,
+      0
+    );
+    sys.combat.actionEconomy.movementMeters = Math.max(
+      0,
+      toNumber(sys.combat.actionEconomy.movementMeters, 9)
+    );
+    sys.combat.actionEconomy.recoveryBreathRounds = Math.max(
+      0,
+      toNumber(sys.combat.actionEconomy.recoveryBreathRounds, 2)
+    );
+
+    sys.resources.ca = 10 + base.vitesse;
+    sys.resources.rp.max = Math.max(0, 5 + base.vitesse + base.intellect);
+    sys.resources.rp.value = clamp(toNumber(sys.resources.rp.value, sys.resources.rp.max), 0, sys.resources.rp.max);
+
+    if (["demon", "npcDemon"].includes(this.type)) {
+      const benchmark = DEMON_RANK_PACKAGES[sys.class.rank]?.benchmark ?? {};
+      const hpBase = Math.max(
+        1,
+        toNumber(sys.resources.hp.base, sys.demonology.baseHpChoice || sys.resources.hp.max || 20)
       );
-      sys.stats.remaining[attr] = Math.max(0, base[attr] - spent);
-    }
-
-    sys.combat ??= {};
-    sys.combat.actionEconomy ??= {};
-    sys.combat.damageFlat = Number(sys.combat.damageFlat) || 0;
-
-    if (this.type !== "demon") {
-      sys.resources.e ??= { value: 0, max: 0 };
-      sys.resources.rp ??= { value: 0, max: 0 };
-      sys.resources.hp ??= { value: 20, max: 20 };
-
-      // Max/CA calculés (source of truth)
-      sys.resources.e.max = 20 + (Number(b.courage) || 0); // E = 20 + Courage
-      sys.resources.ca = 10 + (Number(b.vitesse) || 0); // CA = 10 + Vitesse
-      sys.resources.rp.max =
-        5 + (Number(b.vitesse) || 0) + (Number(b.intellect) || 0);
-      sys.combat.actionEconomy.actionsPerTurn =
-        1 + Math.floor((Number(b.vitesse) || 0) / 5);
-
-      // Clamp only. Do not refill when value reaches 0.
-      const hpMax = Math.max(0, toNum(sys.resources.hp.max, 20));
-      const eMax = Math.max(0, toNum(sys.resources.e.max, 0));
-      const rpMax = Math.max(0, toNum(sys.resources.rp.max, 0));
-      sys.resources.hp.max = hpMax;
-      sys.resources.e.max = eMax;
-      sys.resources.rp.max = rpMax;
-      sys.resources.hp.value = clamp(toNum(sys.resources.hp.value, hpMax), 0, hpMax);
-      sys.resources.e.value = clamp(toNum(sys.resources.e.value, eMax), 0, eMax);
-      sys.resources.rp.value = clamp(toNum(sys.resources.rp.value, rpMax), 0, rpMax);
-
-      if (this.type === "demonist") {
-        sys.resources.bdp ??= { value: 0, max: 0 };
-        const bdpMax = Math.max(0, 10 * (Number(b.courage) || 0));
-        sys.resources.bdp.max = bdpMax;
-        sys.resources.bdp.value = clamp(
-          toNum(sys.resources.bdp.value, bdpMax),
-          0,
-          bdpMax
-        );
-        sys.resources.demonisation = Math.max(
-          0,
-          Math.floor(toNum(sys.resources.demonisation, 0))
-        );
-        // Règle livre : seuil = 10 + Courage
-        sys.resources.demonisationMax = 10 + (Number(b.courage) || 0);
-      }
-    } else {
-      // Branche Démon
-      const baseHP = Math.max(0, toNum(sys.resources?.hp?.base, 20));
-      sys.resources.hp ??= { value: 0, max: 0, base: baseHP };
-      sys.resources.hp.base = baseHP;
-      sys.resources.hp.max = baseHP + 5 * (Number(b.force) || 0);
+      sys.resources.hp.base = hpBase;
+      sys.resources.hp.max = hpBase + 5 * base.force;
+      sys.resources.hp.healableMax = sys.resources.hp.max;
       sys.resources.hp.value = clamp(
-        toNum(sys.resources.hp.value, sys.resources.hp.max),
+        toNumber(sys.resources.hp.value, sys.resources.hp.max),
+        0,
+        sys.resources.hp.max
+      );
+      sys.resources.bdp.max = Math.max(0, 10 * base.courage);
+      sys.resources.bdp.value = clamp(toNumber(sys.resources.bdp.value, 0), 0, sys.resources.bdp.max);
+      sys.resources.demonisation = Math.max(0, toNumber(sys.resources.demonisation, 0));
+      sys.resources.rp.max = Math.max(
+        0,
+        Math.floor((5 + base.vitesse + base.intellect) / 2)
+      );
+      sys.resources.rp.value = clamp(
+        toNumber(sys.resources.rp.value, sys.resources.rp.max),
+        0,
+        sys.resources.rp.max
+      );
+      sys.combat.actionEconomy.movementMeters = Math.max(
+        sys.combat.actionEconomy.movementMeters,
+        toNumber(sys.demonology.movementBase, 9)
+      );
+      sys.combat.basicAttack.unarmedDamage = `${sys.demonology.basicDamage} + Force`;
+      sys.demonology.canInfect = [
+        "Lune inferieure",
+        "Lune superieure",
+      ].includes(sys.class.rank);
+      sys.demonology.canExecute = [
+        "Disciple de Lune inferieure",
+        "Lune inferieure",
+        "Disciple de Lune superieure",
+        "Lune superieure",
+      ].includes(sys.class.rank);
+      sys.demonology.halfReactionRule = true;
+      sys.demonology.halfDamageStatRule = true;
+      sys.demonology.benchmark = {
+        force: toNumber(sys.demonology.benchmark.force, benchmark.force ?? 0),
+        finesse: toNumber(sys.demonology.benchmark.finesse, benchmark.finesse ?? 0),
+        courage: toNumber(sys.demonology.benchmark.courage, benchmark.courage ?? 0),
+        vitesse: toNumber(sys.demonology.benchmark.vitesse, benchmark.vitesse ?? 0),
+        intellect: toNumber(sys.demonology.benchmark.intellect, benchmark.intellect ?? 0),
+        social: toNumber(sys.demonology.benchmark.social, benchmark.social ?? 0),
+        hp: toNumber(sys.demonology.benchmark.hp, benchmark.hp ?? 0),
+        ca: toNumber(sys.demonology.benchmark.ca, benchmark.ca ?? 0),
+        bite: sys.demonology.benchmark.bite || benchmark.bite || "",
+        claw: sys.demonology.benchmark.claw || benchmark.claw || "",
+        bda: sys.demonology.benchmark.bda || benchmark.bda || "",
+        rp: toNumber(sys.demonology.benchmark.rp, benchmark.rp ?? sys.resources.rp.max),
+      };
+      delete sys.resources.e;
+    } else {
+      sys.resources.e.max = Math.max(0, 20 + base.courage);
+      sys.resources.e.value = clamp(toNumber(sys.resources.e.value, sys.resources.e.max), 0, sys.resources.e.max);
+      sys.resources.hp.max = Math.max(1, toNumber(sys.resources.hp.max, 20));
+      const severePenalty = Math.min(
+        0.9,
+        Math.max(0, toNumber(sys.combat.injuries.severeWounds, 0)) * 0.1
+      );
+      sys.resources.hp.healableMax = Math.max(
+        1,
+        Math.floor(sys.resources.hp.max * (1 - severePenalty))
+      );
+      sys.resources.hp.value = clamp(
+        toNumber(sys.resources.hp.value, sys.resources.hp.healableMax),
         0,
         sys.resources.hp.max
       );
 
-      sys.resources.ca = 10 + (Number(b.vitesse) || 0);
-      sys.resources.rp ??= { value: 0, max: 0 };
-      sys.resources.rp.max = Math.max(
-        0,
-        Math.floor(
-          (5 + (Number(b.vitesse) || 0) + (Number(b.intellect) || 0)) / 2
-        )
-      );
-      sys.resources.rp.value = clamp(
-        toNum(sys.resources.rp.value, sys.resources.rp.max),
-        0,
-        sys.resources.rp.max
-      );
+      if (this.type === "demonist") {
+        sys.resources.bdp.max = Math.max(0, 10 * base.courage);
+        sys.resources.bdp.value = clamp(toNumber(sys.resources.bdp.value, 0), 0, sys.resources.bdp.max);
+        sys.resources.demonisation = Math.max(0, Math.floor(toNumber(sys.resources.demonisation, 0)));
+        sys.resources.demonisationMax = 10 + base.courage;
 
-      sys.resources.bdp ??= { value: 0, max: 0 };
-      sys.resources.bdp.max = 10 * (Number(b.courage) || 0);
-      sys.resources.bdp.value = clamp(
-        toNum(sys.resources.bdp.value, sys.resources.bdp.max),
-        0,
-        sys.resources.bdp.max
-      );
-      sys.resources.demonisation = Math.max(
-        0,
-        Math.floor(toNum(sys.resources.demonisation, 0))
-      );
-
-      // Actions par tour démon = 1 + (Vitesse / 5)
-      sys.combat.actionEconomy.actionsPerTurn =
-        1 + Math.floor((Number(b.vitesse) || 0) / 5);
+        if (sys.support.activeDemonistMedicine) {
+          sys.resources.demonisationMax = Math.max(
+            1,
+            Math.floor(sys.resources.demonisationMax * 1.5)
+          );
+        }
+      } else {
+        sys.resources.bdp = { value: 0, max: 0 };
+        sys.resources.demonisation = 0;
+        sys.resources.demonisationMax = 0;
+      }
     }
+
+    if (this.type === "companion") {
+      sys.resources.hp.max = 1;
+      sys.resources.hp.healableMax = 1;
+      sys.resources.hp.value = clamp(toNumber(sys.resources.hp.value, 1), 0, 1);
+      sys.resources.ca = 3;
+      sys.resources.rp.max = 0;
+      sys.resources.rp.value = 0;
+    }
+
+    sys.progression.studySlots.value = clamp(
+      toNumber(sys.progression.studySlots.value, 0),
+      0,
+      Math.max(0, toNumber(sys.progression.studySlots.max, 0))
+    );
+    sys.progression.skillSlots.value = clamp(
+      toNumber(sys.progression.skillSlots.value, 0),
+      0,
+      Math.max(0, toNumber(sys.progression.skillSlots.max, 0))
+    );
+    sys.profile.supplement1934Enabled =
+      !!sys.supplement1934.enabled || !!game.settings.get(SYSTEM_ID, "enableSupplement1934");
   }
 }
+
 Hooks.once("setup", () => {
   CONFIG.Actor.documentClass = BLActor;
 });
-
-/* ========================= API PUBLIQUE ========================= */
 
 Hooks.once("ready", () => {
   const mod = game.modules.get(SYSTEM_ID);
   if (mod) {
     mod.api = {
       useTechnique,
-      rollBaseCheck, // exposé pour réutilisation éventuelle
+      rollBaseCheck,
+      rollBasicAttack,
+      runRecoveryBreath,
+      runSprint,
+      runWait,
+      runRestRefresh,
+      setConditionState,
+      setLimbState,
+      useMedicalItem,
     };
   }
 });
 
-/* ========================= ROLLS UTILES ========================= */
-
-// Jet de base d20 + (stat - 1)
 export async function rollBaseCheck(actor, statKey, label = "") {
   const b = actor.system?.stats?.base ?? {};
-  const mod = (Number(b[statKey]) || 0) - 1;
+  const mod = toNumber(b[statKey], 0) - 1;
   const r = await new Roll(`1d20 + ${mod}`).roll({ async: true });
   return r.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
@@ -305,79 +498,58 @@ export async function rollBaseCheck(actor, statKey, label = "") {
   });
 }
 
-/* =============== AUTOMATE "E = 0" — repos forcé / Inconscient (v12.343) =============== */
-/** Applique l’état “unconscious” si possible + message chat explicite */
 async function blSetUnconscious(actor, tokenOrCombatant) {
   const tokenObj =
     tokenOrCombatant?.object ??
     tokenOrCombatant?.token?.object ??
     actor?.getActiveTokens?.()[0];
 
-  // 1) Toggle status (core) si dispo
   let ok = false;
   try {
     const effect =
-      CONFIG.statusEffects?.find(
-        (e) => e.id === "unconscious" || /unconscious/i.test(e?.id ?? "")
-      )?.id || "unconscious";
+      CONFIG.statusEffects?.find((entry) => entry.id === "unconscious")?.id || "unconscious";
     if (tokenObj?.actor?.toggleStatusEffect) {
       await tokenObj.actor.toggleStatusEffect(effect, { active: true });
       ok = true;
     }
-  } catch (e) {
-    console.warn("BL | toggleStatusEffect failed:", e);
+  } catch (error) {
+    console.warn("BL | toggleStatusEffect failed:", error);
   }
 
-  // 2) Fallback: au moins un message chat
-  const txt = ok
-    ? `${actor.name} <b>tombe inconscient</b> (E=0 prolongé).`
-    : `${actor.name} <b>devrait être inconscient</b> (E=0 prolongé), mais aucun status 'unconscious' n’a pu être appliqué.`;
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
-    content: `<em>${txt}</em>`,
+    content: ok
+      ? `<em>${actor.name} tombe inconscient (E = 0 prolonge).</em>`
+      : `<em>${actor.name} devrait etre inconscient (E = 0 prolonge), mais aucun statut Foundry n'a pu etre applique.</em>`,
   });
 }
 
-/**
- * À chaque début de tour d’un combattant:
- *  - Si E > 0 → reset des flags 0E
- *  - Si E = 0 → mustRest=true, incrémente une “streak” par combat
- *  - Si streak >= 2 → applique Inconscient + message chat
- */
 Hooks.on("updateCombat", async (combat, changed) => {
-  // On ne traite que les changements de tour (début du tour du nouveau combattant)
   if (changed.turn === undefined) return;
 
-  const cbt = combat.combatant; // combattant dont le tour COMMENCE
-  const actor = cbt?.actor;
-  if (!actor) return;
-  if (String(actor.type).toLowerCase() === "demon") return;
+  const combatant = combat.combatant;
+  const actor = combatant?.actor;
+  if (!actor || ["demon", "npcDemon"].includes(String(actor.type).toLowerCase())) return;
   if (!FU.hasProperty(actor, "system.resources.e.value")) return;
 
-  const eVal =
-    Number(FU.getProperty(actor, "system.resources.e.value") ?? 0) || 0;
+  const eValue = toNumber(FU.getProperty(actor, "system.resources.e.value"), 0);
   const combatId = combat.id;
+  const streakPath = `flags.${BL_NS}.zeroStreakByCombat.${combatId}`;
 
-  // Flags “scopés” au combat en cours (évite les fuites entre combats)
-  const pathBase = `flags.${BL_NS}.zeroStreakByCombat.${combatId}`;
-
-  if (eVal > 0) {
-    // Récupéré → reset total
+  if (eValue > 0) {
     await actor.update({
       [`flags.${BL_NS}.mustRest`]: false,
       [`flags.${BL_NS}.mustRestAnnouncedAt`]: null,
-      [`${pathBase}`]: 0,
+      [streakPath]: 0,
     });
     return;
   }
 
-  // E == 0 → repos obligatoire ce round
   await actor.setFlag(BL_NS, "mustRest", true).catch(() => {});
 
-  // Annonce “doit se reposer” (1 fois / round)
   const roundNow = combat.round ?? 0;
-  const lastAnn = Number(actor.getFlag(BL_NS, "mustRestAnnouncedAt") ?? 0) || 0;
-  if (roundNow !== lastAnn) {
+  const lastAnnouncement = toNumber(actor.getFlag(BL_NS, "mustRestAnnouncedAt"), 0);
+  if (roundNow !== lastAnnouncement) {
     await actor.setFlag(BL_NS, "mustRestAnnouncedAt", roundNow).catch(() => {});
     ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor }),
@@ -385,26 +557,18 @@ Hooks.on("updateCombat", async (combat, changed) => {
     });
   }
 
-  // Incrémente la streak pour CE combat
-  const prev = Number(FU.getProperty(actor, pathBase) ?? 0) || 0;
-  const streak = prev + 1;
-  await actor.update({ [pathBase]: streak });
-
-  // Au 2e tour d’affilée à 0E → Inconscient
+  const streak = toNumber(FU.getProperty(actor, streakPath), 0) + 1;
+  await actor.update({ [streakPath]: streak });
   if (streak >= 2) {
-    await blSetUnconscious(actor, cbt);
+    await blSetUnconscious(actor, combatant);
   }
 });
 
-/**
- * Optionnel : au changement de round, on remet à zéro l’annonce (mais pas la streak).
- * (La streak se remet déjà à zéro quand E>0 au début d’un tour)
- */
 Hooks.on("updateCombat", async (combat, changed) => {
   if (changed.round === undefined) return;
-  for (const c of combat.combatants) {
-    const a = c.actor;
-    if (!a) continue;
-    await a.unsetFlag(BL_NS, "mustRestAnnouncedAt").catch(() => {});
+  for (const combatant of combat.combatants) {
+    const actor = combatant.actor;
+    if (!actor) continue;
+    await actor.unsetFlag(BL_NS, "mustRestAnnouncedAt").catch(() => {});
   }
 });

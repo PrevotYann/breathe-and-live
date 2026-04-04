@@ -4,6 +4,9 @@
       "slayer",
       "demonist",
       "demon",
+      "npcHuman",
+      "npcDemon",
+      "companion",
       "npc"
     ],
     "templates": {
@@ -11,7 +14,9 @@
         "class": {
           "type": "Pourfendeur",
           "rank": "Mizunoto",
-          "level": 1
+          "level": 1,
+          "subclass": "",
+          "era": "taisho"
         },
         "stats": {
           "base": {
@@ -22,12 +27,15 @@
             "social": 0,
             "intellect": 0
           },
-          "derived": {}
+          "derived": {},
+          "remaining": {}
         },
         "resources": {
           "hp": {
             "value": 20,
-            "max": 20
+            "max": 20,
+            "healableMax": 20,
+            "base": 20
           },
           "e": {
             "value": 0,
@@ -37,7 +45,39 @@
             "value": 0,
             "max": 0
           },
-          "ca": 10
+          "ca": 10,
+          "bdp": {
+            "value": 0,
+            "max": 0
+          },
+          "demonisation": 0,
+          "demonisationMax": 0
+        },
+        "creation": {
+          "statMethod": "manual",
+          "trainerBackground": "",
+          "partnerBackground": "",
+          "kasugaiType": "",
+          "kasugaiCommands": "",
+          "sensePoints": 0,
+          "superhumanPoints": 0,
+          "breathFormPoints": 0,
+          "studySlots": {
+            "value": 0,
+            "max": 0
+          },
+          "startingEquipment": "",
+          "notes": ""
+        },
+        "profile": {
+          "characterType": "slayer",
+          "combatStyle": "breath",
+          "trainerContext": "",
+          "partnerContext": "",
+          "kasugaiCrow": "",
+          "primaryWeapon": "",
+          "favoredBreath": "",
+          "supplement1934Enabled": false
         },
         "breaths": {
           "sun": {
@@ -47,11 +87,11 @@
               "elu": false
             }
           },
-          "water": {
-            "name": "Souffle de l'Eau",
+          "moon": {
+            "name": "Souffle de la Lune",
             "enabled": false,
             "specials": {
-              "devierVagues": false
+              "bonusSolo": false
             }
           },
           "flame": {
@@ -61,11 +101,11 @@
               "coeurFlamboyant": false
             }
           },
-          "moon": {
-            "name": "Souffle de la Lune",
+          "water": {
+            "name": "Souffle de l'Eau",
             "enabled": false,
             "specials": {
-              "bonusSolo": false
+              "devierVagues": false
             }
           },
           "wind": {
@@ -89,6 +129,13 @@
               "machoireHache": false
             }
           },
+          "flower": {
+            "name": "Souffle de la Fleur",
+            "enabled": false,
+            "specials": {
+              "concentrationFlorissante": false
+            }
+          },
           "mist": {
             "name": "Souffle de la Brume",
             "enabled": false,
@@ -101,20 +148,6 @@
             "enabled": false,
             "specials": {
               "formeLibre": false
-            }
-          },
-          "snow": {
-            "name": "Souffle de la Neige",
-            "enabled": false,
-            "specials": {
-              "dentsDeKatana": false
-            }
-          },
-          "flower": {
-            "name": "Souffle de la Fleur",
-            "enabled": false,
-            "specials": {
-              "concentrationFlorissante": false
             }
           },
           "sound": {
@@ -139,10 +172,38 @@
             }
           },
           "beast": {
-            "name": "Souffle de la Bête",
+            "name": "Souffle de la Bete",
             "enabled": false,
             "specials": {
               "instinctSauvage": false
+            }
+          },
+          "ocean": {
+            "name": "Souffle de l'Ocean",
+            "enabled": false,
+            "specials": {
+              "courantMobile": false
+            }
+          },
+          "west": {
+            "name": "Souffle de l'Ouest",
+            "enabled": false,
+            "specials": {
+              "tirParfait": false
+            }
+          },
+          "snow": {
+            "name": "Souffle de la Neige",
+            "enabled": false,
+            "specials": {
+              "dentsDeKatana": false
+            }
+          },
+          "custom": {
+            "name": "Souffle Original",
+            "enabled": false,
+            "specials": {
+              "customPassive": false
             }
           }
         },
@@ -152,20 +213,16 @@
           "mondeTransparent": false,
           "lameRouge": false
         },
-        "profile": {
-          "characterType": "slayer",
-          "combatStyle": "breath",
-          "trainerContext": "",
-          "partnerContext": "",
-          "kasugaiCrow": ""
-        },
+        "conditions": {},
         "combat": {
           "damageFlat": 0,
+          "movementBonus": 0,
           "actionEconomy": {
             "actionsPerTurn": 1,
             "bonusActions": 0,
             "movementMeters": 9,
-            "recoveryBreathRounds": 2
+            "recoveryBreathRounds": 2,
+            "waitEnabled": true
           },
           "reactions": {
             "dodge": true,
@@ -177,7 +234,50 @@
           "injuries": {
             "severeWounds": 0,
             "lostLimbs": "",
-            "conditions": ""
+            "conditions": "",
+            "limbs": {},
+            "brokenBones": false,
+            "mutilationNotes": ""
+          },
+          "basicAttack": {
+            "autoHitMelee": false,
+            "autoHitFirearm": false,
+            "unarmedDamage": "1d4 + Force"
+          }
+        },
+        "support": {
+          "medicalTraining": false,
+          "demonistHealingReaction": false,
+          "activeDemonistMedicine": false,
+          "companionName": "",
+          "companionRole": ""
+        },
+        "demonology": {
+          "bodyType": "humanoid",
+          "baseHpChoice": 20,
+          "movementType": "biped",
+          "movementBase": 9,
+          "dangerLevel": "moderate",
+          "basicDamage": "1d4",
+          "rankPackage": "",
+          "sharedBloodline": "",
+          "canInfect": false,
+          "canExecute": false,
+          "halfReactionRule": false,
+          "halfDamageStatRule": false,
+          "benchmark": {
+            "force": 0,
+            "finesse": 0,
+            "courage": 0,
+            "vitesse": 0,
+            "intellect": 0,
+            "social": 0,
+            "hp": 0,
+            "ca": 0,
+            "bite": "",
+            "claw": "",
+            "bda": "",
+            "rp": 0
           }
         },
         "progression": {
@@ -187,7 +287,19 @@
           },
           "training": 0,
           "rankPoints": 0,
-          "notes": ""
+          "studySlots": {
+            "value": 0,
+            "max": 0
+          },
+          "skillSlots": {
+            "value": 0,
+            "max": 0
+          },
+          "notes": "",
+          "tcbConstantUnlocked": false,
+          "markedUnlocked": false,
+          "transparentWorldUnlocked": false,
+          "redBladeUnlocked": false
         },
         "death": {
           "state": "alive",
@@ -199,6 +311,10 @@
           "threat": "",
           "behavior": "",
           "loot": ""
+        },
+        "supplement1934": {
+          "enabled": false,
+          "notes": ""
         }
       }
     },
@@ -211,50 +327,135 @@
       "templates": [
         "common"
       ],
-      "resources": {
-        "bdp": {
-          "value": 0,
-          "max": 0
-        },
-        "demonisation": 0
+      "profile": {
+        "characterType": "demonist",
+        "combatStyle": "demonist"
+      },
+      "support": {
+        "demonistHealingReaction": true
       }
     },
     "demon": {
       "templates": [
         "common"
       ],
+      "profile": {
+        "characterType": "demon",
+        "combatStyle": "bda"
+      },
+      "demonology": {
+        "halfReactionRule": true,
+        "halfDamageStatRule": true
+      }
+    },
+    "npcHuman": {
+      "templates": [
+        "common"
+      ],
+      "profile": {
+        "characterType": "npc-human",
+        "combatStyle": "variable"
+      }
+    },
+    "npcDemon": {
+      "templates": [
+        "common"
+      ],
+      "profile": {
+        "characterType": "npc-demon",
+        "combatStyle": "bda"
+      },
+      "demonology": {
+        "halfReactionRule": true,
+        "halfDamageStatRule": true
+      }
+    },
+    "companion": {
+      "templates": [
+        "common"
+      ],
+      "profile": {
+        "characterType": "companion",
+        "combatStyle": "support"
+      },
       "resources": {
-        "bdp": {
+        "hp": {
+          "value": 1,
+          "max": 1,
+          "healableMax": 1,
+          "base": 1
+        },
+        "ca": 3,
+        "rp": {
           "value": 0,
           "max": 0
+        }
+      },
+      "combat": {
+        "actionEconomy": {
+          "actionsPerTurn": 1,
+          "bonusActions": 0,
+          "movementMeters": 6,
+          "recoveryBreathRounds": 0,
+          "waitEnabled": true
         }
       }
     },
     "npc": {
       "templates": [
         "common"
-      ]
+      ],
+      "profile": {
+        "characterType": "npc",
+        "combatStyle": "variable"
+      }
     }
   },
   "Item": {
     "types": [
       "weapon",
+      "firearm",
+      "ammunition",
       "technique",
+      "subclassTechnique",
       "breath",
       "feature",
       "sense",
       "bda",
+      "demonAbility",
       "gear",
+      "utility",
       "medical",
       "poison",
       "food",
+      "consumable",
       "outfit",
-      "vehicle"
+      "clothing",
+      "vehicle",
+      "transport"
     ],
     "templates": {
       "commonItem": {
         "tags": [],
-        "description": ""
+        "description": "",
+        "sourceSection": "",
+        "activation": "action",
+        "quantity": 1,
+        "usageNote": "",
+        "prerequisites": {
+          "class": "",
+          "rank": "",
+          "breath": "",
+          "weapon": "",
+          "trait": ""
+        },
+        "uses": {
+          "value": 0,
+          "max": 0,
+          "per": ""
+        },
+        "effects": [],
+        "selfEffects": []
       }
     },
     "weapon": {
@@ -264,16 +465,49 @@
       "damage": "1d8",
       "range": 1.5,
       "category": "melee",
+      "weaponFamily": "nichirin",
       "attackMod": 0,
       "damageMod": 0,
       "properties": [],
       "usesAmmo": false,
+      "isNichirin": true,
+      "canDecapitate": true,
+      "alternateWeapon": false,
       "ammo": {
         "value": 0,
         "max": 0,
         "reload": ""
       },
       "notes": ""
+    },
+    "firearm": {
+      "templates": [
+        "commonItem"
+      ],
+      "damage": "1d8",
+      "range": 30,
+      "category": "distance",
+      "weaponFamily": "firearm",
+      "attackMod": 0,
+      "damageMod": 0,
+      "properties": [],
+      "usesAmmo": true,
+      "ammoType": "",
+      "ammo": {
+        "value": 0,
+        "max": 0,
+        "reload": ""
+      },
+      "notes": ""
+    },
+    "ammunition": {
+      "templates": [
+        "commonItem"
+      ],
+      "ammoType": "balles",
+      "quantityPerUse": 1,
+      "damageBonus": "",
+      "specialEffect": ""
     },
     "technique": {
       "templates": [
@@ -284,7 +518,134 @@
       "costE": 0,
       "damage": "1d8",
       "range": 1.5,
-      "attackStat": ""
+      "attackStat": "",
+      "autoHit": true,
+      "isBreath": true,
+      "flags": {
+        "aoe": false,
+        "antiFriendlyFire": false,
+        "mobility": false,
+        "decapitation": false,
+        "charge": 0
+      }
+    },
+    "subclassTechnique": {
+      "templates": [
+        "commonItem"
+      ],
+      "subclass": "",
+      "costRp": 0,
+      "costBdp": 0,
+      "damage": "",
+      "range": 0,
+      "attackStat": "",
+      "autoHit": false,
+      "flags": {
+        "reaction": false,
+        "combo": false
+      }
+    },
+    "breath": {
+      "templates": [
+        "commonItem"
+      ],
+      "key": "",
+      "enabled": false,
+      "specials": {},
+      "prereq": {
+        "sense": "",
+        "stats": "",
+        "weapons": ""
+      }
+    },
+    "feature": {
+      "templates": [
+        "commonItem"
+      ],
+      "family": "",
+      "passive": true
+    },
+    "sense": {
+      "templates": [
+        "commonItem"
+      ],
+      "senseType": "",
+      "rank": 0
+    },
+    "bda": {
+      "templates": [
+        "commonItem"
+      ],
+      "costBdp": 0,
+      "demonisationGain": 0,
+      "damage": "",
+      "range": 0
+    },
+    "demonAbility": {
+      "templates": [
+        "commonItem"
+      ],
+      "costBdp": 0,
+      "demonisationGain": 0,
+      "damage": "",
+      "range": 0
+    },
+    "gear": {
+      "templates": [
+        "commonItem"
+      ]
+    },
+    "utility": {
+      "templates": [
+        "commonItem"
+      ]
+    },
+    "medical": {
+      "templates": [
+        "commonItem"
+      ],
+      "healing": "1",
+      "stabilizes": false,
+      "removeConditions": [],
+      "maxHeal": false
+    },
+    "poison": {
+      "templates": [
+        "commonItem"
+      ],
+      "potency": 1,
+      "onHitEffects": [],
+      "application": "action"
+    },
+    "food": {
+      "templates": [
+        "commonItem"
+      ],
+      "healing": "",
+      "enduranceGain": "",
+      "moodBonus": ""
+    },
+    "consumable": {
+      "templates": [
+        "commonItem"
+      ],
+      "healing": "",
+      "enduranceGain": "",
+      "resourceRestore": ""
+    },
+    "outfit": {
+      "templates": [
+        "commonItem"
+      ],
+      "armorBonus": 0,
+      "traits": []
+    },
+    "clothing": {
+      "templates": [
+        "commonItem"
+      ],
+      "armorBonus": 0,
+      "traits": []
     },
     "vehicle": {
       "templates": [
@@ -300,45 +661,19 @@
       "requirements": "",
       "notes": ""
     },
-    "gear": {
+    "transport": {
       "templates": [
         "commonItem"
-      ]
-    },
-    "medical": {
-      "templates": [
-        "commonItem"
-      ]
-    },
-    "poison": {
-      "templates": [
-        "commonItem"
-      ]
-    },
-    "food": {
-      "templates": [
-        "commonItem"
-      ]
-    },
-    "outfit": {
-      "templates": [
-        "commonItem"
-      ]
-    },
-    "sense": {
-      "templates": [
-        "commonItem"
-      ]
-    },
-    "feature": {
-      "templates": [
-        "commonItem"
-      ]
-    },
-    "bda": {
-      "templates": [
-        "commonItem"
-      ]
+      ],
+      "speed": 0,
+      "capacity": 0,
+      "type": "terrestre",
+      "endurance": {
+        "value": 0,
+        "max": 0
+      },
+      "requirements": "",
+      "notes": ""
     }
   }
 }
