@@ -40,8 +40,17 @@
         <label>Degats</label>
         <input type="text" name="system.damage" value="{{system.damage}}" placeholder="ex: 2d8 + Force" />
 
+        <label>Texte Degats</label>
+        <textarea name="system.damageText" rows="3">{{system.damageText}}</textarea>
+
         <label>Portee (m)</label>
         <input type="number" name="system.range" value="{{system.range}}" min="0" step="0.5" />
+
+        <label>Portee (texte)</label>
+        <input type="text" name="system.rangeText" value="{{system.rangeText}}" placeholder="ex: 4.5m / CàC" />
+
+        <label>Modificateur</label>
+        <input type="text" name="system.modifierText" value="{{system.modifierText}}" placeholder="Force / Finesse / Precision..." />
 
         <label>Stat d'attaque</label>
         <input type="text" name="system.attackStat" value="{{system.attackStat}}" placeholder="force / finesse / precision" />

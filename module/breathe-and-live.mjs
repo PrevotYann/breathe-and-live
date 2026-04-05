@@ -4,13 +4,16 @@ import {
   CONDITION_DEFINITIONS,
   DEMON_BODY_OPTIONS,
   DEMON_DANGER_OPTIONS,
+  DEMONIST_RANK_PROGRESSION,
   DEMON_MOVEMENT_OPTIONS,
   DEMON_RANK_PACKAGES,
   DEMON_SHARED_ACTIONS,
   DEMONIST_RANKS,
   DEMON_RANKS,
+  HUMAN_RANK_LEVELS,
   LIMB_DEFINITIONS,
   NPC_RANKS,
+  SLAYER_RANK_PROGRESSION,
   SLAYER_RANKS,
   SYSTEM_ID,
 } from "./config/rule-data.mjs";
@@ -22,6 +25,7 @@ import { BLBaseItemSheet } from "./item/sheets/base-item-sheet.mjs";
 import { BLBreathSheet } from "./sheets/item-breath-sheet.mjs";
 import { useTechnique } from "./chat/use-technique.mjs";
 import { registerEffectHooks } from "./rules/effects-engine.mjs";
+import { normalizeTechniqueItemData, validateTechniqueOwnership } from "./rules/technique-utils.mjs";
 import {
   registerActionHooks,
   rollBasicAttack,
@@ -89,6 +93,9 @@ CONFIG.breatheAndLive.RANKS = {
   demon: DEMON_RANKS,
   npc: NPC_RANKS,
 };
+CONFIG.breatheAndLive.HUMAN_RANK_LEVELS = HUMAN_RANK_LEVELS;
+CONFIG.breatheAndLive.SLAYER_RANK_PROGRESSION = SLAYER_RANK_PROGRESSION;
+CONFIG.breatheAndLive.DEMONIST_RANK_PROGRESSION = DEMONIST_RANK_PROGRESSION;
 
 function toNumber(value, fallback = 0) {
   const n = Number(value);
@@ -269,6 +276,7 @@ class BLActor extends Actor {
     sys.progression ??= {};
     sys.progression.studySlots ??= { value: 0, max: 0 };
     sys.progression.skillSlots ??= { value: 0, max: 0 };
+    sys.progression.bonuses ??= {};
     sys.support ??= {};
     sys.demonology ??= {};
     sys.states ??= {};
@@ -287,7 +295,25 @@ class BLActor extends Actor {
     const defaults = defaultClassForType(this.type);
     sys.class.type ||= defaults.type;
     sys.class.rank ||= defaults.rank;
-    sys.class.level = Math.max(1, toNumber(sys.class.level, 1));
+    const mappedHumanLevel = HUMAN_RANK_LEVELS[sys.class.rank];
+    sys.class.level = Math.max(
+      1,
+      toNumber(
+        ["slayer", "demonist"].includes(this.type) && mappedHumanLevel
+          ? mappedHumanLevel
+          : sys.class.level,
+        1
+      )
+    );
+
+    sys.progression.bonuses.endurance = toNumber(sys.progression.bonuses.endurance, 0);
+    sys.progression.bonuses.reactions = toNumber(sys.progression.bonuses.reactions, 0);
+    sys.progression.bonuses.weaponDieSteps = toNumber(sys.progression.bonuses.weaponDieSteps, 0);
+    sys.progression.bonuses.breathFormBonus = toNumber(sys.progression.bonuses.breathFormBonus, 0);
+    sys.progression.bonuses.repeatedAction = toNumber(sys.progression.bonuses.repeatedAction, 0);
+    sys.progression.bonuses.demonFleshBonus = toNumber(sys.progression.bonuses.demonFleshBonus, 0);
+    sys.progression.bonuses.nichirinDamageBonus = toNumber(sys.progression.bonuses.nichirinDamageBonus, 0);
+    sys.progression.bonuses.nichirinDamageDie ||= "";
 
     ensureConditionData(sys);
     ensureLimbData(sys);
@@ -344,7 +370,10 @@ class BLActor extends Actor {
     );
 
     sys.resources.ca = 10 + base.vitesse;
-    sys.resources.rp.max = Math.max(0, 5 + base.vitesse + base.intellect);
+    sys.resources.rp.max = Math.max(
+      0,
+      5 + base.vitesse + base.intellect + toNumber(sys.progression.bonuses.reactions, 0)
+    );
     sys.resources.rp.value = clamp(toNumber(sys.resources.rp.value, sys.resources.rp.max), 0, sys.resources.rp.max);
 
     if (["demon", "npcDemon"].includes(this.type)) {
@@ -406,7 +435,10 @@ class BLActor extends Actor {
       };
       delete sys.resources.e;
     } else {
-      sys.resources.e.max = Math.max(0, 20 + base.courage);
+      sys.resources.e.max = Math.max(
+        0,
+        20 + base.courage + toNumber(sys.progression.bonuses.endurance, 0)
+      );
       sys.resources.e.value = clamp(toNumber(sys.resources.e.value, sys.resources.e.max), 0, sys.resources.e.max);
       sys.resources.hp.max = Math.max(1, toNumber(sys.resources.hp.max, 20));
       const severePenalty = Math.min(
@@ -471,20 +503,29 @@ Hooks.once("setup", () => {
 });
 
 Hooks.once("ready", () => {
+  const api = {
+    useTechnique,
+    normalizeTechniqueItemData,
+    validateTechniqueOwnership,
+    rollBaseCheck,
+    rollBasicAttack,
+    runRecoveryBreath,
+    runSprint,
+    runWait,
+    runRestRefresh,
+    setConditionState,
+    setLimbState,
+    useMedicalItem,
+  };
+
   const mod = game.modules.get(SYSTEM_ID);
   if (mod) {
-    mod.api = {
-      useTechnique,
-      rollBaseCheck,
-      rollBasicAttack,
-      runRecoveryBreath,
-      runSprint,
-      runWait,
-      runRestRefresh,
-      setConditionState,
-      setLimbState,
-      useMedicalItem,
-    };
+    mod.api = api;
+  }
+
+  game.breatheAndLive = api;
+  if (game.system?.id === SYSTEM_ID) {
+    game.system.api = api;
   }
 });
 

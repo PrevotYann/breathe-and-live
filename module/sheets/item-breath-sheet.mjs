@@ -1,3 +1,19 @@
+import { BREATH_KEYS, BREATH_SPECIAL_ALIASES } from "../config/rule-data.mjs";
+
+function getBreathDefinition(key) {
+  return BREATH_KEYS.find((entry) => entry.key === key) || null;
+}
+
+function normalizeSpecialKey(breathKey, specialKey) {
+  return BREATH_SPECIAL_ALIASES?.[breathKey]?.[specialKey] || specialKey;
+}
+
+function resolveBreathImage(key, currentImg = "") {
+  const definition = getBreathDefinition(key);
+  if (!definition?.img) return currentImg;
+  return !currentImg || /^icons\/svg\//.test(String(currentImg || "")) ? definition.img : currentImg;
+}
+
 export class BLBreathSheet extends ItemSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -22,141 +38,92 @@ export class BLBreathSheet extends ItemSheet {
     const data = await super.getData(options);
     const FU = foundry.utils;
 
-    // Système courant (copie défensive)
     const sys = FU.duplicate(this.item.system ?? {});
-    sys.specials ||= {};
-    sys.prereq ||= { sense: "", stats: "", weapons: "" };
+    const key = String(sys.key || "");
+    const definition = getBreathDefinition(key);
 
-    // Capacités connues par souffle (labels + hints). Celles-ci doivent coller à breath-effects.mjs
-    const SPECIALS_BY_KEY = {
-      sun: {
-        elu: {
-          label: "Élu",
-          hint: "Réduit le coût des techniques (et synergies avec Marque).",
-        },
-      },
-      moon: {
-        bonusSolo: {
-          label: "Frappe de Lune",
-          hint: "+1 dé aux dégâts contre les démons.",
-        },
-      },
-      flame: {
-        coeurFlamboyant: {
-          label: "Cœur flamboyant",
-          hint: "Puissance accrue un round (géré par flag round).",
-        },
-      },
-      flower: {
-        concentrationFlorissante: {
-          label: "Concentration florissante",
-          hint: "Dégâts progressifs sur la même cible (stacks).",
-        },
-      },
-      snow: {
-        dentsDeKatana: {
-          label: "Dents de Katana",
-          hint: "Sur touche : CA -1d4 jusqu’à la fin du round.",
-        },
-      },
-      water: {
-        devierVagues: {
-          label: "Dévier les vagues",
-          hint: "Réaction : annule/redirige une attaque à distance (1 RP).",
-        },
-      },
-      thunder: {
-        vitesseLumiere: {
-          label: "Vitesse de la lumière",
-          hint: "Réaction : Dash 6 m.",
-        },
-      },
-      stone: {
-        machoireHache: {
-          label: "Mâchoire & Hache",
-          hint: "Choix Masse/Hache à l’utilisation (modifie les dégâts).",
-        },
-      },
-      mist: {
-        nuagesTrainants: {
-          label: "Nuages traînants",
-          hint: "Pose une zone de brume (3 m).",
-        },
-      },
-      wind: {
-        ventsDeGuerre: {
-          label: "Vents de guerre",
-          hint: "RP +1d2 si tu achèves un démon.",
-        },
-      },
-      serpent: {
-        formeLibre: {
-          label: "Forme libre",
-          hint: "Allonge serpentiforme : +1,5 m de portée sur la technique.",
-        },
-      },
-      sound: {
-        partitionFulgurante: {
-          label: "Partition fulgurante",
-          hint: "Le son de la lame déstabilise : -1 CA à la cible jusqu'à fin de round.",
-        },
-      },
-      insect: {
-        veninLent: {
-          label: "Venin lent",
-          hint: "Applique un venin léger : -1 dégât infligé par la cible jusqu'à fin de round.",
-        },
-      },
-      love: {
-        coeurPassionne: {
-          label: "Cœur passionné",
-          hint: "Dégâts +1 quand la cible est à portée de mêlée (≤ 1,5 m).",
-        },
-      },
-      beast: {
-        instinctSauvage: {
-          label: "Instinct sauvage",
-          hint: "Si la cible est proche (≤ 1,5 m), le coût en E est réduit de 1 (min 1).",
-        },
-      },
-      ocean: {
-        courantMobile: {
-          label: "Courant mobile",
-          hint: "TODO-RULEBOOK-AMBIGUITY: structure passive pour le Souffle de l'Ocean.",
-        },
-      },
-      west: {
-        tirParfait: {
-          label: "Tir parfait",
-          hint: "TODO-RULEBOOK-AMBIGUITY: passif de duel et arme a feu pour le Souffle de l'Ouest.",
-        },
-      },
-      custom: {
-        customPassive: {
-          label: "Passif personnalise",
-          hint: "Reserve a un Souffle original cree via les regles homebrew.",
-        },
-      },
-    };
+    sys.prereq = FU.duplicate(
+      definition?.prereq || sys.prereq || { sense: "", stats: "", weapons: "" }
+    );
 
-    // Fabrique l’affichage en fonction de la clé de souffle
-    const key = sys.key ?? "";
-    const knownForKey = SPECIALS_BY_KEY[key] ?? {};
+    const normalizedSpecials = {};
+    for (const [specialKey, enabled] of Object.entries(sys.specials || {})) {
+      normalizedSpecials[normalizeSpecialKey(key, specialKey)] = !!enabled;
+    }
+    for (const specialKey of Object.keys(definition?.specials || {})) {
+      normalizedSpecials[specialKey] = !!normalizedSpecials[specialKey];
+    }
+    sys.specials = normalizedSpecials;
+
     const specialsDisplay = {};
-    for (const [specKey, meta] of Object.entries(knownForKey)) {
-      specialsDisplay[specKey] = {
-        label: meta.label,
-        hint: meta.hint ?? "",
-        enabled: !!sys.specials[specKey],
+    for (const [specialKey, meta] of Object.entries(definition?.specials || {})) {
+      specialsDisplay[specialKey] = {
+        label: meta.label || specialKey,
+        hint: meta.hint || "",
+        enabled: !!sys.specials[specialKey],
       };
     }
 
-    // Injecte dans data pour le template
     data.system = {
       ...sys,
       specialsDisplay,
     };
+    data.hasSpecials = Object.keys(specialsDisplay).length > 0;
+    data.keyOptions = BREATH_KEYS.map((entry) => ({
+      value: entry.key,
+      label: entry.optionLabel || entry.label,
+    }));
+    data.resolvedImg = resolveBreathImage(key, this.item.img);
 
     return data;
+  }
+
+  async _updateObject(event, formData) {
+    const FU = foundry.utils;
+    const expanded = FU.expandObject(formData);
+    const currentSystem = FU.duplicate(this.item.system ?? {});
+    const key = String(expanded.system?.key || currentSystem.key || "");
+    const definition = getBreathDefinition(key);
+
+    const nextSpecials = {};
+    for (const [specialKey, enabled] of Object.entries(currentSystem.specials || {})) {
+      nextSpecials[normalizeSpecialKey(key, specialKey)] = !!enabled;
+    }
+    for (const [specialKey, enabled] of Object.entries(expanded.system?.specials || {})) {
+      nextSpecials[normalizeSpecialKey(key, specialKey)] = !!enabled;
+    }
+    for (const specialKey of Object.keys(definition?.specials || {})) {
+      nextSpecials[specialKey] = !!nextSpecials[specialKey];
+    }
+
+    const nextSystem = FU.mergeObject(currentSystem, expanded.system || {}, {
+      inplace: false,
+      overwrite: true,
+    });
+    nextSystem.key = key;
+    nextSystem.enabled = !!nextSystem.enabled;
+    nextSystem.prereq = FU.duplicate(
+      definition?.prereq || nextSystem.prereq || { sense: "", stats: "", weapons: "" }
+    );
+    nextSystem.specials = nextSpecials;
+
+    const nextImg = resolveBreathImage(
+      key,
+      String(expanded.img || this.item.img || "")
+    );
+
+    await this.item.update({
+      name: expanded.name ?? this.item.name,
+      img: nextImg,
+      system: nextSystem,
+    });
+
+    const actor = this.item.actor;
+    if (!actor || !key) return;
+
+    await actor.update({
+      [`system.breaths.${key}.enabled`]: !!nextSystem.enabled,
+      [`system.breaths.${key}.specials`]: nextSpecials,
+    });
   }
 }

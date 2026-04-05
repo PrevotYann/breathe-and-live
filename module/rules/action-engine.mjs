@@ -4,6 +4,16 @@ import {
   SLAYER_RANKS,
   SYSTEM_ID,
 } from "../config/rule-data.mjs";
+import {
+  buildFormulaWithActorStats,
+  noteActorDamageTaken,
+} from "./technique-utils.mjs";
+import {
+  buildReactionTargetRow,
+  canInteractWithToken,
+  consumeDeflectStance,
+  resolveCanvasToken,
+} from "../chat/reaction-card.mjs";
 
 const FU = foundry.utils;
 const METERS_PER_SQUARE = 1.5;
@@ -93,21 +103,7 @@ async function pickTargetToken({ excludeTokenId = null } = {}) {
 }
 
 function replaceStats(expr, actor, fallback = "1") {
-  const stats = actor.system?.stats ?? {};
-  const base = stats.base ?? {};
-  const derived = stats.derived ?? {};
-  const replacements = {
-    Force: toNumber(base.force),
-    Finesse: toNumber(base.finesse),
-    Courage: toNumber(base.courage),
-    Vitesse: toNumber(base.vitesse),
-    Social: toNumber(base.social),
-    Intellect: toNumber(base.intellect),
-    Precision: toNumber(derived.precision),
-    Medecine: toNumber(derived.medecine),
-  };
-
-  let out = String(expr || fallback);
+  let out = buildFormulaWithActorStats(String(expr || fallback), actor);
   out = out.replace(/max\(([^)]+)\)/gi, (_match, inner) => {
     const values = inner
       .split(",")
@@ -115,12 +111,100 @@ function replaceStats(expr, actor, fallback = "1") {
       .map((entry) => toNumber(entry, 0));
     return String(Math.max(...values, 0));
   });
-
-  for (const [key, value] of Object.entries(replacements)) {
-    out = out.replace(new RegExp(`\\b${key}\\b`, "gi"), String(value));
-  }
   return out;
 }
+
+function firstDieMatch(expr) {
+  return String(expr || "").match(/(\d+)d(\d+)/i);
+}
+
+function increaseFirstDieCount(expr, extraDice = 0) {
+  const extra = Math.max(0, toNumber(extraDice, 0));
+  if (!extra) return String(expr || "");
+  let replaced = false;
+  const next = String(expr || "").replace(/(\d+)d(\d+)/i, (_match, count, faces) => {
+    replaced = true;
+    return `${Math.max(1, toNumber(count, 1)) + extra}d${toNumber(faces, 6)}`;
+  });
+  return replaced ? next : `${extra + 1}d6${expr ? ` + (${expr})` : ""}`;
+}
+
+function replaceFirstDie(expr, replacement) {
+  if (!replacement) return String(expr || "");
+  let replaced = false;
+  const next = String(expr || "").replace(/(\d+)d(\d+)/i, () => {
+    replaced = true;
+    return replacement;
+  });
+  return replaced ? next : `${replacement}${expr ? ` + (${expr})` : ""}`;
+}
+
+function appendFlatModifier(expr, mod) {
+  const value = toNumber(mod, 0);
+  if (!value) return String(expr || "");
+  return `(${expr}) ${value >= 0 ? "+" : "-"} ${Math.abs(value)}`;
+}
+
+function repeatedActionFlagPath(actor) {
+  const combatId = game.combat?.id || "free";
+  return `flags.${SYSTEM_ID}.repeatedAction.${combatId}`;
+}
+
+async function resetRepeatedAction(actor) {
+  await actor.update({
+    [repeatedActionFlagPath(actor)]: {
+      stack: 0,
+      lastRound: null,
+      lastTurn: null,
+    },
+  });
+}
+
+async function getRepeatedActionBonus(actor) {
+  const baseIncrement = Math.max(
+    1,
+    toNumber(actor.system?.progression?.bonuses?.repeatedAction, 0)
+  );
+  const combatId = game.combat?.id || "free";
+  const round = game.combat?.round ?? 0;
+  const turn = game.combat?.turn ?? 0;
+  const current =
+    FU.getProperty(actor, repeatedActionFlagPath(actor)) ?? {
+      stack: 0,
+      lastRound: null,
+      lastTurn: null,
+    };
+
+  const isConsecutiveCombatUse =
+    game.combat &&
+    current?.lastRound !== null &&
+    current?.lastTurn !== null &&
+    current.lastRound === round - 1;
+
+  const nextStack = isConsecutiveCombatUse
+    ? Math.max(0, toNumber(current.stack, 0)) + baseIncrement
+    : baseIncrement;
+
+  await actor.update({
+    [repeatedActionFlagPath(actor)]: {
+      stack: nextStack,
+      lastRound: round,
+      lastTurn: turn,
+      combatId,
+    },
+  });
+
+  return nextStack;
+}
+
+const DEMON_FLESH_BDP = {
+  "Rang faible": "1d4 + 1",
+  "Rang eleve": "2d4 + 2",
+  "Disciple de Lune inferieure": "1d10 + 3",
+  "Lune inferieure": "2d6 + 4",
+  "Disciple de Lune superieure": "3d6 + 5",
+  "Lune superieure": "1d20 + 8",
+};
 
 async function spendRp(actor, cost, reason = "") {
   const path = "system.resources.rp.value";
@@ -145,6 +229,7 @@ async function applyDirectDamage(actor, amount, flavor) {
   const hpValue = toNumber(actor.system?.resources?.hp?.value, 0);
   const newHp = Math.max(0, hpValue - Math.max(0, amount));
   await actor.update({ "system.resources.hp.value": newHp });
+  await noteActorDamageTaken(actor, Math.max(0, amount));
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
     content: `<em>${flavor} ${amount} degats (${hpValue} -> ${newHp} PV).</em>`,
@@ -159,6 +244,27 @@ function isDemonActor(actor) {
 
 function demonAttackBonus(value) {
   return Math.floor(Math.max(0, toNumber(value, 0)) / 2);
+}
+
+async function applyBasicAttackDamage({
+  attacker,
+  targetToken,
+  damageRoll,
+}) {
+  const targetActor = targetToken?.actor;
+  if (!targetActor || !damageRoll) return null;
+
+  const currentHp = toNumber(targetActor.system?.resources?.hp?.value, 0);
+  const damage = Math.max(0, toNumber(damageRoll.total, 0));
+  const nextHp = Math.max(0, currentHp - damage);
+
+  await targetActor.update({ "system.resources.hp.value": nextHp });
+  await noteActorDamageTaken(targetActor, damage);
+  if (attacker.system?.states?.lameRouge && isDemonActor(targetActor)) {
+    await targetActor.setFlag(SYSTEM_ID, "redBladeLockRound", game.combat?.round ?? 0);
+  }
+
+  return { currentHp, nextHp, damage };
 }
 
 export async function setConditionState(actor, key, patch = {}) {
@@ -190,17 +296,23 @@ export async function setLimbState(actor, key, patch = {}) {
   return next;
 }
 
-export async function rollBasicAttack(actor, { item = null, targetToken = null } = {}) {
+export async function rollBasicAttack(
+  actor,
+  { item = null, targetToken = null, repeatedAction = false } = {}
+) {
   if (!actor) return null;
 
-  const attackerToken = getPrimaryToken(actor);
+  const attackerToken = resolveCanvasToken(getPrimaryToken(actor), actor);
   const target = targetToken || (await pickTargetToken({ excludeTokenId: attackerToken?.id }));
   if (!target?.actor) return null;
 
-  const weapon = item ?? actor.items.find((entry) =>
-    ["weapon", "firearm"].includes(entry.type)
-  );
+  const weapon =
+    item ??
+    (repeatedAction
+      ? actor.items.find((entry) => entry.type === "weapon")
+      : actor.items.find((entry) => ["weapon", "firearm"].includes(entry.type)));
   const isFirearm = ["firearm"].includes(weapon?.type) || weapon?.system?.weaponFamily === "firearm";
+  const progressionBonuses = actor.system?.progression?.bonuses ?? {};
 
   const range = toNumber(weapon?.system?.range, isFirearm ? 30 : 1.5);
   if (attackerToken && distMetersChebyshev(attackerToken, target) > range) {
@@ -219,6 +331,16 @@ export async function rollBasicAttack(actor, { item = null, targetToken = null }
   let attackMode = "force";
   let autoHit = false;
   const useHalfDemonBonus = !!actor.system?.demonology?.halfDamageStatRule && isDemonActor(actor);
+  let repeatedActionDamage = 0;
+
+  if (repeatedAction && actor.type !== "demonist") {
+    ui.notifications.warn("L'action repetee est reservee aux demonistes.");
+    return null;
+  }
+  if (repeatedAction && isFirearm) {
+    ui.notifications.warn("L'action repetee s'applique aux attaques de melee.");
+    return null;
+  }
 
   if (isFirearm) {
     attackBonus = useHalfDemonBonus ? demonAttackBonus(finesse) : finesse;
@@ -241,6 +363,12 @@ export async function rollBasicAttack(actor, { item = null, targetToken = null }
   attackBonus += toNumber(weapon?.system?.attackMod, 0);
   damageBonus += toNumber(weapon?.system?.damageMod, 0);
 
+  if (repeatedAction) {
+    repeatedActionDamage = await getRepeatedActionBonus(actor);
+  } else if (actor.type === "demonist") {
+    await resetRepeatedAction(actor);
+  }
+
   const targetCa = toNumber(target.actor.system?.resources?.ca, 10);
   let attackRoll = null;
   let attackTotal = targetCa;
@@ -251,12 +379,29 @@ export async function rollBasicAttack(actor, { item = null, targetToken = null }
   }
 
   const hit = autoHit || attackTotal >= targetCa;
-  const baseDamageExpr = replaceStats(
-    weapon?.system?.damage || actor.system?.combat?.basicAttack?.unarmedDamage || "1d4 + Force",
-    actor,
-    "1d4 + 0"
-  );
+  let rawDamageExpr =
+    weapon?.system?.damage || actor.system?.combat?.basicAttack?.unarmedDamage || "1d4 + Force";
+  if (weapon) {
+    rawDamageExpr = increaseFirstDieCount(
+      rawDamageExpr,
+      toNumber(progressionBonuses.weaponDieSteps, 0)
+    );
+  }
+  if (weapon?.system?.isNichirin && progressionBonuses.nichirinDamageDie) {
+    rawDamageExpr = replaceFirstDie(rawDamageExpr, progressionBonuses.nichirinDamageDie);
+  }
+
+  const baseDamageExpr = replaceStats(rawDamageExpr, actor, "1d4 + 0");
   let damageExpr = `${baseDamageExpr} + ${damageBonus}`;
+  if (weapon?.system?.isNichirin) {
+    damageExpr = appendFlatModifier(
+      damageExpr,
+      toNumber(progressionBonuses.nichirinDamageBonus, 0)
+    );
+  }
+  if (repeatedActionDamage) {
+    damageExpr = appendFlatModifier(damageExpr, repeatedActionDamage);
+  }
 
   if (actor.system?.states?.mondeTransparent) {
     damageExpr = `(${damageExpr}) * 2`;
@@ -269,35 +414,124 @@ export async function rollBasicAttack(actor, { item = null, targetToken = null }
     ? await new Roll(damageExpr).evaluate({ async: true })
     : null;
 
-  let newHp = target.actor.system?.resources?.hp?.value ?? 0;
-  if (damageRoll) {
-    newHp = Math.max(0, toNumber(newHp) - toNumber(damageRoll.total));
-    await target.actor.update({ "system.resources.hp.value": newHp });
-    if (actor.system?.states?.lameRouge && isDemonActor(target.actor)) {
-      await target.actor.setFlag(SYSTEM_ID, "redBladeLockRound", game.combat?.round ?? 0);
-    }
-  }
-
   const attackLine = autoHit
     ? "Attaque de base auto-reussie."
     : `Jet d'attaque (${attackMode}) : ${attackRoll.total} contre CA ${targetCa}.`;
-  const damageLine = damageRoll
-    ? `Degats : ${damageRoll.total} (${damageExpr}).`
-    : "Aucun degat.";
+  const modeLine = repeatedAction
+    ? `<div>Action repetee : bonus actuel +${repeatedActionDamage}.</div>`
+    : "";
+  const targetRow = hit
+    ? buildReactionTargetRow({
+        attackerToken,
+        targetToken: target,
+        damageTotal: damageRoll?.total ?? 0,
+      })
+    : "";
 
-  await ChatMessage.create({
+  let attackMessage = null;
+  if (!autoHit && attackRoll) {
+    attackMessage = await attackRoll.toMessage({
+      speaker: actorSpeaker(actor),
+      flavor: `
+        <div class="bl-card" style="display:grid; gap:.35rem;">
+          <div><strong>${actor.name}</strong> attaque <strong>${target.name}</strong> avec <strong>${weapon?.name || "attaque a mains nues"}</strong>.</div>
+          ${modeLine}
+          <div><small>Jet d'attaque (${attackMode}) contre CA ${targetCa}.</small></div>
+          <div>${hit ? "L'attaque touche." : "L'attaque manque sa cible."}</div>
+        </div>
+      `,
+    });
+  }
+
+  if (!hit) {
+    return { hit, attackRoll, damageRoll: null, attackMessage, chatMessage: null };
+  }
+
+  const chatMessage = await damageRoll.toMessage({
     speaker: actorSpeaker(actor),
-    content: `
-      <div class="bl-card">
-        <strong>${actor.name}</strong> attaque <strong>${target.name}</strong> avec <strong>${weapon?.name || "attaque a mains nues"}</strong>.
-        <div>${attackLine}</div>
-        <div>${damageLine}</div>
-        <div>${hit ? `PV cible : ${newHp}` : "L'attaque manque sa cible."}</div>
+    flavor: `
+      <div class="bl-card" style="display:grid; gap:.35rem;">
+        <div><strong>${actor.name}</strong> attaque <strong>${target.name}</strong> avec <strong>${weapon?.name || "attaque a mains nues"}</strong>.</div>
+        ${modeLine}
+        <div><small>${autoHit ? `${attackLine} ` : ""}La cible peut reagir avant l'application des degats.</small></div>
+        <div><b>Degats potentiels:</b> ${damageRoll.total} <small>(${damageExpr})</small></div>
+        ${targetRow}
       </div>
     `,
   });
 
-  return { hit, attackRoll, damageRoll };
+  Hooks.once("renderChatMessage", (message, html) => {
+    if (message.id !== chatMessage.id) return;
+
+    const disableTargetButtons = (tokenId) => {
+      html.find(`button[data-target-token="${tokenId}"]`).prop("disabled", true);
+    };
+
+    html.find(".bl-dodge").on("click", async (event) => {
+      const button = $(event.currentTarget);
+      const token = canvas.tokens.get(String(button.attr("data-target-token")));
+      const targetActor = token?.actor;
+      if (!targetActor || !canInteractWithToken(token)) return;
+
+      const ok = await spendRp(targetActor, 1);
+      if (!ok) return;
+
+      html
+        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+        .html("<em>Esquive reussie : degats annules.</em>");
+      disableTargetButtons(token.id);
+    });
+
+    html.find(".bl-deflect").on("click", async (event) => {
+      const button = $(event.currentTarget);
+      const token = canvas.tokens.get(String(button.attr("data-target-token")));
+      const targetActor = token?.actor;
+      if (!targetActor || !canInteractWithToken(token)) return;
+
+      const ok = await spendRp(targetActor, 1);
+      if (!ok) return;
+
+      html
+        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+        .html("<em>Deviation reussie : degats annules.</em>");
+      disableTargetButtons(token.id);
+    });
+
+    html.find(".bl-stance-deflect").on("click", async (event) => {
+      const button = $(event.currentTarget);
+      const token = canvas.tokens.get(String(button.attr("data-target-token")));
+      const targetActor = token?.actor;
+      if (!targetActor || !canInteractWithToken(token)) return;
+
+      await consumeDeflectStance(targetActor);
+      html
+        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+        .html("<em>Posture defensive consommee : degats annules.</em>");
+      disableTargetButtons(token.id);
+    });
+
+    html.find(".bl-takedmg").on("click", async (event) => {
+      const button = $(event.currentTarget);
+      const token = canvas.tokens.get(String(button.attr("data-target-token")));
+      if (!token?.actor || !canInteractWithToken(token)) return;
+
+      const result = await applyBasicAttackDamage({
+        attacker: actor,
+        targetToken: token,
+        damageRoll,
+      });
+      if (!result) return;
+
+      html
+        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+        .html(
+          `<em>${token.actor.name} prend <b>${result.damage}</b> degats (PV ${result.currentHp} -> ${result.nextHp}).</em>`
+        );
+      disableTargetButtons(token.id);
+    });
+  });
+
+  return { hit, attackRoll, damageRoll, attackMessage, chatMessage };
 }
 
 export async function runRecoveryBreath(actor) {
@@ -365,6 +599,7 @@ export async function runRestRefresh(actor, { full = true } = {}) {
     updates["system.resources.hp.value"] = toNumber(actor.system.resources.hp.healableMax, 0);
   }
   await actor.update(updates);
+  await resetRepeatedAction(actor);
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
     content: `<em>${actor.name} recupere ses ressources lors d'un repos.</em>`,
@@ -417,6 +652,57 @@ export async function useMedicalItem(
   });
 
   return next - hpValue;
+}
+
+export async function gainDemonFleshBdp(actor) {
+  if (!actor || actor.type !== "demonist") return null;
+
+  const options = Object.entries(DEMON_FLESH_BDP)
+    .map(([label, expr]) => `<option value="${label}">${label} (${expr})</option>`)
+    .join("");
+
+  const selected = await new Promise((resolve) => {
+    new Dialog(
+      {
+        title: "Consommer de la chair demoniaque",
+        content: `
+          <div class="form-group">
+            <label>Rang du demon consomme</label>
+            <select id="bl-demon-flesh-rank">${options}</select>
+          </div>
+        `,
+        buttons: {
+          ok: {
+            label: "Consommer",
+            callback: (html) => resolve(String(html.find("#bl-demon-flesh-rank").val() || "")),
+          },
+          cancel: {
+            label: "Annuler",
+            callback: () => resolve(""),
+          },
+        },
+        default: "ok",
+      },
+      { width: 420 }
+    ).render(true);
+  });
+
+  if (!selected) return null;
+
+  const expr = DEMON_FLESH_BDP[selected];
+  const flatBonus = toNumber(actor.system?.progression?.bonuses?.demonFleshBonus, 0);
+  const roll = await new Roll(expr).evaluate({ async: true });
+  const gain = Math.max(0, toNumber(roll.total, 0) + flatBonus);
+  const current = toNumber(actor.system?.resources?.bdp?.value, 0);
+  const max = toNumber(actor.system?.resources?.bdp?.max, current);
+  const next = clamp(current + gain, 0, max);
+
+  await actor.update({ "system.resources.bdp.value": next });
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} consomme de la chair demoniaque (${selected}) et gagne ${next - current} BDP (${current} -> ${next}).</em>`,
+  });
+  return next - current;
 }
 
 async function processConditionTurnStart(actor) {
@@ -485,6 +771,7 @@ export const ActionEngine = {
   runSprint,
   runWait,
   runRestRefresh,
+  gainDemonFleshBdp,
   spendRp,
   setConditionState,
   setLimbState,

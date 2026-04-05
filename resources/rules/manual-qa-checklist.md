@@ -23,7 +23,10 @@ Use this when automated testing is not practical inside the Foundry runtime.
 - Basic attacks
   - Attack with a melee weapon.
   - Attack with a firearm.
-  - Confirm both use the correct attack/damage split and update target HP.
+  - Confirm both show the attack roll and damage roll in chat.
+  - Confirm both expose reaction buttons in chat before target HP is updated.
+  - Confirm `Esquiver (1 RP)` cancels damage and spends 1 RP.
+  - Confirm `Prendre les degats` applies the rolled damage and updates target HP.
 
 - Marked / red blade interactions
   - Activate `Forme Marquee` and use a breath technique.

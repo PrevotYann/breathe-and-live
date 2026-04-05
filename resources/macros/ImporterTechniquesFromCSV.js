@@ -5,6 +5,8 @@
 
 (async () => {
   const FU = foundry.utils;
+  const normalizeTechnique =
+    game.modules.get("breathe-and-live")?.api?.normalizeTechniqueItemData;
 
   // ---------- UI ----------
   const packs = Array.from(game.packs).filter(
@@ -288,20 +290,40 @@
     // description enrichie avec les notes de la colonne Dégâts
     const description = mergeDescription(desc, notes);
 
+    const normalizedSystem = normalizeTechnique
+      ? normalizeTechnique({
+          breath,
+          form: isNaN(form) ? 1 : form,
+          costE: isNaN(costE) ? 0 : costE,
+          damage: dmg,
+          damageText: dmgRaw,
+          range,
+          rangeText: rangeRaw,
+          modifier: COL.attackstat ? r[COL.attackstat] : params.defaultAStat || "",
+          attackStat,
+          tags: extraTags,
+          description,
+          sourceSection: breath ? `Souffle ${breath}` : "",
+        })
+      : {
+          breath,
+          form: isNaN(form) ? 1 : form,
+          costE: isNaN(costE) ? 0 : costE,
+          damage: dmg,
+          damageText: dmgRaw,
+          range,
+          rangeText: rangeRaw,
+          modifierText: COL.attackstat ? r[COL.attackstat] : params.defaultAStat || "",
+          attackStat,
+          tags: extraTags,
+          description,
+        };
+
     const data = {
       name,
       type: "technique",
       folder: folder.id,
-      system: {
-        breath,
-        form: isNaN(form) ? 1 : form,
-        costE: isNaN(costE) ? 0 : costE,
-        damage: dmg,
-        range,
-        attackStat,
-        tags: extraTags,
-        description,
-      },
+      system: normalizedSystem,
     };
 
     const key = keyOf({ name, system: { breath, form } });

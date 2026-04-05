@@ -24,7 +24,7 @@
         </div>
         <div class="field small">
           <label>Niveau</label>
-          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" {{#unless canEdit}}disabled{{/unless}} />
+          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" disabled />
         </div>
         <div class="field small">
           <label>Sous-classe</label>
@@ -230,12 +230,12 @@
                   <input type="checkbox" name="system.breaths.{{entry.key}}.enabled" data-dtype="Boolean" {{checked entry.enabled}} {{#unless ../canEdit}}disabled{{/unless}} />
                   {{entry.label}}
                 </label>
-                {{#if entry.specials}}
+                {{#if entry.specialEntries.length}}
                   <div class="small muted">Passifs d'acteur</div>
-                  {{#each entry.specials as |enabled specialKey|}}
-                    <label class="small">
-                      <input type="checkbox" name="system.breaths.{{../key}}.specials.{{specialKey}}" data-dtype="Boolean" {{checked enabled}} {{#unless ../../canEdit}}disabled{{/unless}} />
-                      {{specialKey}}
+                  {{#each entry.specialEntries as |special|}}
+                    <label class="small" title="{{special.hint}}">
+                      <input type="checkbox" name="system.breaths.{{../key}}.specials.{{special.key}}" data-dtype="Boolean" {{checked special.enabled}} {{#unless ../../canEdit}}disabled{{/unless}} />
+                      {{special.label}}
                     </label>
                   {{/each}}
                 {{/if}}
@@ -267,9 +267,9 @@
       </header>
       <ol class="item-list">
         {{#each itemsTech as |it|}}
-          <li class="item technique-item" data-item-id="{{it.id}}" data-search="{{it.name}} {{it.type}} {{it.system.breath}} {{it.system.tags}}">
+          <li class="item technique-item" data-item-id="{{it.id}}" data-search="{{it.name}} {{it.type}} {{it.system.breathDisplay}} {{it.system.tags}}">
             <div class="name"><a class="item-edit">{{it.name}}</a></div>
-            <div>{{#if it.system.breath}}{{it.system.breath}}{{else}}{{it.type}}{{/if}}</div>
+            <div>{{#if it.system.breathDisplay}}{{it.system.breathDisplay}}{{else}}{{it.type}}{{/if}}{{#if it.blMissingBreath}} <small>(souffle manquant)</small>{{/if}}</div>
             <div>{{it.system.form}}</div>
             <div>{{it.system.costE}}{{#if it.system.costRp}} / RP {{it.system.costRp}}{{/if}}{{#if it.system.costBdp}} / BDP {{it.system.costBdp}}{{/if}}</div>
             <div>{{#if it.system.damage}}{{it.system.damage}}{{else}}-{{/if}}</div>
@@ -325,7 +325,7 @@
         <div>Nom</div><div>Type</div><div></div>
       </header>
       <ol class="item-list">
-        {{#each itemsInventory as |it|}}
+        {{#each itemsOtherInventory as |it|}}
           <li class="item" data-item-id="{{it.id}}">
             <div class="name"><a class="item-edit">{{it.name}}</a></div>
             <div>{{it.type}}</div>

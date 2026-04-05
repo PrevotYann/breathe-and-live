@@ -24,7 +24,7 @@
         </div>
         <div class="field small">
           <label>Niveau</label>
-          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" {{#unless canEdit}}disabled{{/unless}} />
+          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" disabled />
         </div>
         <div class="field small">
           <label>Sous-classe</label>
@@ -35,8 +35,10 @@
   </header>
 
   <section class="field action-strip">
-    <div class="grid five-col">
+    <div class="grid three-col">
       <button type="button" class="bl-action-basic-attack">Attaque de base</button>
+      <button type="button" class="bl-action-repeated-attack">Action repetee</button>
+      <button type="button" class="bl-action-demon-flesh">Consommer chair</button>
       <button type="button" class="bl-action-recovery">Souffle de recuperation</button>
       <button type="button" class="bl-action-sprint">Sprinter</button>
       <button type="button" class="bl-action-wait">Attendre</button>

@@ -1,20 +1,32 @@
 import {
   ADVANCED_STATES,
   BREATH_KEYS,
+  BREATH_SPECIAL_ALIASES,
   CONDITION_DEFINITIONS,
   DEMON_BODY_OPTIONS,
   DEMON_DANGER_OPTIONS,
+  DEMONIST_RANK_PROGRESSION,
   DEMON_MOVEMENT_OPTIONS,
   DEMON_RANK_PACKAGES,
   DEMON_SHARED_ACTIONS,
   DEMONIST_RANKS,
   DEMON_RANKS,
+  HUMAN_RANK_LEVELS,
   LIMB_DEFINITIONS,
   NPC_RANKS,
+  SLAYER_RANK_PROGRESSION,
   SLAYER_RANKS,
 } from "../config/rule-data.mjs";
 import { useTechnique } from "../chat/use-technique.mjs";
+import { getActiveBreaths } from "../rules/breath-effects.mjs";
 import {
+  actorHasBreath,
+  getBreathLabel,
+  normalizeBreathName,
+  validateTechniqueOwnership,
+} from "../rules/technique-utils.mjs";
+import {
+  gainDemonFleshBdp,
   rollBasicAttack,
   runRecoveryBreath,
   runRestRefresh,
@@ -22,6 +34,63 @@ import {
   runWait,
   useMedicalItem,
 } from "../rules/action-engine.mjs";
+
+const BASE_STAT_OPTIONS = [
+  { key: "force", label: "Force" },
+  { key: "finesse", label: "Finesse" },
+  { key: "courage", label: "Courage" },
+  { key: "vitesse", label: "Vitesse" },
+  { key: "social", label: "Social" },
+  { key: "intellect", label: "Intellect" },
+];
+
+function progressionConfigFor(actorType) {
+  if (actorType === "demonist") return DEMONIST_RANK_PROGRESSION;
+  if (actorType === "slayer") return SLAYER_RANK_PROGRESSION;
+  return null;
+}
+
+function sortedProgressionEntries(config) {
+  return Object.entries(config || {}).sort(
+    (a, b) => Number(a[1]?.level || 0) - Number(b[1]?.level || 0)
+  );
+}
+
+function getBreathDefinition(key) {
+  return BREATH_KEYS.find((entry) => entry.key === key) || null;
+}
+
+function normalizeBreathSpecialKey(breathKey, specialKey) {
+  return BREATH_SPECIAL_ALIASES?.[breathKey]?.[specialKey] || specialKey;
+}
+
+function mapBreathSpecialEntries(breathKey, specials = {}) {
+  const definition = getBreathDefinition(breathKey);
+  const known = definition?.specials || {};
+  const entries = [];
+
+  for (const [specialKey, meta] of Object.entries(known)) {
+    entries.push({
+      key: specialKey,
+      label: meta.label || specialKey,
+      hint: meta.hint || "",
+      enabled: !!specials[specialKey],
+    });
+  }
+
+  for (const [specialKey, enabled] of Object.entries(specials || {})) {
+    const normalizedKey = normalizeBreathSpecialKey(breathKey, specialKey);
+    if (entries.some((entry) => entry.key === normalizedKey)) continue;
+    entries.push({
+      key: normalizedKey,
+      label: normalizedKey,
+      hint: "TODO-RULEBOOK-AMBIGUITY: special non repertorie dans la definition du souffle.",
+      enabled: !!enabled,
+    });
+  }
+
+  return entries;
+}
 
 export class BLSlayerSheet extends ActorSheet {
   static get defaultOptions() {
@@ -215,6 +284,16 @@ export class BLSlayerSheet extends ActorSheet {
         notes: "",
         studySlots: { value: 0, max: 0 },
         skillSlots: { value: 0, max: 0 },
+        bonuses: {
+          endurance: 0,
+          reactions: 0,
+          weaponDieSteps: 0,
+          breathFormBonus: 0,
+          repeatedAction: 0,
+          demonFleshBonus: 0,
+          nichirinDamageBonus: 0,
+          nichirinDamageDie: "",
+        },
       },
       support: {
         medicalTraining: false,
@@ -271,15 +350,35 @@ export class BLSlayerSheet extends ActorSheet {
     data.canEdit = !!(game.user?.isGM || this.actor.isOwner);
 
     const allItems = Array.from(this.actor.items ?? []);
-    data.itemsTech = allItems.filter((i) =>
-      ["technique", "subclassTechnique", "bda", "demonAbility"].includes(i.type)
-    );
+    const activeBreaths = getActiveBreaths(this.actor);
+    data.itemsTech = allItems
+      .filter((i) => ["technique", "subclassTechnique", "bda", "demonAbility"].includes(i.type))
+      .map((item) => {
+        const breathKey = item.system?.breathKey || normalizeBreathName(item.system?.breath);
+        const requiresBreath =
+          item.type === "technique" && item.system?.automation?.requiresBreath !== false && !!breathKey;
+        const hasRequiredBreath = !requiresBreath || actorHasBreath(this.actor, breathKey);
+        return {
+          id: item.id,
+          name: item.name,
+          type: item.type,
+          img: item.img,
+          system: {
+            ...item.system,
+            breathDisplay: item.system?.breathLabel || getBreathLabel(breathKey, item.system?.breath || ""),
+          },
+          blMissingBreath: requiresBreath && !hasRequiredBreath,
+        };
+      });
     data.itemsBreaths = allItems.filter((i) => i.type === "breath");
     data.itemsWeapons = allItems.filter((i) => ["weapon", "firearm"].includes(i.type));
     data.itemsMedical = allItems.filter((i) => ["medical", "consumable", "food"].includes(i.type));
     data.itemsInventory = allItems.filter(
       (i) =>
         !["technique", "subclassTechnique", "bda", "demonAbility", "breath"].includes(i.type)
+    );
+    data.itemsOtherInventory = data.itemsInventory.filter(
+      (i) => !["weapon", "firearm", "medical", "consumable", "food"].includes(i.type)
     );
 
     data.derived = {
@@ -288,17 +387,23 @@ export class BLSlayerSheet extends ActorSheet {
     };
     data.system.stats.remaining = this._computeRemaining(data.system);
     data.ownedBreathItems = data.itemsBreaths.map((item) => {
-      const prereq = item.system?.prereq || {};
-      const activeBreath = data.system.breaths?.[item.system?.key] || {};
-      const enabledSpecials = Object.entries(item.system?.specials || {})
-        .filter(([, enabled]) => !!enabled)
-        .map(([key]) => key);
+      const breathKey = item.system?.key || "";
+      const definition = getBreathDefinition(breathKey);
+      const prereq = foundry.utils.duplicate(
+        definition?.prereq || item.system?.prereq || { sense: "", stats: "", weapons: "" }
+      );
+      const activeBreath = activeBreaths?.[breathKey] || {};
+      const enabledSpecials = mapBreathSpecialEntries(breathKey, activeBreath.specials || {})
+        .filter((entry) => !!entry.enabled)
+        .map((entry) => entry.label);
+      const breathImg =
+        /^icons\/svg\//.test(String(item.img || "")) && definition?.img ? definition.img : item.img;
 
       return {
         id: item.id,
         name: item.name,
-        img: item.img,
-        key: item.system?.key || "",
+        img: breathImg,
+        key: breathKey,
         sourceSection: item.system?.sourceSection || "",
         description: item.system?.description || "",
         prereqText: [prereq.sense, prereq.stats, prereq.weapons].filter(Boolean).join(" / "),
@@ -309,8 +414,11 @@ export class BLSlayerSheet extends ActorSheet {
 
     data.breathEntries = BREATH_KEYS.map((entry) => ({
       ...entry,
-      enabled: !!data.system.breaths?.[entry.key]?.enabled,
-      specials: data.system.breaths?.[entry.key]?.specials || {},
+      enabled: !!activeBreaths?.[entry.key]?.enabled,
+      specialEntries: mapBreathSpecialEntries(
+        entry.key,
+        activeBreaths?.[entry.key]?.specials || {}
+      ),
     }));
     data.advancedStateEntries = ADVANCED_STATES.map((entry) => ({
       ...entry,
@@ -359,6 +467,7 @@ export class BLSlayerSheet extends ActorSheet {
     }));
 
     data.rankOptions = this._rankOptions();
+    data.rankLevelAuto = !!HUMAN_RANK_LEVELS[data.system.class.rank] && ["slayer", "demonist"].includes(this.actor.type);
     data.deathStates = [
       { value: "alive", label: "Vivant" },
       { value: "critical", label: "Critique" },
@@ -374,6 +483,198 @@ export class BLSlayerSheet extends ActorSheet {
     data.hasDerivedStats = !data.isCompanion;
 
     return data;
+  }
+
+  async _promptRankAdvancement(stepEntries) {
+    const statChoices = stepEntries.flatMap(([, step]) => step.statChoices || []);
+    const summaryItems = [];
+    let hpBonus = 0;
+    let enduranceBonus = 0;
+    let reactionBonus = 0;
+    let studySlots = 0;
+    let weaponDieSteps = 0;
+    let breathFormBonus = 0;
+    let repeatedActionBonus = 0;
+    let demonFleshBonus = 0;
+    let nichirinDamageBonus = 0;
+    let nichirinDamageDie = "";
+
+    for (const [, step] of stepEntries) {
+      hpBonus += Number(step.hpBonus || 0);
+      enduranceBonus += Number(step.enduranceBonus || 0);
+      reactionBonus += Number(step.reactionBonus || 0);
+      studySlots += Number(step.studySlots || 0);
+      weaponDieSteps += Number(step.weaponDieSteps || 0);
+      breathFormBonus += Number(step.breathFormBonus || 0);
+      repeatedActionBonus += Number(step.repeatedActionBonus || 0);
+      demonFleshBonus += Number(step.demonFleshBonus || 0);
+      nichirinDamageBonus += Number(step.nichirinDamageBonus || 0);
+      if (step.nichirinDamageDie) nichirinDamageDie = step.nichirinDamageDie;
+    }
+
+    if (hpBonus) summaryItems.push(`PV permanents: +${hpBonus}`);
+    if (enduranceBonus) summaryItems.push(`Endurance permanente: +${enduranceBonus}`);
+    if (reactionBonus) summaryItems.push(`Reactions permanentes: +${reactionBonus}`);
+    if (studySlots) summaryItems.push(`Slots d'etude: +${studySlots}`);
+    if (weaponDieSteps) summaryItems.push(`Degats d'armes: +${weaponDieSteps} de`);
+    if (breathFormBonus) summaryItems.push(`Formes de souffle: +${breathFormBonus} de degats`);
+    if (repeatedActionBonus) summaryItems.push(`Action repetee: +${repeatedActionBonus}`);
+    if (demonFleshBonus) summaryItems.push(`BDP gagnes via chair: +${demonFleshBonus}`);
+    if (nichirinDamageBonus) summaryItems.push(`Degats Nichirin: +${nichirinDamageBonus}`);
+    if (nichirinDamageDie) summaryItems.push(`Degats Nichirin definis a ${nichirinDamageDie}`);
+
+    const choiceFields = statChoices
+      .map(
+        (amount, index) => `
+          <div class="form-group">
+            <label>Choix de stat ${index + 1} (+${amount})</label>
+            <select name="stat-${index}">
+              ${BASE_STAT_OPTIONS.map(
+                (option) => `<option value="${option.key}">${option.label}</option>`
+              ).join("")}
+            </select>
+          </div>`
+      )
+      .join("");
+
+    const content = `
+      <form class="bl-rank-dialog">
+        <p>Cette montee de rang applique les bonus du livre.</p>
+        <ul>${summaryItems.map((item) => `<li>${item}</li>`).join("")}</ul>
+        ${choiceFields}
+      </form>`;
+
+    return await new Promise((resolve) => {
+      new Dialog({
+        title: "Montee de rang",
+        content,
+        buttons: {
+          apply: {
+            label: "Appliquer",
+            callback: (html) => {
+              const chosenStats = statChoices.map((amount, index) => ({
+                amount,
+                stat: html.find(`[name="stat-${index}"]`).val(),
+              }));
+              resolve({
+                chosenStats,
+                hpBonus,
+                enduranceBonus,
+                reactionBonus,
+                studySlots,
+                weaponDieSteps,
+                breathFormBonus,
+                repeatedActionBonus,
+                demonFleshBonus,
+                nichirinDamageBonus,
+                nichirinDamageDie,
+              });
+            },
+          },
+          cancel: {
+            label: "Annuler",
+            callback: () => resolve(null),
+          },
+        },
+        default: "apply",
+        close: () => resolve(null),
+      }).render(true);
+    });
+  }
+
+  async _handleRankChange(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const select = event.currentTarget;
+    const previousRank = this.actor.system.class.rank;
+    const nextRank = String(select.value || "");
+    const config = progressionConfigFor(this.actor.type);
+
+    if (!config || nextRank === previousRank) return;
+
+    const previousLevel = HUMAN_RANK_LEVELS[previousRank] || Number(this.actor.system.class.level) || 1;
+    const nextLevel = HUMAN_RANK_LEVELS[nextRank] || config[nextRank]?.level || previousLevel;
+
+    if (nextLevel <= previousLevel) {
+      await this.actor.update({
+        "system.class.rank": nextRank,
+        "system.class.level": nextLevel,
+      });
+      if (nextLevel < previousLevel) {
+        ui.notifications.warn("Le changement vers un rang inferieur ne retire pas automatiquement les bonus deja appliques.");
+      }
+      this.render(false);
+      return;
+    }
+
+    const stepEntries = sortedProgressionEntries(config).filter(
+      ([, step]) => step.level > previousLevel && step.level <= nextLevel
+    );
+    const advancement = await this._promptRankAdvancement(stepEntries);
+
+    if (!advancement) {
+      select.value = previousRank;
+      return;
+    }
+
+    const update = {
+      "system.class.rank": nextRank,
+      "system.class.level": nextLevel,
+      "system.resources.hp.max":
+        Number(this.actor.system.resources?.hp?.max || 0) + Number(advancement.hpBonus || 0),
+      "system.resources.hp.value":
+        Number(this.actor.system.resources?.hp?.value || 0) + Number(advancement.hpBonus || 0),
+      "system.resources.e.value":
+        Number(this.actor.system.resources?.e?.value || 0) + Number(advancement.enduranceBonus || 0),
+      "system.resources.rp.value":
+        Number(this.actor.system.resources?.rp?.value || 0) + Number(advancement.reactionBonus || 0),
+      "system.progression.studySlots.max":
+        Number(this.actor.system.progression?.studySlots?.max || 0) + Number(advancement.studySlots || 0),
+      "system.progression.bonuses.endurance":
+        Number(this.actor.system.progression?.bonuses?.endurance || 0) + Number(advancement.enduranceBonus || 0),
+      "system.progression.bonuses.reactions":
+        Number(this.actor.system.progression?.bonuses?.reactions || 0) + Number(advancement.reactionBonus || 0),
+      "system.progression.bonuses.weaponDieSteps":
+        Number(this.actor.system.progression?.bonuses?.weaponDieSteps || 0) + Number(advancement.weaponDieSteps || 0),
+      "system.progression.bonuses.breathFormBonus":
+        Number(this.actor.system.progression?.bonuses?.breathFormBonus || 0) + Number(advancement.breathFormBonus || 0),
+      "system.progression.bonuses.repeatedAction":
+        Number(this.actor.system.progression?.bonuses?.repeatedAction || 0) + Number(advancement.repeatedActionBonus || 0),
+      "system.progression.bonuses.demonFleshBonus":
+        Number(this.actor.system.progression?.bonuses?.demonFleshBonus || 0) + Number(advancement.demonFleshBonus || 0),
+      "system.progression.bonuses.nichirinDamageBonus":
+        Number(this.actor.system.progression?.bonuses?.nichirinDamageBonus || 0) + Number(advancement.nichirinDamageBonus || 0),
+      "system.progression.bonuses.nichirinDamageDie":
+        advancement.nichirinDamageDie || this.actor.system.progression?.bonuses?.nichirinDamageDie || "",
+    };
+
+    const statTotals = {};
+    for (const choice of advancement.chosenStats || []) {
+      if (!choice?.stat) continue;
+      statTotals[choice.stat] = Number(statTotals[choice.stat] || 0) + Number(choice.amount || 0);
+    }
+    for (const [statKey, amount] of Object.entries(statTotals)) {
+      update[`system.stats.base.${statKey}`] =
+        Number(this.actor.system.stats?.base?.[statKey] || 0) + Number(amount || 0);
+    }
+
+    await this.actor.update(update);
+
+    const followUps = [];
+    if (advancement.weaponDieSteps) followUps.push(`degats d'armes +${advancement.weaponDieSteps} de`);
+    if (advancement.breathFormBonus) followUps.push(`formes de souffle +${advancement.breathFormBonus} de`);
+    if (advancement.repeatedActionBonus) followUps.push(`action repetee +${advancement.repeatedActionBonus}`);
+    if (advancement.demonFleshBonus) followUps.push(`BDP sur chair +${advancement.demonFleshBonus}`);
+    if (advancement.nichirinDamageBonus) followUps.push(`degats Nichirin +${advancement.nichirinDamageBonus}`);
+    if (advancement.nichirinDamageDie) followUps.push(`Nichirin ${advancement.nichirinDamageDie}`);
+
+    if (followUps.length) {
+      ui.notifications.info(`Montee de rang appliquee. Penses aussi aux effets de combat suivants: ${followUps.join(", ")}.`);
+    } else {
+      ui.notifications.info("Montee de rang appliquee.");
+    }
+
+    this.render(false);
   }
 
   activateListeners(html) {
@@ -455,6 +756,15 @@ export class BLSlayerSheet extends ActorSheet {
       event.preventDefault();
       await rollBasicAttack(this.actor);
     });
+    html.find(".bl-action-repeated-attack").on("click", async (event) => {
+      event.preventDefault();
+      await rollBasicAttack(this.actor, { repeatedAction: true });
+    });
+    html.find(".bl-action-demon-flesh").on("click", async (event) => {
+      event.preventDefault();
+      await gainDemonFleshBdp(this.actor);
+      this.render(false);
+    });
     html.find(".bl-action-recovery").on("click", async (event) => {
       event.preventDefault();
       await runRecoveryBreath(this.actor);
@@ -481,5 +791,35 @@ export class BLSlayerSheet extends ActorSheet {
         el.style.display = !query || haystack.includes(query) ? "" : "none";
       });
     });
+  }
+
+  async _onChangeInput(event) {
+    const element = event.currentTarget;
+    if (element?.name === "system.class.rank") {
+      await this._handleRankChange(event);
+      return;
+    }
+    return super._onChangeInput(event);
+  }
+
+  async _onDropItemCreate(itemData) {
+    const entries = Array.isArray(itemData) ? itemData : [itemData];
+    const allowed = [];
+
+    for (const entry of entries) {
+      const validation = validateTechniqueOwnership(this.actor, entry);
+      if (!validation.ok) {
+        ui.notifications.warn(validation.message);
+        continue;
+      }
+      allowed.push(entry);
+    }
+
+    if (!allowed.length) return [];
+    const results = [];
+    for (const entry of allowed) {
+      results.push(await super._onDropItemCreate(entry));
+    }
+    return results.flat();
   }
 }
