@@ -3,11 +3,13 @@ import {
   BREATH_KEYS,
   BREATH_SPECIAL_ALIASES,
   CONDITION_DEFINITIONS,
+  DEMON_BLOODLINE_VARIANTS,
   DEMON_BODY_OPTIONS,
   DEMON_DANGER_OPTIONS,
   DEMONIST_RANK_PROGRESSION,
   DEMON_MOVEMENT_OPTIONS,
   DEMON_RANK_PACKAGES,
+  DEMON_RANK_LEVELS,
   DEMON_SHARED_ACTIONS,
   DEMONIST_RANKS,
   DEMON_RANKS,
@@ -28,6 +30,7 @@ import {
 import {
   gainDemonFleshBdp,
   rollBasicAttack,
+  runDemonSharedAction,
   runRecoveryBreath,
   runRestRefresh,
   runSprint,
@@ -44,10 +47,102 @@ const BASE_STAT_OPTIONS = [
   { key: "intellect", label: "Intellect" },
 ];
 
+const DEMON_STAT_KEYS = [
+  ["force", "Force"],
+  ["finesse", "Finesse"],
+  ["courage", "Courage"],
+  ["vitesse", "Vitesse"],
+  ["intellect", "Intellect"],
+  ["social", "Social"],
+];
+
 function progressionConfigFor(actorType) {
   if (actorType === "demonist") return DEMONIST_RANK_PROGRESSION;
   if (actorType === "slayer") return SLAYER_RANK_PROGRESSION;
   return null;
+}
+
+function isDemonActorType(actorType) {
+  return ["demon", "npcDemon"].includes(String(actorType || ""));
+}
+
+function getDemonRankLevel(rank) {
+  return Number(DEMON_RANK_LEVELS?.[rank] || 0) || Math.max(1, DEMON_RANKS.indexOf(rank) + 1);
+}
+
+function getDemonRankPackage(rank) {
+  return DEMON_RANK_PACKAGES?.[rank] || null;
+}
+
+function getDemonPackageStats(rank) {
+  return Array.from(getDemonRankPackage(rank)?.addedStats || [0, 0, 0, 0, 0, 0]);
+}
+
+function getDemonRankUnlocks(rank) {
+  return {
+    infect: ["Lune inferieure", "Lune superieure"].includes(rank),
+    execute: [
+      "Disciple de Lune inferieure",
+      "Lune inferieure",
+      "Disciple de Lune superieure",
+      "Lune superieure",
+    ].includes(rank),
+  };
+}
+
+function buildDemonQuickAttackEntries(actor, allItems, benchmark = {}) {
+  const naturalItems = allItems.filter((item) => item.type === "demonAbility");
+  const byName = (needle) =>
+    naturalItems.find((item) => String(item.name || "").toLowerCase().includes(needle));
+
+  const biteItem = byName("morsure");
+  const clawItem = byName("griffure");
+  const fallbackRange = 1.5;
+
+  const bite = biteItem
+    ? {
+        key: "bite",
+        itemId: biteItem.id,
+        name: biteItem.name,
+        damage: biteItem.system?.damage || benchmark?.bite || "",
+        range: biteItem.system?.range ?? fallbackRange,
+      }
+    : {
+        key: "bite",
+        itemId: "",
+        name: "Morsure",
+        damage: benchmark?.bite || "",
+        range: fallbackRange,
+      };
+
+  const claw = clawItem
+    ? {
+        key: "claw",
+        itemId: clawItem.id,
+        name: clawItem.name,
+        damage: clawItem.system?.damage || benchmark?.claw || "",
+        range: clawItem.system?.range ?? fallbackRange,
+      }
+    : {
+        key: "claw",
+        itemId: "",
+        name: "Griffure",
+        damage: benchmark?.claw || "",
+        range: fallbackRange,
+      };
+
+  return [bite, claw].filter((entry) => String(entry.damage || "").trim().length);
+}
+
+function buildDemonSharedActionEntries(rank) {
+  const unlocks = getDemonRankUnlocks(rank);
+  return DEMON_SHARED_ACTIONS.map((action) => ({
+    ...action,
+    automatable: ["heal", "regrow", "purify", "infect", "sos", "execute"].includes(action.key),
+    available:
+      (action.key !== "infect" || unlocks.infect) &&
+      (action.key !== "execute" || unlocks.execute),
+  }));
 }
 
 function sortedProgressionEntries(config) {
@@ -78,16 +173,16 @@ function mapBreathSpecialEntries(breathKey, specials = {}) {
     });
   }
 
-  for (const [specialKey, enabled] of Object.entries(specials || {})) {
-    const normalizedKey = normalizeBreathSpecialKey(breathKey, specialKey);
-    if (entries.some((entry) => entry.key === normalizedKey)) continue;
-    entries.push({
-      key: normalizedKey,
-      label: normalizedKey,
-      hint: "TODO-RULEBOOK-AMBIGUITY: special non repertorie dans la definition du souffle.",
-      enabled: !!enabled,
-    });
-  }
+    for (const [specialKey, enabled] of Object.entries(specials || {})) {
+      const normalizedKey = normalizeBreathSpecialKey(breathKey, specialKey);
+      if (entries.some((entry) => entry.key === normalizedKey)) continue;
+      entries.push({
+        key: normalizedKey,
+        label: normalizedKey,
+        hint: "Speciale presente sur l'acteur mais non repertoriee dans la definition locale du souffle.",
+        enabled: !!enabled,
+      });
+    }
 
   return entries;
 }
@@ -358,6 +453,15 @@ export class BLSlayerSheet extends ActorSheet {
         const requiresBreath =
           item.type === "technique" && item.system?.automation?.requiresBreath !== false && !!breathKey;
         const hasRequiredBreath = !requiresBreath || actorHasBreath(this.actor, breathKey);
+        const activation = String(item.system?.activation || "").toLowerCase();
+        const automation = item.system?.automation || {};
+        const hasActionableAutomation =
+          !!automation?.noDamage ||
+          !!automation?.teleportToBurned ||
+          !!automation?.summonFormula ||
+          !!automation?.afflictionCondition ||
+          Number(automation?.delayedDamageRounds || 0) > 0;
+        const hasDamage = !!String(item.system?.damage || "").trim();
         return {
           id: item.id,
           name: item.name,
@@ -368,6 +472,11 @@ export class BLSlayerSheet extends ActorSheet {
             breathDisplay: item.system?.breathLabel || getBreathLabel(breathKey, item.system?.breath || ""),
           },
           blMissingBreath: requiresBreath && !hasRequiredBreath,
+          blUsable:
+            activation !== "passive" &&
+            (hasDamage ||
+              hasActionableAutomation ||
+              ["action", "bonus", "reaction", "free", "rest"].includes(activation)),
         };
       });
     data.itemsBreaths = allItems.filter((i) => i.type === "breath");
@@ -427,11 +536,13 @@ export class BLSlayerSheet extends ActorSheet {
     data.demonBodyOptions = DEMON_BODY_OPTIONS;
     data.demonMovementOptions = DEMON_MOVEMENT_OPTIONS;
     data.demonDangerOptions = DEMON_DANGER_OPTIONS;
-    data.demonSharedActions = DEMON_SHARED_ACTIONS;
+    data.demonBloodlineOptions = DEMON_BLOODLINE_VARIANTS;
+    data.demonSharedActions = buildDemonSharedActionEntries(data.system.class.rank);
     data.demonRankPackage = DEMON_RANK_PACKAGES[data.system.class.rank] || null;
+    data.demonRankBenchmark = foundry.utils.duplicate(data.demonRankPackage?.benchmark || {});
     data.demonRankPackageLabels = data.demonRankPackage
       ? [
-          { label: "Puissance", value: data.demonRankPackage.addedStats?.[0] ?? 0 },
+          { label: "Force", value: data.demonRankPackage.addedStats?.[0] ?? 0 },
           { label: "Finesse", value: data.demonRankPackage.addedStats?.[1] ?? 0 },
           { label: "Courage", value: data.demonRankPackage.addedStats?.[2] ?? 0 },
           { label: "Vitesse", value: data.demonRankPackage.addedStats?.[3] ?? 0 },
@@ -440,13 +551,14 @@ export class BLSlayerSheet extends ActorSheet {
         ]
       : [];
     data.demonBenchmarkRows = [
-      { label: "Puissance", value: data.system.demonology?.benchmark?.force ?? 0 },
-      { label: "Finesse", value: data.system.demonology?.benchmark?.finesse ?? 0 },
-      { label: "Courage", value: data.system.demonology?.benchmark?.courage ?? 0 },
-      { label: "Vitesse", value: data.system.demonology?.benchmark?.vitesse ?? 0 },
-      { label: "Intellect", value: data.system.demonology?.benchmark?.intellect ?? 0 },
-      { label: "Social", value: data.system.demonology?.benchmark?.social ?? 0 },
+      { label: "Force", value: data.demonRankBenchmark?.force ?? 0 },
+      { label: "Finesse", value: data.demonRankBenchmark?.finesse ?? 0 },
+      { label: "Courage", value: data.demonRankBenchmark?.courage ?? 0 },
+      { label: "Vitesse", value: data.demonRankBenchmark?.vitesse ?? 0 },
+      { label: "Intellect", value: data.demonRankBenchmark?.intellect ?? 0 },
+      { label: "Social", value: data.demonRankBenchmark?.social ?? 0 },
     ];
+    data.demonQuickAttacks = buildDemonQuickAttackEntries(this.actor, allItems, data.demonRankBenchmark);
     data.conditionEntries = CONDITION_DEFINITIONS.map((entry) => ({
       ...entry,
       state: data.system.conditions?.[entry.key] || {
@@ -467,7 +579,9 @@ export class BLSlayerSheet extends ActorSheet {
     }));
 
     data.rankOptions = this._rankOptions();
-    data.rankLevelAuto = !!HUMAN_RANK_LEVELS[data.system.class.rank] && ["slayer", "demonist"].includes(this.actor.type);
+    data.rankLevelAuto =
+      (!!HUMAN_RANK_LEVELS[data.system.class.rank] && ["slayer", "demonist"].includes(this.actor.type)) ||
+      (!!DEMON_RANK_LEVELS[data.system.class.rank] && isDemonActorType(this.actor.type));
     data.deathStates = [
       { value: "alive", label: "Vivant" },
       { value: "critical", label: "Critique" },
@@ -478,6 +592,7 @@ export class BLSlayerSheet extends ActorSheet {
     data.isSlayer = this.actor.type === "slayer";
     data.isDemon = this.actor.type === "demon";
     data.isDemonist = this.actor.type === "demonist";
+    data.isNpcDemon = this.actor.type === "npcDemon";
     data.isNpc = ["npc", "npcHuman", "npcDemon", "companion"].includes(this.actor.type);
     data.isCompanion = this.actor.type === "companion";
     data.hasDerivedStats = !data.isCompanion;
@@ -582,12 +697,265 @@ export class BLSlayerSheet extends ActorSheet {
     });
   }
 
+  async _promptDemonRankAdvancement({
+    previousRank,
+    nextRank,
+    nextLevel,
+    statDelta,
+    unlocks,
+    benchmark,
+    projected,
+  }) {
+    const statRows = DEMON_STAT_KEYS.map(([key, label]) => ({
+      label,
+      delta: Number(statDelta?.[key] || 0),
+    })).filter((row) => row.delta !== 0);
+
+    const reminders = [
+      "Les PV, la CA, les RP et les BDP seront recalcules automatiquement depuis les nouvelles statistiques.",
+      "Les demons gardent la regle de demi-RP et l'ajout Force/Finesse a moitie aux degats.",
+    ];
+
+    if (unlocks.infect) reminders.push("Le rang choisi debloque Infecter.");
+    if (unlocks.execute) reminders.push("Le rang choisi debloque Executer.");
+
+    const content = `
+      <form class="bl-rank-dialog">
+        <p>Le demon passe de <b>${previousRank}</b> a <b>${nextRank}</b> (niveau ${nextLevel}).</p>
+        <p>Le rang applique un paquet fixe de statistiques. Le corps de base choisi ne change pas avec le rang.</p>
+        <h3>Gains de statistiques</h3>
+        <ul>${statRows.map((row) => `<li>${row.label} +${row.delta}</li>`).join("") || "<li>Aucun changement detecte.</li>"}</ul>
+        <h3>Valeurs recalculees sur la fiche</h3>
+        <ul>
+          <li>PV de la fiche : ${projected.hp} (= ${projected.baseHpChoice} de corps + 5 x Force)</li>
+          <li>CA de la fiche : ${projected.ca} (= 10 + Vitesse)</li>
+          <li>BDP max : ${projected.bdp} (= 10 x Courage)</li>
+          <li>RP max : ${projected.rp} (regle demon, valeur divisee par 2)</li>
+        </ul>
+        <h3>Repere du rang</h3>
+        <p><small>Repere du livre pour un profil demon de reference. Ce bloc n'ecrase pas automatiquement les formules de la fiche.</small></p>
+        <ul>
+          <li>PV / CA : ${benchmark.hp} / ${benchmark.ca}</li>
+          <li>Morsure : ${benchmark.bite || "-"}</li>
+          <li>Griffure : ${benchmark.claw || "-"}</li>
+          <li>BDA : ${benchmark.bda || "-"}</li>
+          <li>RP repere : ${benchmark.rp}</li>
+        </ul>
+        <h3>Rappels</h3>
+        <ul>${reminders.map((row) => `<li>${row}</li>`).join("")}</ul>
+      </form>`;
+
+    return await new Promise((resolve) => {
+      new Dialog({
+        title: "Montee de rang demoniaque",
+        content,
+        buttons: {
+          apply: {
+            label: "Appliquer",
+            callback: () => resolve(true),
+          },
+          cancel: {
+            label: "Annuler",
+            callback: () => resolve(false),
+          },
+        },
+        default: "apply",
+        close: () => resolve(false),
+      }).render(true);
+    });
+  }
+
+  async _handleDemonRankChange(select, previousRank, nextRank) {
+    const actorDoc =
+      (!this.actor?.isToken && game.actors?.get?.(this.actor?.id)) || this.actor;
+    const previousIndex = DEMON_RANKS.indexOf(previousRank);
+    const nextIndex = DEMON_RANKS.indexOf(nextRank);
+    if (previousIndex === -1 || nextIndex === -1 || previousRank === nextRank) return;
+
+    const nextLevel = getDemonRankLevel(nextRank);
+    const nextPackage = getDemonRankPackage(nextRank);
+    const nextBenchmark = foundry.utils.duplicate(nextPackage?.benchmark || {});
+
+    if (nextIndex <= previousIndex) {
+      await actorDoc.update({
+        system: {
+          class: {
+            rank: nextRank,
+          },
+        },
+      });
+      if (nextIndex < previousIndex) {
+        ui.notifications.warn(
+          "Le changement vers un rang inferieur ne retire pas automatiquement les bonus demoniaques deja appliques."
+        );
+      }
+      this.render(false);
+      return;
+    }
+
+    const previousStats = getDemonPackageStats(previousRank);
+    const nextStats = getDemonPackageStats(nextRank);
+    const statDelta = Object.fromEntries(
+      DEMON_STAT_KEYS.map(([key], index) => [key, Math.max(0, Number(nextStats[index] || 0) - Number(previousStats[index] || 0))])
+    );
+    const currentBase = actorDoc.system.stats?.base || {};
+    const baseHpChoice = Number(actorDoc.system.demonology?.baseHpChoice || 20) || 20;
+    const currentForce = Number(currentBase.force || 0);
+    const currentCourage = Number(currentBase.courage || 0);
+    const currentVitesse = Number(currentBase.vitesse || 0);
+    const currentIntellect = Number(currentBase.intellect || 0);
+
+    const nextBase = {
+      force: currentForce + Number(statDelta.force || 0),
+      finesse: Number(currentBase.finesse || 0) + Number(statDelta.finesse || 0),
+      courage: currentCourage + Number(statDelta.courage || 0),
+      vitesse: currentVitesse + Number(statDelta.vitesse || 0),
+      intellect: currentIntellect + Number(statDelta.intellect || 0),
+      social: Number(currentBase.social || 0) + Number(statDelta.social || 0),
+    };
+
+    const previousHpMax = baseHpChoice + 5 * currentForce;
+    const nextHpMax = baseHpChoice + 5 * nextBase.force;
+    const previousBdpMax = 10 * currentCourage;
+    const nextBdpMax = 10 * nextBase.courage;
+    const previousRpMax = Math.max(0, Math.floor((5 + currentVitesse + currentIntellect) / 2));
+    const nextRpMax = Math.max(0, Math.floor((5 + nextBase.vitesse + nextBase.intellect) / 2));
+    const nextCa = 10 + nextBase.vitesse;
+
+    const confirmed = await this._promptDemonRankAdvancement({
+      previousRank,
+      nextRank,
+      nextLevel,
+      statDelta,
+      unlocks: getDemonRankUnlocks(nextRank),
+      benchmark: {
+        hp: Number(nextBenchmark.hp || 0),
+        ca: Number(nextBenchmark.ca || 0),
+        bite: nextBenchmark.bite || "",
+        claw: nextBenchmark.claw || "",
+        bda: nextBenchmark.bda || "",
+        rp: Number(nextBenchmark.rp || 0),
+      },
+      projected: {
+        hp: nextHpMax,
+        ca: nextCa,
+        bdp: nextBdpMax,
+        rp: nextRpMax,
+        baseHpChoice,
+      },
+    });
+
+    if (!confirmed) {
+      select.value = previousRank;
+      return;
+    }
+
+    const nextHpValue =
+      Number(actorDoc.system.resources?.hp?.value || 0) + Math.max(0, nextHpMax - previousHpMax);
+    const nextBdpValue =
+      Number(actorDoc.system.resources?.bdp?.value || 0) + Math.max(0, nextBdpMax - previousBdpMax);
+    const nextRpValue =
+      Number(actorDoc.system.resources?.rp?.value || 0) + Math.max(0, nextRpMax - previousRpMax);
+
+    const rankUpdate = {
+      system: {
+        class: {
+          rank: nextRank,
+        },
+        stats: {
+          base: {
+            force: nextBase.force,
+            finesse: nextBase.finesse,
+            courage: nextBase.courage,
+            vitesse: nextBase.vitesse,
+            intellect: nextBase.intellect,
+            social: nextBase.social,
+          },
+        },
+        resources: {
+          hp: {
+            value: nextHpValue,
+          },
+          bdp: {
+            value: nextBdpValue,
+          },
+          rp: {
+            value: nextRpValue,
+          },
+        },
+      },
+    };
+
+    try {
+      await actorDoc.update(rankUpdate);
+    } catch (error) {
+      console.error("BL | Demon rank grouped update failed, retrying in smaller patches.", error);
+      await actorDoc.update({
+        system: {
+          class: {
+            rank: nextRank,
+          },
+        },
+      });
+      await actorDoc.update({
+        system: {
+          stats: {
+            base: {
+              force: nextBase.force,
+              finesse: nextBase.finesse,
+              courage: nextBase.courage,
+              vitesse: nextBase.vitesse,
+              intellect: nextBase.intellect,
+              social: nextBase.social,
+            },
+          },
+        },
+      });
+      await actorDoc.update({
+        system: {
+          resources: {
+            hp: {
+              value: nextHpValue,
+            },
+            bdp: {
+              value: nextBdpValue,
+            },
+            rp: {
+              value: nextRpValue,
+            },
+          },
+        },
+      });
+    }
+
+    const unlockedRows = [];
+    const nextUnlocks = getDemonRankUnlocks(nextRank);
+    const previousUnlocks = getDemonRankUnlocks(previousRank);
+    if (nextUnlocks.infect && !previousUnlocks.infect) unlockedRows.push("Infecter");
+    if (nextUnlocks.execute && !previousUnlocks.execute) unlockedRows.push("Executer");
+
+    if (unlockedRows.length) {
+      ui.notifications.info(
+        `Montee de rang appliquee. Nouvelles actions debloquees: ${unlockedRows.join(", ")}.`
+      );
+    } else {
+      ui.notifications.info("Montee de rang demoniaque appliquee.");
+    }
+
+    this.render(false);
+  }
+
   async _handleRankChange(event) {
     event.preventDefault();
     event.stopPropagation();
     const select = event.currentTarget;
     const previousRank = this.actor.system.class.rank;
     const nextRank = String(select.value || "");
+    if (isDemonActorType(this.actor.type)) {
+      await this._handleDemonRankChange(select, previousRank, nextRank);
+      return;
+    }
+
     const config = progressionConfigFor(this.actor.type);
 
     if (!config || nextRank === previousRank) return;
@@ -744,6 +1112,33 @@ export class BLSlayerSheet extends ActorSheet {
       await rollBasicAttack(this.actor, { item });
     });
 
+    html.on("click", ".bl-demon-basic-attack", async (event) => {
+      event.preventDefault();
+      const itemId = event.currentTarget.dataset.itemId;
+      let item = itemId ? this.actor.items.get(itemId) : null;
+      if (!item) {
+        item = {
+          name: String(event.currentTarget.dataset.attackName || "Attaque demoniaque"),
+          type: "demonAbility",
+          system: {
+            damage: String(event.currentTarget.dataset.attackDamage || this.actor.system?.combat?.basicAttack?.unarmedDamage || "1"),
+            range: Number(event.currentTarget.dataset.attackRange || 1.5) || 1.5,
+            weaponFamily: "natural",
+          },
+        };
+      }
+      if (!item) return;
+      await rollBasicAttack(this.actor, { item });
+    });
+
+    html.on("click", ".bl-demon-shared-action", async (event) => {
+      event.preventDefault();
+      const actionKey = String(event.currentTarget.dataset.actionKey || "");
+      if (!actionKey) return;
+      await runDemonSharedAction(this.actor, actionKey);
+      this.render(false);
+    });
+
     html.on("click", ".bl-use-medical", async (event) => {
       event.preventDefault();
       const li = event.currentTarget.closest(".item");
@@ -791,11 +1186,19 @@ export class BLSlayerSheet extends ActorSheet {
         el.style.display = !query || haystack.includes(query) ? "" : "none";
       });
     });
+
+    html.find('[name="system.class.rank"]').on("change", async (event) => {
+      if (event.__blRankHandled) return;
+      event.__blRankHandled = true;
+      await this._handleRankChange(event);
+    });
   }
 
   async _onChangeInput(event) {
     const element = event.currentTarget;
     if (element?.name === "system.class.rank") {
+      if (event.__blRankHandled) return;
+      event.__blRankHandled = true;
       await this._handleRankChange(event);
       return;
     }

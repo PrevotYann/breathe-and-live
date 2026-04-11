@@ -19,6 +19,7 @@ import {
   setTechniqueCooldown,
   startTechniqueCharge,
 } from "../rules/technique-utils.mjs";
+import { queueDemonPendingEffect } from "../rules/action-engine.mjs";
 
 const FU = foundry.utils;
 const SYSTEM_ID = "breathe-and-live";
@@ -132,6 +133,68 @@ function getSelectedTargets(attackerToken) {
   return Array.from(game.user.targets ?? []).filter(
     (target) => target.id !== attackerToken?.id && target.actor
   );
+}
+
+function getTechniqueTargetCap(attacker, item) {
+  const automation = item.system?.automation || {};
+  const base = Number(automation.targetCapBase ?? 0) || 0;
+  const scale = Number(automation.targetCapScalePerLevel ?? 0) || 0;
+  const rankLevel = Number(attacker.system?.class?.level ?? 1) || 1;
+  if (!base) return 0;
+  return Math.max(1, base + Math.max(0, rankLevel - 2) * scale);
+}
+
+function limitTargetsForTechnique(attacker, item, targets) {
+  const cap = getTechniqueTargetCap(attacker, item);
+  if (!cap || targets.length <= cap) return targets;
+  ui.notifications.info(`La technique ${item.name} ne peut affecter que ${cap} cible(s) avec le rang actuel.`);
+  return targets.slice(0, cap);
+}
+
+function getBurnedTargets(excludeActorId = null) {
+  return (canvas?.tokens?.placeables ?? []).filter((token) => {
+    if (!token?.actor || token.document.hidden) return false;
+    if (token.actor.id === excludeActorId) return false;
+    return !!token.actor.getFlag(SYSTEM_ID, "burnMoonAsh") || !!token.actor.system?.conditions?.burn?.active;
+  });
+}
+
+async function promptBurnedTarget(attacker) {
+  const options = getBurnedTargets(attacker?.id);
+  if (!options.length) {
+    ui.notifications.warn("Aucune cible marquee par les cendres n'est disponible.");
+    return null;
+  }
+
+  const htmlOptions = options
+    .map((token) => `<option value="${token.id}">${token.name}</option>`)
+    .join("");
+
+  return new Promise((resolve) => {
+    new Dialog(
+      {
+        title: "Choisir une destination de cendres",
+        content: `
+          <div class="form-group">
+            <label>Cible marquee</label>
+            <select id="bl-burned-target">${htmlOptions}</select>
+          </div>
+        `,
+        buttons: {
+          ok: {
+            label: "Se deplacer",
+            callback: (html) => resolve(canvas.tokens.get(html.find("#bl-burned-target").val())),
+          },
+          cancel: {
+            label: "Annuler",
+            callback: () => resolve(null),
+          },
+        },
+        default: "ok",
+      },
+      { width: 420 }
+    ).render(true);
+  });
 }
 
 function getAoETargets(attackerToken, rangeM, { antiFriendlyFire = false } = {}) {
@@ -252,6 +315,21 @@ async function applyTechniqueDamage({
     });
   }
 
+  const conditionKey = String(item.system?.automation?.afflictionCondition || "").trim();
+  const conditionStacks = Number(item.system?.automation?.afflictionIntensity ?? 0) || 0;
+  if (conditionKey) {
+    const currentState = FU.getProperty(actor, `system.conditions.${conditionKey}`) || {};
+    const currentIntensity = Math.max(0, Number(currentState.intensity || 0));
+    await actor.update({
+      [`system.conditions.${conditionKey}.active`]: true,
+      [`system.conditions.${conditionKey}.intensity`]: Math.max(1, currentIntensity + Math.max(1, conditionStacks || 1)),
+    });
+  }
+
+  if (item.system?.automation?.markAsh) {
+    await actor.setFlag(SYSTEM_ID, "burnMoonAsh", true);
+  }
+
   try {
     const techEffects = FU.getProperty(item, "system.effects") || [];
     if (Array.isArray(techEffects) && techEffects.length) {
@@ -368,7 +446,78 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
   const headWeaponMode = await promptStoneHeadMode(attacker, item);
   if (headWeaponMode) ctx.headWeaponMode = headWeaponMode;
 
+  if (automation.teleportToBurned) {
+    const spendNotes = [];
+    const rpSpend = await spendResource(
+      attacker,
+      "system.resources.rp.value",
+      Number(item.system?.costRp ?? 0) || 0,
+      "RP"
+    );
+    if (!rpSpend.ok) return;
+    if (rpSpend.note) spendNotes.push(rpSpend.note);
+
+    const bdpSpend = await spendResource(
+      attacker,
+      "system.resources.bdp.value",
+      Number(item.system?.costBdp ?? 0) || 0,
+      "BDP"
+    );
+    if (!bdpSpend.ok) return;
+    if (bdpSpend.note) spendNotes.push(bdpSpend.note);
+
+    const destination = await promptBurnedTarget(attacker);
+    if (!destination) return;
+    await attackerToken.document.update({
+      x: destination.document.x,
+      y: destination.document.y,
+    });
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: attacker }),
+      content: `<div class="bl-card"><b>${attacker.name}</b> utilise <b>${item.name}</b> et se teleporte aux cendres de <b>${destination.name}</b>. <small>${spentNotes.join(" • ") || "Sans cout"}</small></div>`,
+    });
+    return;
+  }
+
+  if (automation.summonFormula) {
+    const spendNotes = [];
+    const eSpend = await spendResource(
+      attacker,
+      "system.resources.e.value",
+      Number(item.system?.costE ?? 0) || 0,
+      "E"
+    );
+    if (!eSpend.ok) return;
+    if (eSpend.note) spendNotes.push(eSpend.note);
+
+    const rpSpend = await spendResource(
+      attacker,
+      "system.resources.rp.value",
+      Number(item.system?.costRp ?? 0) || 0,
+      "RP"
+    );
+    if (!rpSpend.ok) return;
+    if (rpSpend.note) spendNotes.push(rpSpend.note);
+
+    const bdpSpend = await spendResource(
+      attacker,
+      "system.resources.bdp.value",
+      Number(item.system?.costBdp ?? 0) || 0,
+      "BDP"
+    );
+    if (!bdpSpend.ok) return;
+    if (bdpSpend.note) spendNotes.push(bdpSpend.note);
+
+    const summonRoll = await new Roll(String(automation.summonFormula)).evaluate({ async: true });
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: attacker }),
+      content: `<div class="bl-card"><b>${attacker.name}</b> utilise <b>${item.name}</b> et invoque ${summonRoll.total} serviteur(s). <small>${spentNotes.join(" â€¢ ") || "Sans cout"}</small></div>`,
+    });
+    return;
+  }
+
   let targetTokens = await resolveTechniqueTargets(attackerToken, item, ctx);
+  targetTokens = limitTargetsForTechnique(attacker, item, targetTokens);
   if (!targetTokens.length) return;
 
   const firstTarget = targetTokens[0];
@@ -411,6 +560,47 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
   );
   if (!bdpSpend.ok) return;
   if (bdpSpend.note) spentNotes.push(bdpSpend.note);
+
+  if (automation.noDamage && Number(automation.delayedDamageRounds ?? 0) > 0) {
+    const formula = String(automation.delayedDamageFormula || item.system?.damage || "0");
+    for (const targetToken of targetTokens) {
+      await queueDemonPendingEffect(targetToken.actor, {
+        delayedRounds: Number(automation.delayedDamageRounds || 1),
+        formula: buildFormulaWithActorStats(formula, attacker, ctx),
+        label: item.name,
+        sourceName: attacker.name,
+        afflictionCondition: String(automation.afflictionCondition || ""),
+        afflictionIntensity: Number(automation.afflictionIntensity || 0),
+        markAsh: !!automation.markAsh,
+      });
+    }
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: attacker }),
+      content: `<div class="bl-card"><b>${attacker.name}</b> prepare <b>${item.name}</b> sur ${targetTokens.map((token) => token.name).join(", ")}. L'effet se declenchera dans ${automation.delayedDamageRounds} round(s). <small>${spentNotes.join(" • ") || "Sans cout"}</small></div>`,
+    });
+    return;
+  }
+
+  if (automation.noDamage && automation.afflictionCondition) {
+    for (const targetToken of targetTokens) {
+      const targetActor = targetToken.actor;
+      const currentState = FU.getProperty(targetActor, `system.conditions.${automation.afflictionCondition}`) || {};
+      const nextIntensity =
+        Math.max(0, Number(currentState.intensity || 0)) + Math.max(1, Number(automation.afflictionIntensity || 1));
+      await targetActor.update({
+        [`system.conditions.${automation.afflictionCondition}.active`]: true,
+        [`system.conditions.${automation.afflictionCondition}.intensity`]: Math.max(1, nextIntensity),
+      });
+      if (automation.markAsh) {
+        await targetActor.setFlag(SYSTEM_ID, "burnMoonAsh", true);
+      }
+    }
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: attacker }),
+      content: `<div class="bl-card"><b>${attacker.name}</b> utilise <b>${item.name}</b> sur ${targetTokens.map((token) => token.name).join(", ")}. <small>${spentNotes.join(" • ") || "Sans cout"}</small></div>`,
+    });
+    return;
+  }
 
   try {
     const selfEffects = FU.getProperty(item, "system.selfEffects") || [];

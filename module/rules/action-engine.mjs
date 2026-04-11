@@ -206,6 +206,30 @@ const DEMON_FLESH_BDP = {
   "Lune superieure": "1d20 + 8",
 };
 
+const DEMON_HEALING_BY_RANK = {
+  "Demon faible": "1d10",
+  "Demon eleve": "2d10",
+  "Disciple de Lune inferieure": "1d20",
+  "Lune inferieure": "1d20",
+  "Disciple de Lune superieure": "1d100",
+  "Lune superieure": "1d100",
+};
+
+function normalizeDamageExpr(expr, fallback = "1") {
+  const text = String(expr || "").trim();
+  if (!text) return fallback;
+  const compact = text.replace(/\s+/g, "");
+  if (/^\d+$/.test(compact)) return compact;
+  const rangeMatch = compact.match(/^(\d+)-(\d+)$/);
+  if (rangeMatch) {
+    const low = toNumber(rangeMatch[1], 1);
+    const high = toNumber(rangeMatch[2], low);
+    if (high <= low) return String(low);
+    return `1d${high - low + 1} + ${low - 1}`;
+  }
+  return text;
+}
+
 async function spendRp(actor, cost, reason = "") {
   const path = "system.resources.rp.value";
   const current = toNumber(FU.getProperty(actor, path), 0);
@@ -220,6 +244,25 @@ async function spendRp(actor, cost, reason = "") {
     await ChatMessage.create({
       speaker: actorSpeaker(actor),
       content: `<em>${actor.name} depense ${cost} RP pour ${reason}.</em>`,
+    });
+  }
+  return true;
+}
+
+async function spendBdp(actor, cost, reason = "") {
+  const path = "system.resources.bdp.value";
+  const current = toNumber(FU.getProperty(actor, path), 0);
+  if (current < cost) {
+    ui.notifications.warn(
+      `${actor.name} n'a pas assez de BDP (${cost} requis, ${current} disponibles).`
+    );
+    return false;
+  }
+  await actor.update({ [path]: current - cost });
+  if (reason) {
+    await ChatMessage.create({
+      speaker: actorSpeaker(actor),
+      content: `<em>${actor.name} depense ${cost} BDP pour ${reason}.</em>`,
     });
   }
   return true;
@@ -242,6 +285,40 @@ function isDemonActor(actor) {
   return ["demon", "npcDemon"].includes(type);
 }
 
+function getDemonPendingEffects(actor) {
+  return FU.duplicate(actor?.getFlag(SYSTEM_ID, "pendingDemonEffects") || []);
+}
+
+async function setDemonPendingEffects(actor, effects) {
+  await actor.setFlag(SYSTEM_ID, "pendingDemonEffects", effects);
+}
+
+export async function queueDemonPendingEffect(actor, effect) {
+  const effects = getDemonPendingEffects(actor);
+  effects.push({
+    id: randomID(),
+    dueRound: Number(game.combat?.round ?? 0) + Math.max(1, toNumber(effect?.delayedRounds, 1)),
+    formula: String(effect?.formula || "0"),
+    label: String(effect?.label || "Effet demoniaque"),
+    sourceName: String(effect?.sourceName || "Demon"),
+    afflictionCondition: String(effect?.afflictionCondition || ""),
+    afflictionIntensity: Math.max(0, toNumber(effect?.afflictionIntensity, 0)),
+    markAsh: !!effect?.markAsh,
+  });
+  await setDemonPendingEffects(actor, effects);
+}
+
+async function applyConditionStacks(actor, key, stacks = 1) {
+  if (!actor || !key) return null;
+  const existing = FU.getProperty(actor, `system.conditions.${key}`) || {};
+  const next = Math.max(1, toNumber(existing.intensity, 0) + Math.max(1, toNumber(stacks, 1)));
+  await actor.update({
+    [`system.conditions.${key}.active`]: true,
+    [`system.conditions.${key}.intensity`]: next,
+  });
+  return next;
+}
+
 function demonAttackBonus(value) {
   return Math.floor(Math.max(0, toNumber(value, 0)) / 2);
 }
@@ -250,6 +327,8 @@ async function applyBasicAttackDamage({
   attacker,
   targetToken,
   damageRoll,
+  weapon = null,
+  isFirearm = false,
 }) {
   const targetActor = targetToken?.actor;
   if (!targetActor || !damageRoll) return null;
@@ -262,6 +341,22 @@ async function applyBasicAttackDamage({
   await noteActorDamageTaken(targetActor, damage);
   if (attacker.system?.states?.lameRouge && isDemonActor(targetActor)) {
     await targetActor.setFlag(SYSTEM_ID, "redBladeLockRound", game.combat?.round ?? 0);
+  }
+
+  const targetHasBurningSkin = targetActor.items?.some(
+    (item) =>
+      item.type === "demonAbility" &&
+      /peau brulante/i.test(String(item.name || ""))
+  );
+  const naturalMelee =
+    !isFirearm &&
+    (!weapon || ["natural", ""].includes(String(weapon.system?.weaponFamily || "")) || ["demonAbility"].includes(String(weapon.type || "")));
+  if (targetHasBurningSkin && naturalMelee) {
+    await applyConditionStacks(attacker, "burn", 1);
+    await ChatMessage.create({
+      speaker: actorSpeaker(targetActor),
+      content: `<em>Peau brulante : ${attacker.name} subit Brulure au contact de ${targetActor.name}.</em>`,
+    });
   }
 
   return { currentHp, nextHp, damage };
@@ -382,6 +477,7 @@ export async function rollBasicAttack(
   let rawDamageExpr =
     weapon?.system?.damage || actor.system?.combat?.basicAttack?.unarmedDamage || "1d4 + Force";
   if (weapon) {
+    rawDamageExpr = normalizeDamageExpr(rawDamageExpr, "1");
     rawDamageExpr = increaseFirstDieCount(
       rawDamageExpr,
       toNumber(progressionBonuses.weaponDieSteps, 0)
@@ -519,6 +615,8 @@ export async function rollBasicAttack(
         attacker: actor,
         targetToken: token,
         damageRoll,
+        weapon,
+        isFirearm,
       });
       if (!result) return;
 
@@ -532,6 +630,245 @@ export async function rollBasicAttack(
   });
 
   return { hit, attackRoll, damageRoll, attackMessage, chatMessage };
+}
+
+async function promptTargetActor(actor, title = "Choisir une cible") {
+  const token = await pickTargetToken({ excludeTokenId: getPrimaryToken(actor)?.id });
+  return token?.actor ? token : null;
+}
+
+export async function runDemonHeal(actor) {
+  if (!actor || !isDemonActor(actor)) return null;
+  const formula = DEMON_HEALING_BY_RANK[String(actor.system?.class?.rank || "")];
+  if (!formula) {
+    ui.notifications.warn("Aucune formule de guerison demoniaque connue pour ce rang.");
+    return null;
+  }
+
+  const hpPath = "system.resources.hp.value";
+  const hpValue = toNumber(FU.getProperty(actor, hpPath), 0);
+  const hpMax = toNumber(actor.system?.resources?.hp?.max, hpValue);
+  if (hpValue >= hpMax) {
+    ui.notifications.info(`${actor.name} est deja a son maximum de PV.`);
+    return 0;
+  }
+
+  const ok = await spendBdp(actor, 2, "Guerison");
+  if (!ok) return null;
+
+  const roll = await new Roll(formula).evaluate({ async: true });
+  const healed = Math.max(0, Math.min(hpMax - hpValue, toNumber(roll.total, 0)));
+  const next = clamp(hpValue + healed, 0, hpMax);
+  await actor.update({ [hpPath]: next });
+
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} utilise Guerison et recupere ${healed} PV (${hpValue} -> ${next}).</em>`,
+  });
+  return healed;
+}
+
+export async function runDemonPurify(actor) {
+  if (!actor || !isDemonActor(actor)) return null;
+  const poison = FU.getProperty(actor, "system.conditions.poisoned") || {};
+  const intensity = Math.max(0, toNumber(poison.intensity, 0));
+  if (!poison.active || intensity <= 0) {
+    ui.notifications.info(`${actor.name} n'a pas de poison actif a purifier.`);
+    return 0;
+  }
+
+  const removed = Math.min(intensity, getRankTier(actor));
+  const next = Math.max(0, intensity - removed);
+  await actor.update({
+    "system.conditions.poisoned.intensity": next,
+    "system.conditions.poisoned.active": next > 0,
+  });
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} utilise Purification et retire ${removed} niveau(x) de poison.</em>`,
+  });
+  return removed;
+}
+
+export async function runDemonRegrow(actor) {
+  if (!actor || !isDemonActor(actor)) return null;
+  const limbStates = FU.getProperty(actor, "system.combat.injuries.limbs") || {};
+  const affected = Object.entries(limbStates)
+    .filter(([, state]) => state?.severed || state?.broken || state?.injured)
+    .map(([key, state]) => `${key}${state.severed ? " (sectionne)" : state.broken ? " (casse)" : " (blesse)"}`);
+  if (!affected.length) {
+    ui.notifications.info(`${actor.name} n'a aucun membre coche pour Repousse.`);
+    return [];
+  }
+
+  const ok = await spendBdp(actor, 4, "Repousse");
+  if (!ok) return null;
+
+  const updates = {};
+  for (const [key] of Object.entries(limbStates)) {
+    updates[`system.combat.injuries.limbs.${key}.injured`] = false;
+    updates[`system.combat.injuries.limbs.${key}.broken`] = false;
+    updates[`system.combat.injuries.limbs.${key}.severed`] = false;
+  }
+  await actor.update(updates);
+
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} utilise Repousse et regenere immediatement les membres touches: ${affected.join(", ")}.</em>`,
+  });
+  return affected;
+}
+
+export async function runDemonInfect(actor) {
+  if (!actor || !isDemonActor(actor)) return null;
+  if (!["Lune inferieure", "Lune superieure"].includes(String(actor.system?.class?.rank || ""))) {
+    ui.notifications.warn("Seules les Lunes inferieures et superieures peuvent infecter.");
+    return null;
+  }
+
+  const targetToken = await promptTargetActor(actor, "Choisir un humain a infecter");
+  const targetActor = targetToken?.actor;
+  if (!targetActor) return null;
+  if (isDemonActor(targetActor) || targetActor.type === "demonist") {
+    ui.notifications.warn("La cible doit etre un humain non demoniaque.");
+    return null;
+  }
+
+  const donorRankIndex = DEMON_RANKS.indexOf(String(actor.system?.class?.rank || ""));
+  const nextRank = DEMON_RANKS[Math.max(0, donorRankIndex - 4)] || DEMON_RANKS[0];
+  await targetActor.setFlag(SYSTEM_ID, "pendingDemonInfection", {
+    donorActorId: actor.id,
+    donorName: actor.name,
+    donorRank: actor.system?.class?.rank || "",
+    resultingRank: nextRank,
+    bloodline: actor.system?.demonology?.sharedBloodline || "",
+    timestamp: Date.now(),
+  });
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} infecte ${targetActor.name}. Si la transformation aboutit, la cible devient un demon de rang ${nextRank}.</em>`,
+  });
+  return nextRank;
+}
+
+export async function runDemonSos(actor) {
+  if (!actor || !isDemonActor(actor)) return null;
+  const bloodline = String(actor.system?.demonology?.sharedBloodline || "").trim() || "sans lignee precisee";
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} lance un SOS demoniaque a la branche ${bloodline}. Les demons d'autres lignees ne repondent pas.</em>`,
+  });
+  return bloodline;
+}
+
+export async function runDemonExecute(actor) {
+  if (!actor || !isDemonActor(actor)) return null;
+  if (![
+    "Disciple de Lune inferieure",
+    "Lune inferieure",
+    "Disciple de Lune superieure",
+    "Lune superieure",
+  ].includes(String(actor.system?.class?.rank || ""))) {
+    ui.notifications.warn("Ce rang demoniaque ne peut pas Executer.");
+    return null;
+  }
+
+  const attackerToken = resolveCanvasToken(getPrimaryToken(actor), actor);
+  const targetToken = await promptTargetActor(actor, "Choisir une cible a executer");
+  const targetActor = targetToken?.actor;
+  if (!targetActor) return null;
+  if (isDemonActor(targetActor) || targetActor.type === "demonist") {
+    ui.notifications.warn("Executer cible un humain, pas une creature demoniaque.");
+    return null;
+  }
+
+  const hp = toNumber(targetActor.system?.resources?.hp?.value, 0);
+  if (hp > 5) {
+    ui.notifications.warn("Executer ne fonctionne que sur une cible humaine a 5 PV ou moins.");
+    return null;
+  }
+
+  const targetRow = buildReactionTargetRow({
+    attackerToken,
+    targetToken,
+    damageTotal: hp,
+    allowDodge: false,
+    allowReactions: true,
+    takeDamageLabel: "Executer",
+  });
+
+  const chatMessage = await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `
+      <div class="bl-card" style="display:grid; gap:.35rem;">
+        <div><strong>${actor.name}</strong> tente d'executer <strong>${targetToken.name}</strong>.</div>
+        <div><small>L'execution ne peut pas etre esquivee, mais des reactions restent possibles.</small></div>
+        <div class="bl-target-list" style="display:grid; gap:.5rem;">${targetRow}</div>
+      </div>
+    `,
+  });
+
+  Hooks.once("renderChatMessage", (message, html) => {
+    if (message.id !== chatMessage.id) return;
+    const disableTargetButtons = (tokenId) => {
+      html.find(`button[data-target-token="${tokenId}"]`).prop("disabled", true);
+    };
+
+    html.find(".bl-deflect, .bl-stance-deflect").on("click", async (event) => {
+      const button = $(event.currentTarget);
+      const token = canvas.tokens.get(String(button.attr("data-target-token")));
+      const defended = token?.actor;
+      if (!defended || !canInteractWithToken(token)) return;
+
+      if (button.hasClass("bl-deflect")) {
+        const ok = await spendRp(defended, 1);
+        if (!ok) return;
+      } else {
+        await consumeDeflectStance(defended);
+      }
+
+      html
+        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+        .html("<em>Execution contrecarree par reaction.</em>");
+      disableTargetButtons(token.id);
+    });
+
+    html.find(".bl-takedmg").on("click", async (event) => {
+      const button = $(event.currentTarget);
+      const token = canvas.tokens.get(String(button.attr("data-target-token")));
+      const target = token?.actor;
+      if (!target || !canInteractWithToken(token)) return;
+
+      const currentHp = toNumber(target.system?.resources?.hp?.value, 0);
+      await target.update({ "system.resources.hp.value": 0 });
+      await ChatMessage.create({
+        speaker: actorSpeaker(actor),
+        content: `<em>${actor.name} execute ${target.name} (${currentHp} -> 0 PV).</em>`,
+      });
+      disableTargetButtons(token.id);
+    });
+  });
+
+  return true;
+}
+
+export async function runDemonSharedAction(actor, key) {
+  switch (String(key || "")) {
+    case "heal":
+      return runDemonHeal(actor);
+    case "regrow":
+      return runDemonRegrow(actor);
+    case "purify":
+      return runDemonPurify(actor);
+    case "infect":
+      return runDemonInfect(actor);
+    case "sos":
+      return runDemonSos(actor);
+    case "execute":
+      return runDemonExecute(actor);
+    default:
+      return null;
+  }
 }
 
 export async function runRecoveryBreath(actor) {
@@ -706,6 +1043,29 @@ export async function gainDemonFleshBdp(actor) {
 }
 
 async function processConditionTurnStart(actor) {
+  const pending = getDemonPendingEffects(actor);
+  if (pending.length) {
+    const round = Number(game.combat?.round ?? 0) || 0;
+    const keep = [];
+    for (const effect of pending) {
+      if (Number(effect.dueRound || 0) > round) {
+        keep.push(effect);
+        continue;
+      }
+
+      const roll = await new Roll(String(effect.formula || "0")).evaluate({ async: true });
+      const amount = Math.max(0, toNumber(roll.total, 0));
+      await applyDirectDamage(actor, amount, `${effect.sourceName} - ${effect.label} :`);
+      if (effect.afflictionCondition) {
+        await applyConditionStacks(actor, effect.afflictionCondition, effect.afflictionIntensity || 1);
+      }
+      if (effect.markAsh) {
+        await actor.setFlag(SYSTEM_ID, "burnMoonAsh", true);
+      }
+    }
+    await setDemonPendingEffects(actor, keep);
+  }
+
   const conditionMap = actor.system?.conditions ?? {};
   for (const definition of CONDITION_DEFINITIONS) {
     const state = conditionMap[definition.key];
@@ -771,7 +1131,16 @@ export const ActionEngine = {
   runSprint,
   runWait,
   runRestRefresh,
+  runDemonSharedAction,
+  runDemonHeal,
+  runDemonRegrow,
+  runDemonPurify,
+  runDemonInfect,
+  runDemonSos,
+  runDemonExecute,
+  queueDemonPendingEffect,
   gainDemonFleshBdp,
+  spendBdp,
   spendRp,
   setConditionState,
   setLimbState,

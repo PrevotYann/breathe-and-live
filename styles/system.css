@@ -262,6 +262,10 @@
   gap: 0.55rem;
 }
 
+.breathe-and-live .bl .action-strip .bl-demon-action-grid {
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+}
+
 .breathe-and-live .bl .core-resource {
   overflow: hidden;
   min-height: 92px;

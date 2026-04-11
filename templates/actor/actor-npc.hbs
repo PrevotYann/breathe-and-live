@@ -19,8 +19,13 @@
   </header>
 
   <section class="field action-strip">
-    <div class="grid four-col">
+    <div class="grid {{#if isNpcDemon}}bl-demon-action-grid{{else}}four-col{{/if}}">
       <button type="button" class="bl-action-basic-attack">Attaque de base</button>
+      {{#if isNpcDemon}}
+        {{#each demonQuickAttacks as |it|}}
+          <button type="button" class="bl-demon-basic-attack" data-item-id="{{it.itemId}}" data-attack-key="{{it.key}}" data-attack-name="{{it.name}}" data-attack-damage="{{it.damage}}" data-attack-range="{{it.range}}">{{it.name}}</button>
+        {{/each}}
+      {{/if}}
       <button type="button" class="bl-action-sprint">Sprinter</button>
       <button type="button" class="bl-action-wait">Attendre</button>
       <button type="button" class="bl-action-rest">Repos</button>
@@ -41,6 +46,25 @@
         <div class="res core-resource"><label>RP</label><div class="pair"><input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" {{#unless canEdit}}disabled{{/unless}} /></div></div>
         <div class="res core-resource"><label>BDP</label><div class="pair"><input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" {{#unless canEdit}}disabled{{/unless}} /></div></div>
       </div>
+
+      {{#if isNpcDemon}}
+        {{#if demonQuickAttacks.length}}
+          <div class="field">
+            <h3>Attaques naturelles</h3>
+            <div class="shared-actions">
+              {{#each demonQuickAttacks as |it|}}
+                <div class="shared-action">
+                  <div>
+                    <strong>{{it.name}}</strong>
+                    <small>{{#if it.damage}}{{it.damage}}{{else}}-{{/if}} • {{it.range}} m</small>
+                  </div>
+                  <button type="button" class="bl-demon-basic-attack" data-item-id="{{it.itemId}}" data-attack-key="{{it.key}}" data-attack-name="{{it.name}}" data-attack-damage="{{it.damage}}" data-attack-range="{{it.range}}">Lancer</button>
+                </div>
+              {{/each}}
+            </div>
+          </div>
+        {{/if}}
+      {{/if}}
 
       <div class="grid two-col">
         <div class="field">
@@ -70,7 +94,9 @@
             <div class="name"><a class="item-edit">{{it.name}}</a></div>
             <div>{{it.type}}</div>
             <div class="controls">
-              <a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>
+              {{#if it.blUsable}}
+                <a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>
+              {{/if}}
               <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
               <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
             </div>
@@ -82,6 +108,32 @@
     <div class="tab" data-group="primary" data-tab="regles">
       <div class="grid two-col">
         <div class="field">
+          {{#if isNpcDemon}}
+            <h3>Actions demoniaques</h3>
+            <div class="shared-actions">
+              {{#each demonSharedActions as |action|}}
+                <div class="shared-action">
+                  <div>
+                    <strong>{{action.label}}</strong>
+                    <small>{{action.note}}</small>
+                  </div>
+                  <div class="controls">
+                    <span>{{action.cost}}</span>
+                    {{#if action.available}}
+                      {{#if action.automatable}}
+                        <button type="button" class="bl-demon-shared-action" data-action-key="{{action.key}}">Utiliser</button>
+                      {{else}}
+                        <span class="hint">Via reaction</span>
+                      {{/if}}
+                    {{else}}
+                      <span class="hint">Rang insuffisant</span>
+                    {{/if}}
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          {{/if}}
+
           <h3>Conditions</h3>
           {{#each conditionEntries as |entry|}}
             <div class="condition-row">

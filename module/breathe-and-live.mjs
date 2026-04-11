@@ -2,11 +2,13 @@ import {
   ADVANCED_STATES,
   BREATH_KEYS,
   CONDITION_DEFINITIONS,
+  DEMON_BLOODLINE_VARIANTS,
   DEMON_BODY_OPTIONS,
   DEMON_DANGER_OPTIONS,
   DEMONIST_RANK_PROGRESSION,
   DEMON_MOVEMENT_OPTIONS,
   DEMON_RANK_PACKAGES,
+  DEMON_RANK_LEVELS,
   DEMON_SHARED_ACTIONS,
   DEMONIST_RANKS,
   DEMON_RANKS,
@@ -86,6 +88,8 @@ CONFIG.breatheAndLive.DEMON_BODY_OPTIONS = DEMON_BODY_OPTIONS;
 CONFIG.breatheAndLive.DEMON_MOVEMENT_OPTIONS = DEMON_MOVEMENT_OPTIONS;
 CONFIG.breatheAndLive.DEMON_DANGER_OPTIONS = DEMON_DANGER_OPTIONS;
 CONFIG.breatheAndLive.DEMON_RANK_PACKAGES = DEMON_RANK_PACKAGES;
+CONFIG.breatheAndLive.DEMON_RANK_LEVELS = DEMON_RANK_LEVELS;
+CONFIG.breatheAndLive.DEMON_BLOODLINE_VARIANTS = DEMON_BLOODLINE_VARIANTS;
 CONFIG.breatheAndLive.DEMON_SHARED_ACTIONS = DEMON_SHARED_ACTIONS;
 CONFIG.breatheAndLive.RANKS = {
   slayer: SLAYER_RANKS,
@@ -296,11 +300,14 @@ class BLActor extends Actor {
     sys.class.type ||= defaults.type;
     sys.class.rank ||= defaults.rank;
     const mappedHumanLevel = HUMAN_RANK_LEVELS[sys.class.rank];
+    const mappedDemonLevel = DEMON_RANK_LEVELS[sys.class.rank];
     sys.class.level = Math.max(
       1,
       toNumber(
         ["slayer", "demonist"].includes(this.type) && mappedHumanLevel
           ? mappedHumanLevel
+          : ["demon", "npcDemon"].includes(this.type) && mappedDemonLevel
+            ? mappedDemonLevel
           : sys.class.level,
         1
       )
@@ -339,7 +346,11 @@ class BLActor extends Actor {
     sys.demonology.basicDamage ||=
       DEMON_DANGER_OPTIONS.find((entry) => entry.key === sys.demonology.dangerLevel)?.baseDamage ??
       "1d4";
-    sys.demonology.rankPackage ||= sys.class.rank;
+    if (["demon", "npcDemon"].includes(this.type)) {
+      sys.demonology.rankPackage = sys.class.rank;
+    } else {
+      sys.demonology.rankPackage ||= sys.class.rank;
+    }
     sys.demonology.benchmark ??= {};
 
     const base = {

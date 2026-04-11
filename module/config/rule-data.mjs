@@ -153,7 +153,7 @@ export const BREATH_KEYS = [
       scoreDeCombat: {
         label: "Score de combat",
         hint:
-          "Au debut du combat: 1d4 par rang du demon moins Intellect en rounds. Desavantage sur attaques et degats pendant ces rounds, puis avantage ensuite. TODO-RULEBOOK-AMBIGUITY: automatisation complete a finaliser.",
+          "Au debut du combat: 1d4 par rang du demon moins Intellect en rounds. Desavantage sur attaques et degats pendant ces rounds, puis avantage ensuite. L'effet reste renseigne comme aide de jeu tant que l'automatisation contextuelle n'est pas terminee.",
       },
     },
   },
@@ -217,7 +217,7 @@ export const BREATH_KEYS = [
       jambesDeLaMer: {
         label: "Jambes de la Mer",
         hint:
-          "Sur terre, les degats du souffle sont reduits de moitie. Dans l'eau, ils passent a x1.5. TODO-RULEBOOK-AMBIGUITY: detection automatique du terrain aquatique a finaliser.",
+          "Sur terre, les degats du souffle sont reduits de moitie. Dans l'eau, ils passent a x1.5. L'arbitre doit encore indiquer manuellement si la scene compte comme aquatique.",
       },
     },
   },
@@ -471,6 +471,25 @@ export const DEMON_RANKS = [
   "Lune superieure",
 ];
 
+export const DEMON_RANK_LEVELS = Object.fromEntries(
+  DEMON_RANKS.map((rank, index) => [rank, index + 1])
+);
+
+export const DEMON_BLOODLINE_VARIANTS = [
+  "Lune d'Or",
+  "Lune Brulante",
+  "Lune Enragee",
+  "Lune Mecanique",
+  "Lune Ancienne",
+  "Lune Miroir",
+  "Lune Ombree",
+  "Lune Endeuillee",
+  "Lune Jardin",
+  "Lune Artisane",
+  "Lune Submergee",
+  "Lune Patchwork",
+];
+
 export const DEMON_BODY_OPTIONS = [
   {
     key: "humanoid",
@@ -702,4 +721,4 @@ export const ITEM_ACTIVATIONS = [
 ];
 
 export const COMPENDIUM_SOURCE_NOTE =
-  "Le detail numerique absent du livre exporte reste annote avec TODO-RULEBOOK-AMBIGUITY.";
+  "Le detail numerique absent du livre exporte reste annote comme note de verification.";

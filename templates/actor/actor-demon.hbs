@@ -3,8 +3,8 @@
     <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
     <div class="header-fields">
       <div class="hero-topline">
-        <div class="eyebrow">Classe jouable • Demon</div>
-        <div class="eyebrow">Actions: {{system.combat.actionEconomy.actionsPerTurn}} • Deplacement: {{system.combat.actionEconomy.movementMeters}} m</div>
+        <div class="eyebrow">Classe jouable - Demon - {{system.class.rank}}</div>
+        <div class="eyebrow">Actions: {{system.combat.actionEconomy.actionsPerTurn}} - Deplacement: {{system.combat.actionEconomy.movementMeters}} m</div>
       </div>
       <h1 class="charname">
         <input name="name" type="text" value="{{actor.name}}" {{#unless canEdit}}disabled{{/unless}} />
@@ -20,11 +20,18 @@
         </div>
         <div class="field small">
           <label>Niveau</label>
-          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" {{#unless canEdit}}disabled{{/unless}} />
+          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" disabled />
+          <small>Auto selon le rang</small>
         </div>
         <div class="field small">
           <label>Lignee</label>
-          <input type="text" name="system.demonology.sharedBloodline" value="{{system.demonology.sharedBloodline}}" placeholder="Branche / lune" {{#unless canEdit}}disabled{{/unless}} />
+          <input type="text" list="bl-demon-bloodlines" name="system.demonology.sharedBloodline" value="{{system.demonology.sharedBloodline}}" placeholder="Branche / lune" {{#unless canEdit}}disabled{{/unless}} />
+          <datalist id="bl-demon-bloodlines">
+            {{#each demonBloodlineOptions as |opt|}}
+              <option value="{{opt}}"></option>
+            {{/each}}
+          </datalist>
+          <small>Suggestions du supplement 1934</small>
         </div>
         <div class="field small">
           <label>Style</label>
@@ -35,8 +42,11 @@
   </header>
 
   <section class="field action-strip">
-    <div class="grid four-col">
+    <div class="grid bl-demon-action-grid">
       <button type="button" class="bl-action-basic-attack">Attaque de base</button>
+      {{#each demonQuickAttacks as |it|}}
+        <button type="button" class="bl-demon-basic-attack" data-item-id="{{it.itemId}}" data-attack-key="{{it.key}}" data-attack-name="{{it.name}}" data-attack-damage="{{it.damage}}" data-attack-range="{{it.range}}">{{it.name}}</button>
+      {{/each}}
       <button type="button" class="bl-action-sprint">Sprinter</button>
       <button type="button" class="bl-action-wait">Attendre</button>
       <button type="button" class="bl-action-rest">Repos</button>
@@ -86,6 +96,23 @@
           <small>Attaque de base: {{system.demonology.basicDamage}}</small>
         </div>
       </div>
+
+      {{#if demonQuickAttacks.length}}
+        <div class="field">
+          <h3>Attaques de base</h3>
+          <div class="shared-actions">
+            {{#each demonQuickAttacks as |it|}}
+              <div class="shared-action">
+                <div>
+                  <strong>{{it.name}}</strong>
+                  <small>{{#if it.damage}}{{it.damage}}{{else}}-{{/if}} • {{it.range}} m</small>
+                </div>
+                <button type="button" class="bl-demon-basic-attack" data-item-id="{{it.itemId}}" data-attack-key="{{it.key}}" data-attack-name="{{it.name}}" data-attack-damage="{{it.damage}}" data-attack-range="{{it.range}}">Lancer</button>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      {{/if}}
 
       <div class="grid two-col">
         <div class="field">
@@ -247,7 +274,9 @@
             <div>{{#if it.system.costBdp}}BDP {{it.system.costBdp}}{{else}}{{it.system.costE}}{{/if}}</div>
             <div>{{#if it.system.damage}}{{it.system.damage}}{{else}}-{{/if}}</div>
             <div class="controls">
-              <a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>
+              {{#if it.blUsable}}
+                <a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>
+              {{/if}}
               <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
               <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
             </div>
@@ -277,7 +306,8 @@
     <div class="tab" data-group="primary" data-tab="regles">
       <div class="grid three-col">
         <div class="field">
-          <h3>Stats de reference du rang</h3>
+          <h3>Repere bestiaire du livre</h3>
+          <p class="hint">Valeurs de reference pour un demon de ce rang. Elles ne remplacent pas automatiquement les formules de la fiche.</p>
           <div class="benchmark-table">
             {{#each demonBenchmarkRows as |row|}}
               <div class="benchmark-row">
@@ -287,11 +317,11 @@
             {{/each}}
           </div>
           <div class="benchmark-table benchmark-attacks">
-            <div class="benchmark-row"><span>PV / CA</span><strong>{{system.demonology.benchmark.hp}} / {{system.demonology.benchmark.ca}}</strong></div>
-            <div class="benchmark-row"><span>Morsure</span><strong>{{system.demonology.benchmark.bite}}</strong></div>
-            <div class="benchmark-row"><span>Griffure</span><strong>{{system.demonology.benchmark.claw}}</strong></div>
-            <div class="benchmark-row"><span>BDA</span><strong>{{system.demonology.benchmark.bda}}</strong></div>
-            <div class="benchmark-row"><span>RP repere</span><strong>{{system.demonology.benchmark.rp}}</strong></div>
+            <div class="benchmark-row"><span>PV / CA</span><strong>{{demonRankBenchmark.hp}} / {{demonRankBenchmark.ca}}</strong></div>
+            <div class="benchmark-row"><span>Morsure</span><strong>{{demonRankBenchmark.bite}}</strong></div>
+            <div class="benchmark-row"><span>Griffure</span><strong>{{demonRankBenchmark.claw}}</strong></div>
+            <div class="benchmark-row"><span>BDA</span><strong>{{demonRankBenchmark.bda}}</strong></div>
+            <div class="benchmark-row"><span>RP repere</span><strong>{{demonRankBenchmark.rp}}</strong></div>
           </div>
         </div>
 
@@ -304,7 +334,18 @@
                   <strong>{{action.label}}</strong>
                   <small>{{action.note}}</small>
                 </div>
-                <span>{{action.cost}}</span>
+                <div class="controls">
+                  <span>{{action.cost}}</span>
+                  {{#if action.available}}
+                    {{#if action.automatable}}
+                      <button type="button" class="bl-demon-shared-action" data-action-key="{{action.key}}">Utiliser</button>
+                    {{else}}
+                      <span class="hint">Via reaction</span>
+                    {{/if}}
+                  {{else}}
+                    <span class="hint">Rang insuffisant</span>
+                  {{/if}}
+                </div>
               </div>
             {{/each}}
           </div>

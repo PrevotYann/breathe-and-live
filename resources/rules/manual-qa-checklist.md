@@ -9,6 +9,8 @@ Use this when automated testing is not practical inside the Foundry runtime.
 - Rank progression fields
   - Change actor rank on slayer, demonist and demon sheets.
   - Confirm the sheet keeps the selected rank and does not reset resources incorrectly.
+  - On a demon sheet, confirm the rank change opens a confirmation dialog, updates level automatically, and refreshes the benchmark block to the new rank.
+  - Confirm a demon rank increase adds the expected fixed stat package delta and unlocks `Infecter` / `Executer` only at the correct ranks.
 
 - Endurance spend and recovery
   - Use a breath technique with `costE > 0`.

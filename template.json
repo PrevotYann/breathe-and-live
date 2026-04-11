@@ -614,7 +614,28 @@
       "costBdp": 0,
       "demonisationGain": 0,
       "damage": "",
-      "range": 0
+      "range": 0,
+      "rangeText": "",
+      "attackStat": "",
+      "specialLines": [],
+      "automation": {
+        "area": "single",
+        "unlimitedRange": false,
+        "cannotBeDodged": false,
+        "cannotBeReactedTo": false,
+        "afflictionCondition": "",
+        "afflictionIntensity": 0,
+        "markAsh": false,
+        "noDamage": false,
+        "delayedDamageRounds": 0,
+        "delayedDamageFormula": "",
+        "targetCapBase": 0,
+        "targetCapScalePerLevel": 0,
+        "summonFormula": "",
+        "teleportToBurned": false
+      },
+      "effects": [],
+      "selfEffects": []
     },
     "demonAbility": {
       "templates": [
@@ -623,7 +644,28 @@
       "costBdp": 0,
       "demonisationGain": 0,
       "damage": "",
-      "range": 0
+      "range": 0,
+      "rangeText": "",
+      "attackStat": "",
+      "specialLines": [],
+      "automation": {
+        "area": "single",
+        "unlimitedRange": false,
+        "cannotBeDodged": false,
+        "cannotBeReactedTo": false,
+        "afflictionCondition": "",
+        "afflictionIntensity": 0,
+        "markAsh": false,
+        "noDamage": false,
+        "delayedDamageRounds": 0,
+        "delayedDamageFormula": "",
+        "targetCapBase": 0,
+        "targetCapScalePerLevel": 0,
+        "summonFormula": "",
+        "teleportToBurned": false
+      },
+      "effects": [],
+      "selfEffects": []
     },
     "gear": {
       "templates": [

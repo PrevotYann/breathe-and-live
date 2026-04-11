@@ -345,6 +345,8 @@ function statTokenMap(actor, context = {}) {
     tokens[normalizeText(label)] = tokens[normalizeText(key)];
   }
 
+  tokens[normalizeText("Puissance")] = tokens[normalizeText("Force")] ?? 0;
+
   for (const [key, label] of Object.entries(derivedMap)) {
     tokens[normalizeText(key)] = Number(FU.getProperty(actor, `system.stats.derived.${key}`) ?? 0) || 0;
     tokens[normalizeText(label)] = tokens[normalizeText(key)];
@@ -367,6 +369,7 @@ function statTokenMap(actor, context = {}) {
 export function buildFormulaWithActorStats(expr, actor, context = {}) {
   let output = String(expr || "1d8").trim();
   if (!actor) return output;
+  output = output.replace(/(\d+d\d+)\s+Puissance\b/gi, "$1 + Puissance");
 
   output = output.replace(/(\d+d\d+)\s+(Force|Finesse|Courage|Vitesse|Social|Intellect|Precision|Performance|Medecine|Tête de Hache)\b/gi, "$1 + $2");
 
@@ -375,6 +378,8 @@ export function buildFormulaWithActorStats(expr, actor, context = {}) {
 
   output = output.replace(/Force\s*(?:\/|ou)\s*Finesse/gi, String(chooseBest("Force", "Finesse")));
   output = output.replace(/Finesse\s*(?:\/|ou)\s*Force/gi, String(chooseBest("Force", "Finesse")));
+  output = output.replace(/Puissance\s*(?:\/|ou)\s*Finesse/gi, String(chooseBest("Puissance", "Finesse")));
+  output = output.replace(/Finesse\s*(?:\/|ou)\s*Puissance/gi, String(chooseBest("Puissance", "Finesse")));
 
   const orderedTokens = Object.keys(tokens).sort((a, b) => b.length - a.length);
   for (const token of orderedTokens) {

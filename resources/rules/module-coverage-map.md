@@ -78,6 +78,7 @@ to the current repository modules so missing coverage stays explicit.
 
 ## Known gaps
 
-- TODO-RULEBOOK-AMBIGUITY: several homebrew / supplement breath passives still need full numeric extraction from the PDF or detailed forms sheet.
-- TODO-RULEBOOK-AMBIGUITY: demon playable progression and every blood art tree are only partially seeded in compendium examples.
-- TODO-RULEBOOK-AMBIGUITY: sheet-side guided character creation wizard is not yet implemented; schema and examples are in place first.
+- Several homebrew / supplement breath passives still need full numeric extraction from the PDF or detailed forms sheet.
+- Demon rank changes now apply the fixed rank package and benchmark refresh from the rulebook, but several 1934 bloodline trees remain only partially extractible from the text export.
+- Shared demon actions such as healing, regrowth, execution and infection are now automated; the remaining gap is mostly the numeric extraction of additional 1934 bloodline trees.
+- Sheet-side guided character creation wizard is not yet implemented; schema and examples are in place first.
