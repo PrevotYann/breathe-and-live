@@ -116,6 +116,53 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="inventaire">
+      <div class="grid two-col">
+        <div class="field">
+          <h3>Poison actif</h3>
+          <div class="rule-pills">
+            <div class="rule-pill">
+              <span>{{activePoisonSummary.title}}</span>
+              <strong>{{#if activePoisonSummary.active}}Dose prete{{else}}Aucune dose{{/if}}</strong>
+              {{#each activePoisonSummary.lines as |line|}}
+                <small>{{line}}</small>
+              {{/each}}
+            </div>
+          </div>
+          {{#if activePoisonSummary.active}}
+            <button type="button" class="bl-clear-poison">Retirer l'enduction</button>
+          {{/if}}
+        </div>
+        <div class="field">
+          <h3>Etat du poison</h3>
+          <div class="rule-pills">
+            <div class="rule-pill">
+              <span>{{poisonStateSummary.profileLabel}}</span>
+              <strong>{{poisonStateSummary.intensity}} niveau(x)</strong>
+              <small>{{poisonStateSummary.effectSummary}}</small>
+              {{#if poisonStateSummary.restrictionSummary}}<small>{{poisonStateSummary.restrictionSummary}}</small>{{/if}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Poisons</h3>
+      <header class="list-header">
+        <div>Nom</div><div>Profil</div><div></div>
+      </header>
+      <ol class="item-list">
+        {{#each itemsPoisons as |it|}}
+          <li class="item" data-item-id="{{it.id}}">
+            <div class="name"><a class="item-edit">{{it.name}}</a><br><small>{{it.blChargeLabel}}</small></div>
+            <div>{{it.blProfileLabel}}</div>
+            <div class="controls">
+              <a class="item-control bl-apply-poison" title="Enduire une arme"><i class="fas fa-vial"></i></a>
+              <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+              <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+            </div>
+          </li>
+        {{/each}}
+      </ol>
+
       <header class="list-header">
         <div>Nom</div><div>Type</div><div></div>
       </header>

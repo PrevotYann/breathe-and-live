@@ -1,0 +1,90 @@
+{
+  "_id": "techFlame01000",
+  "name": "Feu Inconscient",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/flamme.png",
+  "system": {
+    "tags": [
+      "breath",
+      "flame"
+    ],
+    "description": "L'épéiste charge son adversaire à grande vitesse et le décapite en un ou plusieurs coups.",
+    "sourceSection": "Souffle de la Flamme",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Flamme",
+    "breathKey": "flame",
+    "breathLabel": "Souffle de la Flamme",
+    "form": 1,
+    "costE": 2,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "3d6 + Force",
+    "damageText": "3d6 + Force",
+    "range": 1.5,
+    "rangeText": "1.5m / CàC",
+    "modifierText": "Force",
+    "attackStat": "force",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfflamefldr0000",
+  "sort": 100000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!techFlame01000"
+}

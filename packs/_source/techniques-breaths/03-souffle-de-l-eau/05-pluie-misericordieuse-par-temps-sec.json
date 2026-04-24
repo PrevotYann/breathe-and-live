@@ -1,0 +1,95 @@
+{
+  "_id": "tech-water-05-pluie-misericordieuse-par-temps-sec",
+  "name": "Pluie miséricordieuse par temps sec",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/eau.png",
+  "system": {
+    "tags": [
+      "breath",
+      "water",
+      "charge"
+    ],
+    "description": "Un « coup d'épée bienveillant » qui tue la cible sans douleur. Utilisé lorsque l'ennemi se rend.",
+    "sourceSection": "Souffle de l'Eau",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de l'Eau",
+    "breathKey": "water",
+    "breathLabel": "Souffle de l'Eau",
+    "form": 5,
+    "costE": 1,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "3d8 + Finesse",
+    "damageText": "3d8 + Finesse\n\nTemps de charge\n* Nécessite un tour pour se charger\n** Une attaque interrompt la charge",
+    "range": 1.5,
+    "rangeText": "1.5m / CàC",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Temps de charge",
+      "* Nécessite un tour pour se charger",
+      "** Une attaque interrompt la charge"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 1,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 1,
+      "deflect": false
+    }
+  },
+  "folder": "blfwaterfldr0000",
+  "sort": 500000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-water-05-pluie-misericordieuse-par-temps-sec"
+}

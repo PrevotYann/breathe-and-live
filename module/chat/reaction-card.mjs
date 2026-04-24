@@ -54,7 +54,8 @@ export function buildReactionTargetRow({
   damageTotal = 0,
   allowDodge = true,
   allowReactions = true,
-  allowWaterDeflect = true,
+  allowWaterDeflect = false,
+  extraButtonsHtml = "",
   takeDamageLabel = "Prendre les degats",
 }) {
   const targetActor = targetToken?.actor;
@@ -77,6 +78,7 @@ export function buildReactionTargetRow({
         ${canDodge ? `<button class="bl-dodge" data-target-token="${targetToken.id}" data-damage="${damageTotal}">Esquiver (1 RP)</button>` : ""}
         ${canWaterDeflect ? `<button class="bl-deflect" data-target-token="${targetToken.id}" data-damage="${damageTotal}">Devier (1 RP)</button>` : ""}
         ${stance ? `<button class="bl-stance-deflect" data-target-token="${targetToken.id}" data-damage="${damageTotal}">Deflecter (${stance.itemName})</button>` : ""}
+        ${extraButtonsHtml}
         <button class="bl-takedmg" data-target-token="${targetToken.id}" data-damage="${damageTotal}">${takeDamageLabel}</button>
       </div>
       <div class="bl-target-result" style="margin-top:.25rem;"></div>

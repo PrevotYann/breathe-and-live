@@ -1,0 +1,21 @@
+{
+  "name": "Souffle de l'Eau",
+  "sorting": "a",
+  "folder": null,
+  "type": "Item",
+  "_id": "blfwaterfldr0000",
+  "description": "Formes et techniques du Souffle de l'Eau.",
+  "sort": 400000,
+  "color": "#3977b8",
+  "flags": {},
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!folders!blfwaterfldr0000"
+}

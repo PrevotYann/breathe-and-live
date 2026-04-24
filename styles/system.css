@@ -599,6 +599,11 @@
   letter-spacing: 0.06em;
 }
 
+.breathe-and-live .bl .rule-pill small {
+  display: block;
+  color: #6f5a47;
+}
+
 .breathe-and-live .bl .shared-action,
 .breathe-and-live .bl .benchmark-row {
   grid-template-columns: minmax(0, 1fr) auto;

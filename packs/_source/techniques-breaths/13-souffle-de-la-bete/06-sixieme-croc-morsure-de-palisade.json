@@ -1,0 +1,90 @@
+{
+  "_id": "tech-beast-06-sixieme-croc-morsure-de-palisade",
+  "name": "Sixième Croc : Morsure de Palisade",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/bete.png",
+  "system": {
+    "tags": [
+      "breath",
+      "beast"
+    ],
+    "description": "Une décapitation simultanée avec les deux épées des utilisateurs dans les deux directions.",
+    "sourceSection": "Souffle de la Bete",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Bete",
+    "breathKey": "beast",
+    "breathLabel": "Souffle de la Bete",
+    "form": 6,
+    "costE": 9,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d20 + Force",
+    "damageText": "1d20 + Force",
+    "range": 6,
+    "rangeText": "6m",
+    "modifierText": "Force",
+    "attackStat": "force",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfbeastfldr0000",
+  "sort": 600000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-beast-06-sixieme-croc-morsure-de-palisade"
+}

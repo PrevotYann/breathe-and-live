@@ -9,6 +9,12 @@ import {
   noteActorDamageTaken,
 } from "./technique-utils.mjs";
 import {
+  buildPoisonApplicationUpdate,
+  describePoisonState,
+  getEffectiveBaseStats,
+  resolvePoisonRuntime,
+} from "./poison-utils.mjs";
+import {
   buildReactionTargetRow,
   canInteractWithToken,
   consumeDeflectStance,
@@ -308,6 +314,283 @@ export async function queueDemonPendingEffect(actor, effect) {
   await setDemonPendingEffects(actor, effects);
 }
 
+function normalizeActivePoison(state = {}) {
+  return {
+    active: false,
+    itemId: "",
+    itemName: "",
+    weaponId: "",
+    weaponName: "",
+    potency: 1,
+    profile: "generic",
+    damageFormula: "",
+    demonOnly: false,
+    ignoreMoonDemons: false,
+    application: "action",
+    notes: "",
+    appliedRound: 0,
+    ...FU.duplicate(state || {}),
+  };
+}
+
+export function getActivePoisonCoating(actor) {
+  const coating = normalizeActivePoison(FU.getProperty(actor, "system.combat.activePoison"));
+  return coating.active ? coating : null;
+}
+
+export async function clearActivePoisonCoating(actor) {
+  if (!actor) return normalizeActivePoison();
+  const cleared = normalizeActivePoison();
+  await actor.update({ "system.combat.activePoison": cleared });
+  return cleared;
+}
+
+function getPoisonDoseAvailability(item) {
+  if (!item) return { available: 0, path: "", mode: "none", label: "dose" };
+  const usesMax = toNumber(item.system?.uses?.max, 0);
+  const usesValue = toNumber(item.system?.uses?.value, 0);
+  if (usesMax > 0 || usesValue > 0) {
+    return {
+      available: usesValue,
+      path: "system.uses.value",
+      mode: "uses",
+      label: "dose(s)",
+    };
+  }
+
+  return {
+    available: toNumber(item.system?.quantity, 0),
+    path: "system.quantity",
+    mode: "quantity",
+    label: "unite(s)",
+  };
+}
+
+function isPoisonCoatableWeapon(item) {
+  if (!item) return false;
+  return ["weapon", "firearm"].includes(String(item.type || ""));
+}
+
+async function promptPoisonWeapon(actor) {
+  const weapons = Array.from(actor?.items ?? []).filter((item) => isPoisonCoatableWeapon(item));
+  if (!weapons.length) {
+    ui.notifications.warn("Aucune arme valide a enduire de poison.");
+    return null;
+  }
+  if (weapons.length === 1) return weapons[0];
+
+  const options = weapons
+    .map((item) => `<option value="${item.id}">${item.name}</option>`)
+    .join("");
+
+  return new Promise((resolve) => {
+    new Dialog(
+      {
+        title: "Choisir une arme a enduire",
+        content: `
+          <div class="form-group">
+            <label>Arme</label>
+            <select id="bl-poison-weapon">${options}</select>
+          </div>
+        `,
+        buttons: {
+          ok: {
+            label: "Enduire",
+            callback: (html) => resolve(actor.items.get(String(html.find("#bl-poison-weapon").val() || ""))),
+          },
+          cancel: {
+            label: "Annuler",
+            callback: () => resolve(null),
+          },
+        },
+        default: "ok",
+      },
+      { width: 420 }
+    ).render(true);
+  });
+}
+
+async function spendPoisonDose(item) {
+  const availability = getPoisonDoseAvailability(item);
+  if (availability.available <= 0 || !availability.path) {
+    ui.notifications.warn(`${item?.name || "Ce poison"} n'a plus de doses disponibles.`);
+    return false;
+  }
+  await item.update({ [availability.path]: Math.max(0, availability.available - 1) });
+  return true;
+}
+
+function buildPoisonApplicationResult(targetActor, payload = {}) {
+  const current = FU.getProperty(targetActor, "system.conditions.poisoned") || {};
+  const next = buildPoisonApplicationUpdate(current, {
+    addStacks: Math.max(1, toNumber(payload.potency ?? payload.addStacks, 1)),
+    duration: payload.duration,
+    notes: payload.notes,
+    profile: payload.profile,
+    damageFormula: payload.damageFormula,
+    demonOnly: payload.demonOnly,
+    ignoreMoonDemons: payload.ignoreMoonDemons,
+  });
+  const runtime = resolvePoisonRuntime(next, targetActor);
+  const blockedReason = runtime.moonImmune
+    ? "moonImmune"
+    : runtime.blockedByTargetType
+      ? "blockedByTargetType"
+      : "";
+
+  return {
+    next,
+    runtime,
+    blockedReason,
+    summary: describePoisonState(next, targetActor),
+  };
+}
+
+function buildPoisonChatLine(result) {
+  if (!result?.summary) return "Effet de poison applique.";
+  const summary = result.summary;
+  const extra = [summary.effectSummary, summary.restrictionSummary]
+    .filter(Boolean)
+    .join(" ");
+  return `${summary.profileLabel} ${summary.intensity > 0 ? `(niveau ${summary.intensity})` : ""}${extra ? ` - ${extra}` : ""}`.trim();
+}
+
+async function createPoisonStatusChat(actor, summary, intro) {
+  if (!actor || !summary) return null;
+  const details = summary.detailLines?.length
+    ? `<div><small>${summary.detailLines.join(" • ")}</small></div>`
+    : "";
+  const purifyButton = isDemonActor(actor) && summary.runtime?.active
+    ? `<button type="button" class="bl-poison-purify" data-actor-id="${actor.id}">Purification</button>`
+    : "";
+
+  const message = await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `
+      <div class="bl-card" style="display:grid; gap:.35rem;">
+        <div><strong>${actor.name}</strong> - ${intro}</div>
+        <div><small>${summary.profileLabel} • Intensite ${summary.intensity}${summary.duration ? ` • Duree ${summary.duration}` : ""}</small></div>
+        <div>${summary.effectSummary}${summary.restrictionSummary ? ` <small>${summary.restrictionSummary}</small>` : ""}</div>
+        ${details}
+        ${purifyButton}
+      </div>
+    `,
+  });
+
+  if (purifyButton) {
+    Hooks.once("renderChatMessage", (chat, html) => {
+      if (chat.id !== message.id) return;
+      html.find(".bl-poison-purify").on("click", async (event) => {
+        const button = $(event.currentTarget);
+        button.prop("disabled", true);
+        await runDemonPurify(actor);
+      });
+    });
+  }
+
+  return message;
+}
+
+export async function applyPoisonDoseToTarget(
+  sourceActor,
+  targetActor,
+  payload = {},
+  { sourceLabel = "Poison" } = {}
+) {
+  if (!targetActor) return null;
+  const result = buildPoisonApplicationResult(targetActor, payload);
+
+  if (!result.blockedReason) {
+    await targetActor.update({ "system.conditions.poisoned": result.next });
+  }
+
+  const blockedText =
+    result.blockedReason === "moonImmune"
+      ? "Le poison n'affecte pas les demons de rang Lune."
+      : result.blockedReason === "blockedByTargetType"
+        ? "Le poison n'affecte pas cette cible."
+        : "";
+
+  await ChatMessage.create({
+    speaker: actorSpeaker(sourceActor || targetActor),
+    content: `<em>${sourceLabel} sur ${targetActor.name} : ${blockedText || buildPoisonChatLine(result)}.</em>`,
+  });
+
+  return {
+    ...result,
+    applied: !result.blockedReason,
+  };
+}
+
+export async function coatWeaponWithPoison(actor, poisonItem) {
+  if (!actor || !poisonItem || poisonItem.type !== "poison") return null;
+
+  const weapon = await promptPoisonWeapon(actor);
+  if (!weapon) return null;
+
+  const spent = await spendPoisonDose(poisonItem);
+  if (!spent) return null;
+
+  const previous = getActivePoisonCoating(actor);
+  const coating = normalizeActivePoison({
+    active: true,
+    itemId: poisonItem.id,
+    itemName: poisonItem.name,
+    weaponId: weapon.id,
+    weaponName: weapon.name,
+    potency: Math.max(1, toNumber(poisonItem.system?.potency, 1)),
+    profile: String(poisonItem.system?.profile || "generic"),
+    damageFormula: String(poisonItem.system?.damageFormula || ""),
+    demonOnly: !!poisonItem.system?.demonOnly,
+    ignoreMoonDemons: !!poisonItem.system?.ignoreMoonDemons,
+    application: String(poisonItem.system?.application || "action"),
+    notes: String(poisonItem.system?.usageNote || ""),
+    appliedRound: Number(game.combat?.round ?? 0) || 0,
+  });
+  await actor.update({ "system.combat.activePoison": coating });
+
+  const replacedText = previous?.active
+    ? ` La dose precedente sur ${previous.weaponName || "une arme"} est remplacee.`
+    : "";
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} enduit ${weapon.name} avec ${poisonItem.name}.${replacedText}</em>`,
+  });
+  return coating;
+}
+
+export async function applyActivePoisonCoating(
+  attacker,
+  targetActor,
+  { weapon = null, sourceLabel = "Attaque", consume = true } = {}
+) {
+  const coating = getActivePoisonCoating(attacker);
+  if (!coating || !targetActor) return null;
+  if (weapon?.id && coating.weaponId && weapon.id !== coating.weaponId) return null;
+
+  const result = await applyPoisonDoseToTarget(
+    attacker,
+    targetActor,
+    {
+      potency: coating.potency,
+      profile: coating.profile,
+      damageFormula: coating.damageFormula,
+      demonOnly: coating.demonOnly,
+      ignoreMoonDemons: coating.ignoreMoonDemons,
+      notes: coating.notes,
+    },
+    {
+      sourceLabel: `${sourceLabel} - ${coating.itemName}`,
+    }
+  );
+
+  if (consume) {
+    await clearActivePoisonCoating(attacker);
+  }
+
+  return result;
+}
+
 async function applyConditionStacks(actor, key, stacks = 1) {
   if (!actor || !key) return null;
   const existing = FU.getProperty(actor, `system.conditions.${key}`) || {};
@@ -359,7 +642,12 @@ async function applyBasicAttackDamage({
     });
   }
 
-  return { currentHp, nextHp, damage };
+  const poisonResult = await applyActivePoisonCoating(attacker, targetActor, {
+    weapon,
+    sourceLabel: weapon?.name || "Attaque de base",
+  });
+
+  return { currentHp, nextHp, damage, poisonResult };
 }
 
 export async function setConditionState(actor, key, patch = {}) {
@@ -415,7 +703,7 @@ export async function rollBasicAttack(
     return null;
   }
 
-  const base = actor.system?.stats?.base ?? {};
+  const base = getEffectiveBaseStats(actor);
   const derived = actor.system?.stats?.derived ?? {};
   const force = toNumber(base.force);
   const finesse = toNumber(base.finesse);
@@ -516,11 +804,17 @@ export async function rollBasicAttack(
   const modeLine = repeatedAction
     ? `<div>Action repetee : bonus actuel +${repeatedActionDamage}.</div>`
     : "";
+  const activeCoating = getActivePoisonCoating(actor);
+  const poisonNote =
+    activeCoating && (!weapon?.id || !activeCoating.weaponId || activeCoating.weaponId === weapon.id)
+      ? `<div><small>Poison prepare: ${activeCoating.itemName} sur ${activeCoating.weaponName || weapon?.name || "l'arme"}.</small></div>`
+      : "";
   const targetRow = hit
     ? buildReactionTargetRow({
         attackerToken,
         targetToken: target,
         damageTotal: damageRoll?.total ?? 0,
+        allowWaterDeflect: isFirearm || range > METERS_PER_SQUARE,
       })
     : "";
 
@@ -549,6 +843,7 @@ export async function rollBasicAttack(
       <div class="bl-card" style="display:grid; gap:.35rem;">
         <div><strong>${actor.name}</strong> attaque <strong>${target.name}</strong> avec <strong>${weapon?.name || "attaque a mains nues"}</strong>.</div>
         ${modeLine}
+        ${poisonNote}
         <div><small>${autoHit ? `${attackLine} ` : ""}La cible peut reagir avant l'application des degats.</small></div>
         <div><b>Degats potentiels:</b> ${damageRoll.total} <small>(${damageExpr})</small></div>
         ${targetRow}
@@ -589,7 +884,7 @@ export async function rollBasicAttack(
 
       html
         .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
-        .html("<em>Deviation reussie : degats annules.</em>");
+        .html("<em>Deviation reussie : degats annules. Redirection manuelle.</em>");
       disableTargetButtons(token.id);
     });
 
@@ -623,7 +918,7 @@ export async function rollBasicAttack(
       html
         .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
         .html(
-          `<em>${token.actor.name} prend <b>${result.damage}</b> degats (PV ${result.currentHp} -> ${result.nextHp}).</em>`
+          `<em>${token.actor.name} prend <b>${result.damage}</b> degats (PV ${result.currentHp} -> ${result.nextHp}).${result.poisonResult ? ` ${buildPoisonChatLine(result.poisonResult)}.` : ""}</em>`
         );
       disableTargetButtons(token.id);
     });
@@ -794,6 +1089,7 @@ export async function runDemonExecute(actor) {
     damageTotal: hp,
     allowDodge: false,
     allowReactions: true,
+    allowWaterDeflect: false,
     takeDamageLabel: "Executer",
   });
 
@@ -951,7 +1247,11 @@ export async function useMedicalItem(
 ) {
   if (!actor || !item) return null;
 
-  const target = targetActor || actor;
+  const selectedTargetActor =
+    Array.from(game.user.targets ?? [])
+      .map((token) => token?.actor)
+      .find((candidate) => candidate && candidate.id !== actor.id) || null;
+  const target = targetActor || selectedTargetActor || actor;
   if (reaction) {
     const cost = maximize ? 2 : 1;
     const ok = await spendRp(actor, cost, "une reaction medicale");
@@ -980,6 +1280,10 @@ export async function useMedicalItem(
   for (const conditionKey of item.system?.removeConditions ?? []) {
     update[`system.conditions.${conditionKey}.active`] = false;
     update[`system.conditions.${conditionKey}.intensity`] = 0;
+    update[`system.conditions.${conditionKey}.duration`] = 0;
+    if (conditionKey === "poisoned") {
+      update["system.conditions.poisoned.notes"] = "";
+    }
   }
   await target.update(update);
 
@@ -1094,13 +1398,57 @@ async function processConditionTurnStart(actor) {
       });
     }
 
+    if (definition.key === "poisoned") {
+      const runtime = resolvePoisonRuntime(state, actor);
+      const summary = describePoisonState(state, actor);
+      if (!runtime.active) {
+        await actor.update({
+          "system.conditions.poisoned.active": false,
+        });
+        if (Math.max(0, toNumber(state.intensity, 0)) > 0) {
+          await createPoisonStatusChat(actor, summary, "Le poison n'a aucun effet ce tour");
+        }
+      } else if (runtime.turnDamage.kind === "flat") {
+        await applyDirectDamage(
+          actor,
+          Math.max(0, toNumber(runtime.turnDamage.value, 0)),
+          `Poison (${runtime.profile}) affecte ${actor.name} :`
+        );
+        await createPoisonStatusChat(actor, summary, "Le poison agit");
+      } else if (runtime.turnDamage.kind === "formula" && runtime.turnDamage.formula) {
+        const roll = await new Roll(String(runtime.turnDamage.formula)).evaluate({ async: true });
+        await applyDirectDamage(
+          actor,
+          Math.max(0, toNumber(roll.total, 0)),
+          `Poison (${runtime.profile}) affecte ${actor.name} :`
+        );
+        await createPoisonStatusChat(actor, summary, "Le poison agit");
+      } else if (runtime.turnDamage.kind === "percentMax") {
+        const hpMax = toNumber(actor.system?.resources?.hp?.max, 0);
+        const amount = Math.max(0, Math.ceil(hpMax * toNumber(runtime.turnDamage.value, 0)));
+        await applyDirectDamage(
+          actor,
+          amount,
+          `Poison (${runtime.profile}) affecte ${actor.name} :`
+        );
+        await createPoisonStatusChat(actor, summary, "Le poison agit");
+      } else {
+        await createPoisonStatusChat(actor, summary, "Le poison affaiblit la cible");
+      }
+    }
+
     if (toNumber(state.duration, 0) > 0) {
-      await actor.update({
+      const nextDuration = Math.max(0, toNumber(state.duration, 0) - 1);
+      const durationUpdate = {
         [`system.conditions.${definition.key}.duration`]: Math.max(
           0,
           toNumber(state.duration, 0) - 1
         ),
-      });
+      };
+      if (nextDuration === 0 && definition.key === "poisoned" && toNumber(state.intensity, 0) <= 0) {
+        durationUpdate["system.conditions.poisoned.active"] = false;
+      }
+      await actor.update(durationUpdate);
     }
   }
 
@@ -1126,6 +1474,11 @@ export function registerActionHooks() {
 
 export const ActionEngine = {
   registerActionHooks,
+  getActivePoisonCoating,
+  clearActivePoisonCoating,
+  coatWeaponWithPoison,
+  applyPoisonDoseToTarget,
+  applyActivePoisonCoating,
   rollBasicAttack,
   runRecoveryBreath,
   runSprint,

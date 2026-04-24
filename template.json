@@ -217,6 +217,21 @@
         "combat": {
           "damageFlat": 0,
           "movementBonus": 0,
+          "activePoison": {
+            "active": false,
+            "itemId": "",
+            "itemName": "",
+            "weaponId": "",
+            "weaponName": "",
+            "potency": 1,
+            "profile": "generic",
+            "damageFormula": "",
+            "demonOnly": false,
+            "ignoreMoonDemons": false,
+            "application": "action",
+            "notes": "",
+            "appliedRound": 0
+          },
           "actionEconomy": {
             "actionsPerTurn": 1,
             "bonusActions": 0,
@@ -691,6 +706,10 @@
         "commonItem"
       ],
       "potency": 1,
+      "profile": "generic",
+      "damageFormula": "",
+      "demonOnly": false,
+      "ignoreMoonDemons": false,
       "onHitEffects": [],
       "application": "action"
     },

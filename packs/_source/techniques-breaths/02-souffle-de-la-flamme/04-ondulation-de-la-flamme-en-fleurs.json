@@ -1,0 +1,94 @@
+{
+  "_id": "techFlame04000",
+  "name": "Ondulation de la Flamme en Fleurs",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/flamme.png",
+  "system": {
+    "tags": [
+      "breath",
+      "flame",
+      "deflect"
+    ],
+    "description": "L'épéiste fait tournoyer son épée, déviant ainsi les attaques de ses ennemis. Tous les dégâts qui vous sont infligés sont déviés et transmis à la cible de votre choix pendant le round.",
+    "sourceSection": "Souffle de la Flamme",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Flamme",
+    "breathKey": "flame",
+    "breathLabel": "Souffle de la Flamme",
+    "form": 4,
+    "costE": 4,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d12 + Finesse",
+    "damageText": "1d12 + Finesse\n\nDéflecteur / Neutralisateur\n*Annule les dégâts subis",
+    "range": 1.5,
+    "rangeText": "1.5m / CàC",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Déflecteur / Neutralisateur",
+      "*Annule les dégâts subis"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": true,
+      "negateIncomingDamage": true,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": true
+    }
+  },
+  "folder": "blfflamefldr0000",
+  "sort": 400000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!techFlame04000"
+}

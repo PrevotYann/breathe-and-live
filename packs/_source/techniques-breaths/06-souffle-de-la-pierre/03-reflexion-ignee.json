@@ -1,0 +1,94 @@
+{
+  "_id": "tech-stone-03-reflexion-ignee",
+  "name": "Réflexion ignée",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/pierre.png",
+  "system": {
+    "tags": [
+      "breath",
+      "stone",
+      "deflect"
+    ],
+    "description": "Un mouvement défensif qui permet à l'utilisateur de dévier les attaques ennemies avec son arme, renvoyant les attaques vers leur source.",
+    "sourceSection": "Souffle de la Pierre",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Pierre",
+    "breathKey": "stone",
+    "breathLabel": "Souffle de la Pierre",
+    "form": 3,
+    "costE": 6,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d12 + Tête de Hache",
+    "damageText": "1d12 + Tête de Hache\n\nDéflecteur / Neutralisateur\n*Annule les dégâts subis",
+    "range": 9,
+    "rangeText": "9m",
+    "modifierText": "Force / Finesse",
+    "attackStat": "force-or-finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Déflecteur / Neutralisateur",
+      "*Annule les dégâts subis"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": true,
+      "negateIncomingDamage": true,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": true
+    }
+  },
+  "folder": "blfstonefldr0000",
+  "sort": 300000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-stone-03-reflexion-ignee"
+}

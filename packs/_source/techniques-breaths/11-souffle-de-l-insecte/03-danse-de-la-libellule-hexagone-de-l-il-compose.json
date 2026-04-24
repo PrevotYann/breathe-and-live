@@ -1,0 +1,95 @@
+{
+  "_id": "tech-insect-03-danse-de-la-libellule-hexagone-de-l-il-compos",
+  "name": "Danse de la Libellule : Hexagone de l'Œil Composé",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/insecte.png",
+  "system": {
+    "tags": [
+      "breath",
+      "insect",
+      "affliction",
+      "poison"
+    ],
+    "description": "Une attaque basée sur six frappes où l'utilisateur attaque la cible à six endroits différents du corps afin d'injecter du poison mortel à chaque zone, augmentant ainsi les chances que la cible succombe au poison.",
+    "sourceSection": "Souffle de l'Insecte",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de l'Insecte",
+    "breathKey": "insect",
+    "breathLabel": "Souffle de l'Insecte",
+    "form": 3,
+    "costE": 9,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "3d6 + Force",
+    "damageText": "3d6 + Force\n\n3x Affliction\n* Provoque un statut modifié",
+    "range": 3,
+    "rangeText": "3m",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "3x Affliction",
+      "* Provoque un statut modifié"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 3,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfinsectfldr000",
+  "sort": 300000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-insect-03-danse-de-la-libellule-hexagone-de-l-il-compos"
+}

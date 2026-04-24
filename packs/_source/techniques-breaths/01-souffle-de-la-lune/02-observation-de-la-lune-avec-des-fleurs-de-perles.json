@@ -1,0 +1,90 @@
+{
+  "_id": "tech-moon-02-observation-de-la-lune-avec-des-fleurs-de-perle",
+  "name": "Observation de la Lune avec des Fleurs de Perles",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/lune.png",
+  "system": {
+    "tags": [
+      "breath",
+      "moon"
+    ],
+    "description": "L'épéiste dessine la lame dans un large arc de croissant, puis la rengaine d'un seul mouvement, libérant une propagation chaotique de lames en forme de croissant.",
+    "sourceSection": "Souffle de la Lune",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Lune",
+    "breathKey": "moon",
+    "breathLabel": "Souffle de la Lune",
+    "form": 2,
+    "costE": 10,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "3d8 + Finesse",
+    "damageText": "3d8 + Finesse",
+    "range": 3,
+    "rangeText": "3m",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfmoonfldr00000",
+  "sort": 200000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-moon-02-observation-de-la-lune-avec-des-fleurs-de-perle"
+}

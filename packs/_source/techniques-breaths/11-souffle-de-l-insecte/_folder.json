@@ -1,0 +1,21 @@
+{
+  "name": "Souffle de l'Insecte",
+  "sorting": "a",
+  "folder": null,
+  "type": "Item",
+  "_id": "blfinsectfldr000",
+  "description": "Formes et techniques du Souffle de l'Insecte.",
+  "sort": 1200000,
+  "color": "#7573c2",
+  "flags": {},
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!folders!blfinsectfldr000"
+}

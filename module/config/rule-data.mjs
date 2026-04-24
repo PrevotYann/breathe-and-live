@@ -1,11 +1,13 @@
 export const SYSTEM_ID = "breathe-and-live";
+const BREATH_ICON_ROOT = "systems/breathe-and-live/resources/icons/breaths";
 
 export const BREATH_KEYS = [
   {
     key: "sun",
     label: "Souffle du Soleil",
     optionLabel: "sun (Soleil)",
-    img: "icons/magic/fire/projectile-meteor-salvo-light-orange.webp",
+    color: "#d98a1f",
+    img: `${BREATH_ICON_ROOT}/soleil.png`,
     prereq: { sense: "Aucun", stats: "Genie", weapons: "Katana Nichirin" },
     specials: {
       elu: {
@@ -19,7 +21,8 @@ export const BREATH_KEYS = [
     key: "moon",
     label: "Souffle de la Lune",
     optionLabel: "moon (Lune)",
-    img: "systems/breathe-and-live/assets/icons/souffles/lune.png",
+    color: "#6b79b8",
+    img: `${BREATH_ICON_ROOT}/lune.png`,
     prereq: { sense: "Aucun", stats: "Aucun", weapons: "Katana Nichirin" },
     specials: {
       bonusSolo: {
@@ -33,7 +36,8 @@ export const BREATH_KEYS = [
     key: "flame",
     label: "Souffle de la Flamme",
     optionLabel: "flame (Flamme)",
-    img: "systems/breathe-and-live/assets/icons/souffles/flamme.png",
+    color: "#ba4a2f",
+    img: `${BREATH_ICON_ROOT}/flamme.png`,
     prereq: { sense: "Aucun", stats: "Esprit", weapons: "Nichirin Katana" },
     specials: {
       coeurFlamboyant: {
@@ -47,7 +51,8 @@ export const BREATH_KEYS = [
     key: "water",
     label: "Souffle de l'Eau",
     optionLabel: "water (Eau)",
-    img: "icons/skills/water/wave-foam-blue.webp",
+    color: "#3977b8",
+    img: `${BREATH_ICON_ROOT}/eau.png`,
     prereq: { sense: "Aucun", stats: "Aucun", weapons: "Nichirin Katana" },
     specials: {
       devierVagues: {
@@ -61,7 +66,8 @@ export const BREATH_KEYS = [
     key: "wind",
     label: "Souffle du Vent",
     optionLabel: "wind (Vent)",
-    img: "icons/magic/air/wind-swirl-gray-blue.webp",
+    color: "#5d8c72",
+    img: `${BREATH_ICON_ROOT}/vent.png`,
     prereq: { sense: "Aucun", stats: "Aucun", weapons: "Nichirin Katana" },
     specials: {
       ventsDeGuerre: {
@@ -74,7 +80,8 @@ export const BREATH_KEYS = [
     key: "thunder",
     label: "Souffle de la Foudre",
     optionLabel: "thunder (Foudre)",
-    img: "icons/magic/light/projectile-lightning-blue.webp",
+    color: "#c6a437",
+    img: `${BREATH_ICON_ROOT}/foudre.png`,
     prereq: { sense: "Aucun", stats: "Aucun", weapons: "Nichirin Katana" },
     specials: {
       vitesseLumiere: {
@@ -87,7 +94,8 @@ export const BREATH_KEYS = [
     key: "stone",
     label: "Souffle de la Pierre",
     optionLabel: "stone (Pierre)",
-    img: "icons/weapons/hammers/hammer-war-rounding.webp",
+    color: "#766657",
+    img: `${BREATH_ICON_ROOT}/pierre.png`,
     prereq: { sense: "Aucun", stats: "Aucun", weapons: "Nichirin Maul" },
     specials: {
       machoireHache: {
@@ -101,7 +109,8 @@ export const BREATH_KEYS = [
     key: "flower",
     label: "Souffle de la Fleur",
     optionLabel: "flower (Fleur)",
-    img: "icons/consumables/plants/lily-pad-stalk-white.webp",
+    color: "#ba6b93",
+    img: `${BREATH_ICON_ROOT}/fleur.png`,
     prereq: { sense: "Aucun", stats: "Aucun", weapons: "Nichirin Katana" },
     specials: {
       concentrationFlorissante: {
@@ -115,7 +124,8 @@ export const BREATH_KEYS = [
     key: "mist",
     label: "Souffle de la Brume",
     optionLabel: "mist (Brume)",
-    img: "icons/magic/air/fog-gas-smoke-gray.webp",
+    color: "#8793ac",
+    img: `${BREATH_ICON_ROOT}/brume.png`,
     prereq: { sense: "Aucun", stats: "Aucun", weapons: "Nichirin Katana" },
     specials: {
       nuagesTrainants: {
@@ -129,7 +139,8 @@ export const BREATH_KEYS = [
     key: "serpent",
     label: "Souffle du Serpent",
     optionLabel: "serpent (Serpent)",
-    img: "icons/creatures/reptiles/snake-green.webp",
+    color: "#6d8b47",
+    img: `${BREATH_ICON_ROOT}/serpent.png`,
     prereq: { sense: "Aucun", stats: "Aucun", weapons: "Katana torsade Nichirin" },
     specials: {
       formeLibre: {
@@ -143,7 +154,8 @@ export const BREATH_KEYS = [
     key: "sound",
     label: "Souffle du Son",
     optionLabel: "sound (Son)",
-    img: "icons/tools/instruments/megaphone.webp",
+    color: "#8c6d56",
+    img: `${BREATH_ICON_ROOT}/son.png`,
     prereq: {
       sense: "Ouie",
       stats: "Flexibilite",
@@ -161,7 +173,8 @@ export const BREATH_KEYS = [
     key: "insect",
     label: "Souffle de l'Insecte",
     optionLabel: "insect (Insecte)",
-    img: "icons/creatures/invertebrates/butterfly-blue.webp",
+    color: "#7573c2",
+    img: `${BREATH_ICON_ROOT}/insecte.png`,
     prereq: { sense: "Aucun", stats: "Aucun", weapons: "Pointe d'Aiguille Nichirin" },
     specials: {
       ecraserSousLePied: {
@@ -175,7 +188,8 @@ export const BREATH_KEYS = [
     key: "love",
     label: "Souffle de l'Amour",
     optionLabel: "love (Amour)",
-    img: "icons/magic/control/debuff-chains-ropes-red.webp",
+    color: "#cf6d86",
+    img: `${BREATH_ICON_ROOT}/amour.png`,
     prereq: {
       sense: "Aucun",
       stats: "Muscles a 8 plis, Corps flexible",
@@ -193,7 +207,8 @@ export const BREATH_KEYS = [
     key: "beast",
     label: "Souffle de la Bete",
     optionLabel: "beast (Bete)",
-    img: "icons/skills/melee/claws-black.webp",
+    color: "#6f5540",
+    img: `${BREATH_ICON_ROOT}/bete.png`,
     prereq: {
       sense: "Toucher",
       stats: "Corps flexible",
@@ -211,7 +226,8 @@ export const BREATH_KEYS = [
     key: "ocean",
     label: "Souffle de l'Ocean",
     optionLabel: "ocean (Ocean)",
-    img: "icons/magic/water/wave-water-blue.webp",
+    color: "#32879b",
+    img: `${BREATH_ICON_ROOT}/ocean.png`,
     prereq: { sense: "Aucun", stats: "Corps flexible", weapons: "Katana Nichirin" },
     specials: {
       jambesDeLaMer: {
@@ -225,7 +241,8 @@ export const BREATH_KEYS = [
     key: "west",
     label: "Souffle de l'Ouest",
     optionLabel: "west (Ouest)",
-    img: "icons/weapons/guns/gun-pistol-flintlock-metal.webp",
+    color: "#9d613f",
+    img: `${BREATH_ICON_ROOT}/ouest.png`,
     prereq: {
       sense: "Aucun",
       stats: "Corps Fort",
@@ -243,7 +260,8 @@ export const BREATH_KEYS = [
     key: "snow",
     label: "Souffle de la Neige",
     optionLabel: "snow (Neige)",
-    img: "icons/magic/water/barrier-ice-wall-blue.webp",
+    color: "#9ab3d4",
+    img: `${BREATH_ICON_ROOT}/neige.png`,
     prereq: { sense: "Aucun", stats: "Aucun", weapons: "Katana Nichirin" },
     specials: {
       dentsDeKatana: {
@@ -256,7 +274,8 @@ export const BREATH_KEYS = [
     key: "custom",
     label: "Souffle Original",
     optionLabel: "custom (Original)",
-    img: "icons/svg/book.svg",
+    color: "#8a6e52",
+    img: `${BREATH_ICON_ROOT}/original.png`,
     prereq: { sense: "Selon creation", stats: "Selon creation", weapons: "Selon creation" },
     specials: {
       customPassive: {

@@ -1,0 +1,94 @@
+{
+  "_id": "tech-wind-02-griffe-de-vent-purifiante",
+  "name": "Griffe de Vent Purifiante",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/vent.png",
+  "system": {
+    "tags": [
+      "breath",
+      "wind",
+      "aoe"
+    ],
+    "description": "L'épéiste lève l'épée vers le haut, vers la droite, au-dessus de sa tête, et effectue une frappe verticale vers le bas, créant quatre lames de vent qui s'abattent sur l'ennemi comme des griffes.",
+    "sourceSection": "Souffle du Vent",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle du Vent",
+    "breathKey": "wind",
+    "breathLabel": "Souffle du Vent",
+    "form": 2,
+    "costE": 2,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d12 + Force",
+    "damageText": "1d12 + Force\n\nFendre\n*Frappe tous les ennemis à portée",
+    "range": 1.5,
+    "rangeText": "1.5m / CàC",
+    "modifierText": "Force",
+    "attackStat": "force",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Fendre",
+      "*Frappe tous les ennemis à portée"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "allInRange",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": true,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfwindfldr00000",
+  "sort": 200000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-wind-02-griffe-de-vent-purifiante"
+}

@@ -45,6 +45,34 @@
 
         <label>Note d'usage</label>
         <textarea name="system.usageNote" rows="3">{{system.usageNote}}</textarea>
+
+        {{#if isPoison}}
+          <label>Puissance</label>
+          <input type="number" name="system.potency" value="{{system.potency}}" min="1" />
+
+          <label>Profil</label>
+          <select name="system.profile">
+            {{#each poisonProfileOptions as |opt|}}
+              <option value="{{opt.value}}" {{#if (eq ../system.profile opt.value)}}selected{{/if}}>{{opt.label}}</option>
+            {{/each}}
+          </select>
+
+          <label>Formule perso</label>
+          <input type="text" name="system.damageFormula" value="{{system.damageFormula}}" placeholder="Laisser vide pour le profil par defaut" />
+
+          <label>Application</label>
+          <select name="system.application">
+            {{#each poisonApplicationOptions as |opt|}}
+              <option value="{{opt.value}}" {{#if (eq ../system.application opt.value)}}selected{{/if}}>{{opt.label}}</option>
+            {{/each}}
+          </select>
+
+          <label>Cible demon uniquement</label>
+          <input type="checkbox" name="system.demonOnly" data-dtype="Boolean" {{checked system.demonOnly}} />
+
+          <label>Ignore les Lunes</label>
+          <input type="checkbox" name="system.ignoreMoonDemons" data-dtype="Boolean" {{checked system.ignoreMoonDemons}} />
+        {{/if}}
       </div>
     </div>
 

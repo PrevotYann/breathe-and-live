@@ -1,0 +1,94 @@
+{
+  "_id": "tech-flame-07-flamme-purificatrice",
+  "name": "Flamme Purificatrice",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/flamme.png",
+  "system": {
+    "tags": [
+      "breath",
+      "flame",
+      "regeneration"
+    ],
+    "description": "Une position de repos passive pour regagner de l'endurance égale à la quantité de dégâts infligés par l'ennemi au cours du tour précédent.",
+    "sourceSection": "Souffle de la Flamme",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Flamme",
+    "breathKey": "flame",
+    "breathLabel": "Souffle de la Flamme",
+    "form": 7,
+    "costE": 0,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d8 + Force ou Finesse",
+    "damageText": "1d8 + Force ou Finesse\n\nRégénérateur\n*Régénère de l'endurance",
+    "range": 1.5,
+    "rangeText": "1.5m / CàC",
+    "modifierText": "Force / Finesse",
+    "attackStat": "force-or-finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Régénérateur",
+      "*Régénère de l'endurance"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "previousDamageTaken"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfflamefldr0000",
+  "sort": 700000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-flame-07-flamme-purificatrice"
+}

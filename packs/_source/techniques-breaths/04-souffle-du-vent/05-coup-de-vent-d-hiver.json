@@ -1,0 +1,94 @@
+{
+  "_id": "tech-wind-05-coup-de-vent-d-hiver",
+  "name": "Coup de vent d'hiver",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/vent.png",
+  "system": {
+    "tags": [
+      "breath",
+      "wind",
+      "regeneration"
+    ],
+    "description": "L'épéiste frappe d'en haut tout en tombant, aiguise sa concentration et, dans une multitude de coups arqués, atteint la cible.",
+    "sourceSection": "Souffle du Vent",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "Le tableur source indique un cout d'endurance variable selon la version; la fiche conserve ici la valeur minimale extraite.",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle du Vent",
+    "breathKey": "wind",
+    "breathLabel": "Souffle du Vent",
+    "form": 5,
+    "costE": 0,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d6 + Finesse",
+    "damageText": "1d6 + Finesse\n\nRégénérateur\n*Régénère l'endurance",
+    "range": 1.5,
+    "rangeText": "1.5m / CàC",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Régénérateur",
+      "*Régénère l'endurance"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "damageDealt"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfwindfldr00000",
+  "sort": 500000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-wind-05-coup-de-vent-d-hiver"
+}

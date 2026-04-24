@@ -1,0 +1,21 @@
+{
+  "name": "Souffle du Soleil",
+  "sorting": "a",
+  "folder": null,
+  "type": "Item",
+  "_id": "blfsunfldr000000",
+  "description": "Formes et techniques du Souffle du Soleil.",
+  "sort": 100000,
+  "color": "#d98a1f",
+  "flags": {},
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!folders!blfsunfldr000000"
+}

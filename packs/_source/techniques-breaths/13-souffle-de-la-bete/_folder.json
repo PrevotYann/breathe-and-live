@@ -1,0 +1,21 @@
+{
+  "name": "Souffle de la Bete",
+  "sorting": "a",
+  "folder": null,
+  "type": "Item",
+  "_id": "blfbeastfldr0000",
+  "description": "Formes et techniques du Souffle de la Bete.",
+  "sort": 1400000,
+  "color": "#6f5540",
+  "flags": {},
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!folders!blfbeastfldr0000"
+}

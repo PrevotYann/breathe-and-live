@@ -1,0 +1,95 @@
+{
+  "_id": "tech-mist-03-explosion-de-desembuage",
+  "name": "Explosion de désembuage",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/brume.png",
+  "system": {
+    "tags": [
+      "breath",
+      "mist",
+      "deflect"
+    ],
+    "description": "Une seule entaille circulaire pouvant infliger des dégâts ou repousser des attaques. L'épéiste doit choisir l'effet qu'il souhaite utiliser lors de ce coup.",
+    "sourceSection": "Souffle de la Brume",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Brume",
+    "breathKey": "mist",
+    "breathLabel": "Souffle de la Brume",
+    "form": 3,
+    "costE": 1,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "2d8 + Force",
+    "damageText": "2d8 + Force \n\nOU\n\nDéflecteur / Neutralisateur\n*Annule les dégâts subis",
+    "range": 1.5,
+    "rangeText": "1.5m / CàC",
+    "modifierText": "Force",
+    "attackStat": "force",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "OU",
+      "Déflecteur / Neutralisateur",
+      "*Annule les dégâts subis"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "deflect",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": true,
+      "negateIncomingDamage": true,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": true
+    }
+  },
+  "folder": "blfmistfldr00000",
+  "sort": 300000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-mist-03-explosion-de-desembuage"
+}

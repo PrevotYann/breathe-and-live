@@ -1,0 +1,21 @@
+{
+  "name": "Souffle de la Pierre",
+  "sorting": "a",
+  "folder": null,
+  "type": "Item",
+  "_id": "blfstonefldr0000",
+  "description": "Formes et techniques du Souffle de la Pierre.",
+  "sort": 700000,
+  "color": "#766657",
+  "flags": {},
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!folders!blfstonefldr0000"
+}

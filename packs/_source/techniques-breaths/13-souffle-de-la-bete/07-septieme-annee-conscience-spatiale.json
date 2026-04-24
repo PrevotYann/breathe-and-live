@@ -1,0 +1,92 @@
+{
+  "_id": "tech-beast-07-septieme-annee-conscience-spatiale",
+  "name": "Septième année : Conscience spatiale",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/bete.png",
+  "system": {
+    "tags": [
+      "breath",
+      "beast"
+    ],
+    "description": "L'utilisateur peut identifier la position des ennemis en ressentant de petites perturbations dans l'air.",
+    "sourceSection": "Souffle de la Bete",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Bete",
+    "breathKey": "beast",
+    "breathLabel": "Souffle de la Bete",
+    "form": 7,
+    "costE": 1,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d8",
+    "damageText": "Prolonge ou confère la capacité de toucher extrasensoriel à une distance de 9m.",
+    "range": 9,
+    "rangeText": "9m",
+    "modifierText": "X",
+    "attackStat": "",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Prolonge ou confère la capacité de toucher extrasensoriel à une distance de 9m."
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfbeastfldr0000",
+  "sort": 700000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-beast-07-septieme-annee-conscience-spatiale"
+}

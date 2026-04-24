@@ -28,6 +28,9 @@ import {
   validateTechniqueOwnership,
 } from "../rules/technique-utils.mjs";
 import {
+  clearActivePoisonCoating,
+  coatWeaponWithPoison,
+  getActivePoisonCoating,
   gainDemonFleshBdp,
   rollBasicAttack,
   runDemonSharedAction,
@@ -37,6 +40,10 @@ import {
   runWait,
   useMedicalItem,
 } from "../rules/action-engine.mjs";
+import {
+  describePoisonState,
+  getPoisonProfileLabel,
+} from "../rules/poison-utils.mjs";
 
 const BASE_STAT_OPTIONS = [
   { key: "force", label: "Force" },
@@ -185,6 +192,36 @@ function mapBreathSpecialEntries(breathKey, specials = {}) {
     }
 
   return entries;
+}
+
+function getItemChargeLabel(item) {
+  const usesMax = Number(item?.system?.uses?.max || 0) || 0;
+  const usesValue = Number(item?.system?.uses?.value || 0) || 0;
+  if (usesMax > 0 || usesValue > 0) {
+    return `${usesValue}/${usesMax || "?"} dose(s)`;
+  }
+  return `${Number(item?.system?.quantity || 0) || 0} dose(s)`;
+}
+
+function buildActivePoisonSummary(actor) {
+  const coating = getActivePoisonCoating(actor);
+  if (!coating) {
+    return {
+      active: false,
+      title: "Aucun poison actif",
+      lines: ["Aucune arme n'est actuellement enduite."],
+    };
+  }
+
+  return {
+    active: true,
+    title: coating.itemName || "Poison actif",
+    lines: [
+      `Arme: ${coating.weaponName || "non precisee"}`,
+      `Profil: ${getPoisonProfileLabel(coating.profile)}`,
+      `Puissance: ${Number(coating.potency || 1) || 1}`,
+    ].filter(Boolean),
+  };
 }
 
 export class BLSlayerSheet extends ActorSheet {
@@ -336,6 +373,21 @@ export class BLSlayerSheet extends ActorSheet {
       },
       combat: {
         damageFlat: 0,
+        activePoison: {
+          active: false,
+          itemId: "",
+          itemName: "",
+          weaponId: "",
+          weaponName: "",
+          potency: 1,
+          profile: "generic",
+          damageFormula: "",
+          demonOnly: false,
+          ignoreMoonDemons: false,
+          application: "action",
+          notes: "",
+          appliedRound: 0,
+        },
         actionEconomy: {
           actionsPerTurn: 1,
           bonusActions: 0,
@@ -481,13 +533,24 @@ export class BLSlayerSheet extends ActorSheet {
       });
     data.itemsBreaths = allItems.filter((i) => i.type === "breath");
     data.itemsWeapons = allItems.filter((i) => ["weapon", "firearm"].includes(i.type));
+    data.itemsPoisons = allItems
+      .filter((i) => i.type === "poison")
+      .map((item) => ({
+        id: item.id,
+        name: item.name,
+        type: item.type,
+        img: item.img,
+        system: item.system,
+        blChargeLabel: getItemChargeLabel(item),
+        blProfileLabel: getPoisonProfileLabel(item.system?.profile),
+      }));
     data.itemsMedical = allItems.filter((i) => ["medical", "consumable", "food"].includes(i.type));
     data.itemsInventory = allItems.filter(
       (i) =>
-        !["technique", "subclassTechnique", "bda", "demonAbility", "breath"].includes(i.type)
+        !["technique", "subclassTechnique", "bda", "demonAbility", "breath", "poison"].includes(i.type)
     );
     data.itemsOtherInventory = data.itemsInventory.filter(
-      (i) => !["weapon", "firearm", "medical", "consumable", "food"].includes(i.type)
+      (i) => !["weapon", "firearm", "medical", "consumable", "food", "poison"].includes(i.type)
     );
 
     data.derived = {
@@ -559,6 +622,11 @@ export class BLSlayerSheet extends ActorSheet {
       { label: "Social", value: data.demonRankBenchmark?.social ?? 0 },
     ];
     data.demonQuickAttacks = buildDemonQuickAttackEntries(this.actor, allItems, data.demonRankBenchmark);
+    data.activePoisonSummary = buildActivePoisonSummary(this.actor);
+    data.poisonStateSummary = describePoisonState(
+      data.system.conditions?.poisoned || {},
+      this.actor
+    );
     data.conditionEntries = CONDITION_DEFINITIONS.map((entry) => ({
       ...entry,
       state: data.system.conditions?.[entry.key] || {
@@ -1145,6 +1213,22 @@ export class BLSlayerSheet extends ActorSheet {
       const item = li ? this.actor.items.get(li.dataset.itemId) : null;
       if (!item) return;
       await useMedicalItem(this.actor, item, { reaction: false });
+      this.render(false);
+    });
+
+    html.on("click", ".bl-apply-poison", async (event) => {
+      event.preventDefault();
+      const li = event.currentTarget.closest(".item");
+      const item = li ? this.actor.items.get(li.dataset.itemId) : null;
+      if (!item) return;
+      await coatWeaponWithPoison(this.actor, item);
+      this.render(false);
+    });
+
+    html.on("click", ".bl-clear-poison", async (event) => {
+      event.preventDefault();
+      await clearActivePoisonCoating(this.actor);
+      this.render(false);
     });
 
     html.find(".bl-action-basic-attack").on("click", async (event) => {

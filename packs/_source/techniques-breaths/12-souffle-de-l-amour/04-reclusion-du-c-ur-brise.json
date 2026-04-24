@@ -1,0 +1,94 @@
+{
+  "_id": "tech-love-04-reclusion-du-c-ur-brise",
+  "name": "Réclusion du Cœur Brisé",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/amour.png",
+  "system": {
+    "tags": [
+      "breath",
+      "love",
+      "deflect"
+    ],
+    "description": "Le bretteur fait tourner son épée-fouet en cercle, déviant toutes les attaques entrantes et infligeant des dégâts en zone à toutes les cibles.",
+    "sourceSection": "Souffle de l'Amour",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de l'Amour",
+    "breathKey": "love",
+    "breathLabel": "Souffle de l'Amour",
+    "form": 4,
+    "costE": 6,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d12 + Finesse",
+    "damageText": "1d12 + Finesse\n\nDéflecteur / Neutralisateur\n*Annule les dégâts subis",
+    "range": 9,
+    "rangeText": "9m",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Déflecteur / Neutralisateur",
+      "*Annule les dégâts subis"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": true,
+      "negateIncomingDamage": true,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": true
+    }
+  },
+  "folder": "blflovefldr00000",
+  "sort": 400000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-love-04-reclusion-du-c-ur-brise"
+}

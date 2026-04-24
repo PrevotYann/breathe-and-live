@@ -1,0 +1,95 @@
+{
+  "_id": "tech-thunder-06-pluie-d-eclairs-electriques",
+  "name": "Pluie d'éclairs électriques",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/foudre.png",
+  "system": {
+    "tags": [
+      "breath",
+      "thunder",
+      "charge"
+    ],
+    "description": "Une série d'attaques puissantes comme des éclairs fourchus.",
+    "sourceSection": "Souffle de la Foudre",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Foudre",
+    "breathKey": "thunder",
+    "breathLabel": "Souffle de la Foudre",
+    "form": 6,
+    "costE": 10,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "2d20 + Finesse",
+    "damageText": "2d20 + Finesse\n\nTemps de charge\n* Nécessite un tour pour se charger\n** Une attaque interrompt la charge",
+    "range": 4.5,
+    "rangeText": "4.5m",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Temps de charge",
+      "* Nécessite un tour pour se charger",
+      "** Une attaque interrompt la charge"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 1,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 1,
+      "deflect": false
+    }
+  },
+  "folder": "blfthunderfldr00",
+  "sort": 600000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-thunder-06-pluie-d-eclairs-electriques"
+}

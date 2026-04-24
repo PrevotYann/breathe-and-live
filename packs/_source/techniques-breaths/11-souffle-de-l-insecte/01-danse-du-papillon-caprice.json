@@ -1,0 +1,95 @@
+{
+  "_id": "techInsect0001",
+  "name": "Danse du Papillon : Caprice",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/insecte.png",
+  "system": {
+    "tags": [
+      "breath",
+      "insect",
+      "affliction",
+      "poison"
+    ],
+    "description": "L'épéiste saute en avant vers l'adversaire, le piquant plusieurs fois avec la lame pour injecter du poison.",
+    "sourceSection": "Souffle de l'Insecte",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de l'Insecte",
+    "breathKey": "insect",
+    "breathLabel": "Souffle de l'Insecte",
+    "form": 1,
+    "costE": 5,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d8 + Finesse",
+    "damageText": "1d8 + Finesse\n\nAffliction\n* Provoque un statut modifié",
+    "range": 4.5,
+    "rangeText": "4.5m",
+    "modifierText": "Force",
+    "attackStat": "force",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Affliction",
+      "* Provoque un statut modifié"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 1,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfinsectfldr000",
+  "sort": 100000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!techInsect0001"
+}

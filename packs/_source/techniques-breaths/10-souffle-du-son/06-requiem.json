@@ -1,0 +1,94 @@
+{
+  "_id": "tech-sound-06-requiem",
+  "name": "Requiem",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/son.png",
+  "system": {
+    "tags": [
+      "breath",
+      "sound",
+      "aoe"
+    ],
+    "description": "Les lames du Tueur se déplacent avec solennité et mesure, tranchant tout dans un rayon de 4,5 mètres autour de lui. Chaque coup est lourd de sens, produisant des échos lugubres qui résonnent sur le champ de bataille. Les mouvements du Tueur sont gracieux et puissants, car il canalise son chagrin et sa détermination dans ses attaques.",
+    "sourceSection": "Souffle du Son",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle du Son",
+    "breathKey": "sound",
+    "breathLabel": "Souffle du Son",
+    "form": 6,
+    "costE": 17,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "3d8 + Finesse",
+    "damageText": "3d8 + Finesse\n\nFendre\n*Frappe tous les ennemis à portée",
+    "range": 9,
+    "rangeText": "9m",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Fendre",
+      "*Frappe tous les ennemis à portée"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "allInRange",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": true,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfsoundfldr0000",
+  "sort": 600000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-sound-06-requiem"
+}

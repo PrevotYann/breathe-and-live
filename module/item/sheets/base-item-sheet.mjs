@@ -1,3 +1,8 @@
+import {
+  POISON_APPLICATION_OPTIONS,
+  POISON_PROFILE_OPTIONS,
+} from "../../rules/poison-utils.mjs";
+
 export class BLBaseItemSheet extends ItemSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -25,6 +30,9 @@ export class BLBaseItemSheet extends ItemSheet {
     const sys = this.item.system ?? {};
     data.system = sys;
     data.join = (arr, sep = ", ") => (Array.isArray(arr) ? arr.join(sep) : "");
+    data.isPoison = this.item.type === "poison";
+    data.poisonProfileOptions = POISON_PROFILE_OPTIONS;
+    data.poisonApplicationOptions = POISON_APPLICATION_OPTIONS;
     return data;
   }
 

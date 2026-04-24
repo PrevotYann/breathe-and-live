@@ -1,0 +1,21 @@
+{
+  "name": "Souffle du Son",
+  "sorting": "a",
+  "folder": null,
+  "type": "Item",
+  "_id": "blfsoundfldr0000",
+  "description": "Formes et techniques du Souffle du Son.",
+  "sort": 1100000,
+  "color": "#8c6d56",
+  "flags": {},
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!folders!blfsoundfldr0000"
+}

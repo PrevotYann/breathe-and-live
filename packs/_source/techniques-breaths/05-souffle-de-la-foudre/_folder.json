@@ -1,0 +1,21 @@
+{
+  "name": "Souffle de la Foudre",
+  "sorting": "a",
+  "folder": null,
+  "type": "Item",
+  "_id": "blfthunderfldr00",
+  "description": "Formes et techniques du Souffle de la Foudre.",
+  "sort": 600000,
+  "color": "#c6a437",
+  "flags": {},
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!folders!blfthunderfldr00"
+}

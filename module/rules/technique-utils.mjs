@@ -1,4 +1,5 @@
 import { BREATH_KEYS, SYSTEM_ID } from "../config/rule-data.mjs";
+import { getEffectiveBaseStats } from "./poison-utils.mjs";
 
 const FU = foundry.utils;
 
@@ -339,9 +340,10 @@ function statTokenMap(actor, context = {}) {
   const baseMap = baseStatLabelMap();
   const derivedMap = derivedLabelMap();
   const tokens = {};
+  const effectiveBase = getEffectiveBaseStats(actor);
 
   for (const [key, label] of Object.entries(baseMap)) {
-    tokens[normalizeText(key)] = Number(FU.getProperty(actor, `system.stats.base.${key}`) ?? 0) || 0;
+    tokens[normalizeText(key)] = Number(effectiveBase[key] ?? FU.getProperty(actor, `system.stats.base.${key}`) ?? 0) || 0;
     tokens[normalizeText(label)] = tokens[normalizeText(key)];
   }
 

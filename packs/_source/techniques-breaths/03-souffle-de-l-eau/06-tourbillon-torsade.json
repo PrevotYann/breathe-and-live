@@ -1,0 +1,94 @@
+{
+  "_id": "tech-water-06-tourbillon-torsade",
+  "name": "Tourbillon torsadé",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/eau.png",
+  "system": {
+    "tags": [
+      "breath",
+      "water",
+      "aoe"
+    ],
+    "description": "L'épéiste tord violemment le haut et le bas de son corps, créant un tourbillon qui coupe tout ce qui s'y trouve. Touche toutes les cibles dans la zone d'effet, alliés compris.",
+    "sourceSection": "Souffle de l'Eau",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de l'Eau",
+    "breathKey": "water",
+    "breathLabel": "Souffle de l'Eau",
+    "form": 6,
+    "costE": 6,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d20 + Force",
+    "damageText": "1d20 + Force\n\nFendre\n*Frappe tous les ennemis à portée",
+    "range": 1.5,
+    "rangeText": "1.5m / CàC",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Fendre",
+      "*Frappe tous les ennemis à portée"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "allInRange",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": true,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfwaterfldr0000",
+  "sort": 600000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-water-06-tourbillon-torsade"
+}

@@ -1,0 +1,94 @@
+{
+  "_id": "tech-love-06-vents-d-amour-a-pattes-de-chat",
+  "name": "Vents d'Amour à Pattes de Chat",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/amour.png",
+  "system": {
+    "tags": [
+      "breath",
+      "love",
+      "deflect"
+    ],
+    "description": "Le bretteur tourne la tête en bas et crée une fente hélicoïdale avec son épée, déviant les attaques entrantes.",
+    "sourceSection": "Souffle de l'Amour",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de l'Amour",
+    "breathKey": "love",
+    "breathLabel": "Souffle de l'Amour",
+    "form": 6,
+    "costE": 7,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "2d8 + Finesse",
+    "damageText": "2d8 + Finesse\n\nDéflecteur / Neutralisateur\n*Annule les dégâts subis",
+    "range": 9,
+    "rangeText": "9m",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Déflecteur / Neutralisateur",
+      "*Annule les dégâts subis"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": true,
+      "negateIncomingDamage": true,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": true
+    }
+  },
+  "folder": "blflovefldr00000",
+  "sort": 600000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-love-06-vents-d-amour-a-pattes-de-chat"
+}

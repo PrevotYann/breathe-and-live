@@ -1,0 +1,21 @@
+{
+  "name": "Souffle de la Neige",
+  "sorting": "a",
+  "folder": null,
+  "type": "Item",
+  "_id": "blfsnowfldr00000",
+  "description": "Formes et techniques du Souffle de la Neige.",
+  "sort": 1700000,
+  "color": "#9ab3d4",
+  "flags": {},
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!folders!blfsnowfldr00000"
+}

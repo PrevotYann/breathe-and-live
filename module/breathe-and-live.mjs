@@ -29,6 +29,14 @@ import { useTechnique } from "./chat/use-technique.mjs";
 import { registerEffectHooks } from "./rules/effects-engine.mjs";
 import { normalizeTechniqueItemData, validateTechniqueOwnership } from "./rules/technique-utils.mjs";
 import {
+  ensurePoisonStateDefaults,
+  getEffectiveBaseStats,
+  resolvePoisonRuntime,
+} from "./rules/poison-utils.mjs";
+import {
+  clearActivePoisonCoating,
+  coatWeaponWithPoison,
+  getActivePoisonCoating,
   registerActionHooks,
   rollBasicAttack,
   runRecoveryBreath,
@@ -110,6 +118,95 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
+function normalizeIndexName(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function getIndexEntries(index) {
+  if (!index) return [];
+  if (typeof index.values === "function") return Array.from(index.values());
+  if (Array.isArray(index)) return index;
+  return [];
+}
+
+function getIndexEntryId(entry) {
+  return entry?._id ?? entry?.id ?? null;
+}
+
+function deleteIndexEntry(index, id) {
+  if (!index) return;
+  if (typeof index.delete === "function") {
+    index.delete(id);
+    return;
+  }
+  if (Array.isArray(index)) {
+    const idx = index.findIndex((entry) => getIndexEntryId(entry) === id);
+    if (idx >= 0) index.splice(idx, 1);
+  }
+}
+
+async function sanitizeCompendiumIndex(pack) {
+  if (!pack || pack.metadata?.packageType !== "system" || pack.metadata?.packageName !== SYSTEM_ID) return;
+
+  const index = await pack.getIndex();
+  const entries = getIndexEntries(index);
+  if (!entries.length) return;
+
+  const keepByName = new Map();
+  const removeIds = new Set();
+
+  for (const entry of entries) {
+    const id = getIndexEntryId(entry);
+    const key = `${String(entry?.type || pack.documentName || "")}::${normalizeIndexName(entry?.name)}`;
+    const score = (id ? 100 : 0) + (entry?.img ? 10 : 0) + (entry?.folder ? 1 : 0);
+    const current = keepByName.get(key);
+
+    if (!id) {
+      removeIds.add(id);
+      continue;
+    }
+
+    if (!current || score > current.score) {
+      if (current?.id && current.id !== id) removeIds.add(current.id);
+      keepByName.set(key, { id, score });
+      continue;
+    }
+
+    removeIds.add(id);
+  }
+
+  for (const id of removeIds) {
+    deleteIndexEntry(pack.index, id);
+    deleteIndexEntry(index, id);
+  }
+
+  if (removeIds.size) {
+    console.warn(
+      `Breathe & Live | Removed ${removeIds.size} stale duplicate compendium index entr${removeIds.size > 1 ? "ies" : "y"} from ${pack.collection}.`
+    );
+    for (const app of Object.values(pack.apps || {})) {
+      app.render?.(false);
+    }
+  }
+}
+
+async function sanitizeSystemCompendiumIndices() {
+  const packs = Array.from(game.packs || []).filter(
+    (pack) => pack.metadata?.packageType === "system" && pack.metadata?.packageName === SYSTEM_ID
+  );
+  for (const pack of packs) {
+    try {
+      await sanitizeCompendiumIndex(pack);
+    } catch (error) {
+      console.warn(`Breathe & Live | Failed to sanitize compendium index for ${pack.collection}.`, error);
+    }
+  }
+}
+
 function buildStatusEffects() {
   const existing = Array.isArray(CONFIG.statusEffects) ? CONFIG.statusEffects : [];
   const mapped = CONDITION_DEFINITIONS.map((definition) => ({
@@ -128,12 +225,19 @@ function buildStatusEffects() {
 function ensureConditionData(sys) {
   sys.conditions ??= {};
   for (const definition of CONDITION_DEFINITIONS) {
-    sys.conditions[definition.key] ??= {
+    const baseState = {
       active: false,
       intensity: definition.trackIntensity ? 1 : 0,
       duration: 0,
       notes: "",
     };
+    sys.conditions[definition.key] ??= baseState;
+    if (definition.key === "poisoned") {
+      sys.conditions[definition.key] = ensurePoisonStateDefaults({
+        ...baseState,
+        ...sys.conditions[definition.key],
+      });
+    }
   }
 }
 
@@ -288,6 +392,7 @@ class BLActor extends Actor {
     sys.supplement1934 ??= {};
     sys.combat ??= {};
     sys.combat.basicAttack ??= {};
+    sys.combat.activePoison ??= {};
     sys.combat.actionEconomy ??= {};
     sys.combat.reactions ??= {};
     sys.combat.injuries ??= {};
@@ -353,7 +458,7 @@ class BLActor extends Actor {
     }
     sys.demonology.benchmark ??= {};
 
-    const base = {
+    const rawBase = {
       force: toNumber(sys.stats.base.force, 0),
       finesse: toNumber(sys.stats.base.finesse, 0),
       courage: toNumber(sys.stats.base.courage, 0),
@@ -361,11 +466,38 @@ class BLActor extends Actor {
       social: toNumber(sys.stats.base.social, 0),
       intellect: toNumber(sys.stats.base.intellect, 0),
     };
+    const poisonRuntime = resolvePoisonRuntime(sys.conditions?.poisoned, this);
+    const effectiveBase = {
+      force: Math.max(0, rawBase.force - toNumber(poisonRuntime.statPenalty.force, 0)),
+      finesse: Math.max(0, rawBase.finesse - toNumber(poisonRuntime.statPenalty.finesse, 0)),
+      courage: Math.max(0, rawBase.courage - toNumber(poisonRuntime.statPenalty.courage, 0)),
+      vitesse: Math.max(0, rawBase.vitesse - toNumber(poisonRuntime.statPenalty.vitesse, 0)),
+      social: Math.max(0, rawBase.social - toNumber(poisonRuntime.statPenalty.social, 0)),
+      intellect: Math.max(0, rawBase.intellect - toNumber(poisonRuntime.statPenalty.intellect, 0)),
+    };
+    sys.stats.effectiveBase = effectiveBase;
+    sys.conditions.poisoned.runtime = poisonRuntime;
 
     sys.combat.damageFlat = toNumber(sys.combat.damageFlat, 0);
+    sys.combat.activePoison = {
+      active: false,
+      itemId: "",
+      itemName: "",
+      weaponId: "",
+      weaponName: "",
+      potency: 1,
+      profile: "generic",
+      damageFormula: "",
+      demonOnly: false,
+      ignoreMoonDemons: false,
+      application: "action",
+      notes: "",
+      appliedRound: 0,
+      ...sys.combat.activePoison,
+    };
     sys.combat.actionEconomy.actionsPerTurn = Math.max(
       1,
-      1 + Math.floor(base.vitesse / 5)
+      1 + Math.floor(effectiveBase.vitesse / 5)
     );
     sys.combat.actionEconomy.bonusActions = toNumber(
       sys.combat.actionEconomy.bonusActions,
@@ -380,10 +512,10 @@ class BLActor extends Actor {
       toNumber(sys.combat.actionEconomy.recoveryBreathRounds, 2)
     );
 
-    sys.resources.ca = 10 + base.vitesse;
+    sys.resources.ca = 10 + effectiveBase.vitesse;
     sys.resources.rp.max = Math.max(
       0,
-      5 + base.vitesse + base.intellect + toNumber(sys.progression.bonuses.reactions, 0)
+      5 + effectiveBase.vitesse + effectiveBase.intellect + toNumber(sys.progression.bonuses.reactions, 0)
     );
     sys.resources.rp.value = clamp(toNumber(sys.resources.rp.value, sys.resources.rp.max), 0, sys.resources.rp.max);
 
@@ -394,19 +526,19 @@ class BLActor extends Actor {
         toNumber(sys.resources.hp.base, sys.demonology.baseHpChoice || sys.resources.hp.max || 20)
       );
       sys.resources.hp.base = hpBase;
-      sys.resources.hp.max = hpBase + 5 * base.force;
+      sys.resources.hp.max = hpBase + 5 * effectiveBase.force;
       sys.resources.hp.healableMax = sys.resources.hp.max;
       sys.resources.hp.value = clamp(
         toNumber(sys.resources.hp.value, sys.resources.hp.max),
         0,
         sys.resources.hp.max
       );
-      sys.resources.bdp.max = Math.max(0, 10 * base.courage);
+      sys.resources.bdp.max = Math.max(0, 10 * effectiveBase.courage);
       sys.resources.bdp.value = clamp(toNumber(sys.resources.bdp.value, 0), 0, sys.resources.bdp.max);
       sys.resources.demonisation = Math.max(0, toNumber(sys.resources.demonisation, 0));
       sys.resources.rp.max = Math.max(
         0,
-        Math.floor((5 + base.vitesse + base.intellect) / 2)
+        Math.floor((5 + effectiveBase.vitesse + effectiveBase.intellect) / 2)
       );
       sys.resources.rp.value = clamp(
         toNumber(sys.resources.rp.value, sys.resources.rp.max),
@@ -448,7 +580,7 @@ class BLActor extends Actor {
     } else {
       sys.resources.e.max = Math.max(
         0,
-        20 + base.courage + toNumber(sys.progression.bonuses.endurance, 0)
+        20 + effectiveBase.courage + toNumber(sys.progression.bonuses.endurance, 0)
       );
       sys.resources.e.value = clamp(toNumber(sys.resources.e.value, sys.resources.e.max), 0, sys.resources.e.max);
       sys.resources.hp.max = Math.max(1, toNumber(sys.resources.hp.max, 20));
@@ -467,10 +599,10 @@ class BLActor extends Actor {
       );
 
       if (this.type === "demonist") {
-        sys.resources.bdp.max = Math.max(0, 10 * base.courage);
+        sys.resources.bdp.max = Math.max(0, 10 * effectiveBase.courage);
         sys.resources.bdp.value = clamp(toNumber(sys.resources.bdp.value, 0), 0, sys.resources.bdp.max);
         sys.resources.demonisation = Math.max(0, Math.floor(toNumber(sys.resources.demonisation, 0)));
-        sys.resources.demonisationMax = 10 + base.courage;
+        sys.resources.demonisationMax = 10 + effectiveBase.courage;
 
         if (sys.support.activeDemonistMedicine) {
           sys.resources.demonisationMax = Math.max(
@@ -513,12 +645,17 @@ Hooks.once("setup", () => {
   CONFIG.Actor.documentClass = BLActor;
 });
 
-Hooks.once("ready", () => {
+Hooks.once("ready", async () => {
+  await sanitizeSystemCompendiumIndices();
+
   const api = {
     useTechnique,
     normalizeTechniqueItemData,
     validateTechniqueOwnership,
     rollBaseCheck,
+    getActivePoisonCoating,
+    clearActivePoisonCoating,
+    coatWeaponWithPoison,
     rollBasicAttack,
     runRecoveryBreath,
     runSprint,
@@ -541,7 +678,7 @@ Hooks.once("ready", () => {
 });
 
 export async function rollBaseCheck(actor, statKey, label = "") {
-  const b = actor.system?.stats?.base ?? {};
+  const b = getEffectiveBaseStats(actor);
   const mod = toNumber(b[statKey], 0) - 1;
   const r = await new Roll(`1d20 + ${mod}`).roll({ async: true });
   return r.toMessage({

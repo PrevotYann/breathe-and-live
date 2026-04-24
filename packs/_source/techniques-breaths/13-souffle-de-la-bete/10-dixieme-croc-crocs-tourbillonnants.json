@@ -1,0 +1,94 @@
+{
+  "_id": "tech-beast-10-dixieme-croc-crocs-tourbillonnants",
+  "name": "Dixième Croc : Crocs tourbillonnants",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/bete.png",
+  "system": {
+    "tags": [
+      "breath",
+      "beast",
+      "deflect"
+    ],
+    "description": "L'utilisateur fait tourner ses épées dans un mouvement circulaire, déviant les attaques ennemies.",
+    "sourceSection": "Souffle de la Bete",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Bete",
+    "breathKey": "beast",
+    "breathLabel": "Souffle de la Bete",
+    "form": 10,
+    "costE": 5,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "2d8 + Force / Finesse",
+    "damageText": "2d8 + Force / Finesse\n\nDéflecteur / Neutralisateur\n*Annule les dégâts subis",
+    "range": 9,
+    "rangeText": "9m",
+    "modifierText": "Force / Finesse",
+    "attackStat": "force-or-finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Déflecteur / Neutralisateur",
+      "*Annule les dégâts subis"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": true,
+      "negateIncomingDamage": true,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": true
+    }
+  },
+  "folder": "blfbeastfldr0000",
+  "sort": 1000000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-beast-10-dixieme-croc-crocs-tourbillonnants"
+}

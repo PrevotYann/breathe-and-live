@@ -1,7 +1,7 @@
 {
   "name": "Souffle du Soleil",
   "type": "souffle",
-  "img": "icons/svg/sun.svg",
+  "img": "systems/breathe-and-live/resources/icons/breaths/soleil.png",
   "system": {
     "nom": "Souffle du Soleil",
     "resume": "Technique la plus puissante. Consommation d'E divisée par 2, dégâts triplés en Marque.",

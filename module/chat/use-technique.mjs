@@ -1,4 +1,4 @@
-import { applyPreHit, applyOnHit } from "../rules/breath-effects.mjs";
+import { applyPreHit, applyOnHit, getActiveBreaths } from "../rules/breath-effects.mjs";
 import { applyEffectsList } from "../rules/effects-engine.mjs";
 import {
   buildReactionTargetRow,
@@ -19,7 +19,16 @@ import {
   setTechniqueCooldown,
   startTechniqueCharge,
 } from "../rules/technique-utils.mjs";
-import { queueDemonPendingEffect } from "../rules/action-engine.mjs";
+import {
+  applyActivePoisonCoating,
+  getActivePoisonCoating,
+  queueDemonPendingEffect,
+  rollBasicAttack,
+} from "../rules/action-engine.mjs";
+import {
+  buildPoisonApplicationUpdate,
+  inferPoisonApplication,
+} from "../rules/poison-utils.mjs";
 
 const FU = foundry.utils;
 const SYSTEM_ID = "breathe-and-live";
@@ -129,6 +138,65 @@ function getTechniqueRange(item, ctx = {}) {
   return Number(ctx.overrideRange ?? item.system?.range ?? METERS_PER_SQUARE) || METERS_PER_SQUARE;
 }
 
+function getTechniqueBreathKey(item) {
+  return item.system?.breathKey || normalizeBreathName(item.system?.breath);
+}
+
+function isTechniqueRanged(item, rangeM) {
+  const automation = item.system?.automation || {};
+  if (automation.unlimitedRange) return true;
+  if (automation.ranged) return true;
+  return Number(rangeM ?? item.system?.range ?? 0) > METERS_PER_SQUARE;
+}
+
+function hasLoveFriendlyFireProtection(actor, item) {
+  const breathKey = getTechniqueBreathKey(item);
+  if (breathKey !== "love") return false;
+  const breaths = getActiveBreaths(actor);
+  return !!(breaths.love?.enabled && breaths.love?.specials?.balancementsAmoureux);
+}
+
+function getQuickShotWeapon(actor) {
+  return actor.items?.find((owned) => owned.type === "firearm") || null;
+}
+
+async function evaluateTechniqueDamageRoll(expr, edge = 0) {
+  const normalized = Math.sign(Number(edge) || 0);
+  const first = await new Roll(expr).evaluate({ async: true });
+  if (!normalized) {
+    return { roll: first, altRoll: null, mode: "normal" };
+  }
+
+  const second = await new Roll(expr).evaluate({ async: true });
+  const best =
+    normalized > 0
+      ? (Number(second.total) || 0) > (Number(first.total) || 0)
+      : (Number(second.total) || 0) < (Number(first.total) || 0);
+
+  return {
+    roll: best ? second : first,
+    altRoll: best ? first : second,
+    mode: normalized > 0 ? "advantage" : "disadvantage",
+  };
+}
+
+async function applyBeastDislocation(attacker) {
+  if (!attacker) return null;
+  const limbs = FU.getProperty(attacker, "system.combat.injuries.limbs") || {};
+  const armKey =
+    !limbs.rightArm?.injured && !limbs.rightArm?.broken && !limbs.rightArm?.severed
+      ? "rightArm"
+      : "leftArm";
+  const currentNotes = String(FU.getProperty(attacker, `system.combat.injuries.limbs.${armKey}.notes`) || "");
+  await attacker.update({
+    [`system.combat.injuries.limbs.${armKey}.injured`]: true,
+    [`system.combat.injuries.limbs.${armKey}.notes`]: [currentNotes, "Dislocation du Souffle de la Bete - remise en place manuelle requise."]
+      .filter(Boolean)
+      .join(" "),
+  });
+  return armKey;
+}
+
 function getSelectedTargets(attackerToken) {
   return Array.from(game.user.targets ?? []).filter(
     (target) => target.id !== attackerToken?.id && target.actor
@@ -199,7 +267,9 @@ async function promptBurnedTarget(attacker) {
 
 function getAoETargets(attackerToken, rangeM, { antiFriendlyFire = false } = {}) {
   const selected = getSelectedTargets(attackerToken).filter(
-    (target) => distMetersChebyshev(attackerToken, target) <= rangeM
+    (target) =>
+      distMetersChebyshev(attackerToken, target) <= rangeM &&
+      (!antiFriendlyFire || target.document.disposition !== attackerToken.document.disposition)
   );
   if (selected.length) return selected;
 
@@ -211,12 +281,14 @@ function getAoETargets(attackerToken, rangeM, { antiFriendlyFire = false } = {})
   });
 }
 
-async function resolveTechniqueTargets(attackerToken, item, ctx = {}) {
+async function resolveTechniqueTargets(attacker, attackerToken, item, ctx = {}) {
   const rangeM = getTechniqueRange(item, ctx);
   const area = item.system?.automation?.area || (item.system?.flags?.aoe ? "allInRange" : "single");
+  const antiFriendlyFire =
+    !!item.system?.flags?.antiFriendlyFire || hasLoveFriendlyFireProtection(attacker, item);
   if (area === "allInRange" || area === "cone") {
     const targets = getAoETargets(attackerToken, rangeM, {
-      antiFriendlyFire: !!item.system?.flags?.antiFriendlyFire,
+      antiFriendlyFire,
     });
     if (!targets.length) {
       ui.notifications.warn("Aucune cible valide dans la zone.");
@@ -290,6 +362,7 @@ async function applyTechniqueDamage({
   ctx,
   damage,
   totalDamage,
+  applyCoatedPoison = false,
 }) {
   const actor = targetToken?.actor;
   if (!actor) return;
@@ -308,10 +381,13 @@ async function applyTechniqueDamage({
   const afflictionStacks = Number(item.system?.automation?.afflictionStacks ?? 0) || 0;
   if (afflictionStacks > 0) {
     const currentPoison = FU.getProperty(actor, "system.conditions.poisoned") || {};
+    const poisonConfig = inferPoisonApplication(item, actor);
+    const nextPoison = buildPoisonApplicationUpdate(currentPoison, {
+      addStacks: afflictionStacks,
+      ...poisonConfig,
+    });
     await actor.update({
-      "system.conditions.poisoned.active": true,
-      "system.conditions.poisoned.intensity":
-        Math.max(1, Number(currentPoison.intensity || 0)) + afflictionStacks - 1,
+      "system.conditions.poisoned": nextPoison,
     });
   }
 
@@ -328,6 +404,13 @@ async function applyTechniqueDamage({
 
   if (item.system?.automation?.markAsh) {
     await actor.setFlag(SYSTEM_ID, "burnMoonAsh", true);
+  }
+
+  let coatedPoisonResult = null;
+  if (applyCoatedPoison) {
+    coatedPoisonResult = await applyActivePoisonCoating(attacker, actor, {
+      sourceLabel: item.name,
+    });
   }
 
   try {
@@ -362,7 +445,7 @@ async function applyTechniqueDamage({
     }
   }
 
-  return { currentHp, nextHp };
+  return { currentHp, nextHp, coatedPoisonResult };
 }
 
 export async function useTechnique(attacker, item, { controlledToken = null } = {}) {
@@ -516,12 +599,12 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
     return;
   }
 
-  let targetTokens = await resolveTechniqueTargets(attackerToken, item, ctx);
+  let targetTokens = await resolveTechniqueTargets(attacker, attackerToken, item, ctx);
   targetTokens = limitTargetsForTechnique(attacker, item, targetTokens);
   if (!targetTokens.length) return;
 
   const firstTarget = targetTokens[0];
-  const pre = applyPreHit(attacker, firstTarget, item, ctx);
+  const pre = await applyPreHit(attacker, firstTarget, item, ctx);
   const rangeM = getTechniqueRange(item, ctx);
 
   targetTokens = targetTokens.filter(
@@ -616,35 +699,46 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
     console.error("BL | applyEffectsList (self) failed:", error);
   }
 
-  let damageRoll = new Roll(buildFormulaWithActorStats(pre.dmgExpr || "1d8", attacker, ctx));
-  await damageRoll.roll({ async: true });
-
-  let markedRoll = null;
-  if (attacker.system?.states?.marque) {
-    markedRoll = new Roll(buildFormulaWithActorStats(pre.dmgExpr || "1d8", attacker, ctx));
-    await markedRoll.roll({ async: true });
-    if ((markedRoll.total ?? 0) > (damageRoll.total ?? 0)) {
-      damageRoll = markedRoll;
-    }
-  }
+  const damageEdge = (Number(pre.rollEdge?.damage ?? 0) || 0) + (attacker.system?.states?.marque ? 1 : 0);
+  const damageEval = await evaluateTechniqueDamageRoll(
+    buildFormulaWithActorStats(pre.dmgExpr || "1d8", attacker, ctx),
+    damageEdge
+  );
+  const damageRoll = damageEval.roll;
+  const activeCoating = getActivePoisonCoating(attacker);
 
   const noteEntries = [...(pre.notes || []), ...(item.system?.specialLines || [])];
-  if (markedRoll) {
-    noteEntries.push(`Forme Marquee : second jet ${markedRoll.total}`);
+  if (damageEval.altRoll) {
+    noteEntries.push(
+      `${damageEval.mode === "advantage" ? "Jet secondaire favorable" : "Jet secondaire defavorable"} : ${damageEval.altRoll.total}`
+    );
   }
 
   const targetRows = targetTokens
-    .map((targetToken) =>
-      buildReactionTargetRow({
+    .map((targetToken) => {
+      const extraButtons = [
+        pre.ui?.canDislocate && String(targetToken?.actor?.type || "").toLowerCase().includes("demon")
+          ? `<button class="bl-dislocate" data-target-token="${targetToken.id}" data-damage="${damageRoll.total}">Dislocation</button>`
+          : "",
+        activeCoating
+          ? `<button class="bl-takedmg-poison" data-target-token="${targetToken.id}" data-damage="${damageRoll.total}">Prendre + ${activeCoating.itemName}</button>`
+          : "",
+      ]
+        .filter(Boolean)
+        .join("");
+
+      return buildReactionTargetRow({
         attackerToken,
         targetToken,
         damageTotal: damageRoll.total,
         allowDodge:
           !item.system?.automation?.cannotBeDodged && !item.system?.automation?.cannotBeReactedTo,
         allowReactions: !item.system?.automation?.cannotBeReactedTo,
-        allowWaterDeflect: !item.system?.automation?.cannotBeReactedTo,
-      })
-    )
+        allowWaterDeflect:
+          !item.system?.automation?.cannotBeReactedTo && isTechniqueRanged(item, rangeM),
+        extraButtonsHtml: extraButtons,
+      });
+    })
     .join("");
 
   const utilityButtons = `
@@ -659,6 +753,11 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
           ? `<button class="bl-mist" data-target-token="${firstTarget.id}">Brume (3 m)</button>`
           : ""
       }
+      ${
+        pre.ui?.canQuickShot
+          ? `<button class="bl-quickshot" data-attacker-token="${attackerToken.id}">Six-coups</button>`
+          : ""
+      }
     </div>
   `;
 
@@ -666,6 +765,10 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
     noteEntries.length > 0
       ? `<div style="opacity:.8;"><small>${noteEntries.join(" • ")}</small></div>`
       : "";
+
+  const poisonNote = activeCoating
+    ? `<div><small>Poison prepare: ${activeCoating.itemName} sur ${activeCoating.weaponName || "l'arme"}.</small></div>`
+    : "";
 
   const chatMessage = await damageRoll.toMessage({
     speaker: ChatMessage.getSpeaker({ actor: attacker }),
@@ -676,6 +779,7 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
           item.system?.automation?.unlimitedRange ? "illimitee" : `${rangeM} m`
         } • Cibles: ${targetTokens.map((token) => token.name).join(", ")}</small></div>
         <div><b>Degats potentiels:</b> ${damageRoll.total} <small>(${pre.dmgExpr})</small></div>
+        ${poisonNote}
         ${notes}
         ${utilityButtons}
         <hr>
@@ -728,7 +832,7 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
       await actor.update({ "system.resources.rp.value": currentRp - 1 });
       html
         .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
-        .html("<em>Deviation reussie : degats annules.</em>");
+        .html("<em>Deviation reussie : degats annules. Redirection manuelle.</em>");
       await applyOnHit(attacker, token, item, ctx, { tookDamage: false });
       disableTargetButtons(token.id);
     });
@@ -754,6 +858,65 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
 
     html.find(".bl-mist").on("click", async () => {
       await placeMistTemplate(firstTarget);
+    });
+
+    html.find(".bl-quickshot").on("click", async () => {
+      const weapon = getQuickShotWeapon(attacker);
+      if (!weapon) {
+        ui.notifications.warn("Aucun pistolet disponible pour Six-coups.");
+        return;
+      }
+      html.find(".bl-quickshot").prop("disabled", true);
+      await rollBasicAttack(attacker, { item: weapon });
+    });
+
+    html.find(".bl-dislocate").on("click", async (event) => {
+      const button = $(event.currentTarget);
+      const token = canvas.tokens.get(String(button.attr("data-target-token")));
+      if (!token?.actor || !canInteractWithToken(attackerToken)) return;
+
+      const armKey = await applyBeastDislocation(attacker);
+      const damage = Number(button.attr("data-damage")) || 0;
+      const result = await applyTechniqueDamage({
+        attacker,
+        attackerToken,
+        targetToken: token,
+        item,
+        ctx,
+        damage,
+        totalDamage: damage,
+      });
+      html
+        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+        .html(
+          `<em>Dislocation (${armKey === "leftArm" ? "bras gauche" : "bras droit"}) : ${token.actor.name} prend <b>${damage}</b> degats (PV ${result.currentHp} -> ${result.nextHp}).</em>`
+        );
+      disableTargetButtons(token.id);
+    });
+
+    html.find(".bl-takedmg-poison").on("click", async (event) => {
+      const button = $(event.currentTarget);
+      const token = canvas.tokens.get(String(button.attr("data-target-token")));
+      const actor = token?.actor;
+      if (!actor || !canInteractWithToken(token)) return;
+
+      const damage = Number(button.attr("data-damage")) || 0;
+      const result = await applyTechniqueDamage({
+        attacker,
+        attackerToken,
+        targetToken: token,
+        item,
+        ctx,
+        damage,
+        totalDamage: damage,
+        applyCoatedPoison: true,
+      });
+      html
+        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+        .html(
+          `<em>${actor.name} prend <b>${damage}</b> degats (PV ${result.currentHp} -> ${result.nextHp}).${result.coatedPoisonResult ? ` Poison: ${result.coatedPoisonResult.summary?.profileLabel || "dose appliquee"}.` : ""}</em>`
+        );
+      disableTargetButtons(token.id);
     });
 
     html.find(".bl-takedmg").on("click", async (event) => {

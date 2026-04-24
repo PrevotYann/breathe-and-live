@@ -1,0 +1,90 @@
+{
+  "_id": "tech-west-12-maison-du-soleil-levant",
+  "name": "Maison du Soleil levant.",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/ouest.png",
+  "system": {
+    "tags": [
+      "breath",
+      "west"
+    ],
+    "description": "",
+    "sourceSection": "Souffle de l'Ouest",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de l'Ouest",
+    "breathKey": "west",
+    "breathLabel": "Souffle de l'Ouest",
+    "form": 12,
+    "costE": 0,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d8",
+    "damageText": "",
+    "range": 1.5,
+    "rangeText": "",
+    "modifierText": "",
+    "attackStat": "",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfwestfldr00000",
+  "sort": 1200000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-west-12-maison-du-soleil-levant"
+}

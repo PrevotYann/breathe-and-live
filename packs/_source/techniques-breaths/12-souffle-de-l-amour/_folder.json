@@ -1,0 +1,21 @@
+{
+  "name": "Souffle de l'Amour",
+  "sorting": "a",
+  "folder": null,
+  "type": "Item",
+  "_id": "blflovefldr00000",
+  "description": "Formes et techniques du Souffle de l'Amour.",
+  "sort": 1300000,
+  "color": "#cf6d86",
+  "flags": {},
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!folders!blflovefldr00000"
+}

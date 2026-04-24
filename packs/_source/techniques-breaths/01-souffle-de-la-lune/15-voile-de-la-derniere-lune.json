@@ -1,0 +1,94 @@
+{
+  "_id": "tech-moon-15-voile-de-la-derniere-lune",
+  "name": "Voile de la Dernière Lune",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/lune.png",
+  "system": {
+    "tags": [
+      "breath",
+      "moon",
+      "ranged"
+    ],
+    "description": "L'épéiste lance une séquence de coups lents, chacun plus long que le précédent, avant de se terminer par un arc final silencieux.",
+    "sourceSection": "Souffle de la Lune",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Lune",
+    "breathKey": "moon",
+    "breathLabel": "Souffle de la Lune",
+    "form": 15,
+    "costE": 19,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "4d8 + Force/Finesse",
+    "damageText": "4d8 + Force/Finesse\n\nÀ distance\n*Peut être utilisé à distance de mêlée jusqu'à la distance autorisée",
+    "range": 7.5,
+    "rangeText": "7.5m",
+    "modifierText": "Force / Finesse",
+    "attackStat": "force-or-finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "À distance",
+      "*Peut être utilisé à distance de mêlée jusqu'à la distance autorisée"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": true,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfmoonfldr00000",
+  "sort": 1500000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-moon-15-voile-de-la-derniere-lune"
+}

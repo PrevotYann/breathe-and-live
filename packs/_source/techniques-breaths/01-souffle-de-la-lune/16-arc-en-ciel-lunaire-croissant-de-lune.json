@@ -1,0 +1,95 @@
+{
+  "_id": "tech-moon-16-arc-en-ciel-lunaire-croissant-de-lune",
+  "name": "Arc-en-ciel Lunaire, Croissant de Lune",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/lune.png",
+  "system": {
+    "tags": [
+      "breath",
+      "moon",
+      "charge"
+    ],
+    "description": "L'épéiste se balance vers le haut, générant six lames courbes qui s'écrasent vers le bas dans un arc dispersé. L'impact laisse de profonds cratères.",
+    "sourceSection": "Souffle de la Lune",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Lune",
+    "breathKey": "moon",
+    "breathLabel": "Souffle de la Lune",
+    "form": 16,
+    "costE": 16,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "3d20 + Finesse",
+    "damageText": "3d20 + Finesse\n\nTemps de charge\n* Nécessite 1 tour pour se charger\n** Être attaqué interrompt la charge",
+    "range": 9,
+    "rangeText": "9m",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Temps de charge",
+      "* Nécessite 1 tour pour se charger",
+      "** Être attaqué interrompt la charge"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 1,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 1,
+      "deflect": false
+    }
+  },
+  "folder": "blfmoonfldr00000",
+  "sort": 1600000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-moon-16-arc-en-ciel-lunaire-croissant-de-lune"
+}

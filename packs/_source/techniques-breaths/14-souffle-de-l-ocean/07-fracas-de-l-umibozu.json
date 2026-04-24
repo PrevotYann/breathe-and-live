@@ -1,0 +1,90 @@
+{
+  "_id": "tech-ocean-07-fracas-de-l-umibozu",
+  "name": "Fracas de l’Umibozu",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/ocean.png",
+  "system": {
+    "tags": [
+      "breath",
+      "ocean"
+    ],
+    "description": "L'épéiste délivre une frappe descendante qui crée une onde de choc ressemblant à une vague déferlante. La force de ce coup assomme les ennemis et les repousse violemment.",
+    "sourceSection": "Souffle de l'Ocean",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de l'Ocean",
+    "breathKey": "ocean",
+    "breathLabel": "Souffle de l'Ocean",
+    "form": 7,
+    "costE": 0,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d8",
+    "damageText": "",
+    "range": 1.5,
+    "rangeText": "",
+    "modifierText": "Force",
+    "attackStat": "force",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfoceanfldr0000",
+  "sort": 700000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-ocean-07-fracas-de-l-umibozu"
+}

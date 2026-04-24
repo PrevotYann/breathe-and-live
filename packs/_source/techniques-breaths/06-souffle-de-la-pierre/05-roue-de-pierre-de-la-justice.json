@@ -1,0 +1,95 @@
+{
+  "_id": "tech-stone-05-roue-de-pierre-de-la-justice",
+  "name": "Roue de pierre de la justice",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/pierre.png",
+  "system": {
+    "tags": [
+      "breath",
+      "stone",
+      "charge"
+    ],
+    "description": "Une attaque verticale puissante et chargée qui peut infliger de gros dégâts.",
+    "sourceSection": "Souffle de la Pierre",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Pierre",
+    "breathKey": "stone",
+    "breathLabel": "Souffle de la Pierre",
+    "form": 5,
+    "costE": 11,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "3d20 + Tête de Hache",
+    "damageText": "3d20 + Tête de Hache\n\nTemps de charge\n* Nécessite un tour pour se charger\n** Une attaque interrompt la charge",
+    "range": 9,
+    "rangeText": "9m",
+    "modifierText": "Force / Finesse",
+    "attackStat": "force-or-finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Temps de charge",
+      "* Nécessite un tour pour se charger",
+      "** Une attaque interrompt la charge"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 1,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 1,
+      "deflect": false
+    }
+  },
+  "folder": "blfstonefldr0000",
+  "sort": 500000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-stone-05-roue-de-pierre-de-la-justice"
+}

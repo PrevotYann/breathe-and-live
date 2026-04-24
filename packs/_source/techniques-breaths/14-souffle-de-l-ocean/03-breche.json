@@ -1,0 +1,90 @@
+{
+  "_id": "tech-ocean-03-breche",
+  "name": "Brèche",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/ocean.png",
+  "system": {
+    "tags": [
+      "breath",
+      "ocean"
+    ],
+    "description": "Avec un coup de sabre montant effectué rapidement en mouvement horizontal, le combattant crée un tourbillon en forme de baleine géante, infligeant des dégâts à toutes les unités situées à moins de 4,5 mètres du point de saut et d'atterrissage.",
+    "sourceSection": "Souffle de l'Ocean",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de l'Ocean",
+    "breathKey": "ocean",
+    "breathLabel": "Souffle de l'Ocean",
+    "form": 3,
+    "costE": 0,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "1d8",
+    "damageText": "",
+    "range": 4.5,
+    "rangeText": "4.5m",
+    "modifierText": "Force",
+    "attackStat": "force",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfoceanfldr0000",
+  "sort": 300000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-ocean-03-breche"
+}

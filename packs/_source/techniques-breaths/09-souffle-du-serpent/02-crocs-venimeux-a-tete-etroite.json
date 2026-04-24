@@ -1,0 +1,94 @@
+{
+  "_id": "tech-serpent-02-crocs-venimeux-a-tete-etroite",
+  "name": "Crocs venimeux à tête étroite",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/serpent.png",
+  "system": {
+    "tags": [
+      "breath",
+      "serpent",
+      "regeneration"
+    ],
+    "description": "L'épéiste se précipite derrière l'adversaire et le frappe au cou. Son endurance se régénère à hauteur des dégâts infligés.",
+    "sourceSection": "Souffle du Serpent",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle du Serpent",
+    "breathKey": "serpent",
+    "breathLabel": "Souffle du Serpent",
+    "form": 2,
+    "costE": 15,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "3d8 + Finesse",
+    "damageText": "3d8 + Finesse\n\nRégénérateur\n*Régénère l'endurance",
+    "range": 6.1,
+    "rangeText": "20ft",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Régénérateur",
+      "*Régénère l'endurance"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "damageDealt"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfserpentfldr00",
+  "sort": 200000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-serpent-02-crocs-venimeux-a-tete-etroite"
+}

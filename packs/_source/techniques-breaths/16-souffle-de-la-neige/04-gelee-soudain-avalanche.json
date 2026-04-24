@@ -1,0 +1,95 @@
+{
+  "_id": "tech-snow-04-gelee-soudain-avalanche",
+  "name": "Gelée Soudain, Avalanche",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/neige.png",
+  "system": {
+    "tags": [
+      "breath",
+      "snow",
+      "charge"
+    ],
+    "description": "Au son des arbres gelés qui craquent, l'utilisateur avance et abaisse sa lame avec un poids soudain et écrasant. L'attaque imite une montée en puissance rappelant les frappes iai.",
+    "sourceSection": "Souffle de la Neige",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Neige",
+    "breathKey": "snow",
+    "breathLabel": "Souffle de la Neige",
+    "form": 4,
+    "costE": 13,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "2d20 + Force",
+    "damageText": "2d20 + Force\n\nTemps de charge\n* Nécessite un tour pour se charger\n** Une attaque interrompt la charge",
+    "range": 9,
+    "rangeText": "9m",
+    "modifierText": "Force",
+    "attackStat": "force",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [
+      "Temps de charge",
+      "* Nécessite un tour pour se charger",
+      "** Une attaque interrompt la charge"
+    ],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 1,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 1,
+      "deflect": false
+    }
+  },
+  "folder": "blfsnowfldr00000",
+  "sort": 400000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-snow-04-gelee-soudain-avalanche"
+}

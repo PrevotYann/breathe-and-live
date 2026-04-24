@@ -1,0 +1,90 @@
+{
+  "_id": "tech-flower-04-pivoine-de-la-futilite",
+  "name": "Pivoine de la Futilité",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/fleur.png",
+  "system": {
+    "tags": [
+      "breath",
+      "flower"
+    ],
+    "description": "Une gracieuse série de neuf attaques consécutives qui s'enchaînent et se tissent sur elles-mêmes.",
+    "sourceSection": "Souffle de la Fleur",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Fleur",
+    "breathKey": "flower",
+    "breathLabel": "Souffle de la Fleur",
+    "form": 4,
+    "costE": 13,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "9d4 + Finesse",
+    "damageText": "9d4 + Finesse",
+    "range": 7.5,
+    "rangeText": "7.5m",
+    "modifierText": "Finesse",
+    "attackStat": "finesse",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfflowerfldr000",
+  "sort": 400000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-flower-04-pivoine-de-la-futilite"
+}

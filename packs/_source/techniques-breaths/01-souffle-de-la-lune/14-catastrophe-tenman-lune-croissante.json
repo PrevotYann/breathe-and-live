@@ -1,0 +1,90 @@
+{
+  "_id": "tech-moon-14-catastrophe-tenman-lune-croissante",
+  "name": "Catastrophe, Tenman Lune Croissante",
+  "type": "technique",
+  "img": "systems/breathe-and-live/resources/icons/breaths/lune.png",
+  "system": {
+    "tags": [
+      "breath",
+      "moon"
+    ],
+    "description": "L'épéiste crée un anneau de coups en expansion à partir d'un point central, envoyant des lames en forme de croissant dans toutes les directions. Chaque vague devient de plus en plus large.",
+    "sourceSection": "Souffle de la Lune",
+    "activation": "action",
+    "quantity": 1,
+    "usageNote": "",
+    "prerequisites": {
+      "class": "",
+      "rank": "",
+      "breath": "",
+      "weapon": "",
+      "trait": ""
+    },
+    "uses": {
+      "value": 0,
+      "max": 0,
+      "per": ""
+    },
+    "effects": [],
+    "selfEffects": [],
+    "templates": [
+      "commonItem"
+    ],
+    "breath": "Souffle de la Lune",
+    "breathKey": "moon",
+    "breathLabel": "Souffle de la Lune",
+    "form": 14,
+    "costE": 18,
+    "costRp": 0,
+    "costBdp": 0,
+    "damage": "2d20 + Force",
+    "damageText": "2d20 + Force",
+    "range": 9,
+    "rangeText": "9m",
+    "modifierText": "Force",
+    "attackStat": "force",
+    "autoHit": true,
+    "isBreath": true,
+    "specialLines": [],
+    "automation": {
+      "requiresBreath": true,
+      "area": "single",
+      "alternativeMode": "",
+      "lineOnly": false,
+      "ranged": false,
+      "unlimitedRange": false,
+      "chargeTurns": 0,
+      "cooldownTurns": 0,
+      "cannotBeDodged": false,
+      "cannotBeReactedTo": false,
+      "deflect": false,
+      "negateIncomingDamage": false,
+      "afflictionStacks": 0,
+      "enduranceRestore": "none"
+    },
+    "flags": {
+      "aoe": false,
+      "antiFriendlyFire": false,
+      "mobility": false,
+      "decapitation": false,
+      "charge": 0,
+      "deflect": false
+    }
+  },
+  "folder": "blfmoonfldr00000",
+  "sort": 1400000,
+  "flags": {},
+  "ownership": {
+    "default": 0
+  },
+  "_stats": {
+    "duplicateSource": null,
+    "coreVersion": "12.343",
+    "systemId": "breathe-and-live",
+    "systemVersion": "0.1.0",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  },
+  "_key": "!items!tech-moon-14-catastrophe-tenman-lune-croissante"
+}
