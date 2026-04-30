@@ -7,6 +7,7 @@
     "build": "rimraf dist && vite build",
     "clean:packs": "node resources/scripts/clean-compendiums.mjs",
     "build:packs": "node resources/scripts/compile-packs.mjs",
+    "validate:packs": "node resources/scripts/validate-packs.mjs",
     "lint": "eslint ."
   },
   "devDependencies": {

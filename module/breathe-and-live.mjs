@@ -2,6 +2,7 @@ import {
   ADVANCED_STATES,
   BREATH_KEYS,
   CONDITION_DEFINITIONS,
+  CUSTOM_BREATH_COST_TABLES,
   DEMON_BLOODLINE_VARIANTS,
   DEMON_BODY_OPTIONS,
   DEMON_DANGER_OPTIONS,
@@ -26,6 +27,12 @@ import { BLVehicleSheet } from "./item/sheets/vehicle-sheet.mjs";
 import { BLBaseItemSheet } from "./item/sheets/base-item-sheet.mjs";
 import { BLBreathSheet } from "./sheets/item-breath-sheet.mjs";
 import { useTechnique } from "./chat/use-technique.mjs";
+import {
+  buildCustomBreathTechniqueData,
+  calculateCustomBreathCost,
+  openCustomBreathBuilder,
+} from "./rules/custom-breath-builder.mjs";
+import { registerMigrationSetting, runSystemMigrations } from "./migrations.mjs";
 import { registerEffectHooks } from "./rules/effects-engine.mjs";
 import { normalizeTechniqueItemData, validateTechniqueOwnership } from "./rules/technique-utils.mjs";
 import {
@@ -39,14 +46,39 @@ import {
   getActivePoisonCoating,
   registerActionHooks,
   rollBasicAttack,
+  runAssistanceRequest,
+  runCounterAttackReaction,
+  runCraftingCheck,
+  runDrawReaction,
+  runKakushiSupplyRequest,
   runRecoveryBreath,
+  runReloadWeapon,
   runRestRefresh,
   runSprint,
+  runTransportDriveCheck,
   runWait,
   setConditionState,
   setLimbState,
   useMedicalItem,
 } from "./rules/action-engine.mjs";
+import {
+  calculateArmorClass,
+  calculateDemonActionCount,
+  calculateDemonBdpMax,
+  calculateDemonHpMax,
+  calculateDemonistBdpMax,
+  calculateDemonisationMax,
+  calculateDemonReactionMax,
+  calculateHealableMax,
+  calculateHumanActionCount,
+  calculateHumanEnduranceMax,
+  calculateHumanReactionMax,
+  clamp,
+  normalizeBaseStatKey,
+  normalizeDerivedStatKey,
+  normalizeDerivedStats,
+  toNumber,
+} from "./rules/actor-derived-formulas.mjs";
 
 const BL_NS = SYSTEM_ID;
 const FU = foundry.utils;
@@ -92,6 +124,7 @@ CONFIG.breatheAndLive.CONDITIONS = CONDITION_DEFINITIONS;
 CONFIG.breatheAndLive.LIMBS = LIMB_DEFINITIONS;
 CONFIG.breatheAndLive.BREATH_KEYS = BREATH_KEYS;
 CONFIG.breatheAndLive.ADVANCED_STATES = ADVANCED_STATES;
+CONFIG.breatheAndLive.CUSTOM_BREATH_COST_TABLES = CUSTOM_BREATH_COST_TABLES;
 CONFIG.breatheAndLive.DEMON_BODY_OPTIONS = DEMON_BODY_OPTIONS;
 CONFIG.breatheAndLive.DEMON_MOVEMENT_OPTIONS = DEMON_MOVEMENT_OPTIONS;
 CONFIG.breatheAndLive.DEMON_DANGER_OPTIONS = DEMON_DANGER_OPTIONS;
@@ -108,15 +141,6 @@ CONFIG.breatheAndLive.RANKS = {
 CONFIG.breatheAndLive.HUMAN_RANK_LEVELS = HUMAN_RANK_LEVELS;
 CONFIG.breatheAndLive.SLAYER_RANK_PROGRESSION = SLAYER_RANK_PROGRESSION;
 CONFIG.breatheAndLive.DEMONIST_RANK_PROGRESSION = DEMONIST_RANK_PROGRESSION;
-
-function toNumber(value, fallback = 0) {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : fallback;
-}
-
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value));
-}
 
 function normalizeIndexName(value) {
   return String(value || "")
@@ -245,6 +269,7 @@ function ensureLimbData(sys) {
   sys.combat ??= {};
   sys.combat.injuries ??= {};
   sys.combat.injuries.limbs ??= {};
+  sys.combat.injuries.targetedDamage ??= {};
   for (const limb of LIMB_DEFINITIONS) {
     sys.combat.injuries.limbs[limb.key] ??= {
       injured: false,
@@ -252,7 +277,49 @@ function ensureLimbData(sys) {
       broken: false,
       notes: "",
     };
+    sys.combat.injuries.targetedDamage[limb.key] = Math.max(
+      0,
+      toNumber(sys.combat.injuries.targetedDamage[limb.key], 0)
+    );
   }
+}
+
+function isLimbDisabled(state = {}) {
+  return !!state.severed || !!state.broken;
+}
+
+function applyLimbMovementEffects(sys, baseMovement) {
+  const limbStates = sys.combat?.injuries?.limbs || {};
+  let movement = Math.max(0, toNumber(baseMovement, 0));
+  const notes = [];
+  let noFlight = false;
+
+  const disabledLeg = ["leftLeg", "rightLeg"].some((key) => isLimbDisabled(limbStates[key]));
+  if (disabledLeg) {
+    movement *= 0.5;
+    notes.push("jambe touchee: deplacement /2");
+  }
+
+  for (const definition of LIMB_DEFINITIONS) {
+    const state = limbStates[definition.key] || {};
+    if (!isLimbDisabled(state)) continue;
+    if (definition.noFlight) {
+      noFlight = true;
+      notes.push(`${definition.label}: vol impossible`);
+    }
+    if (definition.movementFlatPenalty) {
+      movement -= toNumber(definition.movementFlatPenalty, 0);
+      notes.push(`${definition.label}: -${definition.movementFlatPenalty} m`);
+    }
+    if (definition.movementPenaltyRatio) {
+      movement *= Math.max(0, 1 - toNumber(definition.movementPenaltyRatio, 0));
+      notes.push(`${definition.label}: -${Math.round(definition.movementPenaltyRatio * 100)}%`);
+    }
+  }
+
+  sys.combat.injuries.limbEffectSummary = notes;
+  sys.combat.injuries.noFlight = noFlight;
+  return Number(Math.max(0, movement).toFixed(1));
 }
 
 function defaultClassForType(type) {
@@ -276,6 +343,7 @@ function calculateRemaining(sys) {
   sys.stats ??= {};
   sys.stats.base ??= {};
   sys.stats.derived ??= {};
+  sys.stats.derived = normalizeDerivedStats(sys.stats.derived);
   sys.stats.remaining ??= {};
 
   for (const [key, entries] of Object.entries(BL_DERIVED_GROUPS)) {
@@ -286,6 +354,14 @@ function calculateRemaining(sys) {
     );
     sys.stats.remaining[key] = Math.max(0, baseValue - spent);
   }
+}
+
+function getEquippedArmorBonus(actor) {
+  return (actor.items?.contents ?? []).reduce((total, item) => {
+    if (!["outfit", "clothing"].includes(item.type)) return total;
+    if (!item.system?.equipped) return total;
+    return total + toNumber(item.system?.armorBonus, 0);
+  }, 0);
 }
 
 Hooks.once("init", () => {
@@ -320,7 +396,13 @@ Hooks.once("init", () => {
     config: true,
     type: Boolean,
     default: false,
+    onChange: () => {
+      for (const app of Object.values(ui.windows || {})) {
+        app.render?.(false);
+      }
+    },
   });
+  registerMigrationSetting();
 
   Actors.registerSheet(SYSTEM_ID, BLSlayerSheet, {
     types: ["slayer", "demonist", "demon", "npc", "npcHuman", "npcDemon", "companion"],
@@ -334,7 +416,7 @@ Hooks.once("init", () => {
     label: "Technique",
   });
   Items.registerSheet(SYSTEM_ID, BLWeaponSheet, {
-    types: ["weapon", "firearm"],
+    types: ["weapon", "firearm", "projectile", "explosive"],
     makeDefault: true,
     label: "Arme",
   });
@@ -351,11 +433,14 @@ Hooks.once("init", () => {
       "poison",
       "food",
       "consumable",
+      "craftingComponent",
+      "craftingRecipe",
       "outfit",
       "clothing",
       "sense",
       "feature",
       "ammunition",
+      "modification",
     ],
     makeDefault: true,
     label: "Objet",
@@ -386,9 +471,25 @@ class BLActor extends Actor {
     sys.progression.skillSlots ??= { value: 0, max: 0 };
     sys.progression.bonuses ??= {};
     sys.support ??= {};
+    sys.support.recentDemonFleshRank ||= "";
+    sys.support.demonistMedicineActiveCombatId ||= "";
     sys.demonology ??= {};
     sys.states ??= {};
     sys.creation ??= {};
+    sys.creation.statMethod ||= "manual";
+    sys.creation.statRolls ||= "";
+    sys.creation.statArrayApplied = !!sys.creation.statArrayApplied;
+    sys.creation.trainerPoints ??= { axis1: 0, axis2: 0, axis3: 0 };
+    sys.creation.partnerPoints ??= { axis1: 0, axis2: 0, axis3: 0 };
+    sys.creation.kasugaiPoints ??= { axis1: 0, axis2: 0, axis3: 0 };
+    for (const group of [sys.creation.trainerPoints, sys.creation.partnerPoints, sys.creation.kasugaiPoints]) {
+      group.axis1 = clamp(toNumber(group.axis1, 0), 0, 2);
+      group.axis2 = clamp(toNumber(group.axis2, 0), 0, 2);
+      group.axis3 = clamp(toNumber(group.axis3, 0), 0, 2);
+    }
+    sys.creation.sensePoints = Math.max(0, toNumber(sys.creation.sensePoints, 0));
+    sys.creation.superhumanPoints = Math.max(0, toNumber(sys.creation.superhumanPoints, 0));
+    sys.creation.breathFormPoints = Math.max(0, toNumber(sys.creation.breathFormPoints, 0));
     sys.supplement1934 ??= {};
     sys.combat ??= {};
     sys.combat.basicAttack ??= {};
@@ -397,9 +498,16 @@ class BLActor extends Actor {
     sys.combat.reactions ??= {};
     sys.combat.injuries ??= {};
     sys.resources.hp ??= { value: 20, max: 20, base: 20, healableMax: 20 };
+    sys.resources.hp.temporary = Math.max(0, toNumber(sys.resources.hp.temporary, 0));
     sys.resources.e ??= { value: 0, max: 0 };
+    sys.resources.e.temporary = Math.max(0, toNumber(sys.resources.e.temporary, 0));
     sys.resources.rp ??= { value: 0, max: 0 };
     sys.resources.bdp ??= { value: 0, max: 0 };
+    sys.combat.injuries.nearDeathWounds = Math.max(
+      0,
+      toNumber(sys.combat.injuries.nearDeathWounds, 0)
+    );
+    sys.combat.injuries.targetedDamage ??= {};
 
     const defaults = defaultClassForType(this.type);
     sys.class.type ||= defaults.type;
@@ -424,8 +532,26 @@ class BLActor extends Actor {
     sys.progression.bonuses.breathFormBonus = toNumber(sys.progression.bonuses.breathFormBonus, 0);
     sys.progression.bonuses.repeatedAction = toNumber(sys.progression.bonuses.repeatedAction, 0);
     sys.progression.bonuses.demonFleshBonus = toNumber(sys.progression.bonuses.demonFleshBonus, 0);
+    sys.progression.bonuses.demonFleshExtraDice = toNumber(sys.progression.bonuses.demonFleshExtraDice, 0);
     sys.progression.bonuses.nichirinDamageBonus = toNumber(sys.progression.bonuses.nichirinDamageBonus, 0);
     sys.progression.bonuses.nichirinDamageDie ||= "";
+    sys.progression.bonuses.socialExternal = toNumber(sys.progression.bonuses.socialExternal, 0);
+    sys.progression.bonuses.executionHpBaseLimit = toNumber(sys.progression.bonuses.executionHpBaseLimit, 0);
+    sys.progression.bonuses.stealthDamageBonus ||= "";
+    sys.progression.bonuses.firearmModsMax = toNumber(sys.progression.bonuses.firearmModsMax, 0);
+    sys.progression.flags ??= {};
+    sys.progression.flags.drivingLicense = !!sys.progression.flags.drivingLicense;
+    sys.progression.flags.poisonSpecialist = !!sys.progression.flags.poisonSpecialist;
+    sys.progression.flags.dualWield = !!sys.progression.flags.dualWield;
+    sys.progression.flags.sniperTraining = !!sys.progression.flags.sniperTraining;
+    sys.progression.flags.senseTraining = !!sys.progression.flags.senseTraining;
+    const actorLevel = toNumber(sys.class.level, 1);
+    if (this.type === "slayer") {
+      sys.progression.tcbConstantUnlocked ||= actorLevel >= 3;
+      sys.progression.markedUnlocked ||= actorLevel >= 6;
+      sys.progression.transparentWorldUnlocked ||= actorLevel >= 8;
+      sys.progression.redBladeUnlocked ||= actorLevel >= 10;
+    }
 
     ensureConditionData(sys);
     ensureLimbData(sys);
@@ -495,10 +621,7 @@ class BLActor extends Actor {
       appliedRound: 0,
       ...sys.combat.activePoison,
     };
-    sys.combat.actionEconomy.actionsPerTurn = Math.max(
-      1,
-      1 + Math.floor(effectiveBase.vitesse / 5)
-    );
+    sys.combat.actionEconomy.actionsPerTurn = calculateHumanActionCount(effectiveBase);
     sys.combat.actionEconomy.bonusActions = toNumber(
       sys.combat.actionEconomy.bonusActions,
       0
@@ -507,15 +630,19 @@ class BLActor extends Actor {
       0,
       toNumber(sys.combat.actionEconomy.movementMeters, 9)
     );
+    sys.combat.actionEconomy.effectiveMovementMeters =
+      sys.combat.actionEconomy.movementMeters;
     sys.combat.actionEconomy.recoveryBreathRounds = Math.max(
       0,
       toNumber(sys.combat.actionEconomy.recoveryBreathRounds, 2)
     );
 
-    sys.resources.ca = 10 + effectiveBase.vitesse;
-    sys.resources.rp.max = Math.max(
-      0,
-      5 + effectiveBase.vitesse + effectiveBase.intellect + toNumber(sys.progression.bonuses.reactions, 0)
+    const equippedArmorBonus = getEquippedArmorBonus(this);
+    sys.resources.ca = calculateArmorClass(effectiveBase) + equippedArmorBonus;
+    sys.resources.armorBonus = equippedArmorBonus;
+    sys.resources.rp.max = calculateHumanReactionMax(
+      effectiveBase,
+      sys.progression.bonuses.reactions
     );
     sys.resources.rp.value = clamp(toNumber(sys.resources.rp.value, sys.resources.rp.max), 0, sys.resources.rp.max);
 
@@ -526,28 +653,31 @@ class BLActor extends Actor {
         toNumber(sys.resources.hp.base, sys.demonology.baseHpChoice || sys.resources.hp.max || 20)
       );
       sys.resources.hp.base = hpBase;
-      sys.resources.hp.max = hpBase + 5 * effectiveBase.force;
+      sys.resources.hp.max = calculateDemonHpMax(hpBase, effectiveBase);
       sys.resources.hp.healableMax = sys.resources.hp.max;
       sys.resources.hp.value = clamp(
         toNumber(sys.resources.hp.value, sys.resources.hp.max),
         0,
         sys.resources.hp.max
       );
-      sys.resources.bdp.max = Math.max(0, 10 * effectiveBase.courage);
+      sys.resources.bdp.max = calculateDemonBdpMax(effectiveBase);
       sys.resources.bdp.value = clamp(toNumber(sys.resources.bdp.value, 0), 0, sys.resources.bdp.max);
       sys.resources.demonisation = Math.max(0, toNumber(sys.resources.demonisation, 0));
-      sys.resources.rp.max = Math.max(
-        0,
-        Math.floor((5 + effectiveBase.vitesse + effectiveBase.intellect) / 2)
-      );
+      sys.resources.rp.max = calculateDemonReactionMax(effectiveBase);
       sys.resources.rp.value = clamp(
         toNumber(sys.resources.rp.value, sys.resources.rp.max),
         0,
         sys.resources.rp.max
       );
-      sys.combat.actionEconomy.movementMeters = Math.max(
+      sys.combat.actionEconomy.actionsPerTurn = calculateDemonActionCount(effectiveBase);
+      const demonBaseMovement = Math.max(
         sys.combat.actionEconomy.movementMeters,
         toNumber(sys.demonology.movementBase, 9)
+      );
+      sys.combat.actionEconomy.movementMeters = demonBaseMovement;
+      sys.combat.actionEconomy.effectiveMovementMeters = applyLimbMovementEffects(
+        sys,
+        demonBaseMovement
       );
       sys.combat.basicAttack.unarmedDamage = `${sys.demonology.basicDamage} + Force`;
       sys.demonology.canInfect = [
@@ -578,19 +708,20 @@ class BLActor extends Actor {
       };
       delete sys.resources.e;
     } else {
-      sys.resources.e.max = Math.max(
-        0,
-        20 + effectiveBase.courage + toNumber(sys.progression.bonuses.endurance, 0)
+      sys.resources.e.max = calculateHumanEnduranceMax(
+        effectiveBase,
+        sys.progression.bonuses.endurance
       );
       sys.resources.e.value = clamp(toNumber(sys.resources.e.value, sys.resources.e.max), 0, sys.resources.e.max);
-      sys.resources.hp.max = Math.max(1, toNumber(sys.resources.hp.max, 20));
-      const severePenalty = Math.min(
-        0.9,
-        Math.max(0, toNumber(sys.combat.injuries.severeWounds, 0)) * 0.1
+      sys.combat.actionEconomy.effectiveMovementMeters = applyLimbMovementEffects(
+        sys,
+        sys.combat.actionEconomy.movementMeters
       );
-      sys.resources.hp.healableMax = Math.max(
-        1,
-        Math.floor(sys.resources.hp.max * (1 - severePenalty))
+      sys.resources.hp.max = Math.max(1, toNumber(sys.resources.hp.max, 20));
+      sys.resources.hp.healableMax = calculateHealableMax(
+        sys.resources.hp.max,
+        toNumber(sys.combat.injuries.severeWounds, 0) +
+          toNumber(sys.combat.injuries.nearDeathWounds, 0)
       );
       sys.resources.hp.value = clamp(
         toNumber(sys.resources.hp.value, sys.resources.hp.healableMax),
@@ -599,17 +730,10 @@ class BLActor extends Actor {
       );
 
       if (this.type === "demonist") {
-        sys.resources.bdp.max = Math.max(0, 10 * effectiveBase.courage);
+        sys.resources.bdp.max = calculateDemonistBdpMax(effectiveBase);
         sys.resources.bdp.value = clamp(toNumber(sys.resources.bdp.value, 0), 0, sys.resources.bdp.max);
-        sys.resources.demonisation = Math.max(0, Math.floor(toNumber(sys.resources.demonisation, 0)));
-        sys.resources.demonisationMax = 10 + effectiveBase.courage;
-
-        if (sys.support.activeDemonistMedicine) {
-          sys.resources.demonisationMax = Math.max(
-            1,
-            Math.floor(sys.resources.demonisationMax * 1.5)
-          );
-        }
+        sys.resources.demonisation = Math.max(0, toNumber(sys.resources.demonisation, 0));
+        sys.resources.demonisationMax = calculateDemonisationMax(effectiveBase);
       } else {
         sys.resources.bdp = { value: 0, max: 0 };
         sys.resources.demonisation = 0;
@@ -646,19 +770,31 @@ Hooks.once("setup", () => {
 });
 
 Hooks.once("ready", async () => {
+  await runSystemMigrations();
   await sanitizeSystemCompendiumIndices();
 
   const api = {
     useTechnique,
     normalizeTechniqueItemData,
     validateTechniqueOwnership,
+    calculateCustomBreathCost,
+    buildCustomBreathTechniqueData,
+    openCustomBreathBuilder,
     rollBaseCheck,
+    rollDerivedCheck,
     getActivePoisonCoating,
     clearActivePoisonCoating,
     coatWeaponWithPoison,
     rollBasicAttack,
+    runAssistanceRequest,
+    runCounterAttackReaction,
+    runCraftingCheck,
+    runDrawReaction,
+    runKakushiSupplyRequest,
     runRecoveryBreath,
+    runReloadWeapon,
     runSprint,
+    runTransportDriveCheck,
     runWait,
     runRestRefresh,
     setConditionState,
@@ -678,12 +814,23 @@ Hooks.once("ready", async () => {
 });
 
 export async function rollBaseCheck(actor, statKey, label = "") {
+  const key = normalizeBaseStatKey(statKey);
   const b = getEffectiveBaseStats(actor);
-  const mod = toNumber(b[statKey], 0) - 1;
+  const mod = toNumber(b[key], 0) - 1;
   const r = await new Roll(`1d20 + ${mod}`).roll({ async: true });
   return r.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
-    flavor: label || `Test ${statKey}`,
+    flavor: label || `Test ${key}`,
+  });
+}
+
+export async function rollDerivedCheck(actor, derivedKey, label = "") {
+  const key = normalizeDerivedStatKey(derivedKey);
+  const mod = toNumber(actor?.system?.stats?.derived?.[key], 0);
+  const r = await new Roll(`1d20 + ${mod}`).roll({ async: true });
+  return r.toMessage({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    flavor: label || `Test ${key}`,
   });
 }
 

@@ -1,5 +1,6 @@
 import { BREATH_KEYS, SYSTEM_ID } from "../config/rule-data.mjs";
 import { getEffectiveBaseStats } from "./poison-utils.mjs";
+import { calculateHealableMax } from "./actor-derived-formulas.mjs";
 
 const FU = foundry.utils;
 
@@ -401,6 +402,54 @@ export function actorHasBreath(actor, breathKey) {
   return actorToggle || !!actorItem;
 }
 
+function isConcretePrerequisite(value) {
+  const text = normalizeText(value);
+  return !!text && !["aucun", "none", "seloncreation", "variable", "libre"].includes(text);
+}
+
+function actorHasSense(actor, senseName) {
+  if (!actor || !isConcretePrerequisite(senseName)) return true;
+  const wanted = normalizeText(senseName);
+  return actor.items?.some((item) => {
+    if (item.type !== "sense") return false;
+    return (
+      normalizeText(item.system?.senseType).includes(wanted) ||
+      normalizeText(item.name).includes(wanted)
+    );
+  });
+}
+
+function actorHasTrait(actor, traitName) {
+  if (!actor || !isConcretePrerequisite(traitName)) return true;
+  const wanted = normalizeText(traitName);
+  return actor.items?.some((item) => {
+    if (!["feature", "sense"].includes(item.type)) return false;
+    const tags = Array.isArray(item.system?.tags) ? item.system.tags.join(" ") : "";
+    return (
+      normalizeText(item.name).includes(wanted) ||
+      normalizeText(item.system?.family).includes(wanted) ||
+      normalizeText(tags).includes(wanted)
+    );
+  });
+}
+
+function actorHasWeaponPrereq(actor, weaponName) {
+  if (!actor || !isConcretePrerequisite(weaponName)) return true;
+  const wanted = normalizeText(weaponName);
+  return actor.items?.some((item) => {
+    if (!["weapon", "firearm"].includes(item.type)) return false;
+    const tags = [
+      item.name,
+      item.system?.weaponFamily,
+      item.system?.category,
+      ...(Array.isArray(item.system?.tags) ? item.system.tags : []),
+      ...(Array.isArray(item.system?.properties) ? item.system.properties : []),
+    ].join(" ");
+    const haystack = normalizeText(tags);
+    return haystack.includes(wanted) || wanted.includes(haystack);
+  });
+}
+
 export function validateTechniqueOwnership(actor, itemData) {
   const type = String(itemData?.type || "");
   if (type !== "technique") return { ok: true, breathKey: "" };
@@ -411,14 +460,38 @@ export function validateTechniqueOwnership(actor, itemData) {
     normalizeBreathName(itemData?.name);
 
   const requiresBreath = itemData?.system?.automation?.requiresBreath !== false && !!breathKey;
-  if (!requiresBreath) return { ok: true, breathKey };
-  if (actorHasBreath(actor, breathKey)) return { ok: true, breathKey };
+  if (requiresBreath && !actorHasBreath(actor, breathKey)) {
+    return {
+      ok: false,
+      breathKey,
+      message: `${actor.name} doit posseder ${getBreathLabel(breathKey, breathKey)} pour ajouter ${itemData?.name || "cette technique"}.`,
+    };
+  }
 
-  return {
-    ok: false,
-    breathKey,
-    message: `${actor.name} doit posseder ${getBreathLabel(breathKey, breathKey)} pour ajouter ${itemData?.name || "cette technique"}.`,
-  };
+  const prereq = itemData?.system?.prerequisites || {};
+  if (!actorHasSense(actor, prereq.sense)) {
+    return {
+      ok: false,
+      breathKey,
+      message: `${actor.name} doit posseder le sens requis (${prereq.sense}) pour ajouter ${itemData?.name || "cette technique"}.`,
+    };
+  }
+  if (!actorHasTrait(actor, prereq.trait)) {
+    return {
+      ok: false,
+      breathKey,
+      message: `${actor.name} doit posseder le trait requis (${prereq.trait}) pour ajouter ${itemData?.name || "cette technique"}.`,
+    };
+  }
+  if (!actorHasWeaponPrereq(actor, prereq.weapon)) {
+    return {
+      ok: false,
+      breathKey,
+      message: `${actor.name} doit posseder l'arme requise (${prereq.weapon}) pour ajouter ${itemData?.name || "cette technique"}.`,
+    };
+  }
+
+  return { ok: true, breathKey };
 }
 
 export function normalizeTechniqueItemData(row = {}) {
@@ -452,6 +525,14 @@ export function normalizeTechniqueItemData(row = {}) {
     sourceSection: row.sourceSection || breathLabel || row.sheet || "",
     description: row.description || "",
     usageNote: row.usageNote || "",
+    prerequisites: {
+      class: "",
+      rank: "",
+      sense: "",
+      weapon: "",
+      trait: "",
+      ...(row.prerequisites || {}),
+    },
     tags: Array.from(tags).filter(Boolean),
     specialLines: row.specialLines || damageData.specialLines,
     flags: {
@@ -542,6 +623,52 @@ export async function noteActorDamageTaken(actor, amount) {
   flag.current = Number(flag.current || 0) + Math.max(0, amount);
   await actor.setFlag(SYSTEM_ID, "damageTakenByRound", flag);
   await clearTechniqueCharge(actor);
+
+  const currentHpForDeath = toNumber(actor.system?.resources?.hp?.value, 0);
+  const deathState = String(actor.system?.death?.state || "alive");
+  if (currentHpForDeath <= 0 && deathState !== "dead") {
+    if (actor.system?.death?.standingDeath) {
+      await actor.update({ "system.death.state": "critical" });
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `<strong>${actor.name} tombe a 0 PV, mais Mort debout empeche la mort immediate. Etat: critique.</strong>`,
+      });
+    } else {
+      await actor.update({ "system.death.state": "dead" });
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `<strong>${actor.name} tombe a 0 PV. Selon la regle de mort, l'etat passe a Mort.</strong>`,
+      });
+    }
+  }
+
+  const damage = Math.max(0, toNumber(amount, 0));
+  if (damage < 13 || !FU.hasProperty(actor, "system.resources.hp.max")) return;
+
+  const nearDeath = damage >= 20;
+  const severePath = "system.combat.injuries.severeWounds";
+  const nearDeathPath = "system.combat.injuries.nearDeathWounds";
+  const severe = toNumber(FU.getProperty(actor, severePath), 0);
+  const nearDeathWounds = toNumber(FU.getProperty(actor, nearDeathPath), 0);
+  const nextSevere = severe + (nearDeath ? 0 : 1);
+  const nextNearDeath = nearDeathWounds + (nearDeath ? 1 : 0);
+  const hpMax = toNumber(actor.system?.resources?.hp?.max, 1);
+  const healableMax = calculateHealableMax(hpMax, nextSevere + nextNearDeath);
+  const hpValue = toNumber(actor.system?.resources?.hp?.value, 0);
+
+  await actor.update({
+    [severePath]: nextSevere,
+    [nearDeathPath]: nextNearDeath,
+    "system.resources.hp.healableMax": healableMax,
+    "system.resources.hp.value": Math.min(hpValue, healableMax),
+  });
+
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: nearDeath
+      ? `<strong>${actor.name} subit une blessure quasi mortelle. Cap de soin: ${healableMax} PV.</strong>`
+      : `<strong>${actor.name} subit une blessure grave. Cap de soin: ${healableMax} PV.</strong>`,
+  });
 }
 
 export function getPreviousRoundDamageTaken(actor) {

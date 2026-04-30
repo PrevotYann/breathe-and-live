@@ -35,11 +35,13 @@
             "value": 20,
             "max": 20,
             "healableMax": 20,
-            "base": 20
+            "base": 20,
+            "temporary": 0
           },
           "e": {
             "value": 0,
-            "max": 0
+            "max": 0,
+            "temporary": 0
           },
           "rp": {
             "value": 0,
@@ -55,9 +57,26 @@
         },
         "creation": {
           "statMethod": "manual",
+          "statRolls": "",
+          "statArrayApplied": false,
           "trainerBackground": "",
+          "trainerPoints": {
+            "axis1": 0,
+            "axis2": 0,
+            "axis3": 0
+          },
           "partnerBackground": "",
+          "partnerPoints": {
+            "axis1": 0,
+            "axis2": 0,
+            "axis3": 0
+          },
           "kasugaiType": "",
+          "kasugaiPoints": {
+            "axis1": 0,
+            "axis2": 0,
+            "axis3": 0
+          },
           "kasugaiCommands": "",
           "sensePoints": 0,
           "superhumanPoints": 0,
@@ -209,6 +228,7 @@
         },
         "states": {
           "marque": false,
+          "tcbActive": false,
           "tcbPermanent": false,
           "mondeTransparent": false,
           "lameRouge": false
@@ -236,6 +256,7 @@
             "actionsPerTurn": 1,
             "bonusActions": 0,
             "movementMeters": 9,
+            "effectiveMovementMeters": 9,
             "recoveryBreathRounds": 2,
             "waitEnabled": true
           },
@@ -248,11 +269,13 @@
           },
           "injuries": {
             "severeWounds": 0,
+            "nearDeathWounds": 0,
             "lostLimbs": "",
             "conditions": "",
             "limbs": {},
             "brokenBones": false,
-            "mutilationNotes": ""
+            "mutilationNotes": "",
+            "targetedDamage": {}
           },
           "basicAttack": {
             "autoHitMelee": false,
@@ -264,6 +287,9 @@
           "medicalTraining": false,
           "demonistHealingReaction": false,
           "activeDemonistMedicine": false,
+          "recentDemonFleshRank": "",
+          "demonistMedicineActiveCombatId": "",
+          "companionActorId": "",
           "companionName": "",
           "companionRole": ""
         },
@@ -317,8 +343,20 @@
             "breathFormBonus": 0,
             "repeatedAction": 0,
             "demonFleshBonus": 0,
+            "demonFleshExtraDice": 0,
             "nichirinDamageBonus": 0,
-            "nichirinDamageDie": ""
+            "nichirinDamageDie": "",
+            "socialExternal": 0,
+            "executionHpBaseLimit": 0,
+            "stealthDamageBonus": "",
+            "firearmModsMax": 0
+          },
+          "flags": {
+            "drivingLicense": false,
+            "poisonSpecialist": false,
+            "dualWield": false,
+            "sniperTraining": false,
+            "senseTraining": false
           },
           "notes": "",
           "tcbConstantUnlocked": false,
@@ -408,7 +446,8 @@
           "value": 1,
           "max": 1,
           "healableMax": 1,
-          "base": 1
+          "base": 1,
+          "temporary": 0
         },
         "ca": 3,
         "rp": {
@@ -421,6 +460,7 @@
           "actionsPerTurn": 1,
           "bonusActions": 0,
           "movementMeters": 6,
+          "effectiveMovementMeters": 6,
           "recoveryBreathRounds": 0,
           "waitEnabled": true
         }
@@ -440,7 +480,10 @@
     "types": [
       "weapon",
       "firearm",
+      "projectile",
+      "explosive",
       "ammunition",
+      "modification",
       "technique",
       "subclassTechnique",
       "breath",
@@ -454,6 +497,8 @@
       "poison",
       "food",
       "consumable",
+      "craftingComponent",
+      "craftingRecipe",
       "outfit",
       "clothing",
       "vehicle",
@@ -471,6 +516,7 @@
           "class": "",
           "rank": "",
           "breath": "",
+          "sense": "",
           "weapon": "",
           "trait": ""
         },
@@ -480,7 +526,20 @@
           "per": ""
         },
         "effects": [],
-        "selfEffects": []
+        "selfEffects": [],
+        "supplement1934": {
+          "enabled": false,
+          "notes": ""
+        },
+        "crafting": {
+          "enabled": false,
+          "componentCount": 1,
+          "dc": 4,
+          "stat": "sciences",
+          "resultItemName": "",
+          "consumedOnFailure": false,
+          "notes": ""
+        }
       }
     },
     "weapon": {
@@ -525,6 +584,43 @@
       },
       "notes": ""
     },
+    "projectile": {
+      "templates": [
+        "commonItem"
+      ],
+      "damage": "1d4",
+      "range": 9,
+      "category": "projectile",
+      "weaponFamily": "projectile",
+      "attackMod": 0,
+      "damageMod": 0,
+      "properties": [],
+      "usesAmmo": false,
+      "isNichirin": false,
+      "canDecapitate": false,
+      "recoverable": true,
+      "notes": ""
+    },
+    "explosive": {
+      "templates": [
+        "commonItem"
+      ],
+      "damage": "1d6",
+      "range": 9,
+      "radius": 3,
+      "category": "explosive",
+      "weaponFamily": "explosive",
+      "attackMod": 0,
+      "damageMod": 0,
+      "properties": [],
+      "usesAmmo": false,
+      "isNichirin": false,
+      "canDecapitate": false,
+      "saveDerived": "reflexes",
+      "saveDc": 10,
+      "onMiss": "",
+      "notes": ""
+    },
     "ammunition": {
       "templates": [
         "commonItem"
@@ -533,6 +629,20 @@
       "quantityPerUse": 1,
       "damageBonus": "",
       "specialEffect": ""
+    },
+    "modification": {
+      "templates": [
+        "commonItem"
+      ],
+      "appliesTo": "weapon",
+      "slot": "",
+      "attackMod": 0,
+      "damageMod": 0,
+      "rangeMod": 0,
+      "capacityMod": 0,
+      "reloadMod": "",
+      "requirements": "",
+      "rulesText": ""
     },
     "technique": {
       "templates": [
@@ -568,7 +678,18 @@
         "deflect": false,
         "negateIncomingDamage": false,
         "afflictionStacks": 0,
+        "afflictionCondition": "",
+        "pursuer": false,
+        "sweep": false,
+        "regenerator": false,
         "enduranceRestore": "none"
+      },
+      "customBreath": {
+        "enabled": false,
+        "damageKey": "",
+        "rangeKey": "",
+        "effectKey": "",
+        "rawCost": 0
       },
       "flags": {
         "aoe": false,
@@ -576,7 +697,11 @@
         "mobility": false,
         "decapitation": false,
         "charge": 0,
-        "deflect": false
+        "deflect": false,
+        "regenerator": false,
+        "affliction": false,
+        "pursuer": false,
+        "sweep": false
       }
     },
     "subclassTechnique": {
@@ -586,6 +711,7 @@
       "subclass": "",
       "costRp": 0,
       "costBdp": 0,
+      "demonisationGain": 0,
       "damage": "",
       "range": 0,
       "attackStat": "",
@@ -613,7 +739,15 @@
         "commonItem"
       ],
       "family": "",
-      "passive": true
+      "featureKey": "",
+      "rank": "",
+      "slotCost": 1,
+      "repeatable": false,
+      "passive": true,
+      "stateKey": "",
+      "unlockFlag": "",
+      "grantsState": false,
+      "bonuses": {}
     },
     "sense": {
       "templates": [
@@ -719,6 +853,7 @@
       ],
       "healing": "",
       "enduranceGain": "",
+      "temporaryEndurance": false,
       "moodBonus": ""
     },
     "consumable": {
@@ -727,21 +862,53 @@
       ],
       "healing": "",
       "enduranceGain": "",
+      "temporaryEndurance": false,
       "resourceRestore": ""
+    },
+    "craftingComponent": {
+      "templates": [
+        "commonItem"
+      ],
+      "componentFamily": "",
+      "rarity": "",
+      "quality": 1,
+      "notes": ""
+    },
+    "craftingRecipe": {
+      "templates": [
+        "commonItem"
+      ],
+      "crafting": {
+        "enabled": true,
+        "componentCount": 1,
+        "dc": 4,
+        "stat": "sciences",
+        "resultItemName": "",
+        "consumedOnFailure": false,
+        "notes": ""
+      },
+      "resultType": "gear",
+      "resultQuantity": 1
     },
     "outfit": {
       "templates": [
         "commonItem"
       ],
+      "equipped": false,
       "armorBonus": 0,
-      "traits": []
+      "traits": [],
+      "access": "",
+      "camouflageDc": 0
     },
     "clothing": {
       "templates": [
         "commonItem"
       ],
+      "equipped": false,
       "armorBonus": 0,
-      "traits": []
+      "traits": [],
+      "access": "",
+      "camouflageDc": 0
     },
     "vehicle": {
       "templates": [
@@ -753,6 +920,11 @@
       "endurance": {
         "value": 0,
         "max": 0
+      },
+      "drive": {
+        "relaxedDc": 10,
+        "dangerDc": 15,
+        "notes": ""
       },
       "requirements": "",
       "notes": ""
@@ -767,6 +939,11 @@
       "endurance": {
         "value": 0,
         "max": 0
+      },
+      "drive": {
+        "relaxedDc": 10,
+        "dangerDc": 15,
+        "notes": ""
       },
       "requirements": "",
       "notes": ""

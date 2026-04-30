@@ -1,4 +1,4 @@
-import { BREATH_KEYS, BREATH_SPECIAL_ALIASES } from "../config/rule-data.mjs";
+import { BREATH_KEYS, BREATH_SPECIAL_ALIASES, SYSTEM_ID } from "../config/rule-data.mjs";
 
 function getBreathDefinition(key) {
   return BREATH_KEYS.find((entry) => entry.key === key) || null;
@@ -12,6 +12,15 @@ function resolveBreathImage(key, currentImg = "") {
   const definition = getBreathDefinition(key);
   if (!definition?.img) return currentImg;
   return !currentImg || /^icons\/svg\//.test(String(currentImg || "")) ? definition.img : currentImg;
+}
+
+function inferSupplement1934Content(item, sys = {}) {
+  if (sys.supplement1934?.enabled) return true;
+  const tags = Array.isArray(sys.tags) ? sys.tags : [];
+  const marker = [item?.name, sys.sourceSection, sys.usageNote, ...tags]
+    .join(" ")
+    .toLowerCase();
+  return marker.includes("1934") || marker.includes("supplement 1934");
 }
 
 export class BLBreathSheet extends ItemSheet {
@@ -74,6 +83,8 @@ export class BLBreathSheet extends ItemSheet {
       label: entry.optionLabel || entry.label,
     }));
     data.resolvedImg = resolveBreathImage(key, this.item.img);
+    data.supplement1934Global = !!game.settings.get(SYSTEM_ID, "enableSupplement1934");
+    data.isSupplement1934Content = inferSupplement1934Content(this.item, sys);
 
     return data;
   }

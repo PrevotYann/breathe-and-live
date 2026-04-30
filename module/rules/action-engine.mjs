@@ -1,6 +1,8 @@
 import {
   CONDITION_DEFINITIONS,
+  DEMON_RANK_PACKAGES,
   DEMON_RANKS,
+  LIMB_DEFINITIONS,
   SLAYER_RANKS,
   SYSTEM_ID,
 } from "../config/rule-data.mjs";
@@ -8,12 +10,19 @@ import {
   buildFormulaWithActorStats,
   noteActorDamageTaken,
 } from "./technique-utils.mjs";
+import { applyEffectsList } from "./effects-engine.mjs";
 import {
   buildPoisonApplicationUpdate,
   describePoisonState,
   getEffectiveBaseStats,
   resolvePoisonRuntime,
 } from "./poison-utils.mjs";
+import {
+  clamp,
+  normalizeBaseStatKey,
+  normalizeDerivedStatKey,
+  toNumber as formulaToNumber,
+} from "./actor-derived-formulas.mjs";
 import {
   buildReactionTargetRow,
   canInteractWithToken,
@@ -25,12 +34,7 @@ const FU = foundry.utils;
 const METERS_PER_SQUARE = 1.5;
 
 function toNumber(value, fallback = 0) {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : fallback;
-}
-
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value));
+  return formulaToNumber(value, fallback);
 }
 
 function getCondition(actor, key) {
@@ -221,6 +225,46 @@ const DEMON_HEALING_BY_RANK = {
   "Lune superieure": "1d100",
 };
 
+const DEMONIST_FLESH_TO_DEMON_RANK = {
+  "Rang faible": "Demon faible",
+  "Rang eleve": "Demon eleve",
+  "Disciple de Lune inferieure": "Disciple de Lune inferieure",
+  "Lune inferieure": "Lune inferieure",
+  "Disciple de Lune superieure": "Disciple de Lune superieure",
+  "Lune superieure": "Lune superieure",
+};
+
+const DEMONIST_POWER_DEMONISATION = [
+  {
+    pattern: /(force|puissance)\s+demoniaque/i,
+    gain: 1,
+  },
+  {
+    pattern: /vitesse\s+demoniaque/i,
+    gain: 1,
+  },
+  {
+    pattern: /(soin|guerison)\s+demoniaque|regeneration\s+par\s+chair/i,
+    gain: 2,
+  },
+  {
+    pattern: /regeneration\s+de\s+membre|repousse/i,
+    gain: 2,
+  },
+  {
+    pattern: /art\s+de\s+sang\s+demoniaque\s*-\s*petit|bda\s*-\s*petit/i,
+    gain: 3,
+  },
+  {
+    pattern: /art\s+de\s+sang\s+demoniaque\s*-\s*grand|bda\s*-\s*grand/i,
+    gain: 4,
+  },
+  {
+    pattern: /stockage\s+d.?art\s+demoniaque/i,
+    gain: 5,
+  },
+];
+
 function normalizeDamageExpr(expr, fallback = "1") {
   const text = String(expr || "").trim();
   if (!text) return fallback;
@@ -272,6 +316,297 @@ async function spendBdp(actor, cost, reason = "") {
     });
   }
   return true;
+}
+
+export async function rollBaseCheck(actor, statKey, label = "") {
+  if (!actor || !statKey) return null;
+  const key = normalizeBaseStatKey(statKey);
+  const base = getEffectiveBaseStats(actor);
+  const mod = toNumber(base[key], 0) - 1;
+  const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
+  return roll.toMessage({
+    speaker: actorSpeaker(actor),
+    flavor: label || `Test ${key}`,
+  });
+}
+
+export async function rollDerivedCheck(actor, derivedKey, label = "") {
+  if (!actor || !derivedKey) return null;
+  const key = normalizeDerivedStatKey(derivedKey);
+  const mod = toNumber(actor.system?.stats?.derived?.[key], 0);
+  const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
+  return roll.toMessage({
+    speaker: actorSpeaker(actor),
+    flavor: label || `Test ${key}`,
+  });
+}
+
+function normalizeRuleText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function normalizeRollFormulaText(value, fallback = "0") {
+  let formula = String(value || "")
+    .replace(/\b(endurance|temporaire|temporary|ressource|resource|pv|hp|e)\b/gi, " ")
+    .replace(/[,;]/g, " ")
+    .trim();
+  if (!formula) return fallback;
+  if (/^[+-]/.test(formula)) formula = `0 ${formula}`;
+  return formula;
+}
+
+function itemGrantsTemporaryEndurance(item) {
+  const sys = item?.system || {};
+  if (sys.temporaryEndurance || sys.enduranceTemporary) return true;
+  const haystack = normalizeRuleText(
+    [
+      item?.name,
+      sys.sourceSection,
+      sys.resourceRestore,
+      sys.moodBonus,
+      sys.usageNote,
+      ...(Array.isArray(sys.tags) ? sys.tags : []),
+    ].join(" ")
+  );
+  return (
+    haystack.includes("endurance temporaire") ||
+    haystack.includes("temporary endurance") ||
+    haystack.includes("temp endurance") ||
+    haystack.includes("endurance temp")
+  );
+}
+
+async function applyEnduranceGain(actor, item, { maximize = false } = {}) {
+  if (!actor || !item || !item.system?.enduranceGain) return null;
+  const temporary = itemGrantsTemporaryEndurance(item);
+  const expr = normalizeRollFormulaText(replaceStats(item.system.enduranceGain, actor, "0"), "0");
+  const roll = await new Roll(expr).evaluate({ async: true });
+  const amount = maximize
+    ? Math.max(toNumber(roll.terms?.[0]?.faces, toNumber(roll.total, 0)), toNumber(roll.total, 0))
+    : Math.max(0, toNumber(roll.total, 0));
+  if (amount <= 0) return { amount: 0, temporary };
+
+  const eValue = toNumber(actor.system?.resources?.e?.value, 0);
+  const eMax = toNumber(actor.system?.resources?.e?.max, eValue);
+  const eTemporary = toNumber(actor.system?.resources?.e?.temporary, 0);
+  const nextTemporary = temporary ? eTemporary + amount : eTemporary;
+  const nextValue = clamp(eValue + amount, 0, eMax + nextTemporary);
+
+  const update = { "system.resources.e.value": nextValue };
+  if (temporary) update["system.resources.e.temporary"] = nextTemporary;
+  await actor.update(update);
+
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: temporary
+      ? `<em>${actor.name} consomme ${item.name} et gagne ${amount} E temporaire (${eValue} -> ${nextValue}).</em>`
+      : `<em>${actor.name} consomme ${item.name} et recupere ${nextValue - eValue} E (${eValue} -> ${nextValue}).</em>`,
+  });
+
+  return { amount: nextValue - eValue, temporary };
+}
+
+function inferDemonistDemonisationGain(item) {
+  if (!item) return 0;
+  const explicit = toNumber(item.system?.demonisationGain, 0);
+  if (explicit > 0) return explicit;
+
+  const haystack = normalizeRuleText(
+    [
+      item.name,
+      item.system?.sourceSection,
+      item.system?.usageNote,
+      ...(Array.isArray(item.system?.tags) ? item.system.tags : []),
+    ].join(" ")
+  );
+  const inferred = DEMONIST_POWER_DEMONISATION.find((entry) =>
+    entry.pattern.test(haystack)
+  );
+  return inferred?.gain || 0;
+}
+
+export async function applyDemonisationGain(actor, item, { reason = "" } = {}) {
+  if (!actor || actor.type !== "demonist") return 0;
+  const baseGain = inferDemonistDemonisationGain(item);
+  if (baseGain <= 0) return 0;
+
+  const gain = actor.system?.support?.activeDemonistMedicine
+    ? baseGain / 2
+    : baseGain;
+  const current = toNumber(actor.system?.resources?.demonisation, 0);
+  const max = toNumber(actor.system?.resources?.demonisationMax, 10);
+  const next = Math.max(0, current + gain);
+  await actor.update({ "system.resources.demonisation": next });
+
+  const medicineLine = actor.system?.support?.activeDemonistMedicine
+    ? " Medecine active: accumulation reduite de 50 %."
+    : "";
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} gagne ${gain} point(s) de demonisation${reason ? ` (${reason})` : ""}.${medicineLine}</em>`,
+  });
+  if (next >= max) {
+    await ChatMessage.create({
+      speaker: actorSpeaker(actor),
+      content: `<strong>${actor.name} atteint ou depasse son seuil de demonisation (${next}/${max}).</strong>`,
+    });
+  }
+  return gain;
+}
+
+function maxFormulaTotal(formula) {
+  let total = 0;
+  let matched = false;
+  const withoutDice = String(formula || "0").replace(/(\d*)d(\d+)/gi, (_match, count, faces) => {
+    matched = true;
+    total += Math.max(1, toNumber(count || 1, 1)) * Math.max(1, toNumber(faces, 1));
+    return "0";
+  });
+  const flat = withoutDice
+    .split(/(?=[+-])/)
+    .map((part) => toNumber(part.replace(/\s+/g, ""), 0))
+    .reduce((sum, value) => sum + value, 0);
+  return Math.max(0, total + flat || (matched ? total : toNumber(formula, 0)));
+}
+
+async function promptDemonFleshRank(actor, title = "Rang de sang demon consomme") {
+  const stored = String(actor.system?.support?.recentDemonFleshRank || "");
+  const options = Object.keys(DEMON_HEALING_BY_RANK)
+    .map(
+      (rank) =>
+        `<option value="${rank}" ${rank === stored ? "selected" : ""}>${rank}</option>`
+    )
+    .join("");
+  return new Promise((resolve) => {
+    new Dialog(
+      {
+        title,
+        content: `
+          <div class="form-group">
+            <label>Rang recent</label>
+            <select id="bl-demonist-rank">${options}</select>
+          </div>
+        `,
+        buttons: {
+          ok: {
+            label: "Valider",
+            callback: (html) => resolve(String(html.find("#bl-demonist-rank").val() || "")),
+          },
+          cancel: {
+            label: "Annuler",
+            callback: () => resolve(""),
+          },
+        },
+        default: "ok",
+      },
+      { width: 420 }
+    ).render(true);
+  });
+}
+
+async function getRecentDemonistRank(actor) {
+  const stored = String(actor.system?.support?.recentDemonFleshRank || "");
+  if (DEMON_HEALING_BY_RANK[stored]) return stored;
+  const selected = await promptDemonFleshRank(actor);
+  if (selected) {
+    await actor.update({ "system.support.recentDemonFleshRank": selected });
+  }
+  return selected;
+}
+
+export async function runDemonistHealingReaction(actor, { maximize = false } = {}) {
+  if (!actor || actor.type !== "demonist") return null;
+  if (!actor.system?.support?.demonistHealingReaction) {
+    ui.notifications.warn("La reaction de soin demoniste n'est pas debloquee sur cette fiche.");
+    return null;
+  }
+  const rank = await getRecentDemonistRank(actor);
+  if (!rank) return null;
+
+  const rpCost = maximize ? 2 : 1;
+  const ok = await spendRp(actor, rpCost, maximize ? "reaction de soin demoniste maximale" : "reaction de soin demoniste");
+  if (!ok) return null;
+
+  const formula = DEMON_HEALING_BY_RANK[rank] || "1d10";
+  const amount = maximize
+    ? maxFormulaTotal(formula)
+    : toNumber((await new Roll(formula).evaluate({ async: true })).total, 0);
+  const hpValue = toNumber(actor.system?.resources?.hp?.value, 0);
+  const healableMax = toNumber(actor.system?.resources?.hp?.healableMax, actor.system?.resources?.hp?.max ?? hpValue);
+  const healed = Math.max(0, Math.min(healableMax - hpValue, amount));
+  const next = clamp(hpValue + healed, 0, healableMax);
+  await actor.update({ "system.resources.hp.value": next });
+
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} utilise sa reaction de soin demoniste (${rank}) et recupere ${healed} PV (${hpValue} -> ${next}).</em>`,
+  });
+  return healed;
+}
+
+async function promptDemonistEnhancementMode() {
+  return new Promise((resolve) => {
+    new Dialog(
+      {
+        title: "Reaction d'amelioration demoniste",
+        content: "<p>Choisis l'amelioration liee au demon recemment devore.</p>",
+        buttons: {
+          force: { label: "Force (1 RP)", callback: () => resolve("force") },
+          vitesse: { label: "Vitesse (1 RP)", callback: () => resolve("vitesse") },
+          both: { label: "Force + Vitesse (2 RP)", callback: () => resolve("both") },
+          cancel: { label: "Annuler", callback: () => resolve("") },
+        },
+        default: "force",
+      },
+      { width: 440 }
+    ).render(true);
+  });
+}
+
+export async function runDemonistEnhancementReaction(actor) {
+  if (!actor || actor.type !== "demonist") return null;
+  const rank = await getRecentDemonistRank(actor);
+  if (!rank) return null;
+  const mode = await promptDemonistEnhancementMode();
+  if (!mode) return null;
+
+  const cost = mode === "both" ? 2 : 1;
+  const ok = await spendRp(actor, cost, "reaction d'amelioration demoniste");
+  if (!ok) return null;
+
+  const benchmarkRank = DEMONIST_FLESH_TO_DEMON_RANK[rank] || rank;
+  const benchmark = DEMON_RANK_PACKAGES[benchmarkRank]?.benchmark || {};
+  const stats = mode === "both" ? ["force", "vitesse"] : [mode];
+  const effects = [];
+  for (const stat of stats) {
+    const targetValue = toNumber(benchmark[stat], 0);
+    const currentValue = toNumber(actor.system?.stats?.base?.[stat], 0);
+    if (targetValue > currentValue) {
+      effects.push({
+        target: "self",
+        path: `system.stats.base.${stat}`,
+        mode: "set",
+        value: targetValue,
+        duration: "roundEnd",
+        label: `Amelioration demoniste - ${stat}`,
+      });
+    }
+  }
+
+  // TODO-RULEBOOK-AMBIGUITY: the PDF states the enhancement reaction matches the
+  // recently eaten demon, but does not specify duration. Round-end is reversible
+  // and keeps the reaction tactical without permanently rewriting base stats.
+  if (effects.length) {
+    await applyEffectsList({ source: actor, target: actor, effects, origin: "Reaction demoniste" });
+  }
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} utilise une amelioration demoniste (${rank}) : ${stats.join(" + ")}.</em>`,
+  });
+  return effects;
 }
 
 async function applyDirectDamage(actor, amount, flavor) {
@@ -606,12 +941,184 @@ function demonAttackBonus(value) {
   return Math.floor(Math.max(0, toNumber(value, 0)) / 2);
 }
 
+function stripStatTermsFromDamageExpr(expr) {
+  return String(expr || "1")
+    .replace(
+      /\b(force|finesse|courage|vitesse|social|intellect|athletisme|puissanceBrute|dexterite|equilibre|precision|mithridatisme|endurance|tolerance|reflexes|agilite|rapidite|ruse|tromperie|performance|intimidation|perception|intuition|medecine|nature|sciences|enquete|survie)\b/gi,
+      "0"
+    )
+    .replace(/\+\s*0\b/g, "+ 0");
+}
+
+function weaponUsesAmmo(weapon) {
+  return !!weapon && (!!weapon.system?.usesAmmo || weapon.type === "firearm" || weapon.system?.weaponFamily === "firearm");
+}
+
+function actorHasDisabledArms(actor) {
+  const limbs = actor?.system?.combat?.injuries?.limbs || {};
+  const disabled = (key) => !!limbs[key]?.severed || !!limbs[key]?.broken;
+  return {
+    left: disabled("leftArm"),
+    right: disabled("rightArm"),
+    both: disabled("leftArm") && disabled("rightArm"),
+    any: disabled("leftArm") || disabled("rightArm"),
+  };
+}
+
+async function spendWeaponAmmo(weapon) {
+  if (!weaponUsesAmmo(weapon)) return true;
+  const current = toNumber(weapon.system?.ammo?.value, 0);
+  if (current <= 0) {
+    ui.notifications.warn(`${weapon.name} n'a plus de munitions chargees.`);
+    return false;
+  }
+  await weapon.update({ "system.ammo.value": Math.max(0, current - 1) });
+  return true;
+}
+
+export async function runReloadWeapon(actor, weapon) {
+  if (!actor || !weapon || !weaponUsesAmmo(weapon)) return null;
+  const max = toNumber(weapon.system?.ammo?.max, 0);
+  if (max <= 0) {
+    ui.notifications.warn(`${weapon.name} n'a pas de charge max configuree.`);
+    return null;
+  }
+  const current = toNumber(weapon.system?.ammo?.value, 0);
+  await weapon.update({ "system.ammo.value": max });
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} recharge ${weapon.name} (${current} -> ${max}).</em>`,
+  });
+  return max - current;
+}
+
+async function promptBasicAttackMode(actor, { force = 0, finesse = 0 } = {}) {
+  const defaultMode = finesse > force ? "finesse" : "force";
+  return new Promise((resolve) => {
+    new Dialog(
+      {
+        title: "Attaque de base",
+        content: `
+          <p>Choisis le bonus utilise pour toucher. L'autre caracteristique sera ajoutee aux degats.</p>
+          <div class="form-group">
+            <label>Mode</label>
+            <select id="bl-basic-attack-mode">
+              <option value="force" ${defaultMode === "force" ? "selected" : ""}>Force au toucher, Finesse aux degats (${force}/${finesse})</option>
+              <option value="finesse" ${defaultMode === "finesse" ? "selected" : ""}>Finesse au toucher, Force aux degats (${finesse}/${force})</option>
+            </select>
+          </div>
+        `,
+        buttons: {
+          ok: {
+            label: "Attaquer",
+            callback: (html) => resolve(String(html.find("#bl-basic-attack-mode").val() || defaultMode)),
+          },
+          cancel: {
+            label: "Annuler",
+            callback: () => resolve(""),
+          },
+        },
+        default: "ok",
+      },
+      { width: 460 }
+    ).render(true);
+  });
+}
+
+async function promptTargetLimb(targetActor) {
+  if (!targetActor || !LIMB_DEFINITIONS.length) return null;
+  const options = [
+    `<option value="">Aucun ciblage particulier</option>`,
+    ...LIMB_DEFINITIONS.map((entry) => `<option value="${entry.key}">${entry.label}</option>`),
+  ].join("");
+  return new Promise((resolve) => {
+    new Dialog(
+      {
+        title: "Ciblage de membre",
+        content: `
+          <p>Choisis un membre vise pour suivre les degats de mutilation.</p>
+          <div class="form-group">
+            <label>Membre</label>
+            <select id="bl-target-limb">${options}</select>
+          </div>
+        `,
+        buttons: {
+          ok: {
+            label: "Continuer",
+            callback: (html) => resolve(String(html.find("#bl-target-limb").val() || "")),
+          },
+          cancel: {
+            label: "Annuler",
+            callback: () => resolve(null),
+          },
+        },
+        default: "ok",
+      },
+      { width: 420 }
+    ).render(true);
+  });
+}
+
+async function rollNoRpEvade(actor, attackTotal) {
+  const base = getEffectiveBaseStats(actor);
+  const mod = toNumber(base.finesse, 0) - 1;
+  const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
+  const total = toNumber(roll.total, 0);
+  await roll.toMessage({
+    speaker: actorSpeaker(actor),
+    flavor: `Eviter sans RP contre ${attackTotal}`,
+  });
+  return { roll, total, success: total >= toNumber(attackTotal, 0) };
+}
+
+async function applyTargetedLimbDamage(actor, limbKey, damage) {
+  if (!actor || !limbKey || damage <= 0) return null;
+  const definition = LIMB_DEFINITIONS.find((entry) => entry.key === limbKey);
+  if (!definition) return null;
+
+  const hpMax = toNumber(actor.system?.resources?.hp?.max, 1);
+  const thresholdRatio = toNumber(definition.thresholdRatio, 0.2);
+  const threshold = Math.max(1, Math.ceil(hpMax * thresholdRatio));
+  const demonTarget = isDemonActor(actor);
+  const current = toNumber(FU.getProperty(actor, `system.combat.injuries.targetedDamage.${limbKey}`), 0);
+  const accumulated = demonTarget ? damage : current + damage;
+  const severed = accumulated >= threshold;
+  const updates = {
+    [`system.combat.injuries.targetedDamage.${limbKey}`]: demonTarget ? current : accumulated,
+    [`system.combat.injuries.limbs.${limbKey}.injured`]: true,
+  };
+  if (severed) {
+    updates[`system.combat.injuries.limbs.${limbKey}.severed`] = true;
+    const consequence = [];
+    if (definition.category === "leg") consequence.push("deplacement /2 tant que la jambe est inutilisable");
+    if (definition.noFlight) consequence.push("vol impossible");
+    if (definition.movementFlatPenalty) consequence.push(`deplacement -${definition.movementFlatPenalty} m`);
+    if (definition.movementPenaltyRatio) consequence.push(`deplacement -${Math.round(definition.movementPenaltyRatio * 100)}%`);
+    updates[`system.combat.injuries.limbs.${limbKey}.notes`] = [
+      demonTarget
+      ? `Seuil atteint en une seule attaque (${damage}/${threshold}).`
+      : `Seuil cumulatif atteint (${accumulated}/${threshold}).`,
+      consequence.join(", "),
+    ].filter(Boolean).join(" ");
+  }
+
+  await actor.update(updates);
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: severed
+      ? `<strong>${definition.label} de ${actor.name}: seuil de mutilation atteint (${demonTarget ? damage : accumulated}/${threshold}).</strong>`
+      : `<em>${definition.label} de ${actor.name}: ${demonTarget ? damage : accumulated}/${threshold} degats de ciblage.</em>`,
+  });
+  return { limbKey, damage, accumulated, threshold, severed };
+}
+
 async function applyBasicAttackDamage({
   attacker,
   targetToken,
   damageRoll,
   weapon = null,
   isFirearm = false,
+  targetLimb = "",
 }) {
   const targetActor = targetToken?.actor;
   if (!targetActor || !damageRoll) return null;
@@ -622,6 +1129,7 @@ async function applyBasicAttackDamage({
 
   await targetActor.update({ "system.resources.hp.value": nextHp });
   await noteActorDamageTaken(targetActor, damage);
+  await applyTargetedLimbDamage(targetActor, targetLimb, damage);
   if (attacker.system?.states?.lameRouge && isDemonActor(targetActor)) {
     await targetActor.setFlag(SYSTEM_ID, "redBladeLockRound", game.combat?.round ?? 0);
   }
@@ -681,7 +1189,13 @@ export async function setLimbState(actor, key, patch = {}) {
 
 export async function rollBasicAttack(
   actor,
-  { item = null, targetToken = null, repeatedAction = false } = {}
+  {
+    item = null,
+    targetToken = null,
+    repeatedAction = false,
+    attackMode: requestedAttackMode = "",
+    forceAutoHit = false,
+  } = {}
 ) {
   if (!actor) return null;
 
@@ -725,13 +1239,30 @@ export async function rollBasicAttack(
     return null;
   }
 
+  const arms = actorHasDisabledArms(actor);
+  const naturalWeapon = !weapon || ["natural", ""].includes(String(weapon.system?.weaponFamily || "")) || ["demonAbility"].includes(String(weapon.type || ""));
+  if (arms.both && !naturalWeapon) {
+    ui.notifications.warn(`${actor.name} ne peut pas manier cette arme: les deux bras sont inutilisables.`);
+    return null;
+  }
+
+  const targetLimb = await promptTargetLimb(target.actor);
+  if (targetLimb === null) return null;
+
+  if (!(await spendWeaponAmmo(weapon))) return null;
+
   if (isFirearm) {
     attackBonus = useHalfDemonBonus ? demonAttackBonus(finesse) : finesse;
     damageBonus = precision;
     attackMode = "finesse";
-    autoHit = !!actor.system?.combat?.basicAttack?.autoHitFirearm;
+    autoHit = forceAutoHit || !!actor.system?.combat?.basicAttack?.autoHitFirearm;
   } else {
-    if (finesse > force) {
+    const chosenMode = ["force", "finesse"].includes(requestedAttackMode)
+      ? requestedAttackMode
+      : await promptBasicAttackMode(actor, { force, finesse });
+    if (!chosenMode) return null;
+
+    if (chosenMode === "finesse") {
       attackBonus = useHalfDemonBonus ? demonAttackBonus(finesse) : finesse;
       damageBonus = useHalfDemonBonus ? demonAttackBonus(force) : force;
       attackMode = "finesse";
@@ -740,7 +1271,7 @@ export async function rollBasicAttack(
       damageBonus = useHalfDemonBonus ? demonAttackBonus(finesse) : finesse;
       attackMode = "force";
     }
-    autoHit = !!actor.system?.combat?.basicAttack?.autoHitMelee;
+    autoHit = forceAutoHit || !!actor.system?.combat?.basicAttack?.autoHitMelee;
   }
 
   attackBonus += toNumber(weapon?.system?.attackMod, 0);
@@ -775,7 +1306,7 @@ export async function rollBasicAttack(
     rawDamageExpr = replaceFirstDie(rawDamageExpr, progressionBonuses.nichirinDamageDie);
   }
 
-  const baseDamageExpr = replaceStats(rawDamageExpr, actor, "1d4 + 0");
+  const baseDamageExpr = replaceStats(stripStatTermsFromDamageExpr(rawDamageExpr), actor, "1d4 + 0");
   let damageExpr = `${baseDamageExpr} + ${damageBonus}`;
   if (weapon?.system?.isNichirin) {
     damageExpr = appendFlatModifier(
@@ -793,6 +1324,9 @@ export async function rollBasicAttack(
   if (actor.system?.states?.lameRouge && isDemonActor(target.actor)) {
     damageExpr = `(${damageExpr}) * 2`;
   }
+  if (isDemonActor(actor) && arms.any && /griffe|bras|claw/i.test(String(weapon?.name || weapon?.system?.weaponFamily || ""))) {
+    damageExpr = `(${damageExpr}) / 2`;
+  }
 
   const damageRoll = hit
     ? await new Roll(damageExpr).evaluate({ async: true })
@@ -801,20 +1335,30 @@ export async function rollBasicAttack(
   const attackLine = autoHit
     ? "Attaque de base auto-reussie."
     : `Jet d'attaque (${attackMode}) : ${attackRoll.total} contre CA ${targetCa}.`;
+  const damageMode = isFirearm ? "precision" : attackMode === "force" ? "finesse" : "force";
+  const statLine = `<div><small>Toucher: ${attackMode}. Degats: ${damageMode}${weaponUsesAmmo(weapon) ? `. Munitions: ${toNumber(weapon.system?.ammo?.value, 0)} / ${toNumber(weapon.system?.ammo?.max, 0)}` : ""}.</small></div>`;
   const modeLine = repeatedAction
     ? `<div>Action repetee : bonus actuel +${repeatedActionDamage}.</div>`
     : "";
   const activeCoating = getActivePoisonCoating(actor);
+  const targetLimbLabel = targetLimb
+    ? LIMB_DEFINITIONS.find((entry) => entry.key === targetLimb)?.label || targetLimb
+    : "";
   const poisonNote =
     activeCoating && (!weapon?.id || !activeCoating.weaponId || activeCoating.weaponId === weapon.id)
       ? `<div><small>Poison prepare: ${activeCoating.itemName} sur ${activeCoating.weaponName || weapon?.name || "l'arme"}.</small></div>`
       : "";
+  const limbNote = targetLimbLabel ? `<div><small>Ciblage: ${targetLimbLabel}.</small></div>` : "";
   const targetRow = hit
     ? buildReactionTargetRow({
         attackerToken,
         targetToken: target,
         damageTotal: damageRoll?.total ?? 0,
         allowWaterDeflect: isFirearm || range > METERS_PER_SQUARE,
+        extraButtonsHtml:
+          !autoHit && attackRoll
+            ? `<button class="bl-evade-no-rp" data-target-token="${target.id}" data-attack-total="${attackTotal}">Eviter sans RP</button>`
+            : "",
       })
     : "";
 
@@ -826,6 +1370,8 @@ export async function rollBasicAttack(
         <div class="bl-card" style="display:grid; gap:.35rem;">
           <div><strong>${actor.name}</strong> attaque <strong>${target.name}</strong> avec <strong>${weapon?.name || "attaque a mains nues"}</strong>.</div>
           ${modeLine}
+          ${statLine}
+          ${limbNote}
           <div><small>Jet d'attaque (${attackMode}) contre CA ${targetCa}.</small></div>
           <div>${hit ? "L'attaque touche." : "L'attaque manque sa cible."}</div>
         </div>
@@ -843,6 +1389,8 @@ export async function rollBasicAttack(
       <div class="bl-card" style="display:grid; gap:.35rem;">
         <div><strong>${actor.name}</strong> attaque <strong>${target.name}</strong> avec <strong>${weapon?.name || "attaque a mains nues"}</strong>.</div>
         ${modeLine}
+        ${statLine}
+        ${limbNote}
         ${poisonNote}
         <div><small>${autoHit ? `${attackLine} ` : ""}La cible peut reagir avant l'application des degats.</small></div>
         <div><b>Degats potentiels:</b> ${damageRoll.total} <small>(${damageExpr})</small></div>
@@ -857,6 +1405,33 @@ export async function rollBasicAttack(
     const disableTargetButtons = (tokenId) => {
       html.find(`button[data-target-token="${tokenId}"]`).prop("disabled", true);
     };
+    const disableRpButtons = (tokenId) => {
+      html
+        .find(`.bl-target-row[data-target-token="${tokenId}"] .bl-dodge, .bl-target-row[data-target-token="${tokenId}"] .bl-deflect, .bl-target-row[data-target-token="${tokenId}"] .bl-stance-deflect`)
+        .prop("disabled", true);
+    };
+
+    html.find(".bl-evade-no-rp").on("click", async (event) => {
+      const button = $(event.currentTarget);
+      const token = canvas.tokens.get(String(button.attr("data-target-token")));
+      const targetActor = token?.actor;
+      if (!targetActor || !canInteractWithToken(token)) return;
+
+      const attackTarget = toNumber(button.attr("data-attack-total"), 0);
+      const result = await rollNoRpEvade(targetActor, attackTarget);
+      if (result.success) {
+        html
+          .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+          .html(`<em>Eviter sans RP reussi (${result.total} contre ${attackTarget}) : degats annules.</em>`);
+        disableTargetButtons(token.id);
+      } else {
+        html
+          .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+          .html(`<em>Eviter sans RP echoue (${result.total} contre ${attackTarget}) : reactions RP interdites contre cette attaque.</em>`);
+        button.prop("disabled", true);
+        disableRpButtons(token.id);
+      }
+    });
 
     html.find(".bl-dodge").on("click", async (event) => {
       const button = $(event.currentTarget);
@@ -912,6 +1487,7 @@ export async function rollBasicAttack(
         damageRoll,
         weapon,
         isFirearm,
+        targetLimb,
       });
       if (!result) return;
 
@@ -1004,6 +1580,8 @@ export async function runDemonRegrow(actor) {
     updates[`system.combat.injuries.limbs.${key}.injured`] = false;
     updates[`system.combat.injuries.limbs.${key}.broken`] = false;
     updates[`system.combat.injuries.limbs.${key}.severed`] = false;
+    updates[`system.combat.injuries.limbs.${key}.notes`] = "";
+    updates[`system.combat.injuries.targetedDamage.${key}`] = 0;
   }
   await actor.update(updates);
 
@@ -1137,6 +1715,7 @@ export async function runDemonExecute(actor) {
 
       const currentHp = toNumber(target.system?.resources?.hp?.value, 0);
       await target.update({ "system.resources.hp.value": 0 });
+      await noteActorDamageTaken(target, currentHp);
       await ChatMessage.create({
         speaker: actorSpeaker(actor),
         content: `<em>${actor.name} execute ${target.name} (${currentHp} -> 0 PV).</em>`,
@@ -1146,6 +1725,45 @@ export async function runDemonExecute(actor) {
   });
 
   return true;
+}
+
+async function runDemonPreparedDefense(actor, { mode = "block", label = "Defense demoniaque" } = {}) {
+  if (!actor || !isDemonActor(actor)) return null;
+
+  // TODO-RULEBOOK-AMBIGUITY: the PDF lists demon block/dodge as reaction options,
+  // but does not give a Foundry-sized mitigation formula. We spend 1 RP and reuse
+  // the existing defensive-stance hook so the next incoming attack card can be
+  // cancelled explicitly by the defender.
+  const ok = await spendRp(actor, 1, label);
+  if (!ok) return null;
+
+  await actor.setFlag(SYSTEM_ID, "deflectStance", {
+    itemName: label,
+    actionLabel: mode === "dodge" ? "Esquive preparee" : "Blocage prepare",
+    source: "demon-defense",
+    mode,
+    round: game.combat?.round ?? null,
+    created: Date.now(),
+  });
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `<em>${actor.name} prepare ${label}. La prochaine carte d'attaque peut consommer cette defense pour annuler les degats.</em>`,
+  });
+  return true;
+}
+
+export async function runDemonBlock(actor) {
+  return runDemonPreparedDefense(actor, {
+    mode: "block",
+    label: "Bloquer demoniaque",
+  });
+}
+
+export async function runDemonDodge(actor) {
+  return runDemonPreparedDefense(actor, {
+    mode: "dodge",
+    label: "Esquive demoniaque",
+  });
 }
 
 export async function runDemonSharedAction(actor, key) {
@@ -1162,6 +1780,10 @@ export async function runDemonSharedAction(actor, key) {
       return runDemonSos(actor);
     case "execute":
       return runDemonExecute(actor);
+    case "block":
+      return runDemonBlock(actor);
+    case "dodge":
+      return runDemonDodge(actor);
     default:
       return null;
   }
@@ -1169,6 +1791,14 @@ export async function runDemonSharedAction(actor, key) {
 
 export async function runRecoveryBreath(actor) {
   if (!actor) return null;
+  if (actor.system?.states?.tcbActive) {
+    ui.notifications.warn("Le Souffle de recuperation est interdit pendant le TCB actif.");
+    await ChatMessage.create({
+      speaker: actorSpeaker(actor),
+      content: `<em>${actor.name} ne peut pas utiliser le Souffle de recuperation pendant le TCB actif.</em>`,
+    });
+    return null;
+  }
   const tier = getRankTier(actor);
   const multiplier = actor.system?.states?.marque ? 2 : 1;
   const roll = await new Roll(`${tier}d8`).evaluate({ async: true });
@@ -1183,7 +1813,8 @@ export async function runRecoveryBreath(actor) {
     [`flags.${SYSTEM_ID}.zeroStreakByCombat.${game.combat?.id}`]: 0,
   };
 
-  if (actor.system?.states?.tcbPermanent && getCondition(actor, "bleed")?.active) {
+  const stoppedBleeding = !!(actor.system?.states?.tcbPermanent && getCondition(actor, "bleed")?.active);
+  if (stoppedBleeding) {
     update["system.conditions.bleed.active"] = false;
     update["system.conditions.bleed.intensity"] = 0;
     update["system.conditions.bleed.duration"] = 0;
@@ -1193,7 +1824,7 @@ export async function runRecoveryBreath(actor) {
 
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
-    content: `<em>${actor.name} utilise le Souffle de recuperation et regagne ${amount} E (${eValue} -> ${next}).</em>`,
+    content: `<em>${actor.name} utilise le Souffle de recuperation et regagne ${amount} E (${eValue} -> ${next}).${stoppedBleeding ? " Le saignement est stoppe par le TCB Constant." : ""}</em>`,
   });
 
   return amount;
@@ -1202,7 +1833,11 @@ export async function runRecoveryBreath(actor) {
 export async function runSprint(actor) {
   if (!actor) return null;
   const movement = toNumber(actor.system?.combat?.actionEconomy?.movementMeters, 0);
-  const extra = Number((movement * 1.5).toFixed(1));
+  const effectiveMovement = toNumber(
+    actor.system?.combat?.actionEconomy?.effectiveMovementMeters,
+    movement
+  );
+  const extra = Number((effectiveMovement * 1.5).toFixed(1));
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
     content: `<em>${actor.name} sprinte et peut parcourir jusqu'a ${extra} m supplementaires ce tour.</em>`,
@@ -1219,6 +1854,299 @@ export async function runWait(actor) {
   return true;
 }
 
+function dialogValue(html, selector) {
+  return String(html.find(selector).val() || "").trim();
+}
+
+const CRAFTING_DC_BY_COMPONENTS = new Map([
+  [1, 4],
+  [2, 6],
+  [3, 8],
+  [4, 10],
+  [5, 12],
+  [6, 14],
+]);
+
+function craftingDcForComponents(count, fallback = 4) {
+  const normalized = clamp(Math.round(toNumber(count, 1)), 1, 6);
+  return CRAFTING_DC_BY_COMPONENTS.get(normalized) ?? fallback;
+}
+
+function derivedStatLabel(key) {
+  return CONFIG.breatheAndLive?.DERIVED_LABELS?.[key] || key;
+}
+
+async function promptCraftingOptions(item) {
+  const crafting = item?.system?.crafting || {};
+  const componentCount = clamp(toNumber(crafting.componentCount, 1), 1, 6);
+  const defaultDc = toNumber(crafting.dc, 0) || craftingDcForComponents(componentCount);
+  const stat = String(crafting.stat || "sciences");
+  const statOptions = Object.entries(CONFIG.breatheAndLive?.DERIVED_LABELS || {})
+    .map(
+      ([key, label]) =>
+        `<option value="${key}" ${key === stat ? "selected" : ""}>${label}</option>`
+    )
+    .join("");
+
+  return new Promise((resolve) => {
+    new Dialog(
+      {
+        title: "Fabrication",
+        content: `
+          <div class="form-group">
+            <label>Composants</label>
+            <input id="bl-craft-components" type="number" min="1" max="6" value="${componentCount}" />
+          </div>
+          <div class="form-group">
+            <label>DD</label>
+            <input id="bl-craft-dc" type="number" min="0" value="${defaultDc}" />
+          </div>
+          <div class="form-group">
+            <label>Competence</label>
+            <select id="bl-craft-stat">${statOptions}</select>
+          </div>
+          <p class="hint">Le PDF fixe le DD par nombre de composants. La competence exacte reste au choix du MJ.</p>
+        `,
+        buttons: {
+          ok: {
+            label: "Fabriquer",
+            callback: (html) =>
+              resolve({
+                componentCount: clamp(toNumber(dialogValue(html, "#bl-craft-components"), 1), 1, 6),
+                dc: Math.max(0, toNumber(dialogValue(html, "#bl-craft-dc"), defaultDc)),
+                stat: dialogValue(html, "#bl-craft-stat") || stat,
+              }),
+          },
+          cancel: { label: "Annuler", callback: () => resolve(null) },
+        },
+        default: "ok",
+      },
+      { width: 420 }
+    ).render(true);
+  });
+}
+
+export async function runCraftingCheck(actor, item) {
+  if (!actor || !item) return null;
+  const options = await promptCraftingOptions(item);
+  if (!options) return null;
+
+  const mod = toNumber(actor.system?.stats?.derived?.[options.stat], 0);
+  const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
+  const success = toNumber(roll.total, 0) >= options.dc;
+  const resultName = String(item.system?.crafting?.resultItemName || item.name || "objet").trim();
+
+  // TODO-RULEBOOK-AMBIGUITY: the PDF gives component-count DCs but does not bind
+  // crafting to one exact stat. The sheet lets the GM choose the derived stat.
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `
+      <div class="bl-card" style="display:grid; gap:.35rem;">
+        <strong>Fabrication - ${resultName}</strong>
+        <div>${actor.name} lance ${derivedStatLabel(options.stat)} contre DD ${options.dc} (${options.componentCount} composant(s)).</div>
+        <div>Jet: <b>${roll.total}</b> - ${success ? "reussite" : "echec"}.</div>
+        ${item.system?.crafting?.notes ? `<small>${item.system.crafting.notes}</small>` : ""}
+      </div>
+    `,
+  });
+  return { roll, success, dc: options.dc, stat: options.stat };
+}
+
+async function promptDriveOptions(item, mode) {
+  const dangerous = mode === "danger";
+  const defaultDc = toNumber(
+    dangerous ? item.system?.drive?.dangerDc : item.system?.drive?.relaxedDc,
+    dangerous ? 15 : 10
+  );
+  return new Promise((resolve) => {
+    new Dialog(
+      {
+        title: dangerous ? "Conduite dangereuse" : "Conduite detendue",
+        content: `
+          <div class="form-group">
+            <label>DD</label>
+            <input id="bl-drive-dc" type="number" min="0" value="${defaultDc}" />
+          </div>
+          <p class="hint">${dangerous ? "Route dangereuse: test de Reflexes." : "Conduite detendue: test de Finesse."} Le DD varie selon route, meteo et visibilite.</p>
+        `,
+        buttons: {
+          ok: {
+            label: "Conduire",
+            callback: (html) =>
+              resolve({
+                dc: Math.max(0, toNumber(dialogValue(html, "#bl-drive-dc"), defaultDc)),
+              }),
+          },
+          cancel: { label: "Annuler", callback: () => resolve(null) },
+        },
+        default: "ok",
+      },
+      { width: 380 }
+    ).render(true);
+  });
+}
+
+export async function runTransportDriveCheck(actor, item, { mode = "relaxed" } = {}) {
+  if (!actor || !item) return null;
+  if (!["vehicle", "transport"].includes(item.type)) {
+    ui.notifications.warn("Cet item n'est pas un transport.");
+    return null;
+  }
+  const options = await promptDriveOptions(item, mode);
+  if (!options) return null;
+
+  const dangerous = mode === "danger";
+  const mod = dangerous
+    ? toNumber(actor.system?.stats?.derived?.reflexes, 0)
+    : toNumber(actor.system?.stats?.base?.finesse, 0) - 1;
+  const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
+  const success = toNumber(roll.total, 0) >= options.dc;
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `
+      <div class="bl-card" style="display:grid; gap:.35rem;">
+        <strong>${dangerous ? "Conduite dangereuse" : "Conduite detendue"} - ${item.name}</strong>
+        <div>${dangerous ? "Reflexes" : "Finesse"} contre DD ${options.dc}.</div>
+        <div>Jet: <b>${roll.total}</b> - ${success ? "trajet maitrise" : "complication de conduite"}.</div>
+        ${item.system?.drive?.notes ? `<small>${item.system.drive.notes}</small>` : ""}
+      </div>
+    `,
+  });
+  return { roll, success, dc: options.dc, mode };
+}
+
+export async function runAssistanceRequest(actor) {
+  if (!actor) return null;
+  const request = await new Promise((resolve) => {
+    new Dialog(
+      {
+        title: "Demande d'assistance",
+        content: `
+          <div class="form-group">
+            <label>Niveau de menace</label>
+            <input id="bl-assist-threat" type="text" placeholder="ex: Lune inferieure, demon trop puissant..." />
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea id="bl-assist-message" rows="4" placeholder="Situation, localisation, blesses, urgence..."></textarea>
+          </div>
+        `,
+        buttons: {
+          ok: {
+            label: "Envoyer",
+            callback: (html) =>
+              resolve({
+                threat: dialogValue(html, "#bl-assist-threat"),
+                message: dialogValue(html, "#bl-assist-message"),
+              }),
+          },
+          cancel: { label: "Annuler", callback: () => resolve(null) },
+        },
+        default: "ok",
+      },
+      { width: 480 }
+    ).render(true);
+  });
+  if (!request) return null;
+
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `
+      <div class="bl-card" style="display:grid; gap:.35rem;">
+        <strong>Demande d'assistance - ${actor.name}</strong>
+        <div><b>Menace:</b> ${request.threat || "non precisee"}</div>
+        <div>${request.message || "Aucun detail fourni."}</div>
+        <small>Action de support: le MJ determine le delai et la reponse des pourfendeurs/Kakushi disponibles.</small>
+      </div>
+    `,
+  });
+  return request;
+}
+
+export async function runKakushiSupplyRequest(actor) {
+  if (!actor) return null;
+  const request = await new Promise((resolve) => {
+    new Dialog(
+      {
+        title: "Demande d'objet Kakushi",
+        content: `
+          <div class="form-group">
+            <label>Objet demande</label>
+            <input id="bl-kakushi-item" type="text" placeholder="ex: bandages, munitions, transport..." />
+          </div>
+          <div class="form-group">
+            <label>Quantite</label>
+            <input id="bl-kakushi-qty" type="number" min="1" value="1" />
+          </div>
+          <div class="form-group">
+            <label>Lieu / consigne</label>
+            <textarea id="bl-kakushi-note" rows="3"></textarea>
+          </div>
+        `,
+        buttons: {
+          ok: {
+            label: "Demander",
+            callback: (html) =>
+              resolve({
+                item: dialogValue(html, "#bl-kakushi-item"),
+                quantity: Math.max(1, toNumber(dialogValue(html, "#bl-kakushi-qty"), 1)),
+                note: dialogValue(html, "#bl-kakushi-note"),
+              }),
+          },
+          cancel: { label: "Annuler", callback: () => resolve(null) },
+        },
+        default: "ok",
+      },
+      { width: 480 }
+    ).render(true);
+  });
+  if (!request) return null;
+
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: `
+      <div class="bl-card" style="display:grid; gap:.35rem;">
+        <strong>Requete Kakushi - ${actor.name}</strong>
+        <div><b>Objet:</b> ${request.item || "non precise"} x${request.quantity}</div>
+        <div>${request.note || "Aucune consigne."}</div>
+        <small>Le MJ valide disponibilite, cout et delai de livraison.</small>
+      </div>
+    `,
+  });
+  return request;
+}
+
+export async function runCounterAttackReaction(actor, { assured = false } = {}) {
+  if (!actor) return null;
+  const cost = assured ? 2 : 1;
+  const ok = await spendRp(actor, cost, assured ? "une attaque de reaction assuree" : "une attaque de reaction");
+  if (!ok) return null;
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: assured
+      ? `<em>${actor.name} depense 2 RP pour une attaque de reaction assuree.</em>`
+      : `<em>${actor.name} depense 1 RP pour attaquer hors tour.</em>`,
+  });
+  return rollBasicAttack(actor, { forceAutoHit: assured });
+}
+
+export async function runDrawReaction(actor, { attackAndReturn = false } = {}) {
+  if (!actor) return null;
+  const cost = attackAndReturn ? 2 : 1;
+  const ok = await spendRp(actor, cost, attackAndReturn ? "degainage attaque" : "degainage");
+  if (!ok) return null;
+  await ChatMessage.create({
+    speaker: actorSpeaker(actor),
+    content: attackAndReturn
+      ? `<em>${actor.name} degaine, attaque, puis revient a son arme precedente. Choisis l'arme a utiliser.</em>`
+      : `<em>${actor.name} change d'arme sans depenser d'action.</em>`,
+  });
+  if (attackAndReturn) {
+    return rollBasicAttack(actor);
+  }
+  return true;
+}
+
 export async function runRestRefresh(actor, { full = true } = {}) {
   if (!actor) return null;
   const updates = {};
@@ -1230,6 +2158,11 @@ export async function runRestRefresh(actor, { full = true } = {}) {
   }
   if (full && FU.hasProperty(actor, "system.resources.hp.healableMax")) {
     updates["system.resources.hp.value"] = toNumber(actor.system.resources.hp.healableMax, 0);
+  }
+  if (actor.type === "demonist") {
+    updates["system.resources.demonisation"] = 0;
+    updates["system.support.activeDemonistMedicine"] = false;
+    updates["system.support.demonistMedicineActiveCombatId"] = "";
   }
   await actor.update(updates);
   await resetRepeatedAction(actor);
@@ -1247,21 +2180,67 @@ export async function useMedicalItem(
 ) {
   if (!actor || !item) return null;
 
-  const selectedTargetActor =
-    Array.from(game.user.targets ?? [])
-      .map((token) => token?.actor)
-      .find((candidate) => candidate && candidate.id !== actor.id) || null;
-  const target = targetActor || selectedTargetActor || actor;
+  const itemKey = normalizeRuleText(`${item.name} ${item.system?.sourceSection} ${item.system?.usageNote}`);
+  if (actor.type === "demonist" && itemKey.includes("medecine active demoniste")) {
+    await actor.update({
+      "system.support.activeDemonistMedicine": true,
+      "system.support.demonistMedicineActiveCombatId": game.combat?.id || "",
+    });
+    await ChatMessage.create({
+      speaker: actorSpeaker(actor),
+      content: `<em>${actor.name} active la Medecine Active Demoniste: la demonisation gagnee est reduite de 50 % jusqu'a la fin du combat.</em>`,
+    });
+    return true;
+  }
+
+  if (actor.type === "demonist" && itemKey.includes("medecine de reparation demoniste")) {
+    const current = toNumber(actor.system?.resources?.demonisation, 0);
+    const next = Math.max(0, current / 2);
+    await actor.update({ "system.resources.demonisation": next });
+    await ChatMessage.create({
+      speaker: actorSpeaker(actor),
+      content: `<em>${actor.name} utilise la Medecine de Reparation Demoniste et reduit sa demonisation (${current} -> ${next}).</em>`,
+    });
+    return current - next;
+  }
+
   if (reaction) {
     const cost = maximize ? 2 : 1;
     const ok = await spendRp(actor, cost, "une reaction medicale");
     if (!ok) return null;
   }
 
+  const hasEnduranceGain = !!String(item.system?.enduranceGain || "").trim();
+  const hasHpHealing = !!item.system?.maxHeal || !!String(item.system?.healing || "").trim();
+  if (hasEnduranceGain) {
+    const enduranceResult = await applyEnduranceGain(actor, item, { maximize });
+    if (!hasHpHealing) return enduranceResult;
+  }
+
+  const selectedTargetActor =
+    Array.from(game.user.targets ?? [])
+      .map((token) => token?.actor)
+      .find((candidate) => candidate && candidate.id !== actor.id) || null;
+  const target = targetActor || selectedTargetActor || actor;
+
   const healableMax = toNumber(target.system?.resources?.hp?.healableMax, target.system?.resources?.hp?.max ?? 0);
   const hpValue = toNumber(target.system?.resources?.hp?.value, 0);
 
   if (item.system?.maxHeal) {
+    if (itemKey.includes("chirurg") || itemKey.includes("medecin")) {
+      const hpMax = toNumber(target.system?.resources?.hp?.max, healableMax);
+      await target.update({
+        "system.combat.injuries.severeWounds": 0,
+        "system.combat.injuries.nearDeathWounds": 0,
+        "system.resources.hp.healableMax": hpMax,
+        "system.resources.hp.value": hpMax,
+      });
+      await ChatMessage.create({
+        speaker: actorSpeaker(actor),
+        content: `<em>${actor.name} traite les blessures graves de ${target.name} avec ${item.name}; le cap de soin est restaure.</em>`,
+      });
+      return hpMax - hpValue;
+    }
     await target.update({ "system.resources.hp.value": healableMax });
     await ChatMessage.create({
       speaker: actorSpeaker(actor),
@@ -1332,16 +2311,21 @@ export async function gainDemonFleshBdp(actor) {
 
   const expr = DEMON_FLESH_BDP[selected];
   const flatBonus = toNumber(actor.system?.progression?.bonuses?.demonFleshBonus, 0);
-  const roll = await new Roll(expr).evaluate({ async: true });
+  const extraDice = toNumber(actor.system?.progression?.bonuses?.demonFleshExtraDice, 0);
+  const rollExpr = increaseFirstDieCount(expr, extraDice);
+  const roll = await new Roll(rollExpr).evaluate({ async: true });
   const gain = Math.max(0, toNumber(roll.total, 0) + flatBonus);
   const current = toNumber(actor.system?.resources?.bdp?.value, 0);
   const max = toNumber(actor.system?.resources?.bdp?.max, current);
   const next = clamp(current + gain, 0, max);
 
-  await actor.update({ "system.resources.bdp.value": next });
+  await actor.update({
+    "system.resources.bdp.value": next,
+    "system.support.recentDemonFleshRank": selected,
+  });
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
-    content: `<em>${actor.name} consomme de la chair demoniaque (${selected}) et gagne ${next - current} BDP (${current} -> ${next}).</em>`,
+    content: `<em>${actor.name} consomme de la chair demoniaque (${selected}) et gagne ${next - current} BDP (${current} -> ${next}).${extraDice ? ` Palais raffine: +${extraDice} de(s) sur ${expr}.` : ""}</em>`,
   });
   return next - current;
 }
@@ -1470,6 +2454,44 @@ export function registerActionHooks() {
     if (!actor) return;
     await processConditionTurnStart(actor);
   });
+
+  Hooks.on("deleteCombat", async (combat) => {
+    const updates = [];
+    for (const actor of game.actors?.contents ?? []) {
+      if (actor.type !== "demonist") continue;
+      const activeCombatId = String(actor.system?.support?.demonistMedicineActiveCombatId || "");
+      if (!actor.system?.support?.activeDemonistMedicine) continue;
+      if (activeCombatId && activeCombatId !== combat.id) continue;
+      updates.push(
+        actor.update({
+          "system.support.activeDemonistMedicine": false,
+          "system.support.demonistMedicineActiveCombatId": "",
+        })
+      );
+    }
+    await Promise.all(updates);
+  });
+
+  Hooks.on("updateWorldTime", async (_worldTime, dt = 0) => {
+    const elapsed = Math.max(0, toNumber(dt, 0));
+    if (!elapsed) return;
+    for (const actor of game.actors?.contents ?? []) {
+      if (actor.type !== "demonist") continue;
+      const previousCarry = toNumber(actor.getFlag(SYSTEM_ID, "demonisationDecaySeconds"), 0);
+      const total = previousCarry + elapsed;
+      const hours = Math.floor(total / 3600);
+      const remainder = total % 3600;
+      if (hours <= 0) {
+        await actor.setFlag(SYSTEM_ID, "demonisationDecaySeconds", remainder);
+        continue;
+      }
+      const current = toNumber(actor.system?.resources?.demonisation, 0);
+      await actor.update({
+        "system.resources.demonisation": Math.max(0, current - hours * 2),
+      });
+      await actor.setFlag(SYSTEM_ID, "demonisationDecaySeconds", remainder);
+    }
+  });
 }
 
 export const ActionEngine = {
@@ -1491,8 +2513,22 @@ export const ActionEngine = {
   runDemonInfect,
   runDemonSos,
   runDemonExecute,
+  runDemonBlock,
+  runDemonDodge,
+  runDemonistHealingReaction,
+  runDemonistEnhancementReaction,
+  runReloadWeapon,
+  runCounterAttackReaction,
+  runDrawReaction,
+  runAssistanceRequest,
+  runKakushiSupplyRequest,
+  runCraftingCheck,
+  runTransportDriveCheck,
+  rollBaseCheck,
+  rollDerivedCheck,
   queueDemonPendingEffect,
   gainDemonFleshBdp,
+  applyDemonisationGain,
   spendBdp,
   spendRp,
   setConditionState,

@@ -5,6 +5,9 @@
       <h1 class="charname">
         <input name="name" type="text" value="{{item.name}}" placeholder="Nom de l'arme" />
       </h1>
+      {{#if isSupplement1934Content}}
+        <div class="muted"><small>Supplement 1934{{#unless supplement1934Global}} - optionnel, toggle global desactive{{/unless}}</small></div>
+      {{/if}}
     </div>
   </header>
 
@@ -18,10 +21,18 @@
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="stats">
       <div class="grid two-col">
+        <label>Source</label>
+        <input type="text" name="system.sourceSection" value="{{system.sourceSection}}" placeholder="Section du livre" />
+
+        <label>Supplement 1934</label>
+        <input type="checkbox" name="system.supplement1934.enabled" data-dtype="Boolean" {{checked system.supplement1934.enabled}} />
+
         <label>Categorie</label>
         <select name="system.category">
           <option value="melee" {{#if (eq system.category "melee")}}selected{{/if}}>Melee</option>
           <option value="distance" {{#if (eq system.category "distance")}}selected{{/if}}>Distance</option>
+          <option value="projectile" {{#if (eq system.category "projectile")}}selected{{/if}}>Projectile</option>
+          <option value="explosive" {{#if (eq system.category "explosive")}}selected{{/if}}>Explosif</option>
         </select>
 
         <label>Famille</label>
@@ -32,6 +43,17 @@
 
         <label>Portee (m)</label>
         <input type="number" name="system.range" value="{{system.range}}" min="0" step="0.5" />
+
+        {{#if isExplosive}}
+          <label>Rayon (m)</label>
+          <input type="number" name="system.radius" value="{{system.radius}}" min="0" step="0.5" />
+
+          <label>Jet de sauvegarde</label>
+          <input type="text" name="system.saveDerived" value="{{system.saveDerived}}" placeholder="ex: reflexes" />
+
+          <label>DD</label>
+          <input type="number" name="system.saveDc" value="{{system.saveDc}}" min="0" />
+        {{/if}}
 
         <label>Mod. Attaque</label>
         <input type="number" name="system.attackMod" value="{{system.attackMod}}" />
@@ -47,6 +69,11 @@
 
         <label>Peut decapiter</label>
         <input type="checkbox" name="system.canDecapitate" data-dtype="Boolean" {{checked system.canDecapitate}} />
+
+        {{#if isProjectile}}
+          <label>Recuperable</label>
+          <input type="checkbox" name="system.recoverable" data-dtype="Boolean" {{checked system.recoverable}} />
+        {{/if}}
 
         <label>Notes</label>
         <textarea name="system.notes" rows="3">{{system.notes}}</textarea>

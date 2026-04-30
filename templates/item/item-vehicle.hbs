@@ -1,42 +1,54 @@
 <form class="bl item-vehicle flexcol" autocomplete="off">
   <header class="sheet-header flexrow">
-    <img class="profile" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <img class="profile" src="{{item.img}}" data-edit="img" title="{{item.name}}" />
     <div class="header-fields">
       <h1 class="charname">
-        <input name="name" type="text" value="{{item.name}}" placeholder="Nom du Véhicule"/>
+        <input name="name" type="text" value="{{item.name}}" placeholder="Nom du transport" />
       </h1>
     </div>
   </header>
 
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="stats">Données</a>
+    <a class="item" data-tab="stats">Donnees</a>
     <a class="item" data-tab="desc">Description</a>
   </nav>
 
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="stats">
       <div class="grid two-col">
+        <label>Source</label>
+        <input type="text" name="system.sourceSection" value="{{system.sourceSection}}" placeholder="Section du livre" />
+
         <label>Type de transport</label>
-        <input type="text" name="system.type" value="{{system.type}}" placeholder="terrestre, monture, maritime..."/>
+        <input type="text" name="system.type" value="{{system.type}}" placeholder="terrestre, monture, maritime..." />
 
         <label>Vitesse (m/tour)</label>
-        <input type="number" name="system.speed" value="{{system.speed}}" min="0" step="0.5"/>
+        <input type="number" name="system.speed" value="{{system.speed}}" min="0" step="0.5" />
 
-        <label>Capacité (pers.)</label>
-        <input type="number" name="system.capacity" value="{{system.capacity}}" min="0" step="1"/>
+        <label>Capacite (pers.)</label>
+        <input type="number" name="system.capacity" value="{{system.capacity}}" min="0" step="1" />
 
         <label>Endurance</label>
         <div class="pair">
-          <input type="number" name="system.endurance.value" value="{{system.endurance.value}}" min="0"/>
+          <input type="number" name="system.endurance.value" value="{{system.endurance.value}}" min="0" />
           <span>/</span>
-          <input type="number" name="system.endurance.max" value="{{system.endurance.max}}" min="0"/>
+          <input type="number" name="system.endurance.max" value="{{system.endurance.max}}" min="0" />
         </div>
 
-        <label>Pré-requis</label>
+        <label>DD conduite detendue</label>
+        <input type="number" name="system.drive.relaxedDc" value="{{system.drive.relaxedDc}}" min="0" />
+
+        <label>DD conduite dangereuse</label>
+        <input type="number" name="system.drive.dangerDc" value="{{system.drive.dangerDc}}" min="0" />
+
+        <label>Notes conduite</label>
+        <textarea name="system.drive.notes" rows="2">{{system.drive.notes}}</textarea>
+
+        <label>Prerequis</label>
         <textarea name="system.requirements" rows="2">{{system.requirements}}</textarea>
 
         <label>Tags</label>
-        <input type="text" name="system.tagsText" value="{{join system.tags ", "}}" placeholder="léger, tout-terrain..."/>
+        <input type="text" name="system.tagsText" value="{{join system.tags ", "}}" placeholder="leger, tout-terrain..." />
 
         <label>Notes</label>
         <textarea name="system.notes" rows="2">{{system.notes}}</textarea>

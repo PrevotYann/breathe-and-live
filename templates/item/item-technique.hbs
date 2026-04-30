@@ -5,6 +5,9 @@
       <h1 class="charname">
         <input name="name" type="text" value="{{item.name}}" placeholder="Nom de la technique" />
       </h1>
+      {{#if isSupplement1934Content}}
+        <div class="muted"><small>Supplement 1934{{#unless supplement1934Global}} - optionnel, toggle global desactive{{/unless}}</small></div>
+      {{/if}}
       <div class="flexrow gap">
         <div class="field small">
           <label>Famille / souffle</label>
@@ -37,6 +40,9 @@
         <label>Cout BDP</label>
         <input type="number" name="system.costBdp" value="{{system.costBdp}}" min="0" />
 
+        <label>Demonisation gagnee</label>
+        <input type="number" name="system.demonisationGain" value="{{system.demonisationGain}}" min="0" step="0.5" />
+
         <label>Degats</label>
         <input type="text" name="system.damage" value="{{system.damage}}" placeholder="ex: 2d8 + Force" />
 
@@ -61,8 +67,26 @@
         <label>Source</label>
         <input type="text" name="system.sourceSection" value="{{system.sourceSection}}" placeholder="Regle / section du livre" />
 
+        <label>Supplement 1934</label>
+        <input type="checkbox" name="system.supplement1934.enabled" data-dtype="Boolean" {{checked system.supplement1934.enabled}} />
+
         <label>Activation</label>
         <input type="text" name="system.activation" value="{{system.activation}}" placeholder="action / reaction / passive" />
+
+        <label>Prerequis classe</label>
+        <input type="text" name="system.prerequisites.class" value="{{system.prerequisites.class}}" />
+
+        <label>Prerequis rang</label>
+        <input type="text" name="system.prerequisites.rank" value="{{system.prerequisites.rank}}" />
+
+        <label>Prerequis sens</label>
+        <input type="text" name="system.prerequisites.sense" value="{{system.prerequisites.sense}}" />
+
+        <label>Prerequis arme</label>
+        <input type="text" name="system.prerequisites.weapon" value="{{system.prerequisites.weapon}}" />
+
+        <label>Prerequis trait</label>
+        <input type="text" name="system.prerequisites.trait" value="{{system.prerequisites.trait}}" />
 
         <label>Note d'usage</label>
         <textarea name="system.usageNote" rows="3">{{system.usageNote}}</textarea>
@@ -75,8 +99,27 @@
         <label><input type="checkbox" name="system.flags.antiFriendlyFire" data-dtype="Boolean" {{checked system.flags.antiFriendlyFire}} /> Pas de tir ami</label>
         <label><input type="checkbox" name="system.flags.mobility" data-dtype="Boolean" {{checked system.flags.mobility}} /> Mobilite</label>
         <label><input type="checkbox" name="system.flags.decapitation" data-dtype="Boolean" {{checked system.flags.decapitation}} /> Decapitation</label>
+        <label><input type="checkbox" name="system.flags.regenerator" data-dtype="Boolean" {{checked system.flags.regenerator}} /> Regenerateur</label>
+        <label><input type="checkbox" name="system.flags.affliction" data-dtype="Boolean" {{checked system.flags.affliction}} /> Affliction</label>
+        <label><input type="checkbox" name="system.flags.pursuer" data-dtype="Boolean" {{checked system.flags.pursuer}} /> Poursuivant</label>
+        <label><input type="checkbox" name="system.flags.sweep" data-dtype="Boolean" {{checked system.flags.sweep}} /> Fauchage</label>
         <label>Charge (tours)</label>
         <input type="number" name="system.flags.charge" value="{{system.flags.charge}}" min="0" />
+
+        <label>Creation maison</label>
+        <input type="checkbox" name="system.customBreath.enabled" data-dtype="Boolean" {{checked system.customBreath.enabled}} />
+
+        <label>Cle degats maison</label>
+        <input type="text" name="system.customBreath.damageKey" value="{{system.customBreath.damageKey}}" />
+
+        <label>Cle portee maison</label>
+        <input type="text" name="system.customBreath.rangeKey" value="{{system.customBreath.rangeKey}}" />
+
+        <label>Cle effet maison</label>
+        <input type="text" name="system.customBreath.effectKey" value="{{system.customBreath.effectKey}}" />
+
+        <label>Cout brut maison</label>
+        <input type="number" name="system.customBreath.rawCost" value="{{system.customBreath.rawCost}}" />
       </div>
       <p class="hint">Les tableaux <code>system.effects</code> et <code>system.selfEffects</code> restent editables via JSON/compendium pour les cas avances.</p>
     </div>

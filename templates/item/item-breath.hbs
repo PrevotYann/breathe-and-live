@@ -5,6 +5,9 @@
       <h1 class="charname">
         <input name="name" type="text" value="{{item.name}}" placeholder="Souffle..." />
       </h1>
+      {{#if isSupplement1934Content}}
+        <div class="muted"><small>Supplement 1934{{#unless supplement1934Global}} - optionnel, toggle global desactive{{/unless}}</small></div>
+      {{/if}}
 
       <div class="flexrow gap">
         <div class="field">
@@ -52,6 +55,9 @@
 
         <label>Armes</label>
         <input type="text" name="system.prereq.weapons" value="{{system.prereq.weapons}}" />
+
+        <label>Supplement 1934</label>
+        <input type="checkbox" name="system.supplement1934.enabled" data-dtype="Boolean" {{checked system.supplement1934.enabled}} />
       </div>
     </div>
 

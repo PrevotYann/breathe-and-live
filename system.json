@@ -85,6 +85,13 @@
       "system": "breathe-and-live"
     },
     {
+      "name": "progression-features",
+      "label": "Competences - Progression",
+      "path": "packs/progression-features.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
       "name": "abilities-demons",
       "label": "Abilities - Demons",
       "path": "packs/abilities-demons.db",

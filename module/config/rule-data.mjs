@@ -298,6 +298,11 @@ export const BREATH_SPECIAL_ALIASES = {
 
 export const ADVANCED_STATES = [
   {
+    key: "tcbActive",
+    label: "TCB actif",
+    note: "Concentration totale en cours; le Souffle de recuperation est interdit tant que cet etat est actif.",
+  },
+  {
     key: "tcbPermanent",
     label: "TCB : Constant",
     note: "Recupere 1 Endurance par tour tant qu'actif.",
@@ -318,6 +323,40 @@ export const ADVANCED_STATES = [
     note: "Double les degats contre les demons et bloque leur regeneration jusqu'a la fin du tour.",
   },
 ];
+
+export const CUSTOM_BREATH_COST_TABLES = {
+  damage: [
+    { key: "1d6", label: "1d6", endurance: -1 },
+    { key: "1d8", label: "1d8", endurance: 0 },
+    { key: "1d10", label: "1d10", endurance: 1 },
+    { key: "1d12", label: "1d12", endurance: 2 },
+    { key: "2d8", label: "2d8", endurance: 3 },
+    { key: "3d6", label: "3d6", endurance: 5 },
+    { key: "1d20", label: "1d20", endurance: 6 },
+    { key: "3d8", label: "3d8", endurance: 9 },
+    { key: "4d8", label: "4d8", endurance: 12 },
+    { key: "2d20", label: "2d20", endurance: 13 },
+    { key: "3d20", label: "3d20", endurance: 16 },
+  ],
+  range: [
+    { key: "melee", label: "1.5m / Cac", meters: 1.5, endurance: -3 },
+    { key: "3m", label: "3m", meters: 3, endurance: 1 },
+    { key: "4.5m", label: "4.5m", meters: 4.5, endurance: 2 },
+    { key: "6m", label: "6m", meters: 6, endurance: 3 },
+    { key: "7.5m", label: "7.5m", meters: 7.5, endurance: 4 },
+    { key: "9m", label: "9m", meters: 9, endurance: 5 },
+  ],
+  effects: [
+    { key: "direct", label: "Direct", endurance: -3 },
+    { key: "charge", label: "Temps de Charge", endurance: -5 },
+    { key: "ranged", label: "A distance", endurance: 3 },
+    { key: "regenerator", label: "Regenerateur", endurance: 3 },
+    { key: "deflect", label: "Deflecteur / Negateur", endurance: 4 },
+    { key: "affliction", label: "Affliction", endurance: 3 },
+    { key: "pursuer", label: "Poursuivant", endurance: 3 },
+    { key: "sweep", label: "Fauchage", endurance: 2 },
+  ],
+};
 
 export const CONDITION_DEFINITIONS = [
   {
@@ -421,12 +460,18 @@ export const CONDITION_DEFINITIONS = [
 ];
 
 export const LIMB_DEFINITIONS = [
-  { key: "head", label: "Tete" },
-  { key: "torso", label: "Torse" },
-  { key: "leftArm", label: "Bras gauche" },
-  { key: "rightArm", label: "Bras droit" },
-  { key: "leftLeg", label: "Jambe gauche" },
-  { key: "rightLeg", label: "Jambe droite" },
+  { key: "head", label: "Tete", thresholdRatio: 0.2, category: "vital" },
+  { key: "torso", label: "Torse", thresholdRatio: 0.2, category: "vital" },
+  { key: "leftArm", label: "Bras gauche", thresholdRatio: 0.2, category: "arm" },
+  { key: "rightArm", label: "Bras droit", thresholdRatio: 0.2, category: "arm" },
+  { key: "leftLeg", label: "Jambe gauche", thresholdRatio: 0.2, category: "leg", movementMultiplier: 0.5 },
+  { key: "rightLeg", label: "Jambe droite", thresholdRatio: 0.2, category: "leg", movementMultiplier: 0.5 },
+  { key: "wings", label: "Ailes", thresholdRatio: 0.1, category: "appendage", demonOnly: true, noFlight: true },
+  { key: "tail", label: "Queue", thresholdRatio: 0.1, category: "appendage", demonOnly: true, movementFlatPenalty: 3 },
+  { key: "tentacle1", label: "Tentacule 1", thresholdRatio: 0.1, category: "appendage", demonOnly: true, movementPenaltyRatio: 0.1 },
+  { key: "tentacle2", label: "Tentacule 2", thresholdRatio: 0.1, category: "appendage", demonOnly: true, movementPenaltyRatio: 0.1 },
+  { key: "tentacle3", label: "Tentacule 3", thresholdRatio: 0.1, category: "appendage", demonOnly: true, movementPenaltyRatio: 0.1 },
+  { key: "tentacle4", label: "Tentacule 4", thresholdRatio: 0.1, category: "appendage", demonOnly: true, movementPenaltyRatio: 0.1 },
 ];
 
 export const SLAYER_RANKS = [
@@ -448,37 +493,31 @@ export const HUMAN_RANK_LEVELS = Object.fromEntries(
 );
 
 export const SLAYER_RANK_PROGRESSION = {
-  Mizunoe: { level: 2, statChoices: [1], hpBonus: 3, studySlots: 1, enduranceBonus: 5 },
-  Kanoto: { level: 3, statChoices: [1], hpBonus: 3, weaponDieSteps: 1, enduranceBonus: 5 },
-  Kanoe: { level: 4, statChoices: [1], hpBonus: 3, studySlots: 1, enduranceBonus: 5 },
-  Tsuchinoto: { level: 5, statChoices: [1], hpBonus: 3, weaponDieSteps: 1, enduranceBonus: 5 },
-  Tsuchinoe: { level: 6, statChoices: [1], hpBonus: 3, studySlots: 1, enduranceBonus: 5 },
-  Hinoto: { level: 7, statChoices: [1], hpBonus: 3, weaponDieSteps: 1, enduranceBonus: 5 },
-  Hinoe: { level: 8, statChoices: [1], hpBonus: 3, studySlots: 1, enduranceBonus: 5 },
-  Kinoto: { level: 9, statChoices: [1], hpBonus: 3, weaponDieSteps: 1, enduranceBonus: 5 },
-  Kinoe: { level: 10, statChoices: [5], hpBonus: 3, studySlots: 1, enduranceBonus: 5 },
-  Hashira: { level: 11, hpBonus: 3, reactionBonus: 10, breathFormBonus: 2, enduranceBonus: 15 },
+  Mizunoe: { level: 2, statChoices: [1], hpBonus: 3, studySlots: 1, skillSlots: 1, enduranceBonus: 5 },
+  Kanoto: { level: 3, statChoices: [1], hpBonus: 3, skillSlots: 1, weaponDieSteps: 1, enduranceBonus: 5 },
+  Kanoe: { level: 4, statChoices: [1], hpBonus: 3, studySlots: 1, skillSlots: 1, enduranceBonus: 5 },
+  Tsuchinoto: { level: 5, statChoices: [1], hpBonus: 3, skillSlots: 1, weaponDieSteps: 1, enduranceBonus: 5 },
+  Tsuchinoe: { level: 6, statChoices: [1], hpBonus: 3, studySlots: 1, skillSlots: 1, enduranceBonus: 5 },
+  Hinoto: { level: 7, statChoices: [1], hpBonus: 3, skillSlots: 1, weaponDieSteps: 1, enduranceBonus: 5 },
+  Hinoe: { level: 8, statChoices: [1], hpBonus: 3, studySlots: 1, skillSlots: 1, enduranceBonus: 5 },
+  Kinoto: { level: 9, statChoices: [1], hpBonus: 3, skillSlots: 1, weaponDieSteps: 1, enduranceBonus: 5 },
+  Kinoe: { level: 10, statChoices: [5], hpBonus: 3, studySlots: 1, skillSlots: 1, enduranceBonus: 5 },
+  Hashira: { level: 11, hpBonus: 3, reactionBonus: 10, breathFormBonus: 2, skillSlots: 1, enduranceBonus: 15 },
 };
 
-export const DEMONIST_RANKS = [
-  "Initie",
-  "Mizunoe",
-  "Kanoe",
-  "Hinoto",
-  "Kinoe",
-];
+export const DEMONIST_RANKS = [...SLAYER_RANKS];
 
 export const DEMONIST_RANK_PROGRESSION = {
-  Mizunoe: { level: 2, statChoices: [1], hpBonus: 3, studySlots: 1, demonFleshBonus: 2 },
-  Kanoto: { level: 3, statChoices: [1], hpBonus: 3, repeatedActionBonus: 2, nichirinDamageBonus: 3 },
-  Kanoe: { level: 4, statChoices: [1], hpBonus: 3, studySlots: 1, demonFleshBonus: 4 },
-  Tsuchinoto: { level: 5, statChoices: [1], hpBonus: 3, repeatedActionBonus: 3, nichirinDamageDie: "2d6" },
-  Tsuchinoe: { level: 6, statChoices: [1], hpBonus: 3, studySlots: 1, demonFleshBonus: 4 },
-  Hinoto: { level: 7, statChoices: [1], hpBonus: 3, repeatedActionBonus: 4, nichirinDamageDie: "3d6" },
-  Hinoe: { level: 8, statChoices: [1], hpBonus: 3, studySlots: 1, demonFleshBonus: 6 },
-  Kinoto: { level: 9, statChoices: [1], hpBonus: 3, repeatedActionBonus: 5, nichirinDamageDie: "4d6" },
-  Kinoe: { level: 10, statChoices: [5], hpBonus: 3, studySlots: 1, demonFleshBonus: 8 },
-  Hashira: { level: 11, hpBonus: 3, reactionBonus: 10, breathFormBonus: 1, repeatedActionBonus: 6 },
+  Mizunoe: { level: 2, statChoices: [1], hpBonus: 3, studySlots: 1, skillSlots: 1, demonFleshBonus: 2 },
+  Kanoto: { level: 3, statChoices: [1], hpBonus: 3, skillSlots: 1, repeatedActionBonus: 2, nichirinDamageBonus: 3 },
+  Kanoe: { level: 4, statChoices: [1], hpBonus: 3, studySlots: 1, skillSlots: 1, demonFleshBonus: 4 },
+  Tsuchinoto: { level: 5, statChoices: [1], hpBonus: 3, skillSlots: 1, repeatedActionBonus: 3, nichirinDamageDie: "2d6" },
+  Tsuchinoe: { level: 6, statChoices: [1], hpBonus: 3, studySlots: 1, skillSlots: 1, demonFleshBonus: 4 },
+  Hinoto: { level: 7, statChoices: [1], hpBonus: 3, skillSlots: 1, repeatedActionBonus: 4, nichirinDamageDie: "3d6" },
+  Hinoe: { level: 8, statChoices: [1], hpBonus: 3, studySlots: 1, skillSlots: 1, demonFleshBonus: 6 },
+  Kinoto: { level: 9, statChoices: [1], hpBonus: 3, skillSlots: 1, repeatedActionBonus: 5, nichirinDamageDie: "4d6" },
+  Kinoe: { level: 10, statChoices: [5], hpBonus: 3, studySlots: 1, skillSlots: 1, demonFleshBonus: 8 },
+  Hashira: { level: 11, hpBonus: 3, reactionBonus: 10, breathFormBonus: 1, skillSlots: 1, repeatedActionBonus: 6 },
 };
 
 export const DEMON_RANKS = [
@@ -717,14 +756,14 @@ export const DEMON_SHARED_ACTIONS = [
   {
     key: "block",
     label: "Bloquer",
-    cost: "Reaction",
-    note: "Se prepare a encaisser ou intercepter une attaque.",
+    cost: "1 RP",
+    note: "Prepare une defense demoniaque consommable sur la prochaine attaque.",
   },
   {
     key: "dodge",
     label: "Esquiver",
-    cost: "Reaction",
-    note: "Peut eviter les attaques avec ses points de reaction.",
+    cost: "1 RP",
+    note: "Prepare une esquive demoniaque consommable sur la prochaine attaque.",
   },
 ];
 

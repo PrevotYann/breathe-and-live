@@ -6,6 +6,9 @@
         <input name="name" type="text" value="{{item.name}}" placeholder="Nom de l'objet" />
       </h1>
       <div class="muted"><small>Type: {{item.type}}</small></div>
+      {{#if isSupplement1934Content}}
+        <div class="muted"><small>Supplement 1934{{#unless supplement1934Global}} - optionnel, toggle global desactive{{/unless}}</small></div>
+      {{/if}}
     </div>
   </header>
 
@@ -20,6 +23,12 @@
       <div class="grid two-col">
         <label>Source</label>
         <input type="text" name="system.sourceSection" value="{{system.sourceSection}}" placeholder="Section du livre" />
+
+        <label>Supplement 1934</label>
+        <input type="checkbox" name="system.supplement1934.enabled" data-dtype="Boolean" {{checked system.supplement1934.enabled}} />
+
+        <label>Note 1934</label>
+        <input type="text" name="system.supplement1934.notes" value="{{system.supplement1934.notes}}" placeholder="Optionnel / era / pack" />
 
         <label>Activation</label>
         <input type="text" name="system.activation" value="{{system.activation}}" placeholder="action / reaction / passive" />
@@ -42,6 +51,9 @@
 
         <label>Endurance / ressource</label>
         <input type="text" name="system.enduranceGain" value="{{system.enduranceGain}}" placeholder="ex: 1d6 E" />
+
+        <label>Endurance temporaire</label>
+        <input type="checkbox" name="system.temporaryEndurance" data-dtype="Boolean" {{checked system.temporaryEndurance}} />
 
         <label>Note d'usage</label>
         <textarea name="system.usageNote" rows="3">{{system.usageNote}}</textarea>
@@ -72,6 +84,92 @@
 
           <label>Ignore les Lunes</label>
           <input type="checkbox" name="system.ignoreMoonDemons" data-dtype="Boolean" {{checked system.ignoreMoonDemons}} />
+        {{/if}}
+
+        {{#if isModification}}
+          <label>S'applique a</label>
+          <input type="text" name="system.appliesTo" value="{{system.appliesTo}}" placeholder="weapon / firearm / projectile" />
+
+          <label>Emplacement</label>
+          <input type="text" name="system.slot" value="{{system.slot}}" placeholder="canon / chargeur / crosse..." />
+
+          <label>Mod. attaque</label>
+          <input type="number" name="system.attackMod" value="{{system.attackMod}}" />
+
+          <label>Mod. degats</label>
+          <input type="number" name="system.damageMod" value="{{system.damageMod}}" />
+
+          <label>Mod. portee</label>
+          <input type="number" name="system.rangeMod" value="{{system.rangeMod}}" step="0.5" />
+
+          <label>Mod. capacite</label>
+          <input type="number" name="system.capacityMod" value="{{system.capacityMod}}" />
+
+          <label>Conditions</label>
+          <input type="text" name="system.requirements" value="{{system.requirements}}" />
+        {{/if}}
+
+        {{#if isFeature}}
+          <label>Famille</label>
+          <input type="text" name="system.family" value="{{system.family}}" placeholder="progression / advanced" />
+
+          <label>Cle feature</label>
+          <input type="text" name="system.featureKey" value="{{system.featureKey}}" placeholder="identifiant stable" />
+
+          <label>Rang requis</label>
+          <input type="text" name="system.rank" value="{{system.rank}}" placeholder="Mizunoe / Kanoe / ..." />
+
+          <label>Cout slot</label>
+          <input type="number" name="system.slotCost" value="{{system.slotCost}}" min="0" />
+
+          <label>Repetable</label>
+          <input type="checkbox" name="system.repeatable" data-dtype="Boolean" {{checked system.repeatable}} />
+
+          <label>Etat avance</label>
+          <input type="text" name="system.stateKey" value="{{system.stateKey}}" placeholder="tcbPermanent / marque / ..." />
+
+          <label>Flag deblocage</label>
+          <input type="text" name="system.unlockFlag" value="{{system.unlockFlag}}" placeholder="tcbConstantUnlocked / ..." />
+
+          <label>Active l'etat</label>
+          <input type="checkbox" name="system.grantsState" data-dtype="Boolean" {{checked system.grantsState}} />
+        {{/if}}
+
+        {{#if isClothing}}
+          <label>Equipe</label>
+          <input type="checkbox" name="system.equipped" data-dtype="Boolean" {{checked system.equipped}} />
+
+          <label>Bonus CA</label>
+          <input type="number" name="system.armorBonus" value="{{system.armorBonus}}" />
+
+          <label>Acces social</label>
+          <input type="text" name="system.access" value="{{system.access}}" placeholder="police, artiste, garde..." />
+
+          <label>DD camouflage</label>
+          <input type="number" name="system.camouflageDc" value="{{system.camouflageDc}}" min="0" />
+
+          <label>Traits vetement</label>
+          <input type="text" name="system.traitsText" value="{{join system.traits ", "}}" placeholder="uniforme, civil, nuit..." />
+        {{/if}}
+
+        {{#if isCrafting}}
+          <label>Recette active</label>
+          <input type="checkbox" name="system.crafting.enabled" data-dtype="Boolean" {{checked system.crafting.enabled}} />
+
+          <label>Composants</label>
+          <input type="number" name="system.crafting.componentCount" value="{{system.crafting.componentCount}}" min="1" max="6" />
+
+          <label>DD fabrication</label>
+          <input type="number" name="system.crafting.dc" value="{{system.crafting.dc}}" min="0" />
+
+          <label>Competence</label>
+          <input type="text" name="system.crafting.stat" value="{{system.crafting.stat}}" placeholder="sciences / nature / medecine..." />
+
+          <label>Resultat</label>
+          <input type="text" name="system.crafting.resultItemName" value="{{system.crafting.resultItemName}}" />
+
+          <label>Consomme sur echec</label>
+          <input type="checkbox" name="system.crafting.consumedOnFailure" data-dtype="Boolean" {{checked system.crafting.consumedOnFailure}} />
         {{/if}}
       </div>
     </div>

@@ -18,9 +18,11 @@ import {
   NPC_RANKS,
   SLAYER_RANK_PROGRESSION,
   SLAYER_RANKS,
+  SYSTEM_ID,
 } from "../config/rule-data.mjs";
 import { useTechnique } from "../chat/use-technique.mjs";
 import { getActiveBreaths } from "../rules/breath-effects.mjs";
+import { openCustomBreathBuilder } from "../rules/custom-breath-builder.mjs";
 import {
   actorHasBreath,
   getBreathLabel,
@@ -32,11 +34,22 @@ import {
   coatWeaponWithPoison,
   getActivePoisonCoating,
   gainDemonFleshBdp,
+  runCraftingCheck,
+  rollBaseCheck,
   rollBasicAttack,
+  rollDerivedCheck,
+  runAssistanceRequest,
+  runCounterAttackReaction,
   runDemonSharedAction,
+  runDemonistEnhancementReaction,
+  runDemonistHealingReaction,
+  runDrawReaction,
+  runKakushiSupplyRequest,
+  runReloadWeapon,
   runRecoveryBreath,
   runRestRefresh,
   runSprint,
+  runTransportDriveCheck,
   runWait,
   useMedicalItem,
 } from "../rules/action-engine.mjs";
@@ -44,6 +57,14 @@ import {
   describePoisonState,
   getPoisonProfileLabel,
 } from "../rules/poison-utils.mjs";
+import {
+  calculateArmorClass,
+  calculateDemonActionCount,
+  calculateDemonBdpMax,
+  calculateDemonHpMax,
+  calculateDemonReactionMax,
+  normalizeDerivedStats,
+} from "../rules/actor-derived-formulas.mjs";
 
 const BASE_STAT_OPTIONS = [
   { key: "force", label: "Force" },
@@ -54,6 +75,10 @@ const BASE_STAT_OPTIONS = [
   { key: "intellect", label: "Intellect" },
 ];
 
+const CREATION_STANDARD_ARRAY = [0, 1, 2, 3, 4, 5];
+const CREATION_STARTING_POINT_BUDGET = 15;
+const CREATION_CONTEXT_POINT_BUDGET = 3;
+
 const DEMON_STAT_KEYS = [
   ["force", "Force"],
   ["finesse", "Finesse"],
@@ -62,6 +87,15 @@ const DEMON_STAT_KEYS = [
   ["intellect", "Intellect"],
   ["social", "Social"],
 ];
+const DEMON_CREATION_BASE_SPREAD = [0, 1, 2, 3, 3, 5];
+const DEMON_CREATION_POINT_BUDGET = 3;
+
+const ADVANCED_FEATURE_UNLOCKS = {
+  tcbConstantUnlocked: { level: 3, label: "TCB : Constant" },
+  markedUnlocked: { level: 6, label: "Forme Marquee" },
+  transparentWorldUnlocked: { level: 8, label: "Monde Transparent" },
+  redBladeUnlocked: { level: 10, label: "Lame Rouge" },
+};
 
 function progressionConfigFor(actorType) {
   if (actorType === "demonist") return DEMONIST_RANK_PROGRESSION;
@@ -77,8 +111,25 @@ function getDemonRankLevel(rank) {
   return Number(DEMON_RANK_LEVELS?.[rank] || 0) || Math.max(1, DEMON_RANKS.indexOf(rank) + 1);
 }
 
+function getHumanRankLevel(rank) {
+  return Number(HUMAN_RANK_LEVELS?.[rank] || 0) || Math.max(1, SLAYER_RANKS.indexOf(rank) + 1);
+}
+
+function rankMeetsRequirement(actorType, currentRank, requiredRank) {
+  const rank = String(requiredRank || "").trim();
+  if (!rank || ["Tous", "Tous niveaux", "Aucun"].includes(rank)) return true;
+  if (isDemonActorType(actorType)) {
+    return getDemonRankLevel(currentRank) >= getDemonRankLevel(rank);
+  }
+  return getHumanRankLevel(currentRank) >= getHumanRankLevel(rank);
+}
+
 function getDemonRankPackage(rank) {
   return DEMON_RANK_PACKAGES?.[rank] || null;
+}
+
+function getOptionByKey(options, key) {
+  return options.find((entry) => entry.key === key) || options[0] || {};
 }
 
 function getDemonPackageStats(rank) {
@@ -145,7 +196,7 @@ function buildDemonSharedActionEntries(rank) {
   const unlocks = getDemonRankUnlocks(rank);
   return DEMON_SHARED_ACTIONS.map((action) => ({
     ...action,
-    automatable: ["heal", "regrow", "purify", "infect", "sos", "execute"].includes(action.key),
+    automatable: ["heal", "regrow", "purify", "infect", "sos", "execute", "block", "dodge"].includes(action.key),
     available:
       (action.key !== "infect" || unlocks.infect) &&
       (action.key !== "execute" || unlocks.execute),
@@ -303,26 +354,33 @@ export class BLSlayerSheet extends ActorSheet {
   }
 
   _computeRemaining(sys) {
+    const budget = this._computeDerivedBudget(sys);
+    return Object.fromEntries(
+      Object.entries(budget).map(([key, entry]) => [key, entry.remainingSigned])
+    );
+  }
+
+  _computeDerivedBudget(sys) {
     const groups = CONFIG.breatheAndLive?.DERIVED_GROUPS || {};
     const base = sys.stats?.base || {};
-    const derived = sys.stats?.derived || {};
-    const remaining = {
-      force: 0,
-      finesse: 0,
-      courage: 0,
-      vitesse: 0,
-      social: 0,
-      intellect: 0,
-    };
+    const derived = normalizeDerivedStats(sys.stats?.derived || {});
+    const budget = {};
 
     for (const [baseKey, entries] of Object.entries(groups)) {
       const spent = (entries || []).reduce(
         (sum, entry) => sum + (Number(derived[entry] ?? 0) || 0),
         0
       );
-      remaining[baseKey] = (Number(base[baseKey] ?? 0) || 0) - spent;
+      const baseValue = Number(base[baseKey] ?? 0) || 0;
+      budget[baseKey] = {
+        base: baseValue,
+        spent,
+        remaining: Math.max(0, baseValue - spent),
+        remainingSigned: baseValue - spent,
+        over: Math.max(0, spent - baseValue),
+      };
     }
-    return remaining;
+    return budget;
   }
 
   _rankOptions() {
@@ -354,8 +412,8 @@ export class BLSlayerSheet extends ActorSheet {
         remaining: {},
       },
       resources: {
-        hp: { value: 20, max: 20, healableMax: 20, base: 20 },
-        e: { value: 0, max: 0 },
+        hp: { value: 20, max: 20, healableMax: 20, base: 20, temporary: 0 },
+        e: { value: 0, max: 0, temporary: 0 },
         rp: { value: 0, max: 0 },
         bdp: { value: 0, max: 0 },
         demonisation: 0,
@@ -392,6 +450,7 @@ export class BLSlayerSheet extends ActorSheet {
           actionsPerTurn: 1,
           bonusActions: 0,
           movementMeters: 9,
+          effectiveMovementMeters: 9,
           recoveryBreathRounds: 2,
           waitEnabled: true,
         },
@@ -404,10 +463,12 @@ export class BLSlayerSheet extends ActorSheet {
         },
         injuries: {
           severeWounds: 0,
+          nearDeathWounds: 0,
           lostLimbs: "",
           conditions: "",
           limbs: {},
           brokenBones: false,
+          targetedDamage: {},
           mutilationNotes: "",
         },
         basicAttack: {
@@ -417,8 +478,15 @@ export class BLSlayerSheet extends ActorSheet {
         },
       },
       creation: {
+        statMethod: "manual",
+        statRolls: "",
+        statArrayApplied: false,
         trainerBackground: "",
+        trainerPoints: { axis1: 0, axis2: 0, axis3: 0 },
         partnerBackground: "",
+        partnerPoints: { axis1: 0, axis2: 0, axis3: 0 },
+        kasugaiType: "",
+        kasugaiPoints: { axis1: 0, axis2: 0, axis3: 0 },
         kasugaiCommands: "",
         sensePoints: 0,
         superhumanPoints: 0,
@@ -446,6 +514,11 @@ export class BLSlayerSheet extends ActorSheet {
         medicalTraining: false,
         demonistHealingReaction: false,
         activeDemonistMedicine: false,
+        recentDemonFleshRank: "",
+        demonistMedicineActiveCombatId: "",
+        companionActorId: "",
+        companionName: "",
+        companionRole: "",
       },
       demonology: {
         bodyType: "humanoid",
@@ -493,8 +566,12 @@ export class BLSlayerSheet extends ActorSheet {
       rawSys,
       { inplace: false, insertKeys: true, overwrite: true }
     );
+    data.system.stats.derived = normalizeDerivedStats(data.system.stats.derived);
 
     data.canEdit = !!(game.user?.isGM || this.actor.isOwner);
+    data.supplement1934Global = !!game.settings.get(SYSTEM_ID, "enableSupplement1934");
+    data.supplement1934Active =
+      data.supplement1934Global || !!data.system.supplement1934?.enabled;
 
     const allItems = Array.from(this.actor.items ?? []);
     const activeBreaths = getActiveBreaths(this.actor);
@@ -532,7 +609,9 @@ export class BLSlayerSheet extends ActorSheet {
         };
       });
     data.itemsBreaths = allItems.filter((i) => i.type === "breath");
-    data.itemsWeapons = allItems.filter((i) => ["weapon", "firearm"].includes(i.type));
+    data.itemsWeapons = allItems.filter((i) =>
+      ["weapon", "firearm", "projectile", "explosive"].includes(i.type)
+    );
     data.itemsPoisons = allItems
       .filter((i) => i.type === "poison")
       .map((item) => ({
@@ -545,19 +624,51 @@ export class BLSlayerSheet extends ActorSheet {
         blProfileLabel: getPoisonProfileLabel(item.system?.profile),
       }));
     data.itemsMedical = allItems.filter((i) => ["medical", "consumable", "food"].includes(i.type));
+    data.itemsProgression = allItems.filter((i) => i.type === "feature");
     data.itemsInventory = allItems.filter(
       (i) =>
-        !["technique", "subclassTechnique", "bda", "demonAbility", "breath", "poison"].includes(i.type)
+        !["technique", "subclassTechnique", "bda", "demonAbility", "breath", "poison", "feature"].includes(i.type)
     );
     data.itemsOtherInventory = data.itemsInventory.filter(
-      (i) => !["weapon", "firearm", "medical", "consumable", "food", "poison"].includes(i.type)
+      (i) =>
+        ![
+          "weapon",
+          "firearm",
+          "projectile",
+          "explosive",
+          "medical",
+          "consumable",
+          "food",
+          "poison",
+        ].includes(i.type)
+    );
+    data.itemsCrafting = allItems.filter(
+      (i) => i.type === "craftingRecipe" || i.system?.crafting?.enabled
     );
 
     data.derived = {
       groups: CONFIG.breatheAndLive?.DERIVED_GROUPS || {},
       labels: CONFIG.breatheAndLive?.DERIVED_LABELS || {},
     };
+    data.derivedBudget = this._computeDerivedBudget(data.system);
     data.system.stats.remaining = this._computeRemaining(data.system);
+    const creation = data.system.creation || {};
+    data.creationBudget = {
+      starting: this._sumCreationStartingPoints(creation),
+      trainer: this._sumCreationContextPoints(creation.trainerPoints),
+      partner: this._sumCreationContextPoints(creation.partnerPoints),
+      kasugai: this._sumCreationContextPoints(creation.kasugaiPoints),
+      startingMax: CREATION_STARTING_POINT_BUDGET,
+      contextMax: CREATION_CONTEXT_POINT_BUDGET,
+    };
+    data.creationBudget.startingRemaining =
+      CREATION_STARTING_POINT_BUDGET - data.creationBudget.starting;
+    data.creationBudget.trainerRemaining =
+      CREATION_CONTEXT_POINT_BUDGET - data.creationBudget.trainer;
+    data.creationBudget.partnerRemaining =
+      CREATION_CONTEXT_POINT_BUDGET - data.creationBudget.partner;
+    data.creationBudget.kasugaiRemaining =
+      CREATION_CONTEXT_POINT_BUDGET - data.creationBudget.kasugai;
     data.ownedBreathItems = data.itemsBreaths.map((item) => {
       const breathKey = item.system?.key || "";
       const definition = getBreathDefinition(breathKey);
@@ -596,9 +707,40 @@ export class BLSlayerSheet extends ActorSheet {
       ...entry,
       active: !!data.system.states?.[entry.key],
     }));
+    const actorLevel = Number(data.system.class?.level || 1) || 1;
+    data.advancedFeatureUnlocks = Object.entries(ADVANCED_FEATURE_UNLOCKS).map(
+      ([key, meta]) => ({
+        key,
+        label: meta.label,
+        level: meta.level,
+        unlocked: !!data.system.progression?.[key] || actorLevel >= meta.level,
+      })
+    );
     data.demonBodyOptions = DEMON_BODY_OPTIONS;
     data.demonMovementOptions = DEMON_MOVEMENT_OPTIONS;
     data.demonDangerOptions = DEMON_DANGER_OPTIONS;
+    const demonBodyChoice = getOptionByKey(DEMON_BODY_OPTIONS, data.system.demonology?.bodyType);
+    const demonMovementChoice = getOptionByKey(
+      DEMON_MOVEMENT_OPTIONS,
+      data.system.demonology?.movementType
+    );
+    const demonDangerChoice = getOptionByKey(
+      DEMON_DANGER_OPTIONS,
+      data.system.demonology?.dangerLevel
+    );
+    const demonCreationSpent =
+      Number(demonBodyChoice.points || 0) +
+      Number(demonMovementChoice.points || 0) +
+      Number(demonDangerChoice.points || 0);
+    data.demonCreationBudget = {
+      spent: demonCreationSpent,
+      max: DEMON_CREATION_POINT_BUDGET,
+      remaining: DEMON_CREATION_POINT_BUDGET - demonCreationSpent,
+      valid: demonCreationSpent <= DEMON_CREATION_POINT_BUDGET,
+      body: demonBodyChoice,
+      movement: demonMovementChoice,
+      danger: demonDangerChoice,
+    };
     data.demonBloodlineOptions = DEMON_BLOODLINE_VARIANTS;
     data.demonSharedActions = buildDemonSharedActionEntries(data.system.class.rank);
     data.demonRankPackage = DEMON_RANK_PACKAGES[data.system.class.rank] || null;
@@ -636,15 +778,19 @@ export class BLSlayerSheet extends ActorSheet {
         notes: "",
       },
     }));
-    data.limbEntries = LIMB_DEFINITIONS.map((entry) => ({
-      ...entry,
-      state: data.system.combat?.injuries?.limbs?.[entry.key] || {
-        injured: false,
-        severed: false,
-        broken: false,
-        notes: "",
-      },
-    }));
+    data.limbEntries = LIMB_DEFINITIONS
+      .filter((entry) => !entry.demonOnly || isDemonActorType(this.actor.type))
+      .map((entry) => ({
+        ...entry,
+        thresholdPercent: Math.round(Number(entry.thresholdRatio || 0.2) * 100),
+        targetedDamage: data.system.combat?.injuries?.targetedDamage?.[entry.key] || 0,
+        state: data.system.combat?.injuries?.limbs?.[entry.key] || {
+          injured: false,
+          severed: false,
+          broken: false,
+          notes: "",
+        },
+      }));
 
     data.rankOptions = this._rankOptions();
     data.rankLevelAuto =
@@ -675,6 +821,7 @@ export class BLSlayerSheet extends ActorSheet {
     let enduranceBonus = 0;
     let reactionBonus = 0;
     let studySlots = 0;
+    let skillSlots = 0;
     let weaponDieSteps = 0;
     let breathFormBonus = 0;
     let repeatedActionBonus = 0;
@@ -687,6 +834,7 @@ export class BLSlayerSheet extends ActorSheet {
       enduranceBonus += Number(step.enduranceBonus || 0);
       reactionBonus += Number(step.reactionBonus || 0);
       studySlots += Number(step.studySlots || 0);
+      skillSlots += Number(step.skillSlots || 0);
       weaponDieSteps += Number(step.weaponDieSteps || 0);
       breathFormBonus += Number(step.breathFormBonus || 0);
       repeatedActionBonus += Number(step.repeatedActionBonus || 0);
@@ -699,6 +847,7 @@ export class BLSlayerSheet extends ActorSheet {
     if (enduranceBonus) summaryItems.push(`Endurance permanente: +${enduranceBonus}`);
     if (reactionBonus) summaryItems.push(`Reactions permanentes: +${reactionBonus}`);
     if (studySlots) summaryItems.push(`Slots d'etude: +${studySlots}`);
+    if (skillSlots) summaryItems.push(`Slots de competence: +${skillSlots}`);
     if (weaponDieSteps) summaryItems.push(`Degats d'armes: +${weaponDieSteps} de`);
     if (breathFormBonus) summaryItems.push(`Formes de souffle: +${breathFormBonus} de degats`);
     if (repeatedActionBonus) summaryItems.push(`Action repetee: +${repeatedActionBonus}`);
@@ -745,6 +894,7 @@ export class BLSlayerSheet extends ActorSheet {
                 enduranceBonus,
                 reactionBonus,
                 studySlots,
+                skillSlots,
                 weaponDieSteps,
                 breathFormBonus,
                 repeatedActionBonus,
@@ -882,13 +1032,16 @@ export class BLSlayerSheet extends ActorSheet {
       social: Number(currentBase.social || 0) + Number(statDelta.social || 0),
     };
 
-    const previousHpMax = baseHpChoice + 5 * currentForce;
-    const nextHpMax = baseHpChoice + 5 * nextBase.force;
-    const previousBdpMax = 10 * currentCourage;
-    const nextBdpMax = 10 * nextBase.courage;
-    const previousRpMax = Math.max(0, Math.floor((5 + currentVitesse + currentIntellect) / 2));
-    const nextRpMax = Math.max(0, Math.floor((5 + nextBase.vitesse + nextBase.intellect) / 2));
-    const nextCa = 10 + nextBase.vitesse;
+    const previousHpMax = calculateDemonHpMax(baseHpChoice, { force: currentForce });
+    const nextHpMax = calculateDemonHpMax(baseHpChoice, nextBase);
+    const previousBdpMax = calculateDemonBdpMax({ courage: currentCourage });
+    const nextBdpMax = calculateDemonBdpMax(nextBase);
+    const previousRpMax = calculateDemonReactionMax({
+      vitesse: currentVitesse,
+      intellect: currentIntellect,
+    });
+    const nextRpMax = calculateDemonReactionMax(nextBase);
+    const nextCa = calculateArmorClass(nextBase);
 
     const confirmed = await this._promptDemonRankAdvancement({
       previousRank,
@@ -1066,6 +1219,10 @@ export class BLSlayerSheet extends ActorSheet {
         Number(this.actor.system.resources?.rp?.value || 0) + Number(advancement.reactionBonus || 0),
       "system.progression.studySlots.max":
         Number(this.actor.system.progression?.studySlots?.max || 0) + Number(advancement.studySlots || 0),
+      "system.progression.skillSlots.max":
+        Number(this.actor.system.progression?.skillSlots?.max || 0) + Number(advancement.skillSlots || 0),
+      "system.progression.skillSlots.value":
+        Number(this.actor.system.progression?.skillSlots?.value || 0) + Number(advancement.skillSlots || 0),
       "system.progression.bonuses.endurance":
         Number(this.actor.system.progression?.bonuses?.endurance || 0) + Number(advancement.enduranceBonus || 0),
       "system.progression.bonuses.reactions":
@@ -1113,9 +1270,517 @@ export class BLSlayerSheet extends ActorSheet {
     this.render(false);
   }
 
+  _sumCreationStartingPoints(creation = {}) {
+    return (
+      Number(creation.sensePoints || 0) +
+      Number(creation.superhumanPoints || 0) +
+      Number(creation.breathFormPoints || 0)
+    );
+  }
+
+  _sumCreationContextPoints(points = {}) {
+    return (
+      Number(points.axis1 || 0) +
+      Number(points.axis2 || 0) +
+      Number(points.axis3 || 0)
+    );
+  }
+
+  async _applyCreationStandardArray() {
+    const update = {
+      "system.creation.statMethod": "array",
+      "system.creation.statRolls": CREATION_STANDARD_ARRAY.join(", "),
+      "system.creation.statArrayApplied": true,
+    };
+    BASE_STAT_OPTIONS.forEach((stat, index) => {
+      update[`system.stats.base.${stat.key}`] = CREATION_STANDARD_ARRAY[index] ?? 0;
+    });
+    await this.actor.update(update);
+    ui.notifications.info("Table de stats 0,1,2,3,4,5 appliquee dans l'ordre de la fiche. Tu peux rearranger manuellement.");
+    this.render(false);
+  }
+
+  async _rollCreationStats() {
+    const rolls = [];
+    for (let i = 0; i < 6; i += 1) {
+      const roll = await new Roll("1d6").evaluate({ async: true });
+      rolls.push(Number(roll.total || 0));
+    }
+    await this.actor.update({
+      "system.creation.statMethod": "roll",
+      "system.creation.statRolls": rolls.join(", "),
+      "system.creation.statArrayApplied": false,
+    });
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: `<em>${this.actor.name} tire ses statistiques de creation : ${rolls.join(", ")}.</em>`,
+    });
+    this.render(false);
+  }
+
+  async _promptDemonCreationStats() {
+    const rows = DEMON_STAT_KEYS.map(
+      ([key, label], index) => `
+        <div class="form-group">
+          <label>${label}</label>
+          <select name="${key}">
+            ${DEMON_CREATION_BASE_SPREAD.map((value, optionIndex) => `<option value="${value}" ${optionIndex === index ? "selected" : ""}>${value}</option>`).join("")}
+          </select>
+        </div>`
+    ).join("");
+
+    const content = `
+      <form class="bl-demon-creation-dialog">
+        <p>Assigne la base demoniaque <b>0, 1, 2, 3, 3, 5</b>. Le paquet de rang sera ajoute automatiquement ensuite.</p>
+        ${rows}
+      </form>`;
+
+    return new Promise((resolve) => {
+      new Dialog(
+        {
+          title: "Creation demon - statistiques de base",
+          content,
+          buttons: {
+            apply: {
+              label: "Appliquer",
+              callback: (html) => {
+                const assignment = {};
+                for (const [key] of DEMON_STAT_KEYS) {
+                  assignment[key] = Number(html.find(`[name="${key}"]`).val() || 0) || 0;
+                }
+                resolve(assignment);
+              },
+            },
+            cancel: {
+              label: "Annuler",
+              callback: () => resolve(null),
+            },
+          },
+          default: "apply",
+          close: () => resolve(null),
+        },
+        { width: 480 }
+      ).render(true);
+    });
+  }
+
+  async _applyDemonCreationAssistant({ bodyType = "", movementType = "", dangerLevel = "" } = {}) {
+    if (!isDemonActorType(this.actor.type)) {
+      ui.notifications.warn("L'assistant demon est reserve aux demons jouables ou PNJ demons.");
+      return null;
+    }
+
+    const body = getOptionByKey(DEMON_BODY_OPTIONS, bodyType || this.actor.system?.demonology?.bodyType);
+    const movement = getOptionByKey(
+      DEMON_MOVEMENT_OPTIONS,
+      movementType || this.actor.system?.demonology?.movementType
+    );
+    const danger = getOptionByKey(
+      DEMON_DANGER_OPTIONS,
+      dangerLevel || this.actor.system?.demonology?.dangerLevel
+    );
+    const spent =
+      Number(body.points || 0) +
+      Number(movement.points || 0) +
+      Number(danger.points || 0);
+
+    if (spent > DEMON_CREATION_POINT_BUDGET) {
+      ui.notifications.warn(
+        `Budget de creation demon depasse (${spent}/${DEMON_CREATION_POINT_BUDGET}).`
+      );
+      return null;
+    }
+
+    const baseAssignment = await this._promptDemonCreationStats();
+    if (!baseAssignment) return null;
+
+    const sorted = Object.values(baseAssignment).sort((a, b) => a - b).join(",");
+    if (sorted !== DEMON_CREATION_BASE_SPREAD.slice().sort((a, b) => a - b).join(",")) {
+      ui.notifications.warn("La base demoniaque doit utiliser exactement 0, 1, 2, 3, 3, 5.");
+      return null;
+    }
+
+    const rank = String(this.actor.system?.class?.rank || DEMON_RANKS[0]);
+    const packageStats = getDemonPackageStats(rank);
+    const nextBase = {};
+    DEMON_STAT_KEYS.forEach(([key], index) => {
+      nextBase[key] = Number(baseAssignment[key] || 0) + Number(packageStats[index] || 0);
+    });
+
+    const hpMax = calculateDemonHpMax(body.baseHp, nextBase);
+    const bdpMax = calculateDemonBdpMax(nextBase);
+    const rpMax = calculateDemonReactionMax(nextBase);
+    const ca = calculateArmorClass(nextBase);
+    const actionsPerTurn = calculateDemonActionCount(nextBase);
+    const unlocks = getDemonRankUnlocks(rank);
+
+    await this.actor.update({
+      "system.creation.statMethod": "demon-assistant",
+      "system.creation.statRolls": DEMON_STAT_KEYS.map(
+        ([key, label]) => `${label} ${baseAssignment[key]}`
+      ).join(", "),
+      "system.creation.statArrayApplied": true,
+      "system.demonology.bodyType": body.key,
+      "system.demonology.baseHpChoice": Number(body.baseHp || 20),
+      "system.demonology.movementType": movement.key,
+      "system.demonology.movementBase": Number(movement.movement || 9),
+      "system.demonology.dangerLevel": danger.key,
+      "system.demonology.basicDamage": danger.baseDamage || "1d4",
+      "system.demonology.rankPackage": rank,
+      "system.demonology.canInfect": unlocks.infect,
+      "system.demonology.canExecute": unlocks.execute,
+      "system.demonology.halfReactionRule": true,
+      "system.demonology.halfDamageStatRule": true,
+      "system.stats.base.force": nextBase.force,
+      "system.stats.base.finesse": nextBase.finesse,
+      "system.stats.base.courage": nextBase.courage,
+      "system.stats.base.vitesse": nextBase.vitesse,
+      "system.stats.base.intellect": nextBase.intellect,
+      "system.stats.base.social": nextBase.social,
+      "system.resources.hp.base": Number(body.baseHp || 20),
+      "system.resources.hp.max": hpMax,
+      "system.resources.hp.value": hpMax,
+      "system.resources.hp.healableMax": hpMax,
+      "system.resources.e.value": 0,
+      "system.resources.e.max": 0,
+      "system.resources.rp.max": rpMax,
+      "system.resources.rp.value": rpMax,
+      "system.resources.bdp.max": bdpMax,
+      "system.resources.bdp.value": bdpMax,
+      "system.resources.ca": ca,
+      "system.combat.actionEconomy.actionsPerTurn": actionsPerTurn,
+      "system.combat.actionEconomy.movementMeters": Number(movement.movement || 9),
+      "system.combat.actionEconomy.effectiveMovementMeters": Number(movement.movement || 9),
+      "system.combat.basicAttack.unarmedDamage": `${danger.baseDamage || "1d4"} + Force`,
+    });
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: `<em>Creation demon appliquee pour ${this.actor.name}: ${body.label}, ${movement.label}, ${danger.label} (${spent}/${DEMON_CREATION_POINT_BUDGET} points), rang ${rank}.</em>`,
+    });
+    ui.notifications.info("Creation demon appliquee.");
+    this.render(false);
+    return nextBase;
+  }
+
+  async _createKasugaiCompanion() {
+    if (!this.actor || this.actor.type !== "slayer") {
+      ui.notifications.warn("La creation de Kasugai est reservee aux fiches de Pourfendeur.");
+      return null;
+    }
+
+    const linkedId = String(this.actor.system?.support?.companionActorId || "");
+    const linkedActor = linkedId ? game.actors?.get(linkedId) : null;
+    if (linkedActor) {
+      linkedActor.sheet?.render(true);
+      return linkedActor;
+    }
+
+    const profileName = String(this.actor.system?.profile?.kasugaiCrow || "").trim();
+    const birdType = String(this.actor.system?.creation?.kasugaiType || "").trim();
+    const commands = String(this.actor.system?.creation?.kasugaiCommands || "").trim();
+    const name = profileName || `Kasugai de ${this.actor.name}`;
+    const role = birdType || "Corbeau Kasugai";
+
+    const companion = await Actor.create({
+      name,
+      type: "companion",
+      img: "icons/creatures/birds/corvid-flying-black.webp",
+      system: {
+        class: { type: "Compagnon", rank: "Soutien", level: 1 },
+        profile: {
+          characterType: "companion",
+          combatStyle: "support",
+          trainerContext: "",
+          partnerContext: `Lie a ${this.actor.name}`,
+          kasugaiCrow: name,
+          primaryWeapon: "",
+          favoredBreath: "",
+        },
+        creation: {
+          kasugaiType: role,
+          kasugaiCommands: commands,
+          kasugaiPoints: foundry.utils.duplicate(
+            this.actor.system?.creation?.kasugaiPoints || { axis1: 0, axis2: 0, axis3: 0 }
+          ),
+        },
+        support: {
+          companionName: name,
+          companionRole: role,
+        },
+        npc: {
+          role,
+          threat: "Soutien",
+          behavior: commands,
+          loot: "",
+        },
+      },
+    });
+
+    await this.actor.update({
+      "system.support.companionActorId": companion.id,
+      "system.support.companionName": companion.name,
+      "system.support.companionRole": role,
+    });
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: `<em>${this.actor.name} cree le compagnon Kasugai <strong>${companion.name}</strong>${commands ? ` avec les commandes: ${commands}.` : "."}</em>`,
+    });
+    ui.notifications.info(`${companion.name} cree et lie a ${this.actor.name}.`);
+    this.render(false);
+    return companion;
+  }
+
+  async _findCompendiumItem(packName, itemName) {
+    const pack =
+      game.packs?.get(`${SYSTEM_ID}.${packName}`) ||
+      game.packs?.get(packName);
+    if (!pack) return null;
+    const index = await pack.getIndex({ fields: ["name", "type", "img", "system"] });
+    const entry = index.find((candidate) => candidate.name === itemName);
+    if (!entry?._id) return null;
+    return pack.getDocument(entry._id);
+  }
+
+  async _addStartingEquipment() {
+    const kits = {
+      // TODO-RULEBOOK-AMBIGUITY: the book says "pistolet au choix" for Slayers;
+      // this imports the current representative pistol from the local pack until
+      // a dedicated chooser exists.
+      slayer: [
+        ["items-weapons", "Katana Nichirin standard"],
+        ["items-weapons", "Pistolet standard"],
+        ["items-medical-utility", "Bandage"],
+        ["items-medical-utility", "Pansement compressif"],
+        ["items-medical-utility", "Sifflet Kasugai"],
+      ],
+      demonist: [
+        ["items-weapons", "Fusil de tranchee"],
+        ["items-weapons", "Wakizashi Nichirin"],
+        ["items-medical-utility", "Bandage"],
+      ],
+    };
+
+    const kit = kits[this.actor.type];
+    if (!kit) {
+      ui.notifications.warn("Aucun equipement initial automatique n'est configure pour ce type d'acteur.");
+      return [];
+    }
+
+    const existingNames = new Set(
+      Array.from(this.actor.items ?? []).map((item) => String(item.name || ""))
+    );
+    const itemData = [];
+    const missing = [];
+    const skipped = [];
+
+    for (const [packName, itemName] of kit) {
+      if (existingNames.has(itemName)) {
+        skipped.push(itemName);
+        continue;
+      }
+      const document = await this._findCompendiumItem(packName, itemName);
+      if (!document) {
+        missing.push(`${itemName} (${packName})`);
+        continue;
+      }
+      const data = document.toObject();
+      delete data._id;
+      itemData.push(data);
+    }
+
+    const created = itemData.length
+      ? await this.actor.createEmbeddedDocuments("Item", itemData)
+      : [];
+    const createdNames = created.map((item) => item.name);
+    const noteParts = [];
+    if (createdNames.length) noteParts.push(`Ajoutes: ${createdNames.join(", ")}`);
+    if (skipped.length) noteParts.push(`Deja presents: ${skipped.join(", ")}`);
+    if (missing.length) noteParts.push(`Manquants: ${missing.join(", ")}`);
+
+    await this.actor.update({
+      "system.creation.startingEquipment": noteParts.join(" | "),
+    });
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: `<em>Equipement initial de ${this.actor.name}: ${noteParts.join(" | ") || "aucun changement"}.</em>`,
+    });
+    if (missing.length) {
+      ui.notifications.warn(`Equipement initial incomplet: ${missing.join(", ")}.`);
+    } else {
+      ui.notifications.info("Equipement initial ajoute depuis les compendiums.");
+    }
+    this.render(false);
+    return created;
+  }
+
+  _validateFeatureAcquisition(itemData) {
+    if (!itemData || itemData.type !== "feature") return { ok: true, slotCost: 0 };
+    const sys = itemData.system || {};
+    const featureKey = String(sys.featureKey || itemData.name || "").trim();
+    const repeatable = !!sys.repeatable;
+
+    if (!repeatable) {
+      const alreadyOwned = Array.from(this.actor.items ?? []).some((item) => {
+        if (item.type !== "feature") return false;
+        const ownedKey = String(item.system?.featureKey || item.name || "").trim();
+        return ownedKey && ownedKey === featureKey;
+      });
+      if (alreadyOwned) {
+        return { ok: false, message: `${this.actor.name} possede deja ${itemData.name}.` };
+      }
+    }
+
+    const requiredRank = sys.rank || sys.prerequisites?.rank || "";
+    if (!rankMeetsRequirement(this.actor.type, this.actor.system?.class?.rank, requiredRank)) {
+      return {
+        ok: false,
+        message: `${itemData.name} requiert le rang ${requiredRank}.`,
+      };
+    }
+
+    const requiredClass = String(sys.prerequisites?.class || "").trim();
+    if (requiredClass) {
+      const actorClass = String(this.actor.system?.class?.type || this.actor.type || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+      const normalizedRequired = requiredClass
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+      const classMatches =
+        actorClass.includes(normalizedRequired) ||
+        (normalizedRequired.includes("pourfendeur") && this.actor.type === "slayer") ||
+        (normalizedRequired.includes("demoniste") && this.actor.type === "demonist") ||
+        (normalizedRequired.includes("demon") && isDemonActorType(this.actor.type));
+      if (!classMatches) {
+        return {
+          ok: false,
+          message: `${itemData.name} requiert la classe ${requiredClass}.`,
+        };
+      }
+    }
+
+    const slotCost = Math.max(0, Number(sys.slotCost ?? 0) || 0);
+    const slots = Number(this.actor.system?.progression?.skillSlots?.value || 0) || 0;
+    if (slotCost > slots) {
+      return {
+        ok: false,
+        message: `${itemData.name} requiert ${slotCost} emplacement(s) de competence; ${slots} disponible(s).`,
+      };
+    }
+
+    return { ok: true, slotCost };
+  }
+
+  _addNumericFeatureUpdate(update, path, amount) {
+    const value = Number(amount || 0) || 0;
+    if (!value) return;
+    const current = Number(foundry.utils.getProperty(this.actor, path) || 0) || 0;
+    update[path] = current + value;
+  }
+
+  async _applyFeatureAcquisition(item, slotCost = 0) {
+    if (!item || item.type !== "feature") return;
+    const sys = item.system || {};
+    const bonuses = sys.bonuses || {};
+    const update = {};
+
+    if (slotCost > 0) {
+      update["system.progression.skillSlots.value"] = Math.max(
+        0,
+        (Number(this.actor.system?.progression?.skillSlots?.value || 0) || 0) - slotCost
+      );
+    }
+
+    if (sys.unlockFlag) update[`system.progression.${sys.unlockFlag}`] = true;
+    if (sys.stateKey && sys.grantsState) update[`system.states.${sys.stateKey}`] = true;
+
+    if (bonuses.hpMax) {
+      this._addNumericFeatureUpdate(update, "system.resources.hp.max", bonuses.hpMax);
+      this._addNumericFeatureUpdate(update, "system.resources.hp.value", bonuses.hpMax);
+      this._addNumericFeatureUpdate(update, "system.resources.hp.base", bonuses.hpMax);
+    }
+    if (bonuses.endurance) {
+      this._addNumericFeatureUpdate(update, "system.progression.bonuses.endurance", bonuses.endurance);
+      this._addNumericFeatureUpdate(update, "system.resources.e.value", bonuses.endurance);
+    }
+    if (bonuses.movement) {
+      this._addNumericFeatureUpdate(update, "system.combat.actionEconomy.movementMeters", bonuses.movement);
+    }
+    if (bonuses.studySlots) {
+      this._addNumericFeatureUpdate(update, "system.progression.studySlots.max", bonuses.studySlots);
+      this._addNumericFeatureUpdate(update, "system.progression.studySlots.value", bonuses.studySlots);
+    }
+    if (bonuses.skillSlots) {
+      this._addNumericFeatureUpdate(update, "system.progression.skillSlots.max", bonuses.skillSlots);
+      this._addNumericFeatureUpdate(update, "system.progression.skillSlots.value", bonuses.skillSlots);
+    }
+    if (bonuses.breathFormBonus) {
+      this._addNumericFeatureUpdate(update, "system.progression.bonuses.breathFormBonus", bonuses.breathFormBonus);
+    }
+    if (bonuses.demonFleshExtraDice) {
+      this._addNumericFeatureUpdate(update, "system.progression.bonuses.demonFleshExtraDice", bonuses.demonFleshExtraDice);
+    }
+    if (bonuses.socialExternal) {
+      this._addNumericFeatureUpdate(update, "system.progression.bonuses.socialExternal", bonuses.socialExternal);
+    }
+    if (bonuses.executionHpBaseLimit) {
+      update["system.progression.bonuses.executionHpBaseLimit"] = Math.max(
+        Number(this.actor.system?.progression?.bonuses?.executionHpBaseLimit || 0) || 0,
+        Number(bonuses.executionHpBaseLimit || 0) || 0
+      );
+    }
+    if (bonuses.stealthDamageBonus) {
+      update["system.progression.bonuses.stealthDamageBonus"] = bonuses.stealthDamageBonus;
+    }
+    if (bonuses.firearmModsMax) {
+      update["system.progression.bonuses.firearmModsMax"] = Math.max(
+        Number(this.actor.system?.progression?.bonuses?.firearmModsMax || 0) || 0,
+        Number(bonuses.firearmModsMax || 0) || 0
+      );
+    }
+    if (bonuses.unarmedDamage) update["system.combat.basicAttack.unarmedDamage"] = bonuses.unarmedDamage;
+    if (bonuses.autoHitMelee !== undefined) update["system.combat.basicAttack.autoHitMelee"] = !!bonuses.autoHitMelee;
+    if (bonuses.autoHitFirearm !== undefined) update["system.combat.basicAttack.autoHitFirearm"] = !!bonuses.autoHitFirearm;
+    if (bonuses.medicalReaction !== undefined) update["system.support.medicalTraining"] = !!bonuses.medicalReaction;
+    if (bonuses.demonistHealingReaction !== undefined) {
+      update["system.support.demonistHealingReaction"] = !!bonuses.demonistHealingReaction;
+    }
+    for (const flag of ["drivingLicense", "poisonSpecialist", "dualWield", "sniperTraining", "senseTraining"]) {
+      if (bonuses[flag] !== undefined) update[`system.progression.flags.${flag}`] = !!bonuses[flag];
+    }
+
+    if (Object.keys(update).length) await this.actor.update(update);
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: `<em>${this.actor.name} acquiert la competence ${item.name}${slotCost ? ` (${slotCost} slot)` : ""}.</em>`,
+    });
+  }
+
   activateListeners(html) {
     super.activateListeners(html);
     const canEdit = game.user?.isGM || this.actor.isOwner;
+    const canRoll =
+      canEdit || this.actor.testUserPermission?.(game.user, "OBSERVER") || false;
+
+    if (canRoll) {
+      html.on("click", ".bl-roll-base", async (event) => {
+        event.preventDefault();
+        const statKey = String(event.currentTarget.dataset.stat || "");
+        const label = String(event.currentTarget.dataset.label || statKey);
+        await rollBaseCheck(this.actor, statKey, `Test ${label}`);
+      });
+
+      html.on("click", ".bl-roll-derived", async (event) => {
+        event.preventDefault();
+        const derivedKey = String(event.currentTarget.dataset.derived || "");
+        const label = String(event.currentTarget.dataset.label || derivedKey);
+        await rollDerivedCheck(this.actor, derivedKey, `Test ${label}`);
+      });
+    }
 
     if (!canEdit) return;
 
@@ -1148,6 +1813,58 @@ export class BLSlayerSheet extends ActorSheet {
       this.render(false);
     });
 
+    html.on("click", ".bl-custom-breath-builder", async (event) => {
+      event.preventDefault();
+      await openCustomBreathBuilder(this.actor);
+      this.render(false);
+    });
+
+    html.on("click", ".bl-creation-standard-array", async (event) => {
+      event.preventDefault();
+      await this._applyCreationStandardArray();
+    });
+
+    html.on("click", ".bl-creation-roll-stats", async (event) => {
+      event.preventDefault();
+      await this._rollCreationStats();
+    });
+
+    html.on("click", ".bl-create-kasugai", async (event) => {
+      event.preventDefault();
+      await this._createKasugaiCompanion();
+    });
+
+    html.on("click", ".bl-apply-demon-creation", async (event) => {
+      event.preventDefault();
+      await this._applyDemonCreationAssistant({
+        bodyType: String(html.find('[name="system.demonology.bodyType"]').val() || ""),
+        movementType: String(html.find('[name="system.demonology.movementType"]').val() || ""),
+        dangerLevel: String(html.find('[name="system.demonology.dangerLevel"]').val() || ""),
+      });
+    });
+
+    html.on("click", ".bl-starting-equipment", async (event) => {
+      event.preventDefault();
+      await this._addStartingEquipment();
+    });
+
+    html.on("change", ".bl-creation-budget-input", async (event) => {
+      const input = event.currentTarget;
+      const group = input.dataset.creationGroup || "";
+      const max = group === "starting" ? CREATION_STARTING_POINT_BUDGET : CREATION_CONTEXT_POINT_BUDGET;
+      const selector =
+        group === "starting"
+          ? ".bl-creation-budget-input[data-creation-group='starting']"
+          : `.bl-creation-budget-input[data-creation-group='${group}']`;
+      const total = Array.from(html.find(selector)).reduce(
+        (sum, entry) => sum + (Number(entry.value || 0) || 0),
+        0
+      );
+      if (total > max) {
+        ui.notifications.warn(`Budget de creation depasse (${total}/${max}).`);
+      }
+    });
+
     html.find(".item-delete").on("click", (event) => {
       const li = event.currentTarget.closest(".item");
       const id = li?.dataset.itemId;
@@ -1178,6 +1895,39 @@ export class BLSlayerSheet extends ActorSheet {
       const item = li ? this.actor.items.get(li.dataset.itemId) : null;
       if (!item) return;
       await rollBasicAttack(this.actor, { item });
+    });
+
+    html.on("click", ".bl-weapon-reload", async (event) => {
+      event.preventDefault();
+      const li = event.currentTarget.closest(".item");
+      const item = li ? this.actor.items.get(li.dataset.itemId) : null;
+      if (!item) return;
+      await runReloadWeapon(this.actor, item);
+      this.render(false);
+    });
+
+    html.on("click", ".bl-drive-relaxed", async (event) => {
+      event.preventDefault();
+      const li = event.currentTarget.closest(".item");
+      const item = li ? this.actor.items.get(li.dataset.itemId) : null;
+      if (!item) return;
+      await runTransportDriveCheck(this.actor, item, { mode: "relaxed" });
+    });
+
+    html.on("click", ".bl-drive-danger", async (event) => {
+      event.preventDefault();
+      const li = event.currentTarget.closest(".item");
+      const item = li ? this.actor.items.get(li.dataset.itemId) : null;
+      if (!item) return;
+      await runTransportDriveCheck(this.actor, item, { mode: "danger" });
+    });
+
+    html.on("click", ".bl-crafting-check", async (event) => {
+      event.preventDefault();
+      const li = event.currentTarget.closest(".item");
+      const item = li ? this.actor.items.get(li.dataset.itemId) : null;
+      if (!item) return;
+      await runCraftingCheck(this.actor, item);
     });
 
     html.on("click", ".bl-demon-basic-attack", async (event) => {
@@ -1244,6 +1994,21 @@ export class BLSlayerSheet extends ActorSheet {
       await gainDemonFleshBdp(this.actor);
       this.render(false);
     });
+    html.find(".bl-action-demonist-heal").on("click", async (event) => {
+      event.preventDefault();
+      await runDemonistHealingReaction(this.actor, { maximize: false });
+      this.render(false);
+    });
+    html.find(".bl-action-demonist-heal-max").on("click", async (event) => {
+      event.preventDefault();
+      await runDemonistHealingReaction(this.actor, { maximize: true });
+      this.render(false);
+    });
+    html.find(".bl-action-demonist-enhance").on("click", async (event) => {
+      event.preventDefault();
+      await runDemonistEnhancementReaction(this.actor);
+      this.render(false);
+    });
     html.find(".bl-action-recovery").on("click", async (event) => {
       event.preventDefault();
       await runRecoveryBreath(this.actor);
@@ -1256,6 +2021,34 @@ export class BLSlayerSheet extends ActorSheet {
     html.find(".bl-action-wait").on("click", async (event) => {
       event.preventDefault();
       await runWait(this.actor);
+    });
+    html.find(".bl-action-assistance").on("click", async (event) => {
+      event.preventDefault();
+      await runAssistanceRequest(this.actor);
+    });
+    html.find(".bl-action-kakushi").on("click", async (event) => {
+      event.preventDefault();
+      await runKakushiSupplyRequest(this.actor);
+    });
+    html.find(".bl-action-counter").on("click", async (event) => {
+      event.preventDefault();
+      await runCounterAttackReaction(this.actor, { assured: false });
+      this.render(false);
+    });
+    html.find(".bl-action-counter-assured").on("click", async (event) => {
+      event.preventDefault();
+      await runCounterAttackReaction(this.actor, { assured: true });
+      this.render(false);
+    });
+    html.find(".bl-action-draw").on("click", async (event) => {
+      event.preventDefault();
+      await runDrawReaction(this.actor, { attackAndReturn: false });
+      this.render(false);
+    });
+    html.find(".bl-action-draw-attack").on("click", async (event) => {
+      event.preventDefault();
+      await runDrawReaction(this.actor, { attackAndReturn: true });
+      this.render(false);
     });
     html.find(".bl-action-rest").on("click", async (event) => {
       event.preventDefault();
@@ -1292,6 +2085,7 @@ export class BLSlayerSheet extends ActorSheet {
   async _onDropItemCreate(itemData) {
     const entries = Array.isArray(itemData) ? itemData : [itemData];
     const allowed = [];
+    const featureSlots = new Map();
 
     for (const entry of entries) {
       const validation = validateTechniqueOwnership(this.actor, entry);
@@ -1299,14 +2093,27 @@ export class BLSlayerSheet extends ActorSheet {
         ui.notifications.warn(validation.message);
         continue;
       }
+      const featureValidation = this._validateFeatureAcquisition(entry);
+      if (!featureValidation.ok) {
+        ui.notifications.warn(featureValidation.message);
+        continue;
+      }
+      if (entry?.type === "feature") {
+        featureSlots.set(entry, featureValidation.slotCost || 0);
+      }
       allowed.push(entry);
     }
 
     if (!allowed.length) return [];
     const results = [];
     for (const entry of allowed) {
-      results.push(await super._onDropItemCreate(entry));
+      const created = await super._onDropItemCreate(entry);
+      const createdDocs = (Array.isArray(created) ? created : [created]).filter(Boolean);
+      for (const document of createdDocs) {
+        await this._applyFeatureAcquisition(document, featureSlots.get(entry) || 0);
+      }
+      results.push(...createdDocs);
     }
-    return results.flat();
+    return results;
   }
 }

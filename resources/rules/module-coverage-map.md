@@ -67,6 +67,9 @@ to the current repository modules so missing coverage stays explicit.
 - Slayer / demonist / demon progression hooks
   - actor schema in `template.json`
   - compendium examples in `packs/*.db`
+  - Demonist BDP capacity uses `10 + Courage`; playable demons use `10 x Courage`
+  - Demonist BDP spend can add item-driven `demonisationGain`; Medecine Active Demoniste halves that accumulation, Medecine de Reparation Demoniste halves current demonisation, long rest resets it, and world-time decay removes 2 demonisation per hour.
+  - Demonist healing and enhancement reactions are executable from the demonist sheet using the recently consumed demon rank.
 
 - Medical equipment, clothing, food, transport
   - item schema in `template.json`
@@ -82,3 +85,4 @@ to the current repository modules so missing coverage stays explicit.
 - Demon rank changes now apply the fixed rank package and benchmark refresh from the rulebook, but several 1934 bloodline trees remain only partially extractible from the text export.
 - Shared demon actions such as healing, regrowth, execution and infection are now automated; the remaining gap is mostly the numeric extraction of additional 1934 bloodline trees.
 - Sheet-side guided character creation wizard is not yet implemented; schema and examples are in place first.
+- TODO-RULEBOOK-AMBIGUITY: Demonist enhancement reaction duration is not explicit in the PDF; automation applies it until round end through temporary effects.

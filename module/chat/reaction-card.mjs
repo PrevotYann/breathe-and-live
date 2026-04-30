@@ -67,6 +67,7 @@ export function buildReactionTargetRow({
     !!targetBreaths.water?.enabled &&
     !!targetBreaths.water?.specials?.devierVagues;
   const stance = allowReactions ? getDeflectStance(targetActor) : null;
+  const stanceLabel = stance?.actionLabel || "Deflecter";
   const distance = distMetersChebyshev(attackerToken, targetToken);
   const distanceLabel =
     distance === null ? "" : ` <small>Dist: ${distance.toFixed(1)} m</small>`;
@@ -77,7 +78,7 @@ export function buildReactionTargetRow({
       <div class="bl-target-buttons" style="display:flex; gap:.35rem; flex-wrap:wrap; margin-top:.25rem;">
         ${canDodge ? `<button class="bl-dodge" data-target-token="${targetToken.id}" data-damage="${damageTotal}">Esquiver (1 RP)</button>` : ""}
         ${canWaterDeflect ? `<button class="bl-deflect" data-target-token="${targetToken.id}" data-damage="${damageTotal}">Devier (1 RP)</button>` : ""}
-        ${stance ? `<button class="bl-stance-deflect" data-target-token="${targetToken.id}" data-damage="${damageTotal}">Deflecter (${stance.itemName})</button>` : ""}
+        ${stance ? `<button class="bl-stance-deflect" data-target-token="${targetToken.id}" data-damage="${damageTotal}">${stanceLabel} (${stance.itemName})</button>` : ""}
         ${extraButtonsHtml}
         <button class="bl-takedmg" data-target-token="${targetToken.id}" data-damage="${damageTotal}">${takeDamageLabel}</button>
       </div>

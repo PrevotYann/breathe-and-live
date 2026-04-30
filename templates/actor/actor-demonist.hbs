@@ -3,6 +3,7 @@
     <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
     <div class="header-fields">
       <div class="hero-topline">
+        {{#if supplement1934Active}}<div class="eyebrow">Supplement 1934 actif{{#unless supplement1934Global}} sur cette fiche uniquement{{/unless}}</div>{{/if}}
         <div class="eyebrow">Demoniste • {{system.class.rank}}</div>
         <div class="eyebrow">BDP: {{system.resources.bdp.value}} / {{system.resources.bdp.max}} • Demonisation: {{system.resources.demonisation}}</div>
       </div>
@@ -39,10 +40,20 @@
       <button type="button" class="bl-action-basic-attack">Attaque de base</button>
       <button type="button" class="bl-action-repeated-attack">Action repetee</button>
       <button type="button" class="bl-action-demon-flesh">Consommer chair</button>
+      <button type="button" class="bl-action-demonist-heal">Soin demoniste 1 RP</button>
+      <button type="button" class="bl-action-demonist-heal-max">Soin max 2 RP</button>
+      <button type="button" class="bl-action-demonist-enhance">Amelioration RP</button>
       <button type="button" class="bl-action-recovery">Souffle de recuperation</button>
       <button type="button" class="bl-action-sprint">Sprinter</button>
       <button type="button" class="bl-action-wait">Attendre</button>
       <button type="button" class="bl-action-rest">Repos</button>
+      <button type="button" class="bl-action-assistance">Assistance</button>
+      <button type="button" class="bl-action-kakushi">Kakushi</button>
+      <button type="button" class="bl-starting-equipment">Equipement initial</button>
+      <button type="button" class="bl-action-counter">Riposte 1 RP</button>
+      <button type="button" class="bl-action-counter-assured">Coup assure 2 RP</button>
+      <button type="button" class="bl-action-draw">Degainage 1 RP</button>
+      <button type="button" class="bl-action-draw-attack">Degainage+attaque 2 RP</button>
     </div>
   </section>
 
@@ -67,29 +78,118 @@
         <div class="field">
           <h3>Caracteristiques</h3>
           <div class="grid stats-base">
-            <label>Force</label><input type="number" name="system.stats.base.force" value="{{system.stats.base.force}}" {{#unless canEdit}}disabled{{/unless}} />
-            <label>Finesse</label><input type="number" name="system.stats.base.finesse" value="{{system.stats.base.finesse}}" {{#unless canEdit}}disabled{{/unless}} />
-            <label>Courage</label><input type="number" name="system.stats.base.courage" value="{{system.stats.base.courage}}" {{#unless canEdit}}disabled{{/unless}} />
-            <label>Vitesse</label><input type="number" name="system.stats.base.vitesse" value="{{system.stats.base.vitesse}}" {{#unless canEdit}}disabled{{/unless}} />
-            <label>Social</label><input type="number" name="system.stats.base.social" value="{{system.stats.base.social}}" {{#unless canEdit}}disabled{{/unless}} />
-            <label>Intellect</label><input type="number" name="system.stats.base.intellect" value="{{system.stats.base.intellect}}" {{#unless canEdit}}disabled{{/unless}} />
+            <button type="button" class="bl-roll-base" data-stat="force" data-label="Force">Force</button><input type="number" name="system.stats.base.force" value="{{system.stats.base.force}}" {{#unless canEdit}}disabled{{/unless}} />
+            <button type="button" class="bl-roll-base" data-stat="finesse" data-label="Finesse">Finesse</button><input type="number" name="system.stats.base.finesse" value="{{system.stats.base.finesse}}" {{#unless canEdit}}disabled{{/unless}} />
+            <button type="button" class="bl-roll-base" data-stat="courage" data-label="Courage">Courage</button><input type="number" name="system.stats.base.courage" value="{{system.stats.base.courage}}" {{#unless canEdit}}disabled{{/unless}} />
+            <button type="button" class="bl-roll-base" data-stat="vitesse" data-label="Vitesse">Vitesse</button><input type="number" name="system.stats.base.vitesse" value="{{system.stats.base.vitesse}}" {{#unless canEdit}}disabled{{/unless}} />
+            <button type="button" class="bl-roll-base" data-stat="social" data-label="Social">Social</button><input type="number" name="system.stats.base.social" value="{{system.stats.base.social}}" {{#unless canEdit}}disabled{{/unless}} />
+            <button type="button" class="bl-roll-base" data-stat="intellect" data-label="Intellect">Intellect</button><input type="number" name="system.stats.base.intellect" value="{{system.stats.base.intellect}}" {{#unless canEdit}}disabled{{/unless}} />
           </div>
         </div>
         <div class="field">
           <h3>Support</h3>
+          <div class="grid two-col">
+            <button type="button" class="bl-creation-standard-array">Table 0-5</button>
+            <button type="button" class="bl-creation-roll-stats">Tirer 6d6</button>
+          </div>
+          <label>Methode de stats</label>
+          <input type="text" name="system.creation.statMethod" value="{{system.creation.statMethod}}" {{#unless canEdit}}disabled{{/unless}} />
+          <label>Jets / valeurs disponibles</label>
+          <input type="text" name="system.creation.statRolls" value="{{system.creation.statRolls}}" {{#unless canEdit}}disabled{{/unless}} />
+          <h4>Points de depart <small>{{creationBudget.starting}} / {{creationBudget.startingMax}}</small></h4>
+          <label>Sens / Formes / Traits</label>
+          <div class="grid three-col">
+            <input class="bl-creation-budget-input" data-creation-group="starting" type="number" name="system.creation.sensePoints" value="{{system.creation.sensePoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+            <input class="bl-creation-budget-input" data-creation-group="starting" type="number" name="system.creation.breathFormPoints" value="{{system.creation.breathFormPoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+            <input class="bl-creation-budget-input" data-creation-group="starting" type="number" name="system.creation.superhumanPoints" value="{{system.creation.superhumanPoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          </div>
+          <small>Restant: {{creationBudget.startingRemaining}}</small>
           <label>Reaction de soin demoniste</label>
           <input type="checkbox" name="system.support.demonistHealingReaction" data-dtype="Boolean" {{checked system.support.demonistHealingReaction}} {{#unless canEdit}}disabled{{/unless}} />
           <label>Medecine active demoniste</label>
           <input type="checkbox" name="system.support.activeDemonistMedicine" data-dtype="Boolean" {{checked system.support.activeDemonistMedicine}} {{#unless canEdit}}disabled{{/unless}} />
+          <label>Sang demon recent</label>
+          <input type="text" name="system.support.recentDemonFleshRank" value="{{system.support.recentDemonFleshRank}}" {{#unless canEdit}}disabled{{/unless}} />
+          <label>Emplacements de competence</label>
+          <div class="pair">
+            <input type="number" name="system.progression.skillSlots.value" value="{{system.progression.skillSlots.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+            <span>/</span>
+            <input type="number" name="system.progression.skillSlots.max" value="{{system.progression.skillSlots.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          </div>
+          <h4>Competences acquises</h4>
+          {{#if itemsProgression.length}}
+            <ol class="item-list compact">
+              {{#each itemsProgression as |it|}}
+                <li class="item" data-item-id="{{it.id}}">
+                  <div class="name"><a class="item-edit">{{it.name}}</a><br><small>{{it.system.rank}} {{#if it.system.slotCost}}- {{it.system.slotCost}} slot{{/if}}</small></div>
+                  <div class="controls">
+                    <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+                    <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+                  </div>
+                </li>
+              {{/each}}
+            </ol>
+          {{else}}
+            <small>Glisse une competence depuis le compendium de progression.</small>
+          {{/if}}
           <label>Contexte entraineur</label>
           <textarea name="system.profile.trainerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.trainerContext}}</textarea>
           <label>Corbeau Kasugai</label>
           <input type="text" name="system.profile.kasugaiCrow" value="{{system.profile.kasugaiCrow}}" {{#unless canEdit}}disabled{{/unless}} />
         </div>
       </div>
+
+      <h3>Competences derivees</h3>
+      <div class="grid six-col">
+        <div class="group">
+          <h4>Force <small>{{derivedBudget.force.spent}} / {{derivedBudget.force.base}} depenses - {{#if derivedBudget.force.over}}depassement {{derivedBudget.force.over}}{{else}}reste {{derivedBudget.force.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.force as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Finesse <small>{{derivedBudget.finesse.spent}} / {{derivedBudget.finesse.base}} depenses - {{#if derivedBudget.finesse.over}}depassement {{derivedBudget.finesse.over}}{{else}}reste {{derivedBudget.finesse.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.finesse as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Courage <small>{{derivedBudget.courage.spent}} / {{derivedBudget.courage.base}} depenses - {{#if derivedBudget.courage.over}}depassement {{derivedBudget.courage.over}}{{else}}reste {{derivedBudget.courage.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.courage as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Vitesse <small>{{derivedBudget.vitesse.spent}} / {{derivedBudget.vitesse.base}} depenses - {{#if derivedBudget.vitesse.over}}depassement {{derivedBudget.vitesse.over}}{{else}}reste {{derivedBudget.vitesse.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.vitesse as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Social <small>{{derivedBudget.social.spent}} / {{derivedBudget.social.base}} depenses - {{#if derivedBudget.social.over}}depassement {{derivedBudget.social.over}}{{else}}reste {{derivedBudget.social.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.social as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Intellect <small>{{derivedBudget.intellect.spent}} / {{derivedBudget.intellect.base}} depenses - {{#if derivedBudget.intellect.over}}depassement {{derivedBudget.intellect.over}}{{else}}reste {{derivedBudget.intellect.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.intellect as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+      </div>
     </div>
 
     <div class="tab" data-group="primary" data-tab="techniques">
+      <div class="field">
+        <button type="button" class="bl-custom-breath-builder">Calculateur souffle maison</button>
+      </div>
       <div class="field">
         <label>Recherche</label>
         <input type="text" data-tech-filter placeholder="Nom, type, souffle..." />
@@ -169,14 +269,31 @@
       <ol class="item-list">
         {{#each itemsInventory as |it|}}
           <li class="item" data-item-id="{{it.id}}">
-            <div class="name"><a class="item-edit">{{it.name}}</a></div>
+            <div class="name">
+              <a class="item-edit">{{it.name}}</a>
+              {{#if it.system.usesAmmo}}<br><small>Munitions: {{it.system.ammo.value}} / {{it.system.ammo.max}}</small>{{/if}}
+            </div>
             <div>{{it.type}}</div>
             <div class="controls">
               {{#if (contains ../itemsWeapons it)}}
                 <a class="item-control bl-weapon-attack" title="Attaque"><i class="fas fa-swords"></i></a>
+                {{#if it.system.usesAmmo}}
+                  <a class="item-control bl-weapon-reload" title="Recharger"><i class="fas fa-rotate-right"></i></a>
+                {{/if}}
               {{/if}}
               {{#if (contains ../itemsMedical it)}}
                 <a class="item-control bl-use-medical" title="Utiliser"><i class="fas fa-kit-medical"></i></a>
+              {{/if}}
+              {{#if (eq it.type "transport")}}
+                <a class="item-control bl-drive-relaxed" title="Conduite detendue"><i class="fas fa-road"></i></a>
+                <a class="item-control bl-drive-danger" title="Conduite dangereuse"><i class="fas fa-triangle-exclamation"></i></a>
+              {{/if}}
+              {{#if (eq it.type "vehicle")}}
+                <a class="item-control bl-drive-relaxed" title="Conduite detendue"><i class="fas fa-road"></i></a>
+                <a class="item-control bl-drive-danger" title="Conduite dangereuse"><i class="fas fa-triangle-exclamation"></i></a>
+              {{/if}}
+              {{#if it.system.crafting.enabled}}
+                <a class="item-control bl-crafting-check" title="Fabrication"><i class="fas fa-hammer"></i></a>
               {{/if}}
               <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
               <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
@@ -203,6 +320,7 @@
           {{#each limbEntries as |entry|}}
             <div class="limb-row">
               <strong>{{entry.label}}</strong>
+              <small>Seuil {{entry.thresholdPercent}}% - suivi: {{entry.targetedDamage}}</small>
               <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.injured" data-dtype="Boolean" {{checked entry.state.injured}} {{#unless ../canEdit}}disabled{{/unless}} /> Blesse</label>
               <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.broken" data-dtype="Boolean" {{checked entry.state.broken}} {{#unless ../canEdit}}disabled{{/unless}} /> Casse</label>
               <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.severed" data-dtype="Boolean" {{checked entry.state.severed}} {{#unless ../canEdit}}disabled{{/unless}} /> Sectionne</label>

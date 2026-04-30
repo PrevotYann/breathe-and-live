@@ -2,10 +2,10 @@ import { resolve } from "node:path";
 export default {
   build: {
     sourcemap: true,
-    outDir: ".",
-    emptyOutDir: false,
+    outDir: "dist",
+    emptyOutDir: true,
     rollupOptions: {
-      input: { "module/breathe-and-live": resolve("src/breathe-and-live.ts") },
+      input: { "breathe-and-live": resolve("module/breathe-and-live.mjs") },
       output: { entryFileNames: "module/[name].mjs", format: "es" },
     },
   },

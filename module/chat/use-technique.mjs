@@ -21,6 +21,7 @@ import {
 } from "../rules/technique-utils.mjs";
 import {
   applyActivePoisonCoating,
+  applyDemonisationGain,
   getActivePoisonCoating,
   queueDemonPendingEffect,
   rollBasicAttack,
@@ -122,7 +123,7 @@ async function simpleDash(attackerToken, distanceMeters = 6) {
   });
 }
 
-async function spendResource(actor, path, cost, label) {
+async function spendResource(actor, path, cost, label, { sourceItem = null } = {}) {
   if (!cost) return { ok: true, note: null };
   const current = Number(FU.getProperty(actor, path) ?? 0) || 0;
   if (current < cost) {
@@ -130,7 +131,12 @@ async function spendResource(actor, path, cost, label) {
     return { ok: false, note: null };
   }
   await actor.update({ [path]: current - cost });
-  return { ok: true, note: `${label} -${cost}` };
+  const demonisationGain =
+    path === "system.resources.bdp.value"
+      ? await applyDemonisationGain(actor, sourceItem, { reason: sourceItem?.name || label })
+      : 0;
+  const demonisationNote = demonisationGain ? `, Demonisation +${demonisationGain}` : "";
+  return { ok: true, note: `${label} -${cost}${demonisationNote}` };
 }
 
 function getTechniqueRange(item, ctx = {}) {
@@ -154,6 +160,46 @@ function hasLoveFriendlyFireProtection(actor, item) {
   if (breathKey !== "love") return false;
   const breaths = getActiveBreaths(actor);
   return !!(breaths.love?.enabled && breaths.love?.specials?.balancementsAmoureux);
+}
+
+function isExpulsionItem(item) {
+  const haystack = `${item?.name || ""} ${(item?.system?.tags || []).join(" ")} ${item?.system?.sourceSection || ""}`
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  return haystack.includes("expulsion");
+}
+
+async function useExpulsion(attacker, item) {
+  const hpBase = Math.max(
+    1,
+    Number(attacker.system?.resources?.hp?.base || attacker.system?.resources?.hp?.max || 1) || 1
+  );
+  const hpCost = Math.ceil(hpBase / 2);
+  const hpValue = Number(attacker.system?.resources?.hp?.value || 0) || 0;
+  const currentDemonisation = Number(attacker.system?.resources?.demonisation || 0) || 0;
+  const nextHp = Math.max(0, hpValue - hpCost);
+  const nextDemonisation = Math.max(0, Math.floor(currentDemonisation / 2));
+
+  // TODO-RULEBOOK-AMBIGUITY: the extracted table says Expulsion removes all
+  // demonisation, then lists "removes half total demonisation". The reversible
+  // implementation follows the table value and halves current demonisation.
+  await attacker.update({
+    "system.resources.hp.value": nextHp,
+    "system.resources.demonisation": nextDemonisation,
+  });
+  await noteActorDamageTaken(attacker, hpCost);
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor: attacker }),
+    content: `
+      <div class="bl-card" style="display:grid; gap:.35rem;">
+        <strong>${item.name}</strong>
+        <div>${attacker.name} paie ${hpCost} PV, soit la moitie de ses PV de base.</div>
+        <div>Demonisation: ${currentDemonisation} -> ${nextDemonisation}.</div>
+      </div>
+    `,
+  });
+  return { hpCost, previousDemonisation: currentDemonisation, nextDemonisation };
 }
 
 function getQuickShotWeapon(actor) {
@@ -529,8 +575,12 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
   const headWeaponMode = await promptStoneHeadMode(attacker, item);
   if (headWeaponMode) ctx.headWeaponMode = headWeaponMode;
 
+  if (isExpulsionItem(item)) {
+    return useExpulsion(attacker, item);
+  }
+
   if (automation.teleportToBurned) {
-    const spendNotes = [];
+    const spentNotes = [];
     const rpSpend = await spendResource(
       attacker,
       "system.resources.rp.value",
@@ -538,16 +588,17 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
       "RP"
     );
     if (!rpSpend.ok) return;
-    if (rpSpend.note) spendNotes.push(rpSpend.note);
+    if (rpSpend.note) spentNotes.push(rpSpend.note);
 
     const bdpSpend = await spendResource(
       attacker,
       "system.resources.bdp.value",
       Number(item.system?.costBdp ?? 0) || 0,
-      "BDP"
+      "BDP",
+      { sourceItem: item }
     );
     if (!bdpSpend.ok) return;
-    if (bdpSpend.note) spendNotes.push(bdpSpend.note);
+    if (bdpSpend.note) spentNotes.push(bdpSpend.note);
 
     const destination = await promptBurnedTarget(attacker);
     if (!destination) return;
@@ -563,7 +614,7 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
   }
 
   if (automation.summonFormula) {
-    const spendNotes = [];
+    const spentNotes = [];
     const eSpend = await spendResource(
       attacker,
       "system.resources.e.value",
@@ -571,7 +622,7 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
       "E"
     );
     if (!eSpend.ok) return;
-    if (eSpend.note) spendNotes.push(eSpend.note);
+    if (eSpend.note) spentNotes.push(eSpend.note);
 
     const rpSpend = await spendResource(
       attacker,
@@ -580,16 +631,17 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
       "RP"
     );
     if (!rpSpend.ok) return;
-    if (rpSpend.note) spendNotes.push(rpSpend.note);
+    if (rpSpend.note) spentNotes.push(rpSpend.note);
 
     const bdpSpend = await spendResource(
       attacker,
       "system.resources.bdp.value",
       Number(item.system?.costBdp ?? 0) || 0,
-      "BDP"
+      "BDP",
+      { sourceItem: item }
     );
     if (!bdpSpend.ok) return;
-    if (bdpSpend.note) spendNotes.push(bdpSpend.note);
+    if (bdpSpend.note) spentNotes.push(bdpSpend.note);
 
     const summonRoll = await new Roll(String(automation.summonFormula)).evaluate({ async: true });
     await ChatMessage.create({
@@ -639,7 +691,8 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
     attacker,
     "system.resources.bdp.value",
     Number(item.system?.costBdp ?? 0) || 0,
-    "BDP"
+    "BDP",
+    { sourceItem: item }
   );
   if (!bdpSpend.ok) return;
   if (bdpSpend.note) spentNotes.push(bdpSpend.note);

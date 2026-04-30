@@ -3,6 +3,7 @@
     <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
     <div class="header-fields">
       <div class="hero-topline">
+        {{#if supplement1934Active}}<div class="eyebrow">Supplement 1934 actif{{#unless supplement1934Global}} sur cette fiche uniquement{{/unless}}</div>{{/if}}
         <div class="eyebrow">{{system.class.type}} / {{system.class.rank}}</div>
         <div class="eyebrow">Role: {{system.npc.role}} / Menace: {{system.npc.threat}}</div>
       </div>
@@ -29,6 +30,10 @@
       <button type="button" class="bl-action-sprint">Sprinter</button>
       <button type="button" class="bl-action-wait">Attendre</button>
       <button type="button" class="bl-action-rest">Repos</button>
+      <button type="button" class="bl-action-assistance">Assistance</button>
+      <button type="button" class="bl-action-kakushi">Kakushi</button>
+      <button type="button" class="bl-action-counter">Riposte 1 RP</button>
+      <button type="button" class="bl-action-counter-assured">Coup assure 2 RP</button>
     </div>
   </section>
 
@@ -48,6 +53,44 @@
       </div>
 
       {{#if isNpcDemon}}
+        <div class="field">
+          <h3>Creation demon</h3>
+          <div class="rule-pills">
+            <div class="rule-pill">
+              <span>Budget creation</span>
+              <strong>{{demonCreationBudget.spent}} / {{demonCreationBudget.max}}</strong>
+              <small>{{#if demonCreationBudget.valid}}Restant: {{demonCreationBudget.remaining}}{{else}}Budget depasse{{/if}}</small>
+            </div>
+          </div>
+          <div class="grid three-col">
+            <div>
+              <label>Corps</label>
+              <select name="system.demonology.bodyType" {{#unless canEdit}}disabled{{/unless}}>
+                {{#each demonBodyOptions as |opt|}}
+                  <option value="{{opt.key}}" {{#if (eq ../system.demonology.bodyType opt.key)}}selected{{/if}}>{{opt.label}} - {{opt.points}} pt(s)</option>
+                {{/each}}
+              </select>
+            </div>
+            <div>
+              <label>Deplacement</label>
+              <select name="system.demonology.movementType" {{#unless canEdit}}disabled{{/unless}}>
+                {{#each demonMovementOptions as |opt|}}
+                  <option value="{{opt.key}}" {{#if (eq ../system.demonology.movementType opt.key)}}selected{{/if}}>{{opt.label}} - {{opt.points}} pt(s)</option>
+                {{/each}}
+              </select>
+            </div>
+            <div>
+              <label>Dangerosite</label>
+              <select name="system.demonology.dangerLevel" {{#unless canEdit}}disabled{{/unless}}>
+                {{#each demonDangerOptions as |opt|}}
+                  <option value="{{opt.key}}" {{#if (eq ../system.demonology.dangerLevel opt.key)}}selected{{/if}}>{{opt.label}} - {{opt.points}} pt(s)</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+          <button type="button" class="bl-apply-demon-creation">Appliquer creation demon</button>
+        </div>
+
         {{#if demonQuickAttacks.length}}
           <div class="field">
             <h3>Attaques naturelles</h3>
@@ -148,6 +191,7 @@
           {{#each limbEntries as |entry|}}
             <div class="limb-row">
               <strong>{{entry.label}}</strong>
+              <small>Seuil {{entry.thresholdPercent}}% - suivi: {{entry.targetedDamage}}</small>
               <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.injured" data-dtype="Boolean" {{checked entry.state.injured}} {{#unless ../canEdit}}disabled{{/unless}} /> Blesse</label>
               <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.broken" data-dtype="Boolean" {{checked entry.state.broken}} {{#unless ../canEdit}}disabled{{/unless}} /> Casse</label>
               <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.severed" data-dtype="Boolean" {{checked entry.state.severed}} {{#unless ../canEdit}}disabled{{/unless}} /> Sectionne</label>
