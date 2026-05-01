@@ -8,6 +8,7 @@
     "clean:packs": "node resources/scripts/clean-compendiums.mjs",
     "build:packs": "node resources/scripts/compile-packs.mjs",
     "validate:packs": "node resources/scripts/validate-packs.mjs",
+    "verify:ready": "node resources/scripts/verify-system-readiness.mjs",
     "lint": "eslint ."
   },
   "devDependencies": {

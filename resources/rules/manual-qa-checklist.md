@@ -2,6 +2,10 @@
 
 Use this when automated testing is not practical inside the Foundry runtime.
 
+- Pre-Foundry readiness
+  - Run `npm run verify:ready`, `npm run validate:packs`, `npm run lint`, and `npm run build`.
+  - Confirm all commands pass before opening the system in Foundry.
+
 - Derived formulas
   - Create a slayer with `Courage 4`, `Vitesse 3`, `Intellect 2`.
   - Confirm Endurance becomes `24`, AC becomes `13`, RP becomes `10`.

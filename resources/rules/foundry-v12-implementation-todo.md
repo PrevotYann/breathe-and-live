@@ -689,6 +689,6 @@ Standard d'entree :
 - [x] Polir les feuilles Slayer/Demoniste/Demon/PNJ/item. En-tetes stabilises avec badges ressources, notes d'automatisation des conditions et themes par type d'acteur.
 - [x] Rendre le budget des sous-caracteristiques lisible : depenses, reste, depassement.
 - [x] Ajouter badges/icones/fonds de fiche coherents et lisibles. Badges PV/E/RP/BDP/CA/Demonisation et fonds differencies Slayer/Demoniste/Demon/PNJ ajoutes.
-- [ ] Tester rendu sheet sans donnees manquantes.
+- [ ] Tester rendu sheet sans donnees manquantes dans Foundry. Readiness statique OK via `npm run verify:ready`; test runtime Foundry encore manuel.
 - [x] Ajouter tests ou checklist pour : stats derivees, progression, E/RP, auto-hit souffle, conditions, mutilation, soins, BDP/demonisation, compendiums.
 - [x] Lancer build et validation packs.
