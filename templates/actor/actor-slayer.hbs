@@ -10,6 +10,12 @@
       <h1 class="charname">
         <input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'Name'}}" {{#unless canEdit}}disabled{{/unless}} />
       </h1>
+      <div class="sheet-badge-row">
+        <span class="sheet-badge hp">PV {{system.resources.hp.value}}/{{system.resources.hp.max}}</span>
+        <span class="sheet-badge endurance">E {{system.resources.e.value}}/{{system.resources.e.max}}</span>
+        <span class="sheet-badge rp">RP {{system.resources.rp.value}}/{{system.resources.rp.max}}</span>
+        <span class="sheet-badge ca">CA {{system.resources.ca}}</span>
+      </div>
       <div class="grid four-col summary-grid">
         <div class="field small">
           <label>Classe</label>
@@ -114,6 +120,7 @@
           <div class="grid two-col">
             <div class="field">
               <div class="grid two-col">
+                <button type="button" class="bl-apply-human-creation">Assistant creation</button>
                 <button type="button" class="bl-creation-standard-array">Table 0-5</button>
                 <button type="button" class="bl-creation-roll-stats">Tirer 6d6</button>
               </div>
@@ -499,6 +506,9 @@
 
         <div class="field">
           <h3>Conditions</h3>
+          {{#if conditionAutomationNotes.length}}
+            <small>{{join conditionAutomationNotes " | "}}</small>
+          {{/if}}
           <div class="condition-list">
             {{#each conditionEntries as |entry|}}
               <div class="condition-row">

@@ -41,6 +41,12 @@ import {
   resolvePoisonRuntime,
 } from "./rules/poison-utils.mjs";
 import {
+  buildConditionAutomationNotes,
+  conditionAutoFailDerived,
+  getConditionAutomationSummary,
+  getConditionDerivedPenalties,
+} from "./rules/condition-utils.mjs";
+import {
   clearActivePoisonCoating,
   coatWeaponWithPoison,
   getActivePoisonCoating,
@@ -539,6 +545,18 @@ class BLActor extends Actor {
     sys.progression.bonuses.executionHpBaseLimit = toNumber(sys.progression.bonuses.executionHpBaseLimit, 0);
     sys.progression.bonuses.stealthDamageBonus ||= "";
     sys.progression.bonuses.firearmModsMax = toNumber(sys.progression.bonuses.firearmModsMax, 0);
+    sys.progression.bonuses.baseStats ??= {};
+    sys.progression.bonuses.derivedStats ??= {};
+    for (const key of ["force", "finesse", "courage", "vitesse", "social", "intellect"]) {
+      const normalized = normalizeBaseStatKey(key);
+      sys.progression.bonuses.baseStats[normalized] = toNumber(
+        sys.progression.bonuses.baseStats[normalized],
+        0
+      );
+    }
+    sys.progression.bonuses.derivedStats = normalizeDerivedStats(
+      sys.progression.bonuses.derivedStats
+    );
     sys.progression.flags ??= {};
     sys.progression.flags.drivingLicense = !!sys.progression.flags.drivingLicense;
     sys.progression.flags.poisonSpecialist = !!sys.progression.flags.poisonSpecialist;
@@ -593,15 +611,33 @@ class BLActor extends Actor {
       intellect: toNumber(sys.stats.base.intellect, 0),
     };
     const poisonRuntime = resolvePoisonRuntime(sys.conditions?.poisoned, this);
+    const baseBonuses = sys.progression.bonuses.baseStats || {};
     const effectiveBase = {
-      force: Math.max(0, rawBase.force - toNumber(poisonRuntime.statPenalty.force, 0)),
-      finesse: Math.max(0, rawBase.finesse - toNumber(poisonRuntime.statPenalty.finesse, 0)),
-      courage: Math.max(0, rawBase.courage - toNumber(poisonRuntime.statPenalty.courage, 0)),
-      vitesse: Math.max(0, rawBase.vitesse - toNumber(poisonRuntime.statPenalty.vitesse, 0)),
-      social: Math.max(0, rawBase.social - toNumber(poisonRuntime.statPenalty.social, 0)),
-      intellect: Math.max(0, rawBase.intellect - toNumber(poisonRuntime.statPenalty.intellect, 0)),
+      force: Math.max(0, rawBase.force + toNumber(baseBonuses.force, 0) - toNumber(poisonRuntime.statPenalty.force, 0)),
+      finesse: Math.max(0, rawBase.finesse + toNumber(baseBonuses.finesse, 0) - toNumber(poisonRuntime.statPenalty.finesse, 0)),
+      courage: Math.max(0, rawBase.courage + toNumber(baseBonuses.courage, 0) - toNumber(poisonRuntime.statPenalty.courage, 0)),
+      vitesse: Math.max(0, rawBase.vitesse + toNumber(baseBonuses.vitesse, 0) - toNumber(poisonRuntime.statPenalty.vitesse, 0)),
+      social: Math.max(0, rawBase.social + toNumber(baseBonuses.social, 0) - toNumber(poisonRuntime.statPenalty.social, 0)),
+      intellect: Math.max(0, rawBase.intellect + toNumber(baseBonuses.intellect, 0) - toNumber(poisonRuntime.statPenalty.intellect, 0)),
     };
     sys.stats.effectiveBase = effectiveBase;
+    const derivedBonuses = normalizeDerivedStats(sys.progression.bonuses.derivedStats || {});
+    const conditionDerivedPenalties = getConditionDerivedPenalties(sys);
+    const effectiveDerived = {};
+    for (const [key, value] of Object.entries(normalizeDerivedStats(sys.stats.derived || {}))) {
+      effectiveDerived[key] = Math.max(
+        0,
+        toNumber(value, 0) +
+          toNumber(derivedBonuses[key], 0) -
+          toNumber(conditionDerivedPenalties[key], 0)
+      );
+    }
+    sys.stats.effectiveDerived = effectiveDerived;
+    sys.conditions.automation = {
+      ...getConditionAutomationSummary(sys),
+      notes: buildConditionAutomationNotes(sys),
+      derivedPenalties: conditionDerivedPenalties,
+    };
     sys.conditions.poisoned.runtime = poisonRuntime;
 
     sys.combat.damageFlat = toNumber(sys.combat.damageFlat, 0);
@@ -679,6 +715,9 @@ class BLActor extends Actor {
         sys,
         demonBaseMovement
       );
+      if (sys.conditions.automation?.movementBlocked) {
+        sys.combat.actionEconomy.effectiveMovementMeters = 0;
+      }
       sys.combat.basicAttack.unarmedDamage = `${sys.demonology.basicDamage} + Force`;
       sys.demonology.canInfect = [
         "Lune inferieure",
@@ -717,6 +756,9 @@ class BLActor extends Actor {
         sys,
         sys.combat.actionEconomy.movementMeters
       );
+      if (sys.conditions.automation?.movementBlocked) {
+        sys.combat.actionEconomy.effectiveMovementMeters = 0;
+      }
       sys.resources.hp.max = Math.max(1, toNumber(sys.resources.hp.max, 20));
       sys.resources.hp.healableMax = calculateHealableMax(
         sys.resources.hp.max,
@@ -826,7 +868,15 @@ export async function rollBaseCheck(actor, statKey, label = "") {
 
 export async function rollDerivedCheck(actor, derivedKey, label = "") {
   const key = normalizeDerivedStatKey(derivedKey);
-  const mod = toNumber(actor?.system?.stats?.derived?.[key], 0);
+  const autoFailures = conditionAutoFailDerived(actor, key, label);
+  if (autoFailures.length) {
+    return ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: `<em>${actor.name} echoue automatiquement le test ${label || key} (${autoFailures.join(", ")}).</em>`,
+    });
+  }
+  const derived = actor.system?.stats?.effectiveDerived || actor.system?.stats?.derived || {};
+  const mod = toNumber(derived[key], 0);
   const r = await new Roll(`1d20 + ${mod}`).roll({ async: true });
   return r.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),

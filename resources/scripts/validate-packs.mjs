@@ -53,17 +53,63 @@ function validatePack(filePath) {
   return errors;
 }
 
+function collectJsonFiles(root) {
+  if (!fs.existsSync(root)) return [];
+  const files = [];
+  const stack = [root];
+  while (stack.length) {
+    const current = stack.pop();
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const fullPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        stack.push(fullPath);
+        continue;
+      }
+      if (entry.name.endsWith(".json") && !entry.name.startsWith("_")) {
+        files.push(fullPath);
+      }
+    }
+  }
+  return files;
+}
+
+function validateSourceJsonPack(root) {
+  const errors = [];
+  const files = collectJsonFiles(root);
+  for (const filePath of files) {
+    let doc;
+    try {
+      doc = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    } catch (error) {
+      errors.push(`${path.relative(PACKS_DIR, filePath)} JSON invalide: ${error.message}`);
+      continue;
+    }
+    if (doc.type && doc.system && !hasSourceSection(doc)) {
+      errors.push(`${path.relative(PACKS_DIR, filePath)} item "${doc.name}" sans system.sourceSection`);
+    }
+  }
+  return { errors, count: files.length };
+}
+
 const packFiles = fs
   .readdirSync(PACKS_DIR)
   .filter((file) => file.endsWith(".db"))
   .map((file) => path.join(PACKS_DIR, file));
 
-const errors = packFiles.flatMap((filePath) => validatePack(filePath));
+const sourceTechniqueReport = validateSourceJsonPack(
+  path.join(PACKS_DIR, "_source", "techniques-breaths")
+);
+const errors = [
+  ...packFiles.flatMap((filePath) => validatePack(filePath)),
+  ...sourceTechniqueReport.errors,
+];
 
 if (errors.length) {
   console.error(`Validation des packs echouee (${errors.length} probleme(s)):\n`);
   for (const error of errors) console.error(`- ${error}`);
   process.exitCode = 1;
 } else {
-  console.log(`Validation des packs OK (${packFiles.length} pack(s)).`);
+  console.log(
+    `Validation des packs OK (${packFiles.length} pack(s), ${sourceTechniqueReport.count} source technique(s)).`
+  );
 }

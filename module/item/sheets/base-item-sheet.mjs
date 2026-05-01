@@ -41,6 +41,7 @@ export class BLBaseItemSheet extends ItemSheet {
     data.system = sys;
     data.join = (arr, sep = ", ") => (Array.isArray(arr) ? arr.join(sep) : "");
     data.isPoison = this.item.type === "poison";
+    data.isMedical = ["medical", "consumable"].includes(this.item.type);
     data.isModification = this.item.type === "modification";
     data.isClothing = ["outfit", "clothing"].includes(this.item.type);
     data.isFeature = this.item.type === "feature";

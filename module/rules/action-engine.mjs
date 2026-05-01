@@ -15,8 +15,13 @@ import {
   buildPoisonApplicationUpdate,
   describePoisonState,
   getEffectiveBaseStats,
+  reducePoisonStacks,
   resolvePoisonRuntime,
 } from "./poison-utils.mjs";
+import {
+  conditionAutoFailDerived,
+  getConditionActionRestriction,
+} from "./condition-utils.mjs";
 import {
   clamp,
   normalizeBaseStatKey,
@@ -281,6 +286,11 @@ function normalizeDamageExpr(expr, fallback = "1") {
 }
 
 async function spendRp(actor, cost, reason = "") {
+  const restriction = getConditionActionRestriction(actor, "rp");
+  if (restriction.blocked) {
+    ui.notifications.warn(`${actor.name} ne peut pas depenser de RP. ${restriction.reason}`);
+    return false;
+  }
   const path = "system.resources.rp.value";
   const current = toNumber(FU.getProperty(actor, path), 0);
   if (current < cost) {
@@ -333,7 +343,15 @@ export async function rollBaseCheck(actor, statKey, label = "") {
 export async function rollDerivedCheck(actor, derivedKey, label = "") {
   if (!actor || !derivedKey) return null;
   const key = normalizeDerivedStatKey(derivedKey);
-  const mod = toNumber(actor.system?.stats?.derived?.[key], 0);
+  const autoFailures = conditionAutoFailDerived(actor, key, label);
+  if (autoFailures.length) {
+    return ChatMessage.create({
+      speaker: actorSpeaker(actor),
+      content: `<em>${actor.name} echoue automatiquement le test ${label || key} (${autoFailures.join(", ")}).</em>`,
+    });
+  }
+  const derived = actor.system?.stats?.effectiveDerived || actor.system?.stats?.derived || {};
+  const mod = toNumber(derived[key], 0);
   const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
   return roll.toMessage({
     speaker: actorSpeaker(actor),
@@ -703,7 +721,7 @@ function getPoisonDoseAvailability(item) {
 
 function isPoisonCoatableWeapon(item) {
   if (!item) return false;
-  return ["weapon", "firearm"].includes(String(item.type || ""));
+  return ["weapon", "firearm", "projectile"].includes(String(item.type || ""));
 }
 
 async function promptPoisonWeapon(actor) {
@@ -793,7 +811,7 @@ function buildPoisonChatLine(result) {
 async function createPoisonStatusChat(actor, summary, intro) {
   if (!actor || !summary) return null;
   const details = summary.detailLines?.length
-    ? `<div><small>${summary.detailLines.join(" • ")}</small></div>`
+    ? `<div><small>${summary.detailLines.join(" | ")}</small></div>`
     : "";
   const purifyButton = isDemonActor(actor) && summary.runtime?.active
     ? `<button type="button" class="bl-poison-purify" data-actor-id="${actor.id}">Purification</button>`
@@ -804,7 +822,7 @@ async function createPoisonStatusChat(actor, summary, intro) {
     content: `
       <div class="bl-card" style="display:grid; gap:.35rem;">
         <div><strong>${actor.name}</strong> - ${intro}</div>
-        <div><small>${summary.profileLabel} • Intensite ${summary.intensity}${summary.duration ? ` • Duree ${summary.duration}` : ""}</small></div>
+        <div><small>${summary.profileLabel} | Intensite ${summary.intensity}${summary.duration ? ` | Duree ${summary.duration}` : ""}</small></div>
         <div>${summary.effectSummary}${summary.restrictionSummary ? ` <small>${summary.restrictionSummary}</small>` : ""}</div>
         ${details}
         ${purifyButton}
@@ -1168,6 +1186,7 @@ export async function setConditionState(actor, key, patch = {}) {
     ...existing,
     ...patch,
   };
+  if (next.active && toNumber(next.intensity, 0) <= 0) next.intensity = 1;
   await actor.update({ [`system.conditions.${key}`]: next });
   return next;
 }
@@ -1198,6 +1217,11 @@ export async function rollBasicAttack(
   } = {}
 ) {
   if (!actor) return null;
+  const actionRestriction = getConditionActionRestriction(actor, "basicAttack");
+  if (actionRestriction.blocked) {
+    ui.notifications.warn(`${actor.name} ne peut pas attaquer. ${actionRestriction.reason}`);
+    return null;
+  }
 
   const attackerToken = resolveCanvasToken(getPrimaryToken(actor), actor);
   const target = targetToken || (await pickTargetToken({ excludeTokenId: attackerToken?.id }));
@@ -1218,7 +1242,7 @@ export async function rollBasicAttack(
   }
 
   const base = getEffectiveBaseStats(actor);
-  const derived = actor.system?.stats?.derived ?? {};
+  const derived = actor.system?.stats?.effectiveDerived ?? actor.system?.stats?.derived ?? {};
   const force = toNumber(base.force);
   const finesse = toNumber(base.finesse);
   const precision = toNumber(derived.precision);
@@ -1277,6 +1301,15 @@ export async function rollBasicAttack(
   attackBonus += toNumber(weapon?.system?.attackMod, 0);
   damageBonus += toNumber(weapon?.system?.damageMod, 0);
 
+  let stableShotLine = "";
+  const stableShot = actor.getFlag?.(SYSTEM_ID, "stableShot") || {};
+  if (isFirearm && stableShot?.attackBonus) {
+    const bonus = toNumber(stableShot.attackBonus, 0);
+    attackBonus += bonus;
+    stableShotLine = `<div>Tir en position stable : +${bonus} au toucher.</div>`;
+    await actor.unsetFlag?.(SYSTEM_ID, "stableShot");
+  }
+
   if (repeatedAction) {
     repeatedActionDamage = await getRepeatedActionBonus(actor);
   } else if (actor.type === "demonist") {
@@ -1284,6 +1317,17 @@ export async function rollBasicAttack(
   }
 
   const targetCa = toNumber(target.actor.system?.resources?.ca, 10);
+  const subclassAttack = actor.getFlag?.(SYSTEM_ID, "subclassBasicAttack") || {};
+  const subclassAttackBonus = toNumber(subclassAttack.attackBonus, 0);
+  const subclassDamageBonus = toNumber(subclassAttack.damageBonus, 0);
+  let subclassLine = "";
+  if (subclassAttackBonus) attackBonus += subclassAttackBonus;
+  if (
+    subclassAttack.autoHitIfTargetCaBelowSelf &&
+    targetCa < toNumber(actor.system?.resources?.ca, 10)
+  ) {
+    autoHit = true;
+  }
   let attackRoll = null;
   let attackTotal = targetCa;
 
@@ -1317,6 +1361,51 @@ export async function rollBasicAttack(
   if (repeatedActionDamage) {
     damageExpr = appendFlatModifier(damageExpr, repeatedActionDamage);
   }
+  if (subclassDamageBonus) {
+    damageExpr = appendFlatModifier(damageExpr, subclassDamageBonus);
+  }
+  if (subclassAttack.damageStatDice) {
+    const stat = String(subclassAttack.damageStatDice.stat || "");
+    const faces = Math.max(1, toNumber(subclassAttack.damageStatDice.faces, 6));
+    const baseStats = getEffectiveBaseStats(actor);
+    const derivedStats = actor.system?.stats?.effectiveDerived ?? actor.system?.stats?.derived ?? {};
+    const dice = Math.max(0, toNumber(baseStats[stat] ?? derivedStats[stat], 0));
+    if (dice) damageExpr = `${damageExpr} + ${dice}d${faces}`;
+  }
+  if (subclassAttack.damageMultiplier) {
+    damageExpr = `(${damageExpr}) * ${Math.max(1, toNumber(subclassAttack.damageMultiplier, 1))}`;
+  }
+  if (subclassAttack.itemName) {
+    subclassLine = `<div>${subclassAttack.itemName}: ${[
+      subclassAttackBonus ? `+${subclassAttackBonus} toucher` : "",
+      subclassDamageBonus ? `+${subclassDamageBonus} degats` : "",
+      subclassAttack.autoHitIfTargetCaBelowSelf ? "auto-hit si CA cible inferieure" : "",
+      subclassAttack.damageStatDice ? "des bonus selon stat" : "",
+      subclassAttack.damageMultiplier ? `degats x${subclassAttack.damageMultiplier}` : "",
+    ].filter(Boolean).join(", ")}.</div>`;
+  }
+
+  let bloodFuryLine = "";
+  const bloodFury = actor.getFlag?.(SYSTEM_ID, "bloodFury") || {};
+  const bloodFuryUses = toNumber(bloodFury?.uses, 0);
+  const targetHp = toNumber(target.actor.system?.resources?.hp?.value, 0);
+  const targetHpMax = toNumber(target.actor.system?.resources?.hp?.max, targetHp);
+  const targetBleeding = !!target.actor.system?.conditions?.bleed?.active;
+  const targetUnderHalf = targetHpMax > 0 && targetHp <= targetHpMax / 2;
+  if (hit && actor.type === "demonist" && bloodFuryUses > 0 && (targetBleeding || targetUnderHalf)) {
+    const furyDamage = String(bloodFury.damage || "1d6");
+    damageExpr = `${damageExpr} + (${furyDamage})`;
+    const remaining = Math.max(0, bloodFuryUses - 1);
+    if (remaining > 0) {
+      await actor.setFlag(SYSTEM_ID, "bloodFury", {
+        ...bloodFury,
+        uses: remaining,
+      });
+    } else {
+      await actor.unsetFlag?.(SYSTEM_ID, "bloodFury");
+    }
+    bloodFuryLine = `<div>Fureur sanguinaire : +${furyDamage}, ${remaining} charge(s) restante(s).</div>`;
+  }
 
   if (actor.system?.states?.mondeTransparent) {
     damageExpr = `(${damageExpr}) * 2`;
@@ -1331,6 +1420,18 @@ export async function rollBasicAttack(
   const damageRoll = hit
     ? await new Roll(damageExpr).evaluate({ async: true })
     : null;
+
+  if (subclassAttack.consumeOnAttack) {
+    await actor.unsetFlag?.(SYSTEM_ID, "subclassBasicAttack");
+  }
+  if (subclassAttack.selfEffectAfterAttack) {
+    await applyEffectsList({
+      source: actor,
+      target: actor,
+      effects: [subclassAttack.selfEffectAfterAttack],
+      origin: subclassAttack.itemName || "Sous-classe",
+    });
+  }
 
   const attackLine = autoHit
     ? "Attaque de base auto-reussie."
@@ -1370,6 +1471,9 @@ export async function rollBasicAttack(
         <div class="bl-card" style="display:grid; gap:.35rem;">
           <div><strong>${actor.name}</strong> attaque <strong>${target.name}</strong> avec <strong>${weapon?.name || "attaque a mains nues"}</strong>.</div>
           ${modeLine}
+          ${stableShotLine}
+          ${bloodFuryLine}
+          ${subclassLine}
           ${statLine}
           ${limbNote}
           <div><small>Jet d'attaque (${attackMode}) contre CA ${targetCa}.</small></div>
@@ -1389,6 +1493,9 @@ export async function rollBasicAttack(
       <div class="bl-card" style="display:grid; gap:.35rem;">
         <div><strong>${actor.name}</strong> attaque <strong>${target.name}</strong> avec <strong>${weapon?.name || "attaque a mains nues"}</strong>.</div>
         ${modeLine}
+        ${stableShotLine}
+        ${bloodFuryLine}
+        ${subclassLine}
         ${statLine}
         ${limbNote}
         ${poisonNote}
@@ -1549,11 +1656,8 @@ export async function runDemonPurify(actor) {
   }
 
   const removed = Math.min(intensity, getRankTier(actor));
-  const next = Math.max(0, intensity - removed);
-  await actor.update({
-    "system.conditions.poisoned.intensity": next,
-    "system.conditions.poisoned.active": next > 0,
-  });
+  const nextState = reducePoisonStacks(poison, removed);
+  await actor.update({ "system.conditions.poisoned": nextState });
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
     content: `<em>${actor.name} utilise Purification et retire ${removed} niveau(x) de poison.</em>`,
@@ -1832,6 +1936,11 @@ export async function runRecoveryBreath(actor) {
 
 export async function runSprint(actor) {
   if (!actor) return null;
+  const restriction = getConditionActionRestriction(actor, "sprint");
+  if (restriction.blocked) {
+    ui.notifications.warn(`${actor.name} ne peut pas sprinter. ${restriction.reason}`);
+    return null;
+  }
   const movement = toNumber(actor.system?.combat?.actionEconomy?.movementMeters, 0);
   const effectiveMovement = toNumber(
     actor.system?.combat?.actionEconomy?.effectiveMovementMeters,
@@ -1847,6 +1956,11 @@ export async function runSprint(actor) {
 
 export async function runWait(actor) {
   if (!actor) return null;
+  const restriction = getConditionActionRestriction(actor, "wait");
+  if (restriction.blocked) {
+    ui.notifications.warn(`${actor.name} ne peut pas attendre comme action. ${restriction.reason}`);
+    return null;
+  }
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
     content: `<em>${actor.name} attend et garde son action pour plus tard.</em>`,
@@ -2234,6 +2348,7 @@ export async function useMedicalItem(
         "system.combat.injuries.nearDeathWounds": 0,
         "system.resources.hp.healableMax": hpMax,
         "system.resources.hp.value": hpMax,
+        "system.death.state": "alive",
       });
       await ChatMessage.create({
         speaker: actorSpeaker(actor),
@@ -2241,7 +2356,9 @@ export async function useMedicalItem(
       });
       return hpMax - hpValue;
     }
-    await target.update({ "system.resources.hp.value": healableMax });
+    const update = { "system.resources.hp.value": healableMax };
+    if (healableMax > 0) update["system.death.state"] = "alive";
+    await target.update(update);
     await ChatMessage.create({
       speaker: actorSpeaker(actor),
       content: `<em>${actor.name} soigne completement ${target.name} avec ${item.name}.</em>`,
@@ -2256,12 +2373,20 @@ export async function useMedicalItem(
   const next = clamp(hpValue + amount + medBonus, 0, healableMax);
 
   const update = { "system.resources.hp.value": next };
+  const deathState = String(target.system?.death?.state || "alive");
+  if (item.system?.stabilizes && hpValue <= 0 && next <= 0) {
+    update["system.death.state"] = "critical";
+  } else if (next > 0 && ["critical", "dying", "dead"].includes(deathState)) {
+    update["system.death.state"] = "alive";
+  }
   for (const conditionKey of item.system?.removeConditions ?? []) {
     update[`system.conditions.${conditionKey}.active`] = false;
     update[`system.conditions.${conditionKey}.intensity`] = 0;
     update[`system.conditions.${conditionKey}.duration`] = 0;
     if (conditionKey === "poisoned") {
       update["system.conditions.poisoned.notes"] = "";
+      update["system.conditions.poisoned.stacks"] = {};
+      update["system.conditions.poisoned.profile"] = "generic";
     }
   }
   await target.update(update);
@@ -2355,6 +2480,63 @@ async function processConditionTurnStart(actor) {
   }
 
   const conditionMap = actor.system?.conditions ?? {};
+  const conditionTurns = actor.getFlag(SYSTEM_ID, "conditionTurns") ?? {};
+  const nextConditionTurns = { ...conditionTurns };
+  const turnReminders = [];
+
+  if (conditionMap.slowed?.active) {
+    nextConditionTurns.slowedCanAct =
+      conditionTurns.slowedCanAct === undefined ? true : !conditionTurns.slowedCanAct;
+    turnReminders.push(
+      nextConditionTurns.slowedCanAct
+        ? "Ralenti : peut agir ce tour, puis devra sauter sa prochaine action."
+        : "Ralenti : ne peut pas agir ce tour."
+    );
+  } else if (conditionTurns.slowedCanAct !== undefined) {
+    delete nextConditionTurns.slowedCanAct;
+  }
+
+  if (conditionMap.fury?.active) {
+    turnReminders.push("Fureur : doit utiliser des attaques de base contre une cible a portee.");
+  }
+  if (conditionMap.imprisoned?.active) {
+    turnReminders.push("Emprisonne : deplacement impossible jusqu'a liberation.");
+  }
+  if (conditionMap.paralyzed?.active) {
+    turnReminders.push("Paralyse : deplacement impossible, parole conservee.");
+  }
+  if (conditionMap.controlled?.active) {
+    turnReminders.push("Controle : actions sous contrainte externe.");
+  }
+  if (conditionMap.charmed?.active) {
+    turnReminders.push("Charme : ne peut pas blesser son charmeur et partage ses ennemis.");
+  }
+  if (conditionMap.cursed?.active) {
+    turnReminders.push("Maudit : appliquer l'effet specifique note par le MJ.");
+  }
+  if (conditionMap.sadness?.active) {
+    const endurance = toNumber(
+      actor.system?.stats?.effectiveDerived?.endurance ?? actor.system?.stats?.derived?.endurance,
+      0
+    );
+    const roll = await new Roll(`1d20 + ${endurance}`).evaluate({ async: true });
+    const passed = toNumber(roll.total, 0) >= 15;
+    turnReminders.push(
+      `Triste : test d'endurance DD 15 ${passed ? "reussi" : "echoue"} (${roll.total}).`
+    );
+    // TODO-RULEBOOK-AMBIGUITY: la consequence exacte de l'echec n'est pas precisee dans l'extrait de condition.
+  }
+
+  await actor.setFlag(SYSTEM_ID, "conditionTurns", nextConditionTurns).catch(() => {});
+  if (turnReminders.length) {
+    await ChatMessage.create({
+      speaker: actorSpeaker(actor),
+      content: `<div><strong>Conditions de ${actor.name}</strong></div><ul>${turnReminders
+        .map((line) => `<li>${line}</li>`)
+        .join("")}</ul>`,
+    });
+  }
+
   for (const definition of CONDITION_DEFINITIONS) {
     const state = conditionMap[definition.key];
     if (!state?.active) continue;
@@ -2415,6 +2597,27 @@ async function processConditionTurnStart(actor) {
           amount,
           `Poison (${runtime.profile}) affecte ${actor.name} :`
         );
+        await createPoisonStatusChat(actor, summary, "Le poison agit");
+      } else if (runtime.turnDamage.kind === "mixed") {
+        let amount = 0;
+        const hpMax = toNumber(actor.system?.resources?.hp?.max, 0);
+        for (const part of runtime.turnDamage.parts || []) {
+          if (part.kind === "flat") {
+            amount += Math.max(0, toNumber(part.value, 0));
+          } else if (part.kind === "formula" && part.formula) {
+            const roll = await new Roll(String(part.formula)).evaluate({ async: true });
+            amount += Math.max(0, toNumber(roll.total, 0));
+          } else if (part.kind === "percentMax") {
+            amount += Math.max(0, Math.ceil(hpMax * toNumber(part.value, 0)));
+          }
+        }
+        if (amount > 0) {
+          await applyDirectDamage(
+            actor,
+            amount,
+            `Poison (${runtime.profile}) affecte ${actor.name} :`
+          );
+        }
         await createPoisonStatusChat(actor, summary, "Le poison agit");
       } else {
         await createPoisonStatusChat(actor, summary, "Le poison affaiblit la cible");

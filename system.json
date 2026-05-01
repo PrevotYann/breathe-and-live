@@ -99,6 +99,20 @@
       "system": "breathe-and-live"
     },
     {
+      "name": "supplement-1934-actors",
+      "label": "Supplement 1934 - Acteurs",
+      "path": "packs/supplement-1934-actors.db",
+      "type": "Actor",
+      "system": "breathe-and-live"
+    },
+    {
+      "name": "supplement-1934",
+      "label": "Supplement 1934 - Objets & Capacites",
+      "path": "packs/supplement-1934.db",
+      "type": "Item",
+      "system": "breathe-and-live"
+    },
+    {
       "name": "supplement-1934-breaths",
       "label": "Supplement 1934 - Souffles",
       "path": "packs/supplement-1934-breaths.db",

@@ -3,6 +3,7 @@ import {
   BREATH_KEYS,
   BREATH_SPECIAL_ALIASES,
   CONDITION_DEFINITIONS,
+  DEMON_BLOODLINE_DETAILS,
   DEMON_BLOODLINE_VARIANTS,
   DEMON_BODY_OPTIONS,
   DEMON_DANGER_OPTIONS,
@@ -63,6 +64,8 @@ import {
   calculateDemonBdpMax,
   calculateDemonHpMax,
   calculateDemonReactionMax,
+  normalizeBaseStatKey,
+  normalizeDerivedStatKey,
   normalizeDerivedStats,
 } from "../rules/actor-derived-formulas.mjs";
 
@@ -78,6 +81,80 @@ const BASE_STAT_OPTIONS = [
 const CREATION_STANDARD_ARRAY = [0, 1, 2, 3, 4, 5];
 const CREATION_STARTING_POINT_BUDGET = 15;
 const CREATION_CONTEXT_POINT_BUDGET = 3;
+
+const HUMAN_CREATION_PRESETS = {
+  slayer: {
+    classType: "Pourfendeur",
+    rank: "Mizunoto",
+    level: 1,
+    statMethod: "assistant-slayer",
+    statRolls: "5 Vitesse, 4 Finesse, 3 Force, 2 Courage, 1 Intellect, 0 Social",
+    base: { force: 3, finesse: 4, courage: 2, vitesse: 5, social: 0, intellect: 1 },
+    derived: {
+      puissanceBrute: 2,
+      dexterite: 2,
+      precision: 2,
+      endurance: 1,
+      agilite: 2,
+      rapidite: 2,
+      perception: 1,
+    },
+    creation: {
+      sensePoints: 5,
+      superhumanPoints: 5,
+      breathFormPoints: 5,
+      trainerPoints: { axis1: 1, axis2: 1, axis3: 1 },
+      partnerPoints: { axis1: 1, axis2: 1, axis3: 1 },
+      kasugaiPoints: { axis1: 1, axis2: 1, axis3: 1 },
+    },
+    profile: {
+      characterType: "slayer",
+      combatStyle: "Creation rapide : souffle, mobilite et reactions",
+      favoredBreath: "water",
+      primaryWeapon: "Katana Nichirin standard",
+      trainerContext: "Entraineur cree via assistant.",
+      partnerContext: "Partenaire cree via assistant.",
+      kasugaiCrow: "Kasugai a nommer",
+    },
+    resources: { endurance: 22, rp: 11, bdp: 0 },
+  },
+  demonist: {
+    classType: "Demoniste",
+    rank: "Mizunoto",
+    level: 1,
+    statMethod: "assistant-demonist",
+    statRolls: "5 Courage, 4 Intellect, 3 Finesse, 2 Vitesse, 1 Force, 0 Social",
+    base: { force: 1, finesse: 3, courage: 5, vitesse: 2, social: 0, intellect: 4 },
+    derived: {
+      precision: 2,
+      mithridatisme: 2,
+      endurance: 2,
+      tolerance: 1,
+      reflexes: 1,
+      medecine: 2,
+      sciences: 1,
+      survie: 1,
+    },
+    creation: {
+      sensePoints: 4,
+      superhumanPoints: 5,
+      breathFormPoints: 6,
+      trainerPoints: { axis1: 1, axis2: 1, axis3: 1 },
+      partnerPoints: { axis1: 1, axis2: 1, axis3: 1 },
+      kasugaiPoints: { axis1: 0, axis2: 0, axis3: 0 },
+    },
+    profile: {
+      characterType: "demonist",
+      combatStyle: "Creation rapide : medecine, chair demoniaque et arme a feu",
+      favoredBreath: "west",
+      primaryWeapon: "Fusil de tranchee",
+      trainerContext: "Instructeur demoniste cree via assistant.",
+      partnerContext: "Cellule de chasse creee via assistant.",
+      kasugaiCrow: "",
+    },
+    resources: { endurance: 25, rp: 11, bdp: 15 },
+  },
+};
 
 const DEMON_STAT_KEYS = [
   ["force", "Force"],
@@ -105,6 +182,15 @@ function progressionConfigFor(actorType) {
 
 function isDemonActorType(actorType) {
   return ["demon", "npcDemon"].includes(String(actorType || ""));
+}
+
+function normalizeSheetText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function getDemonRankLevel(rank) {
@@ -742,6 +828,14 @@ export class BLSlayerSheet extends ActorSheet {
       danger: demonDangerChoice,
     };
     data.demonBloodlineOptions = DEMON_BLOODLINE_VARIANTS;
+    data.demonBloodlineDetails = DEMON_BLOODLINE_DETAILS;
+    data.demonBloodlineDetail = this._getDemonBloodlineDetail(
+      data.system.demonology?.sharedBloodline
+    );
+    data.demonBloodlineDataLabel =
+      data.demonBloodlineDetail?.availableData === "mechanics-extracted"
+        ? "Pouvoirs extraits disponibles"
+        : "Traits seulement";
     data.demonSharedActions = buildDemonSharedActionEntries(data.system.class.rank);
     data.demonRankPackage = DEMON_RANK_PACKAGES[data.system.class.rank] || null;
     data.demonRankBenchmark = foundry.utils.duplicate(data.demonRankPackage?.benchmark || {});
@@ -778,6 +872,7 @@ export class BLSlayerSheet extends ActorSheet {
         notes: "",
       },
     }));
+    data.conditionAutomationNotes = data.system.conditions?.automation?.notes || [];
     data.limbEntries = LIMB_DEFINITIONS
       .filter((entry) => !entry.demonOnly || isDemonActorType(this.actor.type))
       .map((entry) => ({
@@ -1318,6 +1413,83 @@ export class BLSlayerSheet extends ActorSheet {
     this.render(false);
   }
 
+  async _applyHumanCreationAssistant() {
+    const preset = HUMAN_CREATION_PRESETS[this.actor.type];
+    if (!preset) {
+      ui.notifications.warn("Assistant de creation rapide reserve aux Pourfendeurs et Demonistes.");
+      return;
+    }
+
+    const confirmed = await Dialog.confirm({
+      title: "Assistant de creation",
+      content: `<p>Appliquer le profil de depart ${preset.classType} sur ${this.actor.name} ? Les statistiques, points de creation et contextes seront remplaces.</p>`,
+      yes: () => true,
+      no: () => false,
+      defaultYes: true,
+    });
+    if (!confirmed) return;
+
+    const derived = normalizeDerivedStats(preset.derived);
+    const update = {
+      "system.class.type": preset.classType,
+      "system.class.rank": preset.rank,
+      "system.class.level": preset.level,
+      "system.creation.statMethod": preset.statMethod,
+      "system.creation.statRolls": preset.statRolls,
+      "system.creation.statArrayApplied": true,
+      "system.creation.sensePoints": preset.creation.sensePoints,
+      "system.creation.superhumanPoints": preset.creation.superhumanPoints,
+      "system.creation.breathFormPoints": preset.creation.breathFormPoints,
+      "system.creation.trainerPoints": preset.creation.trainerPoints,
+      "system.creation.partnerPoints": preset.creation.partnerPoints,
+      "system.creation.kasugaiPoints": preset.creation.kasugaiPoints,
+      "system.creation.trainerBackground": preset.profile.trainerContext,
+      "system.creation.partnerBackground": preset.profile.partnerContext,
+      "system.creation.notes": "Assistant de creation rapide applique; ajuster les choix fins selon la table.",
+      "system.profile.characterType": preset.profile.characterType,
+      "system.profile.combatStyle": preset.profile.combatStyle,
+      "system.profile.trainerContext": preset.profile.trainerContext,
+      "system.profile.partnerContext": preset.profile.partnerContext,
+      "system.profile.kasugaiCrow": preset.profile.kasugaiCrow,
+      "system.profile.primaryWeapon": preset.profile.primaryWeapon,
+      "system.profile.favoredBreath": preset.profile.favoredBreath,
+      "system.resources.hp.base": 20,
+      "system.resources.hp.max": 20,
+      "system.resources.hp.value": 20,
+      "system.resources.hp.healableMax": 20,
+      "system.resources.e.value": preset.resources.endurance,
+      "system.resources.e.max": preset.resources.endurance,
+      "system.resources.rp.value": preset.resources.rp,
+      "system.resources.rp.max": preset.resources.rp,
+      "system.progression.studySlots.value": 0,
+      "system.progression.studySlots.max": 0,
+      "system.progression.skillSlots.value": 0,
+      "system.progression.skillSlots.max": 0,
+    };
+
+    for (const [key, value] of Object.entries(preset.base)) {
+      update[`system.stats.base.${key}`] = value;
+    }
+    for (const [key, value] of Object.entries(derived)) {
+      update[`system.stats.derived.${key}`] = value;
+    }
+
+    if (this.actor.type === "demonist") {
+      update["system.support.demonistHealingReaction"] = true;
+      update["system.resources.bdp.value"] = preset.resources.bdp;
+      update["system.resources.bdp.max"] = preset.resources.bdp;
+      update["system.resources.demonisation"] = 0;
+    }
+
+    await this.actor.update(update);
+    await this._addStartingEquipment();
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: `<em>Assistant de creation ${preset.classType} applique a ${this.actor.name}. Verifie ensuite le souffle, les traits et les choix narratifs fins.</em>`,
+    });
+    this.render(false);
+  }
+
   async _promptDemonCreationStats() {
     const rows = DEMON_STAT_KEYS.map(
       ([key, label], index) => `
@@ -1543,6 +1715,96 @@ export class BLSlayerSheet extends ActorSheet {
     return pack.getDocument(entry._id);
   }
 
+  _getDemonBloodlineDetail(value) {
+    const normalized = normalizeSheetText(value);
+    if (!normalized) return null;
+    return (
+      DEMON_BLOODLINE_DETAILS.find(
+        (entry) =>
+          normalizeSheetText(entry.name) === normalized ||
+          normalizeSheetText(entry.key) === normalized
+      ) || null
+    );
+  }
+
+  async _importDemonBloodlineAbilities() {
+    if (!isDemonActorType(this.actor.type)) {
+      ui.notifications.warn("Les lignages demoniaques ne s'importent que sur une fiche demon.");
+      return [];
+    }
+
+    const detail = this._getDemonBloodlineDetail(
+      this.actor.system?.demonology?.sharedBloodline
+    );
+    if (!detail) {
+      ui.notifications.warn("Choisis une lignee demoniaque connue avant l'import.");
+      return [];
+    }
+
+    const pack =
+      game.packs?.get(`${SYSTEM_ID}.abilities-demons`) ||
+      game.packs?.get("abilities-demons");
+    if (!pack) {
+      ui.notifications.warn("Pack abilities-demons introuvable.");
+      return [];
+    }
+
+    const index = await pack.getIndex({ fields: ["name", "type", "img", "system"] });
+    const existingNames = new Set(
+      Array.from(this.actor.items ?? []).map((item) => String(item.name || ""))
+    );
+    const currentRank = this.actor.system?.class?.rank || "";
+    const tagSet = new Set([normalizeSheetText(detail.key)]);
+    const candidates = index.filter((entry) => {
+      const tags = Array.isArray(entry.system?.tags) ? entry.system.tags : [];
+      const normalizedTags = tags.map((tag) => normalizeSheetText(tag));
+      const matchesBloodline = normalizedTags.some((tag) => tagSet.has(tag));
+      if (!matchesBloodline || existingNames.has(entry.name)) return false;
+      const requiredRank = entry.system?.prerequisites?.rank || "";
+      return rankMeetsRequirement(this.actor.type, currentRank, requiredRank);
+    });
+
+    const documents = [];
+    for (const entry of candidates) {
+      const document = await pack.getDocument(entry._id);
+      if (!document) continue;
+      const data = document.toObject();
+      delete data._id;
+      documents.push(data);
+    }
+
+    const created = documents.length
+      ? await this.actor.createEmbeddedDocuments("Item", documents)
+      : [];
+    const importedNames = created.map((item) => item.name);
+    const skippedByName = index
+      .filter((entry) => {
+        const tags = Array.isArray(entry.system?.tags) ? entry.system.tags : [];
+        return (
+          tags.map((tag) => normalizeSheetText(tag)).some((tag) => tagSet.has(tag)) &&
+          existingNames.has(entry.name)
+        );
+      })
+      .map((entry) => entry.name);
+
+    const noteParts = [];
+    if (importedNames.length) noteParts.push(`Importes: ${importedNames.join(", ")}`);
+    if (skippedByName.length) noteParts.push(`Deja presents: ${skippedByName.join(", ")}`);
+    if (!noteParts.length) {
+      noteParts.push(
+        "Aucun pouvoir importable pour ce rang avec les donnees locales disponibles."
+      );
+    }
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: `<em>Lignee ${detail.name} pour ${this.actor.name}. ${noteParts.join(" | ")}</em>`,
+    });
+    ui.notifications.info(`Import de lignee termine: ${importedNames.length} ajout(s).`);
+    this.render(false);
+    return created;
+  }
+
   async _addStartingEquipment() {
     const kits = {
       // TODO-RULEBOOK-AMBIGUITY: the book says "pistolet au choix" for Slayers;
@@ -1742,6 +2004,23 @@ export class BLSlayerSheet extends ActorSheet {
         Number(bonuses.firearmModsMax || 0) || 0
       );
     }
+    for (const [key, amount] of Object.entries(bonuses.baseStats || {})) {
+      const statKey = normalizeBaseStatKey(key);
+      this._addNumericFeatureUpdate(
+        update,
+        `system.progression.bonuses.baseStats.${statKey}`,
+        amount
+      );
+    }
+    for (const [key, amount] of Object.entries(bonuses.derivedStats || {})) {
+      const statKey = normalizeDerivedStatKey(key);
+      this._addNumericFeatureUpdate(
+        update,
+        `system.progression.bonuses.derivedStats.${statKey}`,
+        amount
+      );
+    }
+    if (bonuses.subclass) update["system.class.subclass"] = bonuses.subclass;
     if (bonuses.unarmedDamage) update["system.combat.basicAttack.unarmedDamage"] = bonuses.unarmedDamage;
     if (bonuses.autoHitMelee !== undefined) update["system.combat.basicAttack.autoHitMelee"] = !!bonuses.autoHitMelee;
     if (bonuses.autoHitFirearm !== undefined) update["system.combat.basicAttack.autoHitFirearm"] = !!bonuses.autoHitFirearm;
@@ -1829,6 +2108,11 @@ export class BLSlayerSheet extends ActorSheet {
       await this._rollCreationStats();
     });
 
+    html.on("click", ".bl-apply-human-creation", async (event) => {
+      event.preventDefault();
+      await this._applyHumanCreationAssistant();
+    });
+
     html.on("click", ".bl-create-kasugai", async (event) => {
       event.preventDefault();
       await this._createKasugaiCompanion();
@@ -1841,6 +2125,11 @@ export class BLSlayerSheet extends ActorSheet {
         movementType: String(html.find('[name="system.demonology.movementType"]').val() || ""),
         dangerLevel: String(html.find('[name="system.demonology.dangerLevel"]').val() || ""),
       });
+    });
+
+    html.on("click", ".bl-import-demon-bloodline", async (event) => {
+      event.preventDefault();
+      await this._importDemonBloodlineAbilities();
     });
 
     html.on("click", ".bl-starting-equipment", async (event) => {

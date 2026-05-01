@@ -1,5 +1,5 @@
-2026/04/11-20:02:46.688 6310 Delete type=3 #1
-2026/04/11-20:02:46.693 3bb4 Level-0 table #5: started
-2026/04/11-20:02:46.695 3bb4 Level-0 table #5: 90778 bytes OK
-2026/04/11-20:02:46.699 3bb4 Delete type=0 #3
-2026/04/11-20:02:46.699 3bb4 Manual compaction at level-0 from '!folders!blfbeastfldr0000' @ 72057594037927935 : 1 .. '!items!techSunValse01' @ 0 : 0; will stop at (end)
+2026/05/01-11:20:51.345 35b4 Delete type=3 #1
+2026/05/01-11:20:51.351 d9c Level-0 table #5: started
+2026/05/01-11:20:51.355 d9c Level-0 table #5: 91476 bytes OK
+2026/05/01-11:20:51.357 d9c Delete type=0 #3
+2026/05/01-11:20:51.357 d9c Manual compaction at level-0 from '!folders!blfbeastfldr0000' @ 72057594037927935 : 1 .. '!items!techSunValse01' @ 0 : 0; will stop at (end)

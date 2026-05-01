@@ -10,6 +10,13 @@
       <h1 class="charname">
         <input name="name" type="text" value="{{actor.name}}" {{#unless canEdit}}disabled{{/unless}} />
       </h1>
+      <div class="sheet-badge-row">
+        <span class="sheet-badge hp">PV {{system.resources.hp.value}}/{{system.resources.hp.max}}</span>
+        <span class="sheet-badge endurance">E {{system.resources.e.value}}/{{system.resources.e.max}}</span>
+        <span class="sheet-badge rp">RP {{system.resources.rp.value}}/{{system.resources.rp.max}}</span>
+        <span class="sheet-badge bdp">BDP {{system.resources.bdp.value}}/{{system.resources.bdp.max}}</span>
+        <span class="sheet-badge danger">Dem {{system.resources.demonisation}}/{{system.resources.demonisationMax}}</span>
+      </div>
       <div class="grid four-col summary-grid">
         <div class="field small">
           <label>Classe</label>
@@ -89,6 +96,7 @@
         <div class="field">
           <h3>Support</h3>
           <div class="grid two-col">
+            <button type="button" class="bl-apply-human-creation">Assistant creation</button>
             <button type="button" class="bl-creation-standard-array">Table 0-5</button>
             <button type="button" class="bl-creation-roll-stats">Tirer 6d6</button>
           </div>
@@ -307,6 +315,9 @@
       <div class="grid two-col">
         <div class="field">
           <h3>Conditions</h3>
+          {{#if conditionAutomationNotes.length}}
+            <small>{{join conditionAutomationNotes " | "}}</small>
+          {{/if}}
           {{#each conditionEntries as |entry|}}
             <div class="condition-row">
               <label><input type="checkbox" name="system.conditions.{{entry.key}}.active" data-dtype="Boolean" {{checked entry.state.active}} {{#unless ../canEdit}}disabled{{/unless}} /> {{entry.label}}</label>

@@ -10,6 +10,12 @@
       <h1 class="charname">
         <input name="name" type="text" value="{{actor.name}}" {{#unless canEdit}}disabled{{/unless}} />
       </h1>
+      <div class="sheet-badge-row">
+        <span class="sheet-badge hp">PV {{system.resources.hp.value}}/{{system.resources.hp.max}}</span>
+        <span class="sheet-badge rp">RP {{system.resources.rp.value}}/{{system.resources.rp.max}}</span>
+        <span class="sheet-badge ca">CA {{system.resources.ca}}</span>
+        {{#if isNpcDemon}}<span class="sheet-badge bdp">BDP {{system.resources.bdp.value}}/{{system.resources.bdp.max}}</span>{{/if}}
+      </div>
       <div class="grid four-col summary-grid">
         <div class="field small"><label>Type</label><input type="text" name="system.class.type" value="{{system.class.type}}" {{#unless canEdit}}disabled{{/unless}} /></div>
         <div class="field small"><label>Rang</label><input type="text" name="system.class.rank" value="{{system.class.rank}}" {{#unless canEdit}}disabled{{/unless}} /></div>
@@ -178,6 +184,9 @@
           {{/if}}
 
           <h3>Conditions</h3>
+          {{#if conditionAutomationNotes.length}}
+            <small>{{join conditionAutomationNotes " | "}}</small>
+          {{/if}}
           {{#each conditionEntries as |entry|}}
             <div class="condition-row">
               <label><input type="checkbox" name="system.conditions.{{entry.key}}.active" data-dtype="Boolean" {{checked entry.state.active}} {{#unless ../canEdit}}disabled{{/unless}} /> {{entry.label}}</label>

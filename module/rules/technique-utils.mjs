@@ -627,13 +627,14 @@ export async function noteActorDamageTaken(actor, amount) {
   const currentHpForDeath = toNumber(actor.system?.resources?.hp?.value, 0);
   const deathState = String(actor.system?.death?.state || "alive");
   if (currentHpForDeath <= 0 && deathState !== "dead") {
-    if (actor.system?.death?.standingDeath) {
+    const prevented = await consumeDeathPreventionItem(actor);
+    if (!prevented && actor.system?.death?.standingDeath) {
       await actor.update({ "system.death.state": "critical" });
       await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: `<strong>${actor.name} tombe a 0 PV, mais Mort debout empeche la mort immediate. Etat: critique.</strong>`,
       });
-    } else {
+    } else if (!prevented) {
       await actor.update({ "system.death.state": "dead" });
       await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
@@ -669,6 +670,44 @@ export async function noteActorDamageTaken(actor, amount) {
       ? `<strong>${actor.name} subit une blessure quasi mortelle. Cap de soin: ${healableMax} PV.</strong>`
       : `<strong>${actor.name} subit une blessure grave. Cap de soin: ${healableMax} PV.</strong>`,
   });
+}
+
+async function consumeDeathPreventionItem(actor) {
+  const item = actor.items?.find?.((candidate) => {
+    const sys = candidate.system || {};
+    const tags = Array.isArray(sys.tags) ? sys.tags : [];
+    const marker = [candidate.name, sys.sourceSection, sys.usageNote, ...tags]
+      .join(" ")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+    const quantity = toNumber(sys.quantity, 1);
+    return (
+      quantity > 0 &&
+      (sys.preventDeath ||
+        marker.includes("anti-0") ||
+        marker.includes("sauvetage 0") ||
+        marker.includes("sauvetage a 0") ||
+        marker.includes("empeche la mort"))
+    );
+  });
+  if (!item) return false;
+
+  const hpMax = toNumber(actor.system?.resources?.hp?.max, 1);
+  const healableMax = toNumber(actor.system?.resources?.hp?.healableMax, hpMax);
+  const restore = Math.max(1, toNumber(item.system?.preventDeathHp, 1));
+  const nextHp = Math.max(1, Math.min(Math.max(1, healableMax), restore));
+  const quantity = toNumber(item.system?.quantity, 1);
+  await item.update({ "system.quantity": Math.max(0, quantity - 1) });
+  await actor.update({
+    "system.resources.hp.value": nextHp,
+    "system.death.state": String(item.system?.preventDeathState || "critical"),
+  });
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<strong>${actor.name} devrait tomber a 0 PV, mais ${item.name} est consomme: ${nextHp} PV et etat critique.</strong>`,
+  });
+  return true;
 }
 
 export function getPreviousRoundDamageTaken(actor) {

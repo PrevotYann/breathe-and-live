@@ -583,7 +583,7 @@ Standard d'entree :
 
 ### P3 - Creation de personnage
 
-- [ ] From scratch : assistant de creation Slayer/Demoniste/Demon.
+- [x] From scratch : assistant de creation Slayer/Demoniste/Demon. Pourfendeur/Demoniste ont un profil rapide avec stats, derives, budgets et equipement initial ; Demon conserve l'assistant corps/mouvement/danger avec spread 0/1/2/3/3/5.
 - [x] Implementer attribution `0,1,2,3,4,5` et tirage 6d6.
 - [x] Implementer depense des 15 points de depart.
 - [x] Implementer contextes entraineur/partenaire/Kasugai avec total 3 points.
@@ -602,7 +602,7 @@ Standard d'entree :
 
 ### P5 - Conditions, blessures, mutilation
 
-- [ ] Modifier l'existant : completer effets automatiques de chaque condition.
+- [x] Modifier l'existant : completer effets automatiques de chaque condition. Brulure/saignement/fumee/poison agissent au tour, les restrictions de deplacement/RP/actions/techniques/jets sensoriels sont appliquees, et les fiches affichent les notes d'automatisation.
 - [x] From scratch : ciblage de membre dans chat avant attaque.
 - [x] Implementer seuils 10/20% PV et difference humain cumulatif vs demon single-hit.
 - [x] Implementer consequences bras/jambes/ailes/queue/tentacules.
@@ -613,25 +613,25 @@ Standard d'entree :
 
 - [x] Modifier l'existant : verifier progression Slayer rang par rang.
 - [x] Modifier l'existant : verifier Souffle de recuperation et TCB actif.
-- [ ] Modifier l'existant : importer/normaliser tous les styles de souffle.
-- [ ] Modifier l'existant : completer passifs de chaque souffle.
+- [x] Modifier l'existant : importer/normaliser tous les styles de souffle.
+- [x] Modifier l'existant : completer passifs de chaque souffle.
 - [x] From scratch : calculateur de souffle homebrew.
 - [x] Ajouter validation prerequis sens/trait/arme.
-- [ ] Marquer les formes a donnees manquantes sans inventer.
+- [x] Marquer les formes a donnees manquantes sans inventer.
 
 ### P7 - Sous-classes Slayer
 
-- [ ] From scratch ou pack data : creer les 16 sous-classes de Pourfendeur.
-- [ ] Ajouter features de depart, Kanoe, Hinoto, Kinoe.
-- [ ] Automatiser passifs/reactions/attaques les plus mecaniques.
-- [ ] Ajouter charges 1/jour, 1/rencontre, 3/jour.
+- [x] From scratch ou pack data : creer les 16 sous-classes de Pourfendeur.
+- [x] Ajouter features de depart, Kanoe, Hinoto, Kinoe.
+- [x] Automatiser passifs/reactions/attaques les plus mecaniques.
+- [x] Ajouter charges 1/jour, 1/rencontre, 3/jour.
 
 ### P8 - Demoniste
 
 - [x] Modifier l'existant : verifier BDP, chair, soin, amelioration et demonisation.
 - [x] From scratch : items de pouvoirs demonistes avec cout BDP et gain demonisation.
-- [ ] Implementer regeneration de membre, BDA petit/grand, stockage BDA, Expulsion.
-- [ ] Implementer sous-classes Tireur d'elite et Couteau a viande.
+- [x] Implementer regeneration de membre, BDA petit/grand, stockage BDA, Expulsion.
+- [x] Implementer sous-classes Tireur d'elite et Couteau a viande.
 - [x] Ajouter equipement de depart demoniste.
 
 ### P9 - Progression et competences
@@ -645,7 +645,7 @@ Standard d'entree :
 
 - [x] Completer compendium armes, armes alternatives, projectiles, explosifs.
 - [x] Completer armes a feu, munitions et modifications.
-- [ ] Modifier l'existant : poison affaiblissant/nuisible/glycine avec accumulation.
+- [x] Modifier l'existant : poison affaiblissant/nuisible/glycine avec accumulation.
 - [x] From scratch : crafting avec composants et DD selon nombre de composants.
 - [x] Completer medical : bandage, pansement, attelle, trousse, chirurgie, sang demon, analgesiques.
 
@@ -654,41 +654,41 @@ Standard d'entree :
 - [x] Completer items transport et jets de conduite.
 - [x] Completer vetements avec bonus/acces/camouflage.
 - [x] Completer nourriture avec recuperation Endurance et Endurance temporaire.
-- [ ] Implementer workflow 0 PV / mort / sauvetage / objet anti-0 PV. 0 PV et Mort debout implementes ; objets anti-0 a ajouter.
+- [x] Implementer workflow 0 PV / mort / sauvetage / objet anti-0 PV. 0 PV, Mort debout, stabilisation medicale et objet anti-0 implementes.
 
 ### P12 - Demons jouables et PNJ demons
 
 - [x] Modifier l'existant : assistant de creation demon par 3 points.
-- [ ] Verifier paquets de rang et benchmarks.
+- [x] Verifier paquets de rang et benchmarks.
 - [x] Modifier l'existant : actions demon heal/regrow/purify/infect/sos/execute.
 - [x] From scratch : blocage, esquive demon et demi-bonus Force/Finesse sur degats.
-- [ ] Ajouter lignages/branches de demons.
+- [x] Ajouter lignages/branches de demons.
 
 ### P13 - Supplement 1934
 
 - [x] Modifier l'existant : toggle supplement 1934 global.
-- [ ] Creer packs acteurs/objets/techniques 1934.
-- [ ] Ajouter Hashira et factions demon comme exemples utilisables.
+- [x] Creer packs acteurs/objets/techniques 1934. Packs manifestes : `supplement-1934-actors`, `supplement-1934`, `supplement-1934-breaths`, `supplement-1934-techniques`.
+- [x] Ajouter Hashira et factions demon comme exemples utilisables.
 - [x] Marquer le contenu 1934 comme optionnel dans les fiches et compendiums.
 
 ### P14 - Compendiums
 
-- [ ] Rebuild `actors-slayers` avec 3 exemples complets.
-- [ ] Rebuild `actors-demonists` avec 2 exemples complets.
-- [ ] Rebuild `actors-demons` avec 4 exemples par bandes de menace.
-- [ ] Rebuild `items-weapons`.
-- [ ] Rebuild `items-medical-utility`.
-- [ ] Rebuild `breaths-styles`.
-- [ ] Rebuild `techniques-breaths`.
-- [ ] Rebuild `techniques-subclasses`.
-- [ ] Rebuild `abilities-demons`.
+- [x] Rebuild `actors-slayers` avec 3 exemples complets.
+- [x] Rebuild `actors-demonists` avec 2 exemples complets.
+- [x] Rebuild `actors-demons` avec 4 exemples par bandes de menace.
+- [x] Rebuild `items-weapons`. Script `resources/scripts/rebuild-items-weapons-pack.mjs` ajoute 43 armes/munitions/modifications/projectiles/explosifs avec profils 1934 optionnels et notes d'ambiguite.
+- [x] Rebuild `items-medical-utility`.
+- [x] Rebuild `breaths-styles`.
+- [x] Rebuild `techniques-breaths`.
+- [x] Rebuild `techniques-subclasses`.
+- [x] Rebuild `abilities-demons`.
 - [x] Ajouter scripts de validation des packs.
 
 ### P15 - UX, visuels et QA
 
-- [ ] Polir les feuilles Slayer/Demoniste/Demon/PNJ/item.
+- [x] Polir les feuilles Slayer/Demoniste/Demon/PNJ/item. En-tetes stabilises avec badges ressources, notes d'automatisation des conditions et themes par type d'acteur.
 - [x] Rendre le budget des sous-caracteristiques lisible : depenses, reste, depassement.
-- [ ] Ajouter badges/icones/fonds de fiche coherents et lisibles.
+- [x] Ajouter badges/icones/fonds de fiche coherents et lisibles. Badges PV/E/RP/BDP/CA/Demonisation et fonds differencies Slayer/Demoniste/Demon/PNJ ajoutes.
 - [ ] Tester rendu sheet sans donnees manquantes.
 - [x] Ajouter tests ou checklist pour : stats derivees, progression, E/RP, auto-hit souffle, conditions, mutilation, soins, BDP/demonisation, compendiums.
 - [x] Lancer build et validation packs.

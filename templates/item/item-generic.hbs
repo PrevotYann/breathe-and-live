@@ -55,6 +55,17 @@
         <label>Endurance temporaire</label>
         <input type="checkbox" name="system.temporaryEndurance" data-dtype="Boolean" {{checked system.temporaryEndurance}} />
 
+        {{#if isMedical}}
+          <label>Stabilise</label>
+          <input type="checkbox" name="system.stabilizes" data-dtype="Boolean" {{checked system.stabilizes}} />
+
+          <label>Anti-0 PV</label>
+          <input type="checkbox" name="system.preventDeath" data-dtype="Boolean" {{checked system.preventDeath}} />
+
+          <label>PV anti-0</label>
+          <input type="number" name="system.preventDeathHp" value="{{system.preventDeathHp}}" min="1" />
+        {{/if}}
+
         <label>Note d'usage</label>
         <textarea name="system.usageNote" rows="3">{{system.usageNote}}</textarea>
 

@@ -30,10 +30,55 @@ import {
   buildPoisonApplicationUpdate,
   inferPoisonApplication,
 } from "../rules/poison-utils.mjs";
+import { getConditionActionRestriction } from "../rules/condition-utils.mjs";
+import { LIMB_DEFINITIONS } from "../config/rule-data.mjs";
 
 const FU = foundry.utils;
 const SYSTEM_ID = "breathe-and-live";
 const METERS_PER_SQUARE = 1.5;
+
+const DEMONIST_HEALING_BY_FLESH_RANK = {
+  "Rang faible": "1d10",
+  "Rang eleve": "2d10",
+  "Disciple de Lune inferieure": "1d20",
+  "Lune inferieure": "1d20",
+  "Disciple de Lune superieure": "1d100",
+  "Lune superieure": "1d100",
+  "Demon faible": "1d10",
+  "Demon eleve": "2d10",
+};
+
+const DEMON_HEALING_BY_RANK = {
+  "Demon faible": "1d10",
+  "Demon eleve": "2d10",
+  "Disciple de Lune inferieure": "1d20",
+  "Lune inferieure": "1d20",
+  "Disciple de Lune superieure": "1d100",
+  "Lune superieure": "1d100",
+};
+
+function toNumber(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function normalizeRuleText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function itemRuleText(item) {
+  return normalizeRuleText(
+    [
+      item?.name,
+      item?.system?.sourceSection,
+      item?.system?.usageNote,
+      ...(Array.isArray(item?.system?.tags) ? item.system.tags : []),
+    ].join(" ")
+  );
+}
 
 function distMetersChebyshev(aToken, bToken) {
   if (!aToken?.center || !bToken?.center) return Number.POSITIVE_INFINITY;
@@ -163,11 +208,7 @@ function hasLoveFriendlyFireProtection(actor, item) {
 }
 
 function isExpulsionItem(item) {
-  const haystack = `${item?.name || ""} ${(item?.system?.tags || []).join(" ")} ${item?.system?.sourceSection || ""}`
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-  return haystack.includes("expulsion");
+  return itemRuleText(item).includes("expulsion");
 }
 
 async function useExpulsion(attacker, item) {
@@ -200,6 +241,373 @@ async function useExpulsion(attacker, item) {
     `,
   });
   return { hpCost, previousDemonisation: currentDemonisation, nextDemonisation };
+}
+
+function getDemonistUtilityKind(item) {
+  const haystack = itemRuleText(item);
+  if (haystack.includes("expulsion")) return "expulsion";
+  if (/regeneration\s+(de\s+)?membre|repousse|regeneration\s+continue\s+des\s+membres/.test(haystack)) {
+    return "regrow";
+  }
+  if (/soin\s+demoniaque|guerison\s+demoniaque|regeneration\s+par\s+chair/.test(haystack)) {
+    return "heal";
+  }
+  if (/stockage\s+d['’]?art\s+demoniaque|stockage\s+bda/.test(haystack)) return "storeBda";
+  if (/(force|vitesse)\s+demoniaque/.test(haystack)) return "selfBoost";
+  if (/concentration\s+demoniaque/.test(haystack)) return "demonFocus";
+  if (/fureur\s+sanguinaire/.test(haystack)) return "bloodFury";
+  if (/tir\s+en\s+position\s+stable/.test(haystack)) return "stableShot";
+  if (item.type === "subclassTechnique" && item.system?.flags?.subclassUtility) {
+    return "subclassUtility";
+  }
+  if (/correction|double-?tap|chasseur\s+vorace/.test(haystack)) return "utility";
+  return "";
+}
+
+async function spendTechniqueUtilityCosts(actor, item) {
+  const spentNotes = [];
+  const eSpend = await spendResource(
+    actor,
+    "system.resources.e.value",
+    toNumber(item.system?.costE, 0),
+    "E"
+  );
+  if (!eSpend.ok) return null;
+  if (eSpend.note) spentNotes.push(eSpend.note);
+
+  const rpSpend = await spendResource(
+    actor,
+    "system.resources.rp.value",
+    toNumber(item.system?.costRp, 0),
+    "RP"
+  );
+  if (!rpSpend.ok) return null;
+  if (rpSpend.note) spentNotes.push(rpSpend.note);
+
+  const bdpSpend = await spendResource(
+    actor,
+    "system.resources.bdp.value",
+    toNumber(item.system?.costBdp, 0),
+    "BDP",
+    { sourceItem: item }
+  );
+  if (!bdpSpend.ok) return null;
+  if (bdpSpend.note) spentNotes.push(bdpSpend.note);
+
+  if (!toNumber(item.system?.costBdp, 0)) {
+    const demonisationGain = await applyDemonisationGain(actor, item, {
+      reason: item.name,
+    });
+    if (demonisationGain) spentNotes.push(`Demonisation +${demonisationGain}`);
+  }
+  return spentNotes;
+}
+
+function getLimbLabel(key) {
+  return LIMB_DEFINITIONS.find((entry) => entry.key === key)?.label || key;
+}
+
+function getDamagedLimbs(actor) {
+  const limbStates = FU.getProperty(actor, "system.combat.injuries.limbs") || {};
+  return Object.entries(limbStates)
+    .filter(([, state]) => state?.severed || state?.broken || state?.injured)
+    .map(([key, state]) => ({
+      key,
+      label: `${getLimbLabel(key)}${state.severed ? " (sectionne)" : state.broken ? " (casse)" : " (blesse)"}`,
+    }));
+}
+
+async function promptRegrowLimb(actor, candidates) {
+  if (candidates.length <= 1) return candidates[0]?.key || "";
+  const options = candidates
+    .map((entry) => `<option value="${entry.key}">${entry.label}</option>`)
+    .join("");
+  return new Promise((resolve) => {
+    new Dialog(
+      {
+        title: "Regeneration de membre",
+        content: `
+          <div class="form-group">
+            <label>Membre a regenerer</label>
+            <select id="bl-regrow-limb">${options}</select>
+          </div>
+        `,
+        buttons: {
+          ok: {
+            label: "Regenerer",
+            callback: (html) => resolve(String(html.find("#bl-regrow-limb").val() || "")),
+          },
+          cancel: {
+            label: "Annuler",
+            callback: () => resolve(""),
+          },
+        },
+        default: "ok",
+      },
+      { width: 420 }
+    ).render(true);
+  });
+}
+
+async function useRegrowPower(actor, item) {
+  const candidates = getDamagedLimbs(actor);
+  if (!candidates.length) {
+    ui.notifications.info(`${actor.name} n'a aucun membre coche a regenerer.`);
+    return null;
+  }
+
+  const continuous = itemRuleText(item).includes("regeneration continue des membres");
+  const selectedKeys =
+    actor.type === "demonist" && !continuous
+      ? [await promptRegrowLimb(actor, candidates)].filter(Boolean)
+      : candidates.map((entry) => entry.key);
+  if (!selectedKeys.length) return null;
+
+  const spentNotes = await spendTechniqueUtilityCosts(actor, item);
+  if (!spentNotes) return null;
+
+  const updates = {};
+  for (const key of selectedKeys) {
+    updates[`system.combat.injuries.limbs.${key}.injured`] = false;
+    updates[`system.combat.injuries.limbs.${key}.broken`] = false;
+    updates[`system.combat.injuries.limbs.${key}.severed`] = false;
+    updates[`system.combat.injuries.limbs.${key}.notes`] = "";
+    updates[`system.combat.injuries.targetedDamage.${key}`] = 0;
+  }
+  await actor.update(updates);
+
+  const labels = selectedKeys.map(getLimbLabel).join(", ");
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="bl-card"><b>${actor.name}</b> utilise <b>${item.name}</b> et regenere: ${labels}. <small>${spentNotes.join(" • ") || "Sans cout"}</small></div>`,
+  });
+  return selectedKeys;
+}
+
+async function promptDemonistHealingRank(actor) {
+  const stored = String(actor.system?.support?.recentDemonFleshRank || "");
+  if (DEMONIST_HEALING_BY_FLESH_RANK[stored]) return stored;
+  const options = Object.keys(DEMONIST_HEALING_BY_FLESH_RANK)
+    .map((rank) => `<option value="${rank}">${rank}</option>`)
+    .join("");
+  return new Promise((resolve) => {
+    new Dialog(
+      {
+        title: "Rang de chair demoniaque recente",
+        content: `
+          <div class="form-group">
+            <label>Rang</label>
+            <select id="bl-healing-rank">${options}</select>
+          </div>
+        `,
+        buttons: {
+          ok: {
+            label: "Valider",
+            callback: (html) => resolve(String(html.find("#bl-healing-rank").val() || "")),
+          },
+          cancel: {
+            label: "Annuler",
+            callback: () => resolve(""),
+          },
+        },
+        default: "ok",
+      },
+      { width: 420 }
+    ).render(true);
+  });
+}
+
+async function useHealingPower(actor, item) {
+  let rank = String(actor.system?.class?.rank || "");
+  let formula = DEMON_HEALING_BY_RANK[rank];
+  if (actor.type === "demonist") {
+    rank = await promptDemonistHealingRank(actor);
+    if (!rank) return null;
+    if (String(actor.system?.support?.recentDemonFleshRank || "") !== rank) {
+      await actor.update({ "system.support.recentDemonFleshRank": rank });
+    }
+    formula = DEMONIST_HEALING_BY_FLESH_RANK[rank];
+  }
+  if (!formula) {
+    ui.notifications.warn("Aucune formule de soin connue pour ce rang.");
+    return null;
+  }
+
+  const spentNotes = await spendTechniqueUtilityCosts(actor, item);
+  if (!spentNotes) return null;
+
+  const roll = await new Roll(formula).evaluate({ async: true });
+  const hpValue = toNumber(actor.system?.resources?.hp?.value, 0);
+  const hpMax = toNumber(
+    actor.type === "demonist"
+      ? actor.system?.resources?.hp?.healableMax
+      : actor.system?.resources?.hp?.max,
+    hpValue
+  );
+  const healed = Math.max(0, Math.min(hpMax - hpValue, toNumber(roll.total, 0)));
+  const next = Math.max(0, Math.min(hpMax, hpValue + healed));
+  await actor.update({ "system.resources.hp.value": next });
+
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="bl-card"><b>${actor.name}</b> utilise <b>${item.name}</b> (${rank}) et recupere ${healed} PV (${hpValue} -> ${next}). <small>${spentNotes.join(" • ") || "Sans cout"}</small></div>`,
+  });
+  return healed;
+}
+
+async function useStoreBdaPower(actor, item) {
+  const spentNotes = await spendTechniqueUtilityCosts(actor, item);
+  if (!spentNotes) return null;
+
+  await actor.setFlag(SYSTEM_ID, "storedDemonicArt", {
+    itemId: item.id,
+    itemName: item.name,
+    combatId: game.combat?.id || "",
+    round: game.combat?.round ?? null,
+    timestamp: Date.now(),
+  });
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="bl-card"><b>${actor.name}</b> stocke un Art Demoniaque pour un combat futur. <small>${spentNotes.join(" • ") || "Sans cout"}</small></div>`,
+  });
+  return true;
+}
+
+async function useDemonFocus(actor, item) {
+  const bdpPath = "system.resources.bdp.value";
+  const current = toNumber(FU.getProperty(actor, bdpPath), 0);
+  const cost = Math.ceil(current / 2);
+  if (cost <= 0) {
+    ui.notifications.warn(`${actor.name} n'a pas assez de BDP pour Concentration demoniaque.`);
+    return null;
+  }
+  await actor.update({ [bdpPath]: Math.max(0, current - cost) });
+  await actor.setFlag(SYSTEM_ID, "demonFocusExtraAction", {
+    itemId: item.id,
+    itemName: item.name,
+    cost,
+    combatId: game.combat?.id || "",
+    round: game.combat?.round ?? null,
+    timestamp: Date.now(),
+  });
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="bl-card"><b>${actor.name}</b> utilise <b>${item.name}</b> : BDP ${current} -> ${current - cost}, action supplementaire disponible ce tour.</div>`,
+  });
+  return true;
+}
+
+async function useBloodFury(actor, item) {
+  await actor.setFlag(SYSTEM_ID, "bloodFury", {
+    itemId: item.id,
+    itemName: item.name,
+    uses: Math.max(1, toNumber(item.system?.flags?.bloodFuryCharges, 3) || 3),
+    damage: item.system?.damage || "1d6",
+    combatId: game.combat?.id || "",
+    round: game.combat?.round ?? null,
+    timestamp: Date.now(),
+  });
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="bl-card"><b>${actor.name}</b> active <b>${item.name}</b>. Les 3 prochaines attaques eligibles gagnent +${item.system?.damage || "1d6"}.</div>`,
+  });
+  return true;
+}
+
+async function useStableShot(actor, item) {
+  await actor.setFlag(SYSTEM_ID, "stableShot", {
+    itemId: item.id,
+    itemName: item.name,
+    attackBonus: 8,
+    combatId: game.combat?.id || "",
+    round: game.combat?.round ?? null,
+    timestamp: Date.now(),
+  });
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="bl-card"><b>${actor.name}</b> prend une <b>position stable</b>. La prochaine attaque a distance gagne +8 au toucher; le deplacement est a gerer comme immobilise.</div>`,
+  });
+  return true;
+}
+
+async function useSubclassUtility(actor, item) {
+  const spentNotes = await spendTechniqueUtilityCosts(actor, item);
+  if (!spentNotes) return null;
+
+  const flags = item.system?.flags || {};
+  if (flags.basicAttackMod) {
+    await actor.setFlag(SYSTEM_ID, "subclassBasicAttack", {
+      ...flags.basicAttackMod,
+      itemId: item.id,
+      itemName: item.name,
+      combatId: game.combat?.id || "",
+      round: game.combat?.round ?? null,
+      timestamp: Date.now(),
+    });
+  }
+
+  const selfEffects = FU.getProperty(item, "system.selfEffects") || [];
+  if (Array.isArray(selfEffects) && selfEffects.length) {
+    await applyEffectsList({
+      source: actor,
+      target: actor,
+      effects: selfEffects,
+      origin: item.uuid,
+    });
+  }
+
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="bl-card"><b>${actor.name}</b> utilise <b>${item.name}</b>. <small>${item.system?.usageNote || ""}</small>${spentNotes.length ? `<small>${spentNotes.join(" • ")}</small>` : ""}</div>`,
+  });
+  return true;
+}
+
+async function useSelfUtility(actor, item) {
+  const spentNotes = await spendTechniqueUtilityCosts(actor, item);
+  if (!spentNotes) return null;
+
+  const selfEffects = FU.getProperty(item, "system.selfEffects") || [];
+  if (Array.isArray(selfEffects) && selfEffects.length) {
+    await applyEffectsList({
+      source: actor,
+      target: actor,
+      effects: selfEffects,
+      origin: item.uuid,
+    });
+  }
+
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="bl-card"><b>${actor.name}</b> utilise <b>${item.name}</b>. <small>${spentNotes.join(" • ") || "Sans cout"}</small></div>`,
+  });
+  return true;
+}
+
+async function useDemonistUtility(attacker, item, kind) {
+  switch (kind) {
+    case "expulsion":
+      return useExpulsion(attacker, item);
+    case "regrow":
+      return useRegrowPower(attacker, item);
+    case "heal":
+      return useHealingPower(attacker, item);
+    case "storeBda":
+      return useStoreBdaPower(attacker, item);
+    case "demonFocus":
+      return useDemonFocus(attacker, item);
+    case "bloodFury":
+      return useBloodFury(attacker, item);
+    case "stableShot":
+      return useStableShot(attacker, item);
+    case "subclassUtility":
+      return useSubclassUtility(attacker, item);
+    case "selfBoost":
+    case "utility":
+      return useSelfUtility(attacker, item);
+    default:
+      return null;
+  }
 }
 
 function getQuickShotWeapon(actor) {
@@ -507,11 +915,21 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
     );
   }
 
+  const restriction = getConditionActionRestriction(attacker, "technique");
+  if (restriction.blocked) {
+    return ui.notifications.warn(`${attacker.name} ne peut pas utiliser cette technique. ${restriction.reason}`);
+  }
+
   const breathKey = item.system?.breathKey || normalizeBreathName(item.system?.breath);
   if (item.type === "technique" && breathKey && !actorHasBreath(attacker, breathKey)) {
     return ui.notifications.warn(
       `${attacker.name} ne possede pas le souffle requis pour ${item.name}.`
     );
+  }
+
+  const utilityKind = getDemonistUtilityKind(item);
+  if (utilityKind) {
+    return useDemonistUtility(attacker, item, utilityKind);
   }
 
   let attackerToken = resolveCanvasToken(controlledToken, attacker);

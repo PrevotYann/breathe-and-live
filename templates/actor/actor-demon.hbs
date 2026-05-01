@@ -10,6 +10,12 @@
       <h1 class="charname">
         <input name="name" type="text" value="{{actor.name}}" {{#unless canEdit}}disabled{{/unless}} />
       </h1>
+      <div class="sheet-badge-row">
+        <span class="sheet-badge hp">PV {{system.resources.hp.value}}/{{system.resources.hp.max}}</span>
+        <span class="sheet-badge rp">RP {{system.resources.rp.value}}/{{system.resources.rp.max}}</span>
+        <span class="sheet-badge bdp">BDP {{system.resources.bdp.value}}/{{system.resources.bdp.max}}</span>
+        <span class="sheet-badge ca">CA {{system.resources.ca}}</span>
+      </div>
       <div class="grid four-col summary-grid">
         <div class="field small">
           <label>Rang</label>
@@ -39,6 +45,20 @@
           <input type="text" name="system.profile.combatStyle" value="{{system.profile.combatStyle}}" {{#unless canEdit}}disabled{{/unless}} />
         </div>
       </div>
+      {{#if demonBloodlineDetail}}
+        <div class="field demon-bloodline-summary">
+          <div class="shared-action">
+            <div>
+              <strong>{{demonBloodlineDetail.name}}</strong>
+              <small>{{demonBloodlineDetail.traits}}</small>
+              <small>{{demonBloodlineDataLabel}}</small>
+            </div>
+            <div class="controls">
+              <button type="button" class="bl-import-demon-bloodline">Importer pouvoirs</button>
+            </div>
+          </div>
+        </div>
+      {{/if}}
     </div>
   </header>
 
@@ -411,6 +431,9 @@
 
         <div class="field">
           <h3>Conditions & mutilation</h3>
+          {{#if conditionAutomationNotes.length}}
+            <small>{{join conditionAutomationNotes " | "}}</small>
+          {{/if}}
           <div class="condition-list">
             {{#each conditionEntries as |entry|}}
               <div class="condition-row">

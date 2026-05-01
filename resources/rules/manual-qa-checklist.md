@@ -12,6 +12,8 @@ Use this when automated testing is not practical inside the Foundry runtime.
   - Set Force to 6 and split more than 6 points across Force derived stats on a legacy actor; confirm the sheet displays `depassement`, then editing one field clamps it back to the shared Force budget.
 
 - Character creation controls
+  - On a fresh Slayer sheet, click `Assistant creation`, confirm the dialog, and check that base stats, derived stats, 15 starting points, trainer/partner/Kasugai budgets, and starting equipment are filled without duplicates.
+  - On a fresh Demonist sheet, click `Assistant creation`, confirm the dialog, and check that base stats, derived stats, 15 starting points, demonist healing reaction, BDP, and starting equipment are filled without duplicates.
   - On a Slayer or Demonist sheet, click `Table 0-5` and confirm the base stats are filled and `creation.statRolls` stores `0, 1, 2, 3, 4, 5`.
   - Click `Tirer 6d6` and confirm six values are stored in `creation.statRolls` and posted to chat.
   - Set sense/trait/breath-form creation points above 15 and confirm the sheet warns that the budget is exceeded.
@@ -35,6 +37,15 @@ Use this when automated testing is not practical inside the Foundry runtime.
   - Try demon creation choices totaling more than 3 points and confirm the assistant refuses to apply them.
   - On a demon of sufficient rank, use `Guerison`, `Repousse`, `Purification`, `Infecter`, `SOS` and `Executer`; confirm BDP costs, limb recovery, poison stack removal, infection flag, bloodline chat, and execution reactions.
   - Use demon `Bloquer` and `Esquiver`; confirm each spends 1 RP, creates a prepared defense button on the next incoming attack card, and consumes that defense to cancel damage.
+
+- Slayer subclasses
+  - Open `techniques-subclasses` and confirm it contains 16 Slayer subclass families, with `Depart`, `Kanoe`, `Hinoto`, `Kinoe` feature entries and matching reaction/attack/posture entries.
+  - Drag a `Depart` subclass feature onto a Slayer and confirm `system.class.subclass` is set while base/derived subclass bonuses appear through effective stats, without changing the creation budget remainder.
+  - Drag a `Kanoe` or `Kinoe` subclass feature below the required rank and confirm the drop is refused; repeat at the required rank and confirm the bonus applies.
+  - Use `Posture de l'Eau Ecrasante`, then make a basic attack and confirm the chat card shows +2 to hit and +4 damage.
+  - Use `Coupe-Pierre` against a target with lower CA and confirm the next basic attack is auto-hit, then the prepared flag is consumed.
+  - Use `Vents de Guerre`, then make a basic attack and confirm the damage formula adds Vitesse d6 and consumes one prepared use.
+  - Use a limited subclass attack such as `Typhon tourbillonnant`, `Danse perforante`, or `Coup de foudre`; confirm daily/combat use fields are visible and the chat card resolves area/condition notes.
 
 - Endurance spend and recovery
   - Use a breath technique with `costE > 0`.
@@ -88,6 +99,13 @@ Use this when automated testing is not practical inside the Foundry runtime.
   - Select damage/range/effect values and create the technique.
   - Confirm the created item has `sourceSection: Creation de souffle personnalise`, calculated `costE`, damage, range, tags, and automation flags.
 
+- Breath styles and forms
+  - Open `breaths-styles` and confirm the 18 entries exist: 17 named styles plus `Souffle Original`.
+  - Import one style to an actor, enable it, and confirm its special checkbox matches the style passive from the sheet.
+  - Open `techniques-breaths` and confirm the 140 forms are grouped by breath family.
+  - Open the Ouest forms 4, 6, 7, 8, 9, 10, 11 and 12 and confirm each has a `TODO-RULEBOOK-AMBIGUITY` note rather than an invented description.
+  - Use one technique from Soleil, Lune, Flamme, Eau, Vent, Foudre, Pierre, Fleur, Brume, Serpent, Son, Insecte, Amour, Bete, Ocean, Ouest and Neige; confirm each resolves from chat without missing-field errors.
+
 - Technique prerequisites
   - Create or edit a technique with `prerequisites.sense`, `prerequisites.trait`, or `prerequisites.weapon`.
   - Drag it to an actor missing that requirement and confirm the drop is refused with a clear warning.
@@ -103,7 +121,17 @@ Use this when automated testing is not practical inside the Foundry runtime.
   - Toggle `Brulure`, `Saignement`, and `Enfume`.
   - Advance combat turns.
   - Confirm turn-start damage or endurance loss occurs.
+  - Toggle `Desequilibre`, then try `Esquiver (1 RP)` and confirm RP spending is refused.
+  - Toggle `Emprisonne` or `Paralyse`, reopen the sheet, and confirm effective movement is 0 and sprint is refused.
+  - Toggle `Ralenti`, advance the actor's turns twice, and confirm the sheet/chat alternates between an acting turn and a no-action turn.
+  - Toggle `Fureur`, then confirm techniques are refused while basic attacks remain usable.
+  - Toggle `Aveugle`, `Assourdi`, `Anosmie`, `Ageusie`, or `Paresthesie`; confirm relevant perception/touch checks auto-fail and paresthesia lowers effective Precision.
+  - Toggle `Controle`, `Charme`, `Maudit`, or `Triste`; advance combat and confirm the turn-start chat reminder appears. For `Triste`, confirm the Endurance DD 15 roll is shown.
   - Use bandages on a bleeding actor and confirm the status clears.
+  - Apply `Poison affaiblissant`, `Poison nuisible`, and `Poison de glycine endommageant` to the same demon across multiple hits; confirm the sheet shows accumulated stacks by profile.
+  - Advance the demon's combat turn and confirm weakening penalties, `Xd10` harmful damage, and glycine `% PV max` damage all resolve together.
+  - Use demon `Purification` and confirm it removes poison stacks by rank rather than clearing every stack.
+  - Use an anti-poison medical item and confirm poison activity, intensity, and per-profile stacks clear.
 
 - Limb injury thresholds
   - Make a basic attack and choose a targeted limb before rolling.
@@ -128,6 +156,8 @@ Use this when automated testing is not practical inside the Foundry runtime.
 - Death workflow
   - Deal damage that brings an actor to 0 PV and confirm `system.death.state` becomes `dead`.
   - Enable `standingDeath`, deal damage to 0 PV, and confirm the state becomes `critical` instead of `dead`.
+  - Add `Kit de sauvetage anti-0 PV`, deal damage to 0 PV, and confirm the item quantity decreases, PV becomes 1, and death state becomes `critical`.
+  - Use `Trousse de premiers secours` on a 0 PV actor and confirm stabilization/healing updates the death state.
   - Use demon `Executer` on a human at 5 PV or less, click `Executer`, and confirm the target PV drop to 0 also updates the death state.
 
 - Demonist BDP gain/spend
@@ -143,12 +173,26 @@ Use this when automated testing is not practical inside the Foundry runtime.
   - Use `Expulsion` and confirm PV are reduced by half base HP and current demonisation is halved.
   - Use `Seringue de sang demon` and `Analgesiques`; confirm the first heals PV and the second grants temporary Endurance.
 
+- Demon bloodlines
+  - On a demon sheet, select `Lune Brulante` and confirm the header shows traits and `Pouvoirs extraits disponibles`.
+  - Click `Importer pouvoirs` on a `Demon faible` and confirm only the lineage marker plus rang-faible Lune Brulante entries are added.
+  - Raise the demon to `Lune inferieure`, import again, and confirm newly eligible Lune Brulante entries are added while duplicates are skipped.
+  - Select `Lune Patchwork`, import, and confirm only the lineage marker is added with a `TODO-RULEBOOK-AMBIGUITY` note.
+  - Use `SOS de lignee` and confirm the chat message reports the selected shared bloodline.
+
 - Compendium importability
   - Open each listed system pack in Foundry.
   - Confirm entries display without missing-type warnings.
+  - Open `actors-slayers` and confirm the three examples load: Eau, Hashira Flamme, Neige 1934.
+  - Open `actors-demonists` and confirm both examples expose BDP, demonisation and demonist reaction controls.
+  - Open `actors-demons` and confirm the four examples cover Demon faible, Demon eleve 1934, Disciple de Lune Brulante and playable Demon Patchwork.
+  - Open `supplement-1934-actors` and confirm it contains the four 1934 actor examples: Yuki, Demon des rails, Akari and Shiori Patchwork.
+  - Open `supplement-1934`, `supplement-1934-breaths`, and `supplement-1934-techniques`; confirm each pack is visible from the system compendiums.
   - Toggle `Activer le supplement 1934` in system settings and confirm open actor/item sheets re-render.
   - Open a 1934-tagged item or supplement pack entry and confirm it displays the `Supplement 1934` optional badge/checkbox.
 
 - Sheet rendering
   - Open each actor type: `slayer`, `demonist`, `demon`, `npcHuman`, `npcDemon`, `companion`.
   - Confirm no missing-field errors appear in console.
+  - Confirm the header badges fit on Slayer, Demonist, Demon and NPC sheets at default Foundry popout size.
+  - Confirm condition automation notes do not overlap condition inputs when several restrictive conditions are active.

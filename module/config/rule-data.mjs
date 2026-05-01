@@ -533,20 +533,94 @@ export const DEMON_RANK_LEVELS = Object.fromEntries(
   DEMON_RANKS.map((rank, index) => [rank, index + 1])
 );
 
-export const DEMON_BLOODLINE_VARIANTS = [
-  "Lune d'Or",
-  "Lune Brulante",
-  "Lune Enragee",
-  "Lune Mecanique",
-  "Lune Ancienne",
-  "Lune Miroir",
-  "Lune Ombree",
-  "Lune Endeuillee",
-  "Lune Jardin",
-  "Lune Artisane",
-  "Lune Submergee",
-  "Lune Patchwork",
+export const DEMON_BLOODLINE_DETAILS = [
+  {
+    key: "lune-or",
+    name: "Lune d'Or",
+    traits: "Vetements dores.",
+    availableData: "traits-only",
+    tags: ["1934", "lune-or"],
+  },
+  {
+    key: "lune-brulante",
+    name: "Lune Brulante",
+    traits: "Flammes, traces de brulures, cicatrices et cendres.",
+    availableData: "mechanics-extracted",
+    tags: ["1934", "lune-brulante", "burn"],
+  },
+  {
+    key: "lune-enragee",
+    name: "Lune Enragee",
+    traits: "Fourrure, crocs et regard animal.",
+    availableData: "traits-only",
+    tags: ["1934", "lune-enragee"],
+  },
+  {
+    key: "lune-mecanique",
+    name: "Lune Mecanique",
+    traits: "Engrenages, horloges, pieces mecaniques ou armure.",
+    availableData: "traits-only",
+    tags: ["1934", "lune-mecanique"],
+  },
+  {
+    key: "lune-ancienne",
+    name: "Lune Ancienne",
+    traits: "Os et ornements osseux.",
+    availableData: "traits-only",
+    tags: ["1934", "lune-ancienne"],
+  },
+  {
+    key: "lune-miroir",
+    name: "Lune Miroir",
+    traits: "Fragments de miroir et surfaces reflechissantes.",
+    availableData: "traits-only",
+    tags: ["1934", "lune-miroir"],
+  },
+  {
+    key: "lune-ombree",
+    name: "Lune Ombree",
+    traits: "Aucun signe distinctif connu dans l'extrait local.",
+    availableData: "traits-only",
+    tags: ["1934", "lune-ombree"],
+  },
+  {
+    key: "lune-endeuillee",
+    name: "Lune Endeuillee",
+    traits: "Vetements ceremoniels, larmes ou habits dechires.",
+    availableData: "traits-only",
+    tags: ["1934", "lune-endeuillee"],
+  },
+  {
+    key: "lune-jardin",
+    name: "Lune Jardin",
+    traits: "Fleurs, plantes, fruits, legumes ou autres signes de flore.",
+    availableData: "traits-only",
+    tags: ["1934", "lune-jardin"],
+  },
+  {
+    key: "lune-artisane",
+    name: "Lune Artisane",
+    traits: "Outils artistiques ou artisanaux.",
+    availableData: "traits-only",
+    tags: ["1934", "lune-artisane"],
+  },
+  {
+    key: "lune-submergee",
+    name: "Lune Submergee",
+    traits: "Vie marine, traits aquatiques ou outils de peche.",
+    availableData: "traits-only",
+    tags: ["1934", "lune-submergee"],
+  },
+  {
+    key: "lune-patchwork",
+    name: "Lune Patchwork",
+    traits: "Coton, toile ou morceaux de tissu assembles.",
+    availableData: "traits-only",
+    tags: ["1934", "lune-patchwork"],
+  },
 ];
+
+export const DEMON_BLOODLINE_VARIANTS = DEMON_BLOODLINE_DETAILS.map((entry) => entry.name);
 
 export const DEMON_BODY_OPTIONS = [
   {

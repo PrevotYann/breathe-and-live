@@ -6,13 +6,14 @@
   "system": {
     "tags": [
       "breath",
-      "west"
+      "west",
+      "missing-rule-data"
     ],
-    "description": "",
+    "description": "TODO-RULEBOOK-AMBIGUITY: les donnees descriptives detaillees de cette forme ne sont pas presentes dans l'extrait local; la fiche conserve les champs mecaniques disponibles et reste modifiable.",
     "sourceSection": "Souffle de l'Ouest",
     "activation": "action",
     "quantity": 1,
-    "usageNote": "",
+    "usageNote": "TODO-RULEBOOK-AMBIGUITY: les donnees descriptives detaillees de cette forme ne sont pas presentes dans l'extrait local; la fiche conserve les champs mecaniques disponibles et reste modifiable.",
     "prerequisites": {
       "class": "",
       "rank": "",
