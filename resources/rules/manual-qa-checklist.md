@@ -3,7 +3,7 @@
 Use this when automated testing is not practical inside the Foundry runtime.
 
 - Pre-Foundry readiness
-  - Run `npm run verify:ready`, `npm run validate:packs`, `npm run lint`, and `npm run build`.
+  - Run `npm test`, `npm run verify:ready`, `npm run validate:packs`, `npm run lint`, and `npm run build`.
   - Confirm all commands pass before opening the system in Foundry.
 
 - Derived formulas
@@ -200,3 +200,16 @@ Use this when automated testing is not practical inside the Foundry runtime.
   - Confirm no missing-field errors appear in console.
   - Confirm the header badges fit on Slayer, Demonist, Demon and NPC sheets at default Foundry popout size.
   - Confirm condition automation notes do not overlap condition inputs when several restrictive conditions are active.
+
+- Multiplayer regression checks (Foundry v12.343)
+  - Restart the world after this update: `system.json` now enables the system socket used by chat reactions.
+  - Connect one GM and two players. Keep the GM on the attack scene. Post a basic attack and a breath technique as player A; resolve damage/dodge as the owning defender, player B. Confirm HP/RP changes once and results appear on every client.
+  - Reload player B before reacting to a newly created card. Confirm its buttons still work. Reload after resolving it and confirm its target buttons remain disabled.
+  - Click the same damage button rapidly on both the GM and defender clients. Confirm damage applies once. Confirm an observer cannot resolve a target they do not own.
+  - Move the GM to a different scene and attempt a reaction. Confirm an explicit scene warning appears and no resources are spent; return the GM to the attack scene and retry.
+  - Existing chat cards created before this update lack the stored attack context. Create a new attack card to use persistent reactions; no historical cards are rewritten.
+  - With the three clients connected, advance a burning actor's turn and confirm one damage application, one chat result, and one TCB recovery. Advance world time one hour and confirm demonisation decays by 2 only once.
+  - Use two unlinked tokens based on the same actor. Apply round-end effects to both and to a separate actor outside combat. End the round: both token effects expire, while the separate actor keeps its effect.
+  - Apply a `turnEnd` effect to each combatant. End one combatant's turn and confirm only its effect expires. Apply `custom:3`, reload after one round, and confirm it expires after the remaining two rounds.
+  - Use a technique with E/RP/BDP costs while short of RP, then while short of BDP. Confirm no resource changes in either failure. Restore resources and confirm all costs are deducted once.
+  - Apply Neige's temporary CA penalty, change Vitesse or equipped armor, and reload. Confirm the penalty remains on the current derived CA and expiration restores the current unmodified CA.

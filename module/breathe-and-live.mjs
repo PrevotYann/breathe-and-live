@@ -1,3 +1,5 @@
+import { registerPersistentCardHooks } from "./chat/persistent-cards.mjs";
+import { isAutomationAuthority, isCombatTurnStart } from "./rules/automation-authority.mjs";
 import {
   ADVANCED_STATES,
   BREATH_KEYS,
@@ -33,7 +35,7 @@ import {
   openCustomBreathBuilder,
 } from "./rules/custom-breath-builder.mjs";
 import { registerMigrationSetting, runSystemMigrations } from "./migrations.mjs";
-import { registerEffectHooks } from "./rules/effects-engine.mjs";
+import { registerEffectHooks, applyTemporaryModifiers } from "./rules/effects-engine.mjs";
 import { normalizeTechniqueItemData, validateTechniqueOwnership } from "./rules/technique-utils.mjs";
 import {
   ensurePoisonStateDefaults,
@@ -792,6 +794,8 @@ class BLActor extends Actor {
       sys.resources.rp.value = 0;
     }
 
+    sys.resources.ca = applyTemporaryModifiers(this, "system.resources.ca", sys.resources.ca);
+
     sys.progression.studySlots.value = clamp(
       toNumber(sys.progression.studySlots.value, 0),
       0,
@@ -812,6 +816,7 @@ Hooks.once("setup", () => {
 });
 
 Hooks.once("ready", async () => {
+  registerPersistentCardHooks();
   await runSystemMigrations();
   await sanitizeSystemCompendiumIndices();
 
@@ -910,8 +915,9 @@ async function blSetUnconscious(actor, tokenOrCombatant) {
   });
 }
 
-Hooks.on("updateCombat", async (combat, changed) => {
-  if (changed.turn === undefined) return;
+Hooks.on("updateCombat", async (combat, changed, options, userId) => {
+  if (!isAutomationAuthority(userId)) return;
+  if (!isCombatTurnStart(combat, changed)) return;
 
   const combatant = combat.combatant;
   const actor = combatant?.actor;
@@ -950,7 +956,8 @@ Hooks.on("updateCombat", async (combat, changed) => {
   }
 });
 
-Hooks.on("updateCombat", async (combat, changed) => {
+Hooks.on("updateCombat", async (combat, changed, options, userId) => {
+  if (!isAutomationAuthority(userId)) return;
   if (changed.round === undefined) return;
   for (const combatant of combat.combatants) {
     const actor = combatant.actor;

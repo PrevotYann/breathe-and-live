@@ -1,3 +1,5 @@
+import { cardFlags, registerCardType } from "../chat/persistent-cards.mjs";
+import { isAutomationAuthority, isCombatTurnStart } from "./automation-authority.mjs";
 import {
   CONDITION_DEFINITIONS,
   DEMON_RANK_PACKAGES,
@@ -818,6 +820,7 @@ async function createPoisonStatusChat(actor, summary, intro) {
     : "";
 
   const message = await ChatMessage.create({
+    flags: cardFlags("purify", { actorUuid: actor.uuid, field: "content" }),
     speaker: actorSpeaker(actor),
     content: `
       <div class="bl-card" style="display:grid; gap:.35rem;">
@@ -830,16 +833,7 @@ async function createPoisonStatusChat(actor, summary, intro) {
     `,
   });
 
-  if (purifyButton) {
-    Hooks.once("renderChatMessage", (chat, html) => {
-      if (chat.id !== message.id) return;
-      html.find(".bl-poison-purify").on("click", async (event) => {
-        const button = $(event.currentTarget);
-        button.prop("disabled", true);
-        await runDemonPurify(actor);
-      });
-    });
-  }
+
 
   return message;
 }
@@ -1488,6 +1482,10 @@ export async function rollBasicAttack(
   }
 
   const chatMessage = await damageRoll.toMessage({
+    flags: cardFlags("basicAttack", {
+      actorUuid: actor.uuid, weaponUuid: weapon?.uuid ?? null,
+      sceneId: canvas.scene.id, damageTotal: damageRoll.total, isFirearm, targetLimb,
+    }),
     speaker: actorSpeaker(actor),
     flavor: `
       <div class="bl-card" style="display:grid; gap:.35rem;">
@@ -1506,106 +1504,7 @@ export async function rollBasicAttack(
     `,
   });
 
-  Hooks.once("renderChatMessage", (message, html) => {
-    if (message.id !== chatMessage.id) return;
 
-    const disableTargetButtons = (tokenId) => {
-      html.find(`button[data-target-token="${tokenId}"]`).prop("disabled", true);
-    };
-    const disableRpButtons = (tokenId) => {
-      html
-        .find(`.bl-target-row[data-target-token="${tokenId}"] .bl-dodge, .bl-target-row[data-target-token="${tokenId}"] .bl-deflect, .bl-target-row[data-target-token="${tokenId}"] .bl-stance-deflect`)
-        .prop("disabled", true);
-    };
-
-    html.find(".bl-evade-no-rp").on("click", async (event) => {
-      const button = $(event.currentTarget);
-      const token = canvas.tokens.get(String(button.attr("data-target-token")));
-      const targetActor = token?.actor;
-      if (!targetActor || !canInteractWithToken(token)) return;
-
-      const attackTarget = toNumber(button.attr("data-attack-total"), 0);
-      const result = await rollNoRpEvade(targetActor, attackTarget);
-      if (result.success) {
-        html
-          .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
-          .html(`<em>Eviter sans RP reussi (${result.total} contre ${attackTarget}) : degats annules.</em>`);
-        disableTargetButtons(token.id);
-      } else {
-        html
-          .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
-          .html(`<em>Eviter sans RP echoue (${result.total} contre ${attackTarget}) : reactions RP interdites contre cette attaque.</em>`);
-        button.prop("disabled", true);
-        disableRpButtons(token.id);
-      }
-    });
-
-    html.find(".bl-dodge").on("click", async (event) => {
-      const button = $(event.currentTarget);
-      const token = canvas.tokens.get(String(button.attr("data-target-token")));
-      const targetActor = token?.actor;
-      if (!targetActor || !canInteractWithToken(token)) return;
-
-      const ok = await spendRp(targetActor, 1);
-      if (!ok) return;
-
-      html
-        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
-        .html("<em>Esquive reussie : degats annules.</em>");
-      disableTargetButtons(token.id);
-    });
-
-    html.find(".bl-deflect").on("click", async (event) => {
-      const button = $(event.currentTarget);
-      const token = canvas.tokens.get(String(button.attr("data-target-token")));
-      const targetActor = token?.actor;
-      if (!targetActor || !canInteractWithToken(token)) return;
-
-      const ok = await spendRp(targetActor, 1);
-      if (!ok) return;
-
-      html
-        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
-        .html("<em>Deviation reussie : degats annules. Redirection manuelle.</em>");
-      disableTargetButtons(token.id);
-    });
-
-    html.find(".bl-stance-deflect").on("click", async (event) => {
-      const button = $(event.currentTarget);
-      const token = canvas.tokens.get(String(button.attr("data-target-token")));
-      const targetActor = token?.actor;
-      if (!targetActor || !canInteractWithToken(token)) return;
-
-      await consumeDeflectStance(targetActor);
-      html
-        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
-        .html("<em>Posture defensive consommee : degats annules.</em>");
-      disableTargetButtons(token.id);
-    });
-
-    html.find(".bl-takedmg").on("click", async (event) => {
-      const button = $(event.currentTarget);
-      const token = canvas.tokens.get(String(button.attr("data-target-token")));
-      if (!token?.actor || !canInteractWithToken(token)) return;
-
-      const result = await applyBasicAttackDamage({
-        attacker: actor,
-        targetToken: token,
-        damageRoll,
-        weapon,
-        isFirearm,
-        targetLimb,
-      });
-      if (!result) return;
-
-      html
-        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
-        .html(
-          `<em>${token.actor.name} prend <b>${result.damage}</b> degats (PV ${result.currentHp} -> ${result.nextHp}).${result.poisonResult ? ` ${buildPoisonChatLine(result.poisonResult)}.` : ""}</em>`
-        );
-      disableTargetButtons(token.id);
-    });
-  });
 
   return { hit, attackRoll, damageRoll, attackMessage, chatMessage };
 }
@@ -1776,6 +1675,7 @@ export async function runDemonExecute(actor) {
   });
 
   const chatMessage = await ChatMessage.create({
+    flags: cardFlags("execution", { actorUuid: actor.uuid, sceneId: canvas.scene.id, field: "content" }),
     speaker: actorSpeaker(actor),
     content: `
       <div class="bl-card" style="display:grid; gap:.35rem;">
@@ -1786,47 +1686,7 @@ export async function runDemonExecute(actor) {
     `,
   });
 
-  Hooks.once("renderChatMessage", (message, html) => {
-    if (message.id !== chatMessage.id) return;
-    const disableTargetButtons = (tokenId) => {
-      html.find(`button[data-target-token="${tokenId}"]`).prop("disabled", true);
-    };
 
-    html.find(".bl-deflect, .bl-stance-deflect").on("click", async (event) => {
-      const button = $(event.currentTarget);
-      const token = canvas.tokens.get(String(button.attr("data-target-token")));
-      const defended = token?.actor;
-      if (!defended || !canInteractWithToken(token)) return;
-
-      if (button.hasClass("bl-deflect")) {
-        const ok = await spendRp(defended, 1);
-        if (!ok) return;
-      } else {
-        await consumeDeflectStance(defended);
-      }
-
-      html
-        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
-        .html("<em>Execution contrecarree par reaction.</em>");
-      disableTargetButtons(token.id);
-    });
-
-    html.find(".bl-takedmg").on("click", async (event) => {
-      const button = $(event.currentTarget);
-      const token = canvas.tokens.get(String(button.attr("data-target-token")));
-      const target = token?.actor;
-      if (!target || !canInteractWithToken(token)) return;
-
-      const currentHp = toNumber(target.system?.resources?.hp?.value, 0);
-      await target.update({ "system.resources.hp.value": 0 });
-      await noteActorDamageTaken(target, currentHp);
-      await ChatMessage.create({
-        speaker: actorSpeaker(actor),
-        content: `<em>${actor.name} execute ${target.name} (${currentHp} -> 0 PV).</em>`,
-      });
-      disableTargetButtons(token.id);
-    });
-  });
 
   return true;
 }
@@ -2651,14 +2511,16 @@ async function processConditionTurnStart(actor) {
 }
 
 export function registerActionHooks() {
-  Hooks.on("updateCombat", async (combat, changed) => {
-    if (changed.turn === undefined) return;
+  Hooks.on("updateCombat", async (combat, changed, options, userId) => {
+    if (!isAutomationAuthority(userId)) return;
+    if (!isCombatTurnStart(combat, changed)) return;
     const actor = combat.combatant?.actor;
     if (!actor) return;
     await processConditionTurnStart(actor);
   });
 
-  Hooks.on("deleteCombat", async (combat) => {
+  Hooks.on("deleteCombat", async (combat, options, userId) => {
+    if (!isAutomationAuthority(userId)) return;
     const updates = [];
     for (const actor of game.actors?.contents ?? []) {
       if (actor.type !== "demonist") continue;
@@ -2675,7 +2537,8 @@ export function registerActionHooks() {
     await Promise.all(updates);
   });
 
-  Hooks.on("updateWorldTime", async (_worldTime, dt = 0) => {
+  Hooks.on("updateWorldTime", async (_worldTime, dt = 0, options, userId) => {
+    if (!isAutomationAuthority(userId)) return;
     const elapsed = Math.max(0, toNumber(dt, 0));
     if (!elapsed) return;
     for (const actor of game.actors?.contents ?? []) {
@@ -2738,3 +2601,157 @@ export const ActionEngine = {
   setLimbState,
   useMedicalItem,
 };
+
+registerCardType("basicAttack", async (card, html, on) => {
+  const actor = await fromUuid(card.actorUuid);
+  const weapon = card.weaponUuid ? await fromUuid(card.weaponUuid) : null;
+  if (!actor) throw new Error("Attaquant introuvable.");
+  const damageRoll = { total: card.damageTotal };
+  const { isFirearm, targetLimb } = card;
+  const disableTargetButtons = (tokenId) => {
+    html.find(`button[data-target-token="${tokenId}"]`).prop("disabled", true);
+  };
+  const disableRpButtons = (tokenId) => {
+    html
+      .find(`.bl-target-row[data-target-token="${tokenId}"] .bl-dodge, .bl-target-row[data-target-token="${tokenId}"] .bl-deflect, .bl-target-row[data-target-token="${tokenId}"] .bl-stance-deflect`)
+      .prop("disabled", true);
+  };
+
+  on(".bl-evade-no-rp", async (event) => {
+    const button = $(event.currentTarget);
+    const token = canvas.tokens.get(String(button.attr("data-target-token")));
+    const targetActor = token?.actor;
+    if (!targetActor || !canInteractWithToken(token)) return;
+
+    const attackTarget = toNumber(button.attr("data-attack-total"), 0);
+    const result = await rollNoRpEvade(targetActor, attackTarget);
+    if (result.success) {
+      html
+        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+        .html(`<em>Eviter sans RP reussi (${result.total} contre ${attackTarget}) : degats annules.</em>`);
+      disableTargetButtons(token.id);
+    } else {
+      html
+        .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+        .html(`<em>Eviter sans RP echoue (${result.total} contre ${attackTarget}) : reactions RP interdites contre cette attaque.</em>`);
+      button.prop("disabled", true);
+      disableRpButtons(token.id);
+    }
+  });
+
+  on(".bl-dodge", async (event) => {
+    const button = $(event.currentTarget);
+    const token = canvas.tokens.get(String(button.attr("data-target-token")));
+    const targetActor = token?.actor;
+    if (!targetActor || !canInteractWithToken(token)) return;
+
+    const ok = await spendRp(targetActor, 1);
+    if (!ok) return;
+
+    html
+      .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+      .html("<em>Esquive reussie : degats annules.</em>");
+    disableTargetButtons(token.id);
+  });
+
+  on(".bl-deflect", async (event) => {
+    const button = $(event.currentTarget);
+    const token = canvas.tokens.get(String(button.attr("data-target-token")));
+    const targetActor = token?.actor;
+    if (!targetActor || !canInteractWithToken(token)) return;
+
+    const ok = await spendRp(targetActor, 1);
+    if (!ok) return;
+
+    html
+      .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+      .html("<em>Deviation reussie : degats annules. Redirection manuelle.</em>");
+    disableTargetButtons(token.id);
+  });
+
+  on(".bl-stance-deflect", async (event) => {
+    const button = $(event.currentTarget);
+    const token = canvas.tokens.get(String(button.attr("data-target-token")));
+    const targetActor = token?.actor;
+    if (!targetActor || !canInteractWithToken(token)) return;
+
+    await consumeDeflectStance(targetActor);
+    html
+      .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+      .html("<em>Posture defensive consommee : degats annules.</em>");
+    disableTargetButtons(token.id);
+  });
+
+  on(".bl-takedmg", async (event) => {
+    const button = $(event.currentTarget);
+    const token = canvas.tokens.get(String(button.attr("data-target-token")));
+    if (!token?.actor || !canInteractWithToken(token)) return;
+
+    const result = await applyBasicAttackDamage({
+      attacker: actor,
+      targetToken: token,
+      damageRoll,
+      weapon,
+      isFirearm,
+      targetLimb,
+    });
+    if (!result) return;
+
+    html
+      .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+      .html(
+        `<em>${token.actor.name} prend <b>${result.damage}</b> degats (PV ${result.currentHp} -> ${result.nextHp}).${result.poisonResult ? ` ${buildPoisonChatLine(result.poisonResult)}.` : ""}</em>`
+      );
+    disableTargetButtons(token.id);
+  });
+});
+registerCardType("execution", async (card, html, on) => {
+  const actor = await fromUuid(card.actorUuid);
+  if (!actor) throw new Error("Attaquant introuvable.");
+  const disableTargetButtons = (tokenId) => {
+    html.find(`button[data-target-token="${tokenId}"]`).prop("disabled", true);
+  };
+
+  on(".bl-deflect, .bl-stance-deflect", async (event) => {
+    const button = $(event.currentTarget);
+    const token = canvas.tokens.get(String(button.attr("data-target-token")));
+    const defended = token?.actor;
+    if (!defended || !canInteractWithToken(token)) return;
+
+    if (button.hasClass("bl-deflect")) {
+      const ok = await spendRp(defended, 1);
+      if (!ok) return;
+    } else {
+      await consumeDeflectStance(defended);
+    }
+
+    html
+      .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
+      .html("<em>Execution contrecarree par reaction.</em>");
+    disableTargetButtons(token.id);
+  });
+
+  on(".bl-takedmg", async (event) => {
+    const button = $(event.currentTarget);
+    const token = canvas.tokens.get(String(button.attr("data-target-token")));
+    const target = token?.actor;
+    if (!target || !canInteractWithToken(token)) return;
+
+    const currentHp = toNumber(target.system?.resources?.hp?.value, 0);
+    await target.update({ "system.resources.hp.value": 0 });
+    await noteActorDamageTaken(target, currentHp);
+    await ChatMessage.create({
+      speaker: actorSpeaker(actor),
+      content: `<em>${actor.name} execute ${target.name} (${currentHp} -> 0 PV).</em>`,
+    });
+    disableTargetButtons(token.id);
+  });
+});
+registerCardType("purify", async (card, html, on) => {
+  const actor = await fromUuid(card.actorUuid);
+  on(".bl-poison-purify", async event => {
+  if (!actor?.isOwner) return;
+  await runDemonPurify(actor);
+  $(event.currentTarget).prop("disabled", true);
+  });
+});
