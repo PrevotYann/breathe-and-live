@@ -1,0 +1,32 @@
+name: Publish Foundry system
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install
+      - run: npm test
+      - run: npm run build
+      - name: Archive the built system
+        working-directory: dist
+        run: zip -r ../breathe-and-live.zip .
+      - name: Publish install manifest and archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: >-
+          gh release create "$RELEASE_TAG"
+          dist/manifest.json dist/system.json breathe-and-live.zip
+          --verify-tag --title "Breathe and Live $RELEASE_TAG" --generate-notes

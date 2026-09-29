@@ -7,6 +7,12 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 const output = path.join(root, "dist");
 const staging = path.join(output, ".pack-sources");
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "system.json"), "utf8"));
+// Keep each release tied to its own archive, even after a newer release is published.
+const releaseTag = `v${manifest.version}`;
+if (process.env.GITHUB_REF_TYPE === "tag" && process.env.GITHUB_REF_NAME !== releaseTag) {
+  throw new Error(`Release tag must be ${releaseTag} to match system.json`);
+}
+manifest.download = `${manifest.url}/releases/download/${releaseTag}/${manifest.id}.zip`;
 
 // Vite builds the entry module; Foundry also needs the static assets and databases.
 for (const entry of ["template.json", "templates", "styles", "lang", "assets", "resources/icons", "resources/macros", "LICENSE.txt"]) {
@@ -29,6 +35,8 @@ try {
     console.log(`Packaged ${pack.name}`);
   }
   fs.writeFileSync(path.join(output, "system.json"), JSON.stringify(manifest, null, 2) + "\n");
+  // Remote-install alias generated from the packaged manifest, including compiled pack paths.
+  fs.writeFileSync(path.join(output, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
 } finally {
   const relative = path.relative(output, staging);
   if (!relative || relative.startsWith("..") || path.isAbsolute(relative)) throw new Error("Unsafe staging path");

@@ -136,8 +136,9 @@
   },
   "scripts": [],
   "dependencies": [],
-  "manifest": "",
-  "download": "",
+  "url": "https://github.com/PrevotYann/breathe-and-live",
+  "manifest": "https://github.com/PrevotYann/breathe-and-live/releases/latest/download/manifest.json",
+  "download": "https://github.com/PrevotYann/breathe-and-live/releases/download/v0.2.0/breathe-and-live.zip",
   "license": "LICENSE.txt",
   "documentTypes": {
     "Actor": {
