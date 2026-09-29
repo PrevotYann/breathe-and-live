@@ -1,5 +1,5 @@
 {
-  "_id": "tech-serpent-02-crocs-venimeux-a-tete-etroite",
+  "_id": "b7ced305543b812b",
   "name": "Crocs venimeux à tête étroite",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/serpent.png",
@@ -90,5 +90,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-serpent-02-crocs-venimeux-a-tete-etroite"
+  "_key": "!items!b7ced305543b812b"
 }

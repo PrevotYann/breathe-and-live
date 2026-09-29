@@ -1,5 +1,5 @@
 {
-  "_id": "tech-beast-08-huitieme-croc-ruee-explosive",
+  "_id": "a2750a66bb996864",
   "name": "Huitième Croc : Ruée explosive",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/bete.png",
@@ -89,5 +89,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-beast-08-huitieme-croc-ruee-explosive"
+  "_key": "!items!a2750a66bb996864"
 }

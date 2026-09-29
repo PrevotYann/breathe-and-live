@@ -25,6 +25,7 @@ export default [
   {
     ignores: [
       "dist/**",
+      "tmp/**",
       "node_modules/**",
       "packs/**",
       "resources/rules/**",

@@ -1,5 +1,5 @@
 {
-  "_id": "techSnow000001",
+  "_id": "a78552b971b8629e",
   "name": "Enterrement Silencieux",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/neige.png",
@@ -90,5 +90,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!techSnow000001"
+  "_key": "!items!a78552b971b8629e"
 }

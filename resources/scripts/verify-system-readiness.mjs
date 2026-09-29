@@ -60,7 +60,7 @@ function assert(condition, message) {
 
 function validateManifest() {
   const manifest = readJson("system.json");
-  assert(manifest.compatibility?.verified === "12.343", "system.json doit verifier Foundry 12.343");
+  assert(manifest.compatibility?.minimum === "14" && manifest.compatibility?.verified === "14.368", "system.json doit cibler Foundry 14.368");
   assert(Array.isArray(manifest.esmodules) && manifest.esmodules.includes("module/breathe-and-live.mjs"), "Module principal manquant");
   assert(Array.isArray(manifest.styles) && manifest.styles.includes("styles/system.css"), "Feuille CSS principale manquante");
 

@@ -1,5 +1,5 @@
 {
-  "_id": "tech-flame-08-rafale-de-flammes-dansantes",
+  "_id": "ab787ece356bf759",
   "name": "Rafale de Flammes Dansantes",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/flamme.png",
@@ -89,5 +89,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-flame-08-rafale-de-flammes-dansantes"
+  "_key": "!items!ab787ece356bf759"
 }

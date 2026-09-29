@@ -1,5 +1,5 @@
 {
-  "_id": "tech-west-11-mort-debout",
+  "_id": "672d3f0190b3e6f5",
   "name": "Mort debout",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/ouest.png",
@@ -87,5 +87,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-west-11-mort-debout"
+  "_key": "!items!672d3f0190b3e6f5"
 }

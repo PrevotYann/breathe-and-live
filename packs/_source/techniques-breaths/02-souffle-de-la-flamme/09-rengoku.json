@@ -1,5 +1,5 @@
 {
-  "_id": "techFlame09000",
+  "_id": "e11a42a1f9281bb5",
   "name": "Rengoku",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/flamme.png",
@@ -91,5 +91,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!techFlame09000"
+  "_key": "!items!e11a42a1f9281bb5"
 }

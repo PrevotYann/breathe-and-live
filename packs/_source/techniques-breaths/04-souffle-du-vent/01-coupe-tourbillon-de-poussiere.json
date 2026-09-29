@@ -1,5 +1,5 @@
 {
-  "_id": "tech-wind-01-coupe-tourbillon-de-poussiere",
+  "_id": "c1bbe07f84dab8ab",
   "name": "Coupe-tourbillon de poussière",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/vent.png",
@@ -89,5 +89,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-wind-01-coupe-tourbillon-de-poussiere"
+  "_key": "!items!c1bbe07f84dab8ab"
 }

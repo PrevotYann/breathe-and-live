@@ -2,6 +2,15 @@
 
 Use this when automated testing is not practical inside the Foundry runtime.
 
+- Foundry 14.368 upgrade
+  - Follow `foundry-v14-migration.md` and run `npm run test:v14` against a disposable QA world.
+  - On a backed-up V12 world, compare actor IDs, embedded items, spent resources, ranks, conditions, and limb injuries before and after migration.
+  - Reload the world, then edit an existing actor and resolve damage; confirm there is no Actor collection/class error.
+  - As a player with an active GM, use an existing attack card after reloading; verify one RP/damage update and disabled buttons on both clients.
+  - Drag breathing forms and weapons from compendiums to each archetype; verify import counts and prerequisite display.
+  - Verify mist Regions are visible on the target's V14 level, including player-created regions with the world permissions used by the group.
+  - Check firearms, creation/progression dialogs, Demonist flesh/healing, Demon regeneration, and 1934 options with the group's usual modules enabled.
+
 - Pre-Foundry readiness
   - Run `npm test`, `npm run verify:ready`, `npm run validate:packs`, `npm run lint`, and `npm run build`.
   - Confirm all commands pass before opening the system in Foundry.

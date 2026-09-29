@@ -1,5 +1,5 @@
 {
-  "_id": "tech-wind-02-griffe-de-vent-purifiante",
+  "_id": "0ec36839f49b02be",
   "name": "Griffe de Vent Purifiante",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/vent.png",
@@ -90,5 +90,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-wind-02-griffe-de-vent-purifiante"
+  "_key": "!items!0ec36839f49b02be"
 }

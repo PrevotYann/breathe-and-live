@@ -1,5 +1,5 @@
 {
-  "_id": "tech-snow-02-blizzard-nocturne-infini",
+  "_id": "1f931ecc14e39baa",
   "name": "Blizzard Nocturne Infini",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/neige.png",
@@ -91,5 +91,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-snow-02-blizzard-nocturne-infini"
+  "_key": "!items!1f931ecc14e39baa"
 }

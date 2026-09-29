@@ -1,5 +1,5 @@
 {
-  "_id": "tech-flame-07-flamme-purificatrice",
+  "_id": "1d3f2c4e85926fbc",
   "name": "Flamme Purificatrice",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/flamme.png",
@@ -90,5 +90,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-flame-07-flamme-purificatrice"
+  "_key": "!items!1d3f2c4e85926fbc"
 }

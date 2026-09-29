@@ -1,5 +1,5 @@
 {
-  "_id": "tech-love-05-amour-ondulant-griffe-sauvage",
+  "_id": "e66bfde141739fd8",
   "name": "Amour Ondulant - Griffe Sauvage",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/amour.png",
@@ -89,5 +89,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-love-05-amour-ondulant-griffe-sauvage"
+  "_key": "!items!e66bfde141739fd8"
 }

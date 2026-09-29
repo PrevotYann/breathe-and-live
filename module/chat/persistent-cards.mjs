@@ -61,8 +61,9 @@ export async function executeCardRequest(request) {
 }
 
 export function registerPersistentCardHooks() {
-  Hooks.on("renderChatMessage", (message, html) => {
+  Hooks.on("renderChatMessageHTML", (message, element) => {
     if (!factories.has(message.getFlag(NS, "card")?.kind)) return;
+    const html = $(element);
     html.find(".bl-card button").off("click.blCard").on("click.blCard", async event => {
       const button = $(event.currentTarget);
       const request = {

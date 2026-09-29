@@ -335,7 +335,7 @@ export async function rollBaseCheck(actor, statKey, label = "") {
   const key = normalizeBaseStatKey(statKey);
   const base = getEffectiveBaseStats(actor);
   const mod = toNumber(base[key], 0) - 1;
-  const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
+  const roll = await new Roll(`1d20 + ${mod}`).evaluate();
   return roll.toMessage({
     speaker: actorSpeaker(actor),
     flavor: label || `Test ${key}`,
@@ -354,7 +354,7 @@ export async function rollDerivedCheck(actor, derivedKey, label = "") {
   }
   const derived = actor.system?.stats?.effectiveDerived || actor.system?.stats?.derived || {};
   const mod = toNumber(derived[key], 0);
-  const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
+  const roll = await new Roll(`1d20 + ${mod}`).evaluate();
   return roll.toMessage({
     speaker: actorSpeaker(actor),
     flavor: label || `Test ${key}`,
@@ -403,7 +403,7 @@ async function applyEnduranceGain(actor, item, { maximize = false } = {}) {
   if (!actor || !item || !item.system?.enduranceGain) return null;
   const temporary = itemGrantsTemporaryEndurance(item);
   const expr = normalizeRollFormulaText(replaceStats(item.system.enduranceGain, actor, "0"), "0");
-  const roll = await new Roll(expr).evaluate({ async: true });
+  const roll = await new Roll(expr).evaluate();
   const amount = maximize
     ? Math.max(toNumber(roll.terms?.[0]?.faces, toNumber(roll.total, 0)), toNumber(roll.total, 0))
     : Math.max(0, toNumber(roll.total, 0));
@@ -553,7 +553,7 @@ export async function runDemonistHealingReaction(actor, { maximize = false } = {
   const formula = DEMON_HEALING_BY_RANK[rank] || "1d10";
   const amount = maximize
     ? maxFormulaTotal(formula)
-    : toNumber((await new Roll(formula).evaluate({ async: true })).total, 0);
+    : toNumber((await new Roll(formula).evaluate()).total, 0);
   const hpValue = toNumber(actor.system?.resources?.hp?.value, 0);
   const healableMax = toNumber(actor.system?.resources?.hp?.healableMax, actor.system?.resources?.hp?.max ?? hpValue);
   const healed = Math.max(0, Math.min(healableMax - hpValue, amount));
@@ -1074,7 +1074,7 @@ async function promptTargetLimb(targetActor) {
 async function rollNoRpEvade(actor, attackTotal) {
   const base = getEffectiveBaseStats(actor);
   const mod = toNumber(base.finesse, 0) - 1;
-  const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
+  const roll = await new Roll(`1d20 + ${mod}`).evaluate();
   const total = toNumber(roll.total, 0);
   await roll.toMessage({
     speaker: actorSpeaker(actor),
@@ -1326,7 +1326,7 @@ export async function rollBasicAttack(
   let attackTotal = targetCa;
 
   if (!autoHit) {
-    attackRoll = await new Roll(`1d20 + ${attackBonus}`).evaluate({ async: true });
+    attackRoll = await new Roll(`1d20 + ${attackBonus}`).evaluate();
     attackTotal = toNumber(attackRoll.total, 0);
   }
 
@@ -1412,7 +1412,7 @@ export async function rollBasicAttack(
   }
 
   const damageRoll = hit
-    ? await new Roll(damageExpr).evaluate({ async: true })
+    ? await new Roll(damageExpr).evaluate()
     : null;
 
   if (subclassAttack.consumeOnAttack) {
@@ -1533,7 +1533,7 @@ export async function runDemonHeal(actor) {
   const ok = await spendBdp(actor, 2, "Guerison");
   if (!ok) return null;
 
-  const roll = await new Roll(formula).evaluate({ async: true });
+  const roll = await new Roll(formula).evaluate();
   const healed = Math.max(0, Math.min(hpMax - hpValue, toNumber(roll.total, 0)));
   const next = clamp(hpValue + healed, 0, hpMax);
   await actor.update({ [hpPath]: next });
@@ -1765,7 +1765,7 @@ export async function runRecoveryBreath(actor) {
   }
   const tier = getRankTier(actor);
   const multiplier = actor.system?.states?.marque ? 2 : 1;
-  const roll = await new Roll(`${tier}d8`).evaluate({ async: true });
+  const roll = await new Roll(`${tier}d8`).evaluate();
   const amount = toNumber(roll.total, 0) * multiplier;
   const eMax = toNumber(actor.system?.resources?.e?.max, 0);
   const eValue = toNumber(actor.system?.resources?.e?.value, 0);
@@ -1906,7 +1906,7 @@ export async function runCraftingCheck(actor, item) {
   if (!options) return null;
 
   const mod = toNumber(actor.system?.stats?.derived?.[options.stat], 0);
-  const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
+  const roll = await new Roll(`1d20 + ${mod}`).evaluate();
   const success = toNumber(roll.total, 0) >= options.dc;
   const resultName = String(item.system?.crafting?.resultItemName || item.name || "objet").trim();
 
@@ -1973,7 +1973,7 @@ export async function runTransportDriveCheck(actor, item, { mode = "relaxed" } =
   const mod = dangerous
     ? toNumber(actor.system?.stats?.derived?.reflexes, 0)
     : toNumber(actor.system?.stats?.base?.finesse, 0) - 1;
-  const roll = await new Roll(`1d20 + ${mod}`).evaluate({ async: true });
+  const roll = await new Roll(`1d20 + ${mod}`).evaluate();
   const success = toNumber(roll.total, 0) >= options.dc;
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
@@ -2228,7 +2228,7 @@ export async function useMedicalItem(
 
   const medBonus = reaction ? 0 : toNumber(actor.system?.stats?.derived?.medecine, 0);
   const healExpr = replaceStats(item.system?.healing || "1", actor, "1");
-  const roll = await new Roll(healExpr).evaluate({ async: true });
+  const roll = await new Roll(healExpr).evaluate();
   const amount = maximize ? Math.max(toNumber(roll.terms?.[0]?.faces, toNumber(roll.total, 0)), toNumber(roll.total, 0)) : toNumber(roll.total, 0);
   const next = clamp(hpValue + amount + medBonus, 0, healableMax);
 
@@ -2298,7 +2298,7 @@ export async function gainDemonFleshBdp(actor) {
   const flatBonus = toNumber(actor.system?.progression?.bonuses?.demonFleshBonus, 0);
   const extraDice = toNumber(actor.system?.progression?.bonuses?.demonFleshExtraDice, 0);
   const rollExpr = increaseFirstDieCount(expr, extraDice);
-  const roll = await new Roll(rollExpr).evaluate({ async: true });
+  const roll = await new Roll(rollExpr).evaluate();
   const gain = Math.max(0, toNumber(roll.total, 0) + flatBonus);
   const current = toNumber(actor.system?.resources?.bdp?.value, 0);
   const max = toNumber(actor.system?.resources?.bdp?.max, current);
@@ -2326,7 +2326,7 @@ async function processConditionTurnStart(actor) {
         continue;
       }
 
-      const roll = await new Roll(String(effect.formula || "0")).evaluate({ async: true });
+      const roll = await new Roll(String(effect.formula || "0")).evaluate();
       const amount = Math.max(0, toNumber(roll.total, 0));
       await applyDirectDamage(actor, amount, `${effect.sourceName} - ${effect.label} :`);
       if (effect.afflictionCondition) {
@@ -2379,7 +2379,7 @@ async function processConditionTurnStart(actor) {
       actor.system?.stats?.effectiveDerived?.endurance ?? actor.system?.stats?.derived?.endurance,
       0
     );
-    const roll = await new Roll(`1d20 + ${endurance}`).evaluate({ async: true });
+    const roll = await new Roll(`1d20 + ${endurance}`).evaluate();
     const passed = toNumber(roll.total, 0) >= 15;
     turnReminders.push(
       `Triste : test d'endurance DD 15 ${passed ? "reussi" : "echoue"} (${roll.total}).`
@@ -2402,7 +2402,7 @@ async function processConditionTurnStart(actor) {
     if (!state?.active) continue;
 
     if (definition.turnFormula) {
-      const roll = await new Roll(definition.turnFormula).evaluate({ async: true });
+      const roll = await new Roll(definition.turnFormula).evaluate();
       await applyDirectDamage(
         actor,
         toNumber(roll.total, 0),
@@ -2442,7 +2442,7 @@ async function processConditionTurnStart(actor) {
         );
         await createPoisonStatusChat(actor, summary, "Le poison agit");
       } else if (runtime.turnDamage.kind === "formula" && runtime.turnDamage.formula) {
-        const roll = await new Roll(String(runtime.turnDamage.formula)).evaluate({ async: true });
+        const roll = await new Roll(String(runtime.turnDamage.formula)).evaluate();
         await applyDirectDamage(
           actor,
           Math.max(0, toNumber(roll.total, 0)),
@@ -2465,7 +2465,7 @@ async function processConditionTurnStart(actor) {
           if (part.kind === "flat") {
             amount += Math.max(0, toNumber(part.value, 0));
           } else if (part.kind === "formula" && part.formula) {
-            const roll = await new Roll(String(part.formula)).evaluate({ async: true });
+            const roll = await new Roll(String(part.formula)).evaluate();
             amount += Math.max(0, toNumber(roll.total, 0));
           } else if (part.kind === "percentMax") {
             amount += Math.max(0, Math.ceil(hpMax * toNumber(part.value, 0)));

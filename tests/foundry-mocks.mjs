@@ -57,8 +57,15 @@ globalThis.foundry = { utils: {
   randomID: () => Math.random().toString(36).slice(2),
 } };
 globalThis.Actor = MockActor;
-globalThis.ActorSheet = class {};
-globalThis.ItemSheet = class {};
+globalThis.Item = class {};
+foundry.appv1 = { sheets: { ActorSheet: class {}, ItemSheet: class {} } };
+export const registeredSheets = [];
+export const loadedTemplates = [];
+foundry.applications = {
+  apps: { DocumentSheetConfig: { registerSheet: (...args) => registeredSheets.push(args) } },
+  handlebars: { loadTemplates: async paths => loadedTemplates.push(...paths) },
+};
+globalThis.Handlebars = { registerHelper() {} };
 globalThis.CONFIG = { Actor: {} };
 globalThis.Hooks = {
   on(name, callback) { hooks.set(name, [...(hooks.get(name) ?? []), callback]); },
@@ -81,7 +88,7 @@ globalThis.ui = {
 globalThis.game = {
   user: gm,
   users: { activeGM: gm, get: id => [gm, player, observer].find(user => user.id === id) },
-  settings: { get: () => false },
+  settings: { get: () => false, register() {} },
   actors: { contents: [], get(id) { return this.contents.find(actor => actor.id === id); } },
   messages: new Map(),
   socket: { on: (name, callback) => sockets.set(name, callback), emit: (name, payload) => emitted.push({ name, payload }) },

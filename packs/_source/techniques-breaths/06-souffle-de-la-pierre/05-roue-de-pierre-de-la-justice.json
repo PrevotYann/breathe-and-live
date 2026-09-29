@@ -1,5 +1,5 @@
 {
-  "_id": "tech-stone-05-roue-de-pierre-de-la-justice",
+  "_id": "fec921f2899fc2f0",
   "name": "Roue de pierre de la justice",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/pierre.png",
@@ -91,5 +91,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-stone-05-roue-de-pierre-de-la-justice"
+  "_key": "!items!fec921f2899fc2f0"
 }

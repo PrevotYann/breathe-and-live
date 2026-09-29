@@ -1,5 +1,5 @@
 {
-  "_id": "tech-insect-02-danse-du-dard-de-l-abeille-vrai-battement",
+  "_id": "cc1e7d70e1f8b880",
   "name": "Danse du Dard de l'Abeille : Vrai Battement",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/insecte.png",
@@ -91,5 +91,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-insect-02-danse-du-dard-de-l-abeille-vrai-battement"
+  "_key": "!items!cc1e7d70e1f8b880"
 }

@@ -1,5 +1,5 @@
 {
-  "_id": "tech-water-01-surface-de-l-eau-coupee",
+  "_id": "cad6de33e4f6ccc1",
   "name": "Surface de l'eau coupée",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/eau.png",
@@ -89,5 +89,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-water-01-surface-de-l-eau-coupee"
+  "_key": "!items!cad6de33e4f6ccc1"
 }

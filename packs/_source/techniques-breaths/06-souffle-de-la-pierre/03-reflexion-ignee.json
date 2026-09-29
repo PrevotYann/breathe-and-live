@@ -1,5 +1,5 @@
 {
-  "_id": "tech-stone-03-reflexion-ignee",
+  "_id": "138fc9b16b423e2b",
   "name": "Réflexion ignée",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/pierre.png",
@@ -90,5 +90,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-stone-03-reflexion-ignee"
+  "_key": "!items!138fc9b16b423e2b"
 }

@@ -1,5 +1,5 @@
 {
-  "_id": "tech-mist-03-explosion-de-desembuage",
+  "_id": "8cf17bf67e8577fb",
   "name": "Explosion de désembuage",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/brume.png",
@@ -91,5 +91,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-mist-03-explosion-de-desembuage"
+  "_key": "!items!8cf17bf67e8577fb"
 }

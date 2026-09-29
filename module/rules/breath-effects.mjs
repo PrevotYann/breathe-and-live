@@ -114,7 +114,7 @@ async function ensureSoundTempoState(attacker, targetActor) {
   if (!state || state.combatId !== combatId) {
     const rankLevel = Math.max(1, getDemonRankLevel(targetActor));
     const intellect = Math.max(0, toNumber(getEffectiveBaseStats(attacker).intellect, 0));
-    const countdownRoll = await new Roll(`${rankLevel}d4`).evaluate({ async: true });
+    const countdownRoll = await new Roll(`${rankLevel}d4`).evaluate();
     const countdown = Math.max(0, toNumber(countdownRoll.total, 0) - intellect);
     state = {
       combatId,
@@ -467,7 +467,7 @@ export async function applyOnHit(
     breaths.snow?.enabled &&
     breaths.snow?.specials?.dentsDeKatana
   ) {
-    const caLossRoll = await new Roll("1d4").evaluate({ async: true });
+    const caLossRoll = await new Roll("1d4").evaluate();
     const loss = Math.max(1, Number(caLossRoll.total) || 1);
     await applyEffectsList({
       source: attacker,
@@ -498,7 +498,7 @@ export async function applyOnHit(
     const curRp = Number(FU.getProperty(attacker, rpPath) ?? 0) || 0;
     const rpMax = Number(FU.getProperty(attacker, rpMaxPath) ?? curRp) || curRp;
 
-    const gainRoll = await new Roll("1d2").evaluate({ async: true });
+    const gainRoll = await new Roll("1d2").evaluate();
     const gain = Math.max(1, Number(gainRoll.total) || 1);
     const nextRp = Math.min(rpMax, curRp + gain);
     await attacker.update({ [rpPath]: nextRp });

@@ -1,5 +1,5 @@
 {
-  "_id": "tech-water-04-maree-battante",
+  "_id": "22234945c6e871fa",
   "name": "Marée battante",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/eau.png",
@@ -90,5 +90,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-water-04-maree-battante"
+  "_key": "!items!22234945c6e871fa"
 }

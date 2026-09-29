@@ -1,5 +1,5 @@
 {
-  "_id": "tech-thunder-01-coup-de-tonnerre-et-eclair",
+  "_id": "58720ee36c0c742e",
   "name": "Coup de tonnerre et éclair",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/foudre.png",
@@ -95,5 +95,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-thunder-01-coup-de-tonnerre-et-eclair"
+  "_key": "!items!58720ee36c0c742e"
 }

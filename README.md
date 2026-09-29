@@ -1,10 +1,12 @@
 # Breathe and Live Foundry VTT System
 
-Version 0.1
+Version 0.2.0 — Foundry VTT 14.368
 
-Based on Simple Worldbuilding System
+French Demon Slayer / Breathe and Live system with Slayer, Demonist, Demon and NPC sheets, breathing techniques, combat reactions, progression, equipment, and the 1934 supplement.
 
-A simple game system for Foundry VTT which allows for flexible definition of Actors and Items to assist with worldbuilding or for running games which do not have a more complete system implementation available.
+Build with `npm install` then `npm run build`. Copy the contents of `dist/` into Foundry's `Data/systems/breathe-and-live/` folder.
+
+See [V14 migration and validation](resources/rules/foundry-v14-migration.md) for upgrading an existing V12 world and running the browser smoke tests. Back up the world before Foundry performs its core migration.
 
 ## Référentiel de règles (version physique)
 

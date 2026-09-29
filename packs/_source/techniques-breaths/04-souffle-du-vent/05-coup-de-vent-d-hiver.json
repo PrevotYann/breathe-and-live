@@ -1,5 +1,5 @@
 {
-  "_id": "tech-wind-05-coup-de-vent-d-hiver",
+  "_id": "b67948bdd3255a4d",
   "name": "Coup de vent d'hiver",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/vent.png",
@@ -90,5 +90,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-wind-05-coup-de-vent-d-hiver"
+  "_key": "!items!b67948bdd3255a4d"
 }

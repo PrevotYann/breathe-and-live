@@ -1,5 +1,5 @@
 {
-  "_id": "techInsect0001",
+  "_id": "98e714eef8138ce2",
   "name": "Danse du Papillon : Caprice",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/insecte.png",
@@ -91,5 +91,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!techInsect0001"
+  "_key": "!items!98e714eef8138ce2"
 }

@@ -1,5 +1,5 @@
 {
-  "_id": "tech-flame-05-tigre-de-flamme",
+  "_id": "00a80e51b1041bce",
   "name": "Tigre de Flamme",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/flamme.png",
@@ -90,5 +90,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-flame-05-tigre-de-flamme"
+  "_key": "!items!00a80e51b1041bce"
 }

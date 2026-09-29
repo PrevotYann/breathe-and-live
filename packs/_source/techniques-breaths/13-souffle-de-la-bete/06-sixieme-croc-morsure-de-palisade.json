@@ -1,5 +1,5 @@
 {
-  "_id": "tech-beast-06-sixieme-croc-morsure-de-palisade",
+  "_id": "aa61f73d26d79bc4",
   "name": "Sixième Croc : Morsure de Palisade",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/bete.png",
@@ -86,5 +86,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-beast-06-sixieme-croc-morsure-de-palisade"
+  "_key": "!items!aa61f73d26d79bc4"
 }

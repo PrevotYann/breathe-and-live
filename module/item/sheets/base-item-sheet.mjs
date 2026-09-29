@@ -13,7 +13,7 @@ function inferSupplement1934Content(item, sys = {}) {
   return marker.includes("1934") || marker.includes("supplement 1934");
 }
 
-export class BLBaseItemSheet extends ItemSheet {
+export class BLBaseItemSheet extends foundry.appv1.sheets.ItemSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["breathe-and-live", "sheet", "item"],

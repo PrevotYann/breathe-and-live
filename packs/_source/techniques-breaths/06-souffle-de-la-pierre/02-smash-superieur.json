@@ -1,5 +1,5 @@
 {
-  "_id": "tech-stone-02-smash-superieur",
+  "_id": "623e18bfaa5cafe8",
   "name": "Smash supérieur",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/pierre.png",
@@ -86,5 +86,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-stone-02-smash-superieur"
+  "_key": "!items!623e18bfaa5cafe8"
 }

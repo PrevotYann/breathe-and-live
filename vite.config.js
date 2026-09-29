@@ -1,5 +1,6 @@
 import { resolve } from "node:path";
 export default {
+  esbuild: { keepNames: true },
   build: {
     sourcemap: true,
     outDir: "dist",

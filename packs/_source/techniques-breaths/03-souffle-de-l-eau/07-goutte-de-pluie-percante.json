@@ -1,5 +1,5 @@
 {
-  "_id": "tech-water-07-goutte-de-pluie-percante",
+  "_id": "d3bf56f739d3eb67",
   "name": "Goutte de pluie perçante",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/eau.png",
@@ -89,5 +89,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-water-07-goutte-de-pluie-percante"
+  "_key": "!items!d3bf56f739d3eb67"
 }

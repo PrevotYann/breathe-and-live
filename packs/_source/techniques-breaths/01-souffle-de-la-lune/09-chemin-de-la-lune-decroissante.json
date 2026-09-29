@@ -1,5 +1,5 @@
 {
-  "_id": "tech-moon-09-chemin-de-la-lune-decroissante",
+  "_id": "06ee871ec7b76190",
   "name": "Chemin de la Lune Décroissante",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/lune.png",
@@ -86,5 +86,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-moon-09-chemin-de-la-lune-decroissante"
+  "_key": "!items!06ee871ec7b76190"
 }

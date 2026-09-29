@@ -1,5 +1,5 @@
 {
-  "_id": "tech-beast-01-premier-croc-pierce",
+  "_id": "edc27a76318cfdc5",
   "name": "Premier croc : Pierce",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/bete.png",
@@ -86,5 +86,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-beast-01-premier-croc-pierce"
+  "_key": "!items!edc27a76318cfdc5"
 }

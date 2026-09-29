@@ -135,15 +135,19 @@ async function pickTarget(excludeTokenId = null) {
 
 async function placeMistTemplate(targetToken) {
   if (!canvas.scene) return;
-  await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [
+  await canvas.scene.createEmbeddedDocuments("Region", [
     {
-      t: "circle",
-      user: game.user.id,
-      x: targetToken.center.x,
-      y: targetToken.center.y,
-      distance: 3,
-      fillColor: "#7da0ff",
-      borderColor: "#7da0ff",
+      name: "Brume",
+      color: "#7da0ff",
+      shapes: [{
+        type: "circle",
+        x: targetToken.center.x,
+        y: targetToken.center.y,
+        radius: 3 * (canvas.grid.size || 100) / METERS_PER_SQUARE,
+      }],
+      levels: targetToken.document?.level ? [targetToken.document.level] : [],
+      visibility: CONST.REGION_VISIBILITY.ALWAYS,
+      ownership: { [game.user.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER },
       hidden: false,
       flags: {
         [SYSTEM_ID]: { kind: "mist", expireRound: game.combat?.round ?? null },
@@ -411,7 +415,7 @@ async function useHealingPower(actor, item) {
   const spentNotes = await spendTechniqueUtilityCosts(actor, item);
   if (!spentNotes) return null;
 
-  const roll = await new Roll(formula).evaluate({ async: true });
+  const roll = await new Roll(formula).evaluate();
   const hpValue = toNumber(actor.system?.resources?.hp?.value, 0);
   const hpMax = toNumber(
     actor.type === "demonist"
@@ -591,12 +595,12 @@ function getQuickShotWeapon(actor) {
 
 async function evaluateTechniqueDamageRoll(expr, edge = 0) {
   const normalized = Math.sign(Number(edge) || 0);
-  const first = await new Roll(expr).evaluate({ async: true });
+  const first = await new Roll(expr).evaluate();
   if (!normalized) {
     return { roll: first, altRoll: null, mode: "normal" };
   }
 
-  const second = await new Roll(expr).evaluate({ async: true });
+  const second = await new Roll(expr).evaluate();
   const best =
     normalized > 0
       ? (Number(second.total) || 0) > (Number(first.total) || 0)
@@ -993,7 +997,7 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
     const spentNotes = await spendTechniqueUtilityCosts(attacker, item);
     if (!spentNotes) return;
 
-    const summonRoll = await new Roll(String(automation.summonFormula)).evaluate({ async: true });
+    const summonRoll = await new Roll(String(automation.summonFormula)).evaluate();
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
       content: `<div class="bl-card"><b>${attacker.name}</b> utilise <b>${item.name}</b> et invoque ${summonRoll.total} serviteur(s). <small>${spentNotes.join(" â€¢ ") || "Sans cout"}</small></div>`,

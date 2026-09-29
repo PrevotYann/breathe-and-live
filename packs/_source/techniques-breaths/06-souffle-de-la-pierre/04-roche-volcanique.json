@@ -1,5 +1,5 @@
 {
-  "_id": "tech-stone-04-roche-volcanique",
+  "_id": "27a630fe91a6221f",
   "name": "Roche volcanique",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/pierre.png",
@@ -86,5 +86,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-stone-04-roche-volcanique"
+  "_key": "!items!27a630fe91a6221f"
 }

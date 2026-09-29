@@ -1,5 +1,5 @@
 {
-  "_id": "tech-sound-06-requiem",
+  "_id": "bf2649b37be20de3",
   "name": "Requiem",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/son.png",
@@ -90,5 +90,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-sound-06-requiem"
+  "_key": "!items!bf2649b37be20de3"
 }

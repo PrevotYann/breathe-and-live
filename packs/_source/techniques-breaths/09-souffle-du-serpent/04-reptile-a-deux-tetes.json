@@ -1,5 +1,5 @@
 {
-  "_id": "tech-serpent-04-reptile-a-deux-tetes",
+  "_id": "dbad4e87f24e5542",
   "name": "Reptile à deux têtes",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/serpent.png",
@@ -89,5 +89,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-serpent-04-reptile-a-deux-tetes"
+  "_key": "!items!dbad4e87f24e5542"
 }

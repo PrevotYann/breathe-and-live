@@ -361,7 +361,7 @@ function buildActivePoisonSummary(actor) {
   };
 }
 
-export class BLSlayerSheet extends ActorSheet {
+export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["breathe-and-live", "sheet", "actor", "slayer"],
@@ -1398,7 +1398,7 @@ export class BLSlayerSheet extends ActorSheet {
   async _rollCreationStats() {
     const rolls = [];
     for (let i = 0; i < 6; i += 1) {
-      const roll = await new Roll("1d6").evaluate({ async: true });
+      const roll = await new Roll("1d6").evaluate();
       rolls.push(Number(roll.total || 0));
     }
     await this.actor.update({

@@ -103,7 +103,7 @@ async function _applySingleEffect({ actor, eff }) {
   // évaluer la valeur si "roll"
   if (eff.roll && typeof eff.roll === "string") {
     const r = new Roll(eff.roll);
-    await r.evaluate({ async: true });
+    await r.evaluate();
     eff._computed = Number(r.total ?? 0) || 0;
     eff.value = eff._computed;
   }

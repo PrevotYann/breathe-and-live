@@ -1,5 +1,5 @@
 {
-  "_id": "tech-stone-01-serpentine-bipolaire",
+  "_id": "f72c5f9f09aaca93",
   "name": "Serpentine bipolaire",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/pierre.png",
@@ -90,5 +90,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!tech-stone-01-serpentine-bipolaire"
+  "_key": "!items!f72c5f9f09aaca93"
 }

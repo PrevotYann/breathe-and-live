@@ -372,12 +372,14 @@ function getEquippedArmorBonus(actor) {
   }, 0);
 }
 
-Hooks.once("init", () => {
+Hooks.once("init", async () => {
   console.log("Breathe & Live | init");
+  // Register before Foundry constructs world collections (before the setup hook).
+  CONFIG.Actor.documentClass = BLActor;
 
   buildStatusEffects();
 
-  loadTemplates([
+  await foundry.applications.handlebars.loadTemplates([
     "systems/breathe-and-live/templates/actor/actor-slayer.hbs",
     "systems/breathe-and-live/templates/actor/actor-demonist.hbs",
     "systems/breathe-and-live/templates/actor/actor-demon.hbs",
@@ -412,28 +414,28 @@ Hooks.once("init", () => {
   });
   registerMigrationSetting();
 
-  Actors.registerSheet(SYSTEM_ID, BLSlayerSheet, {
+  foundry.applications.apps.DocumentSheetConfig.registerSheet(Actor, SYSTEM_ID, BLSlayerSheet, {
     types: ["slayer", "demonist", "demon", "npc", "npcHuman", "npcDemon", "companion"],
     makeDefault: true,
     label: "Breathe & Live Actor",
   });
 
-  Items.registerSheet(SYSTEM_ID, BLTechniqueSheet, {
+  foundry.applications.apps.DocumentSheetConfig.registerSheet(Item, SYSTEM_ID, BLTechniqueSheet, {
     types: ["technique", "subclassTechnique", "bda", "demonAbility"],
     makeDefault: true,
     label: "Technique",
   });
-  Items.registerSheet(SYSTEM_ID, BLWeaponSheet, {
+  foundry.applications.apps.DocumentSheetConfig.registerSheet(Item, SYSTEM_ID, BLWeaponSheet, {
     types: ["weapon", "firearm", "projectile", "explosive"],
     makeDefault: true,
     label: "Arme",
   });
-  Items.registerSheet(SYSTEM_ID, BLVehicleSheet, {
+  foundry.applications.apps.DocumentSheetConfig.registerSheet(Item, SYSTEM_ID, BLVehicleSheet, {
     types: ["vehicle", "transport"],
     makeDefault: true,
     label: "Transport",
   });
-  Items.registerSheet(SYSTEM_ID, BLBaseItemSheet, {
+  foundry.applications.apps.DocumentSheetConfig.registerSheet(Item, SYSTEM_ID, BLBaseItemSheet, {
     types: [
       "gear",
       "utility",
@@ -453,7 +455,7 @@ Hooks.once("init", () => {
     makeDefault: true,
     label: "Objet",
   });
-  Items.registerSheet(SYSTEM_ID, BLBreathSheet, {
+  foundry.applications.apps.DocumentSheetConfig.registerSheet(Item, SYSTEM_ID, BLBreathSheet, {
     types: ["breath"],
     makeDefault: true,
     label: "Souffle",
@@ -811,10 +813,6 @@ class BLActor extends Actor {
   }
 }
 
-Hooks.once("setup", () => {
-  CONFIG.Actor.documentClass = BLActor;
-});
-
 Hooks.once("ready", async () => {
   registerPersistentCardHooks();
   await runSystemMigrations();
@@ -864,7 +862,7 @@ export async function rollBaseCheck(actor, statKey, label = "") {
   const key = normalizeBaseStatKey(statKey);
   const b = getEffectiveBaseStats(actor);
   const mod = toNumber(b[key], 0) - 1;
-  const r = await new Roll(`1d20 + ${mod}`).roll({ async: true });
+  const r = await new Roll(`1d20 + ${mod}`).evaluate();
   return r.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
     flavor: label || `Test ${key}`,
@@ -882,7 +880,7 @@ export async function rollDerivedCheck(actor, derivedKey, label = "") {
   }
   const derived = actor.system?.stats?.effectiveDerived || actor.system?.stats?.derived || {};
   const mod = toNumber(derived[key], 0);
-  const r = await new Roll(`1d20 + ${mod}`).roll({ async: true });
+  const r = await new Roll(`1d20 + ${mod}`).evaluate();
   return r.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
     flavor: label || `Test ${key}`,

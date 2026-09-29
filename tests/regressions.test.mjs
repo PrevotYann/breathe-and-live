@@ -2,18 +2,15 @@ import test, { beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import {
   NS, MockActor, fire, gm, player, observer, documents, sockets, emitted,
-  chatMessages, tokenFor, makeCombat,
+  chatMessages, tokenFor, makeCombat, registeredSheets, loadedTemplates,
 } from "./foundry-mocks.mjs";
 import { spendResourceCosts } from "../module/rules/resource-costs.mjs";
 import { isAutomationAuthority } from "../module/rules/automation-authority.mjs";
-import { applyEffectsList, purgeExpiredEffects, registerEffectHooks } from "../module/rules/effects-engine.mjs";
-import { registerActionHooks } from "../module/rules/action-engine.mjs";
+import { applyEffectsList, purgeExpiredEffects } from "../module/rules/effects-engine.mjs";
 import { useTechnique } from "../module/chat/use-technique.mjs";
 import { cardFlags, registerPersistentCardHooks, executeCardRequest, enqueueCardAction } from "../module/chat/persistent-cards.mjs";
 await import("../module/breathe-and-live.mjs");
-await fire("setup");
-registerEffectHooks();
-registerActionHooks();
+await fire("init");
 registerPersistentCardHooks();
 
 beforeEach(() => {
@@ -35,6 +32,14 @@ const costs = [
   { path: "system.resources.rp.value", cost: 1, label: "RP" },
   { path: "system.resources.bdp.value", cost: 2, label: "BDP" },
 ];
+
+test("V14 init registers the actor class before collections and all document sheets", () => {
+  assert.notEqual(CONFIG.Actor.documentClass, MockActor);
+  assert.ok(CONFIG.Actor.documentClass.prototype instanceof MockActor);
+  assert.equal(registeredSheets.filter(([type]) => type === Actor).length, 1);
+  assert.equal(registeredSheets.filter(([type]) => type === Item).length, 5);
+  assert.equal(loadedTemplates.length, 9);
+});
 
 test("insufficient BDP does not consume E or RP", async () => {
   const actor = new MockActor("payer", resources());
@@ -214,7 +219,7 @@ test("defender receives a working persistent listener on initial render and relo
   game.user = player;
   for (let render = 0; render < 2; render++) {
     const html = $("<div>").html(message.flavor);
-    await fire("renderChatMessage", message, html);
+    await fire("renderChatMessageHTML", message, html[0]);
     html.find(".bl-dodge").trigger("click");
     assert.equal(emitted.length, render + 1);
   }

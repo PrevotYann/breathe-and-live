@@ -1,5 +1,5 @@
 {
-  "_id": "techFlame04000",
+  "_id": "42fb3637f905b8b3",
   "name": "Ondulation de la Flamme en Fleurs",
   "type": "technique",
   "img": "systems/breathe-and-live/resources/icons/breaths/flamme.png",
@@ -90,5 +90,5 @@
     "modifiedTime": null,
     "lastModifiedBy": null
   },
-  "_key": "!items!techFlame04000"
+  "_key": "!items!42fb3637f905b8b3"
 }
