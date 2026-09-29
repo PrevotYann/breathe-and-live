@@ -1,4 +1,5 @@
 import { registerPersistentCardHooks } from "./chat/persistent-cards.mjs";
+import { registerSystemDataModels } from "./data/system-models.mjs";
 import { isAutomationAuthority, isCombatTurnStart } from "./rules/automation-authority.mjs";
 import {
   ADVANCED_STATES,
@@ -374,6 +375,7 @@ function getEquippedArmorBonus(actor) {
 
 Hooks.once("init", async () => {
   console.log("Breathe & Live | init");
+  registerSystemDataModels();
   // Register before Foundry constructs world collections (before the setup hook).
   CONFIG.Actor.documentClass = BLActor;
 
@@ -813,8 +815,10 @@ class BLActor extends Actor {
   }
 }
 
+// Attach listeners before the initial chat log renders during world setup.
+Hooks.once("setup", registerPersistentCardHooks);
+
 Hooks.once("ready", async () => {
-  registerPersistentCardHooks();
   await runSystemMigrations();
   await sanitizeSystemCompendiumIndices();
 

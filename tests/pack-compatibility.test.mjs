@@ -6,7 +6,7 @@ import path from "node:path";
 const root = new URL("../", import.meta.url);
 const read = name => JSON.parse(fs.readFileSync(new URL(name, root), "utf8"));
 const manifest = read("system.json");
-const template = read("template.json");
+const template = read("module/data/document-defaults.json");
 
 test("V14 declares every existing actor and item type without changing saved schemas", () => {
   for (const kind of ["Actor", "Item"]) {

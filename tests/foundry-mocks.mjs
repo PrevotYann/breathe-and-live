@@ -66,7 +66,9 @@ foundry.applications = {
   handlebars: { loadTemplates: async paths => loadedTemplates.push(...paths) },
 };
 globalThis.Handlebars = { registerHelper() {} };
-globalThis.CONFIG = { Actor: {} };
+foundry.data = { fields: { DataField: class {}, ObjectField: class {}, ArrayField: class {}, SchemaField: class {}, NumberField: class {} } };
+foundry.abstract = { TypeDataModel: class {} };
+globalThis.CONFIG = { Actor: {}, Item: {} };
 globalThis.Hooks = {
   on(name, callback) { hooks.set(name, [...(hooks.get(name) ?? []), callback]); },
   once(name, callback) { this.on(name, callback); },

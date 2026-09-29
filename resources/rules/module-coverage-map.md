@@ -65,14 +65,14 @@ to the current repository modules so missing coverage stays explicit.
   - `resources/souffles/*.json`
 
 - Slayer / demonist / demon progression hooks
-  - actor schema in `template.json`
+  - actor schema in `module/data/document-defaults.json`
   - compendium examples in `packs/*.db`
   - Demonist BDP capacity uses `10 + Courage`; playable demons use `10 x Courage`
   - Demonist BDP spend can add item-driven `demonisationGain`; Medecine Active Demoniste halves that accumulation, Medecine de Reparation Demoniste halves current demonisation, long rest resets it, and world-time decay removes 2 demonisation per hour.
   - Demonist healing and enhancement reactions are executable from the demonist sheet using the recently consumed demon rank.
 
 - Medical equipment, clothing, food, transport
-  - item schema in `template.json`
+  - item schema in `module/data/document-defaults.json`
   - example packs in `packs/items-medical-utility.db`
 
 - 1934 supplement

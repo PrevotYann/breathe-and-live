@@ -15,7 +15,7 @@ if (process.env.GITHUB_REF_TYPE === "tag" && process.env.GITHUB_REF_NAME !== rel
 manifest.download = `${manifest.url}/releases/download/${releaseTag}/${manifest.id}.zip`;
 
 // Vite builds the entry module; Foundry also needs the static assets and databases.
-for (const entry of ["template.json", "templates", "styles", "lang", "assets", "resources/icons", "resources/macros", "LICENSE.txt"]) {
+for (const entry of ["templates", "styles", "lang", "assets", "resources/icons", "resources/macros", "LICENSE.txt"]) {
   fs.cpSync(path.join(root, entry), path.join(output, entry), { recursive: true });
 }
 // Preserve the public import path used by older technique macros.

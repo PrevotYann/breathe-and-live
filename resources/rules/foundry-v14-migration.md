@@ -1,6 +1,6 @@
 # Foundry V14 upgrade
 
-System release: **0.2.0**. Target: **Foundry VTT 14.368** (Node.js 24 for a standalone server).
+System release: **0.2.1**. Target: **Foundry VTT 14.368** (Node.js 24 for a standalone server).
 
 ## Install
 
@@ -22,7 +22,7 @@ System release: **0.2.0**. Target: **Foundry VTT 14.368** (Node.js 24 for a stan
 - Mist areas use V14 Regions, associated with the target's scene level. The 3 m radius uses the system's existing 1.5 m per square convention.
 - Repair invalid hand-authored compendium IDs deterministically and align breathing-form database keys with those IDs. Every already-valid ID is retained. Pack item references are updated together; world actor/item IDs are untouched. Old links using an invalid compendium ID need to be recreated from the corrected pack.
 
-The existing `template.json` schema and Application V1 sheets are deliberately retained, both supported by V14. Foundry can report their deprecation. Moving them to TypeDataModel/Application V2 is a separate future migration; it is not required for V14 play.
+Version 0.2.1 replaces the deprecated root `template.json` with registered TypeDataModels and bundled defaults in `module/data/document-defaults.json`. Saved data paths, custom fields and partial updates are preserved. The manifest no longer contains the unsupported `system` and `dependencies` keys. Foundry installs the new package without `template.json`; when copying files manually over an older installation, remove the old root `template.json` yourself. Application V1 sheets remain supported by V14 and may report their separate deprecation.
 
 ## Rules-to-code scope
 

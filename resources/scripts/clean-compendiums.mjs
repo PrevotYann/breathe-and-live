@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..", "..");
 const PACKS_DIR = path.join(ROOT, "packs");
-const TEMPLATE_PATH = path.join(ROOT, "template.json");
+const TEMPLATE_PATH = path.join(ROOT, "module/data/document-defaults.json");
 const SYSTEM_PATH = path.join(ROOT, "system.json");
 
 const templateData = JSON.parse(fs.readFileSync(TEMPLATE_PATH, "utf8"));

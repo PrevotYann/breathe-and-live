@@ -31,6 +31,29 @@ try {
   await ready();
   result.version = await page.evaluate(() => game.version);
   assert.equal(result.version, manifest.compatibility.verified);
+  await page.evaluate(async () => {
+    for (const [kind, types] of Object.entries(game.system.documentTypes)) {
+      for (const type of Object.keys(types)) {
+        if (!CONFIG[kind].dataModels[type]) throw new Error(`Missing data model: ${kind}.${type}`);
+      }
+    }
+    const actor = await Actor.create({ name: "QA data model preservation", type: "slayer",
+      system: { resources: { hp: { value: 7 }, bdp: { value: 3 } }, homebrew: { note: "preserved" } } });
+    await actor.update({ "system.resources.hp.value": 6 });
+    if (actor.toObject().system.resources.bdp.value !== 3 || actor.system.resources.hp.value !== 6
+      || actor.system.homebrew.note !== "preserved" || !actor.system.creation.studySlots) {
+      throw new Error("Data model defaults or partial update corrupted saved data");
+    }
+    const restored = new CONFIG.Actor.documentClass(actor.toObject());
+    if (restored.system.homebrew.note !== "preserved" || restored.system.resources.hp.value !== 6) {
+      throw new Error("Data model serialization lost saved fields");
+    }
+    if (!(actor.system.schema.getField("resources.hp.value") instanceof foundry.data.fields.NumberField)) {
+      throw new Error("Token resource value must remain editable as a NumberField");
+    }
+    await actor.delete();
+  });
+  console.log("PASS: data model defaults, partial updates and saved custom fields survive");
   result.packs = await page.evaluate(async () => {
     const packs = [];
     for (const pack of game.packs) {
