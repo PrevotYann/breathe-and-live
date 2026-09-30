@@ -24,10 +24,10 @@
     </div>
   </header>
 
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="specials">Capacites speciales</a>
-    <a class="item" data-tab="prereq">Prerequis</a>
-    <a class="item" data-tab="desc">Description</a>
+  <nav class="sheet-tabs tabs" data-group="primary" aria-label="Sections de la fiche">
+    <a class="item" data-tab="specials"><i class="fas fa-wind" aria-hidden="true"></i><span>Capacités</span></a>
+    <a class="item" data-tab="prereq"><i class="fas fa-list-check" aria-hidden="true"></i><span>Prérequis</span></a>
+    <a class="item" data-tab="desc"><i class="fas fa-book-open" aria-hidden="true"></i><span>Description</span></a>
   </nav>
 
   <section class="sheet-body">
@@ -41,7 +41,7 @@
         {{/each}}
       </div>
       {{#unless hasSpecials}}
-        <p class="hint" style="opacity:.8;">Choisis la <b>cle systeme</b> du souffle pour voir ses capacites speciales.</p>
+        <p class="hint" >Choisis la <b>cle systeme</b> du souffle pour voir ses capacites speciales.</p>
       {{/unless}}
     </div>
 

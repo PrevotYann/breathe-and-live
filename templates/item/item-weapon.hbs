@@ -11,21 +11,19 @@
     </div>
   </header>
 
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="stats">Donnees</a>
-    <a class="item" data-tab="munitions">Munitions</a>
-    <a class="item" data-tab="tags">Tags</a>
-    <a class="item" data-tab="desc">Description</a>
+  <nav class="sheet-tabs tabs" data-group="primary" aria-label="Sections de la fiche">
+    <a class="item" data-tab="stats"><i class="fas fa-chart-simple" aria-hidden="true"></i><span>Utilisation</span></a>
+    <a class="item" data-tab="munitions"><i class="fas fa-bullseye" aria-hidden="true"></i><span>Munitions</span></a>
+    <a class="item" data-tab="tags"><i class="fas fa-tags" aria-hidden="true"></i><span>Références</span></a>
+    <a class="item" data-tab="desc"><i class="fas fa-book-open" aria-hidden="true"></i><span>Description</span></a>
   </nav>
 
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="stats">
       <div class="grid two-col">
-        <label>Source</label>
-        <input type="text" name="system.sourceSection" value="{{system.sourceSection}}" placeholder="Section du livre" />
 
-        <label>Supplement 1934</label>
-        <input type="checkbox" name="system.supplement1934.enabled" data-dtype="Boolean" {{checked system.supplement1934.enabled}} />
+
+
 
         <label>Categorie</label>
         <select name="system.category">
@@ -83,7 +81,6 @@
     <div class="tab" data-group="primary" data-tab="munitions">
       <div class="grid two-col">
         <label><input type="checkbox" name="system.usesAmmo" data-dtype="Boolean" {{checked system.usesAmmo}} /> Utilise des munitions</label>
-        <span></span>
 
         <label>Charge</label>
         <input type="number" name="system.ammo.value" value="{{system.ammo.value}}" min="0" />
@@ -100,6 +97,12 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="tags">
+      <h2>Références</h2>
+      <div class="grid two-col"><label>Source</label>
+        <input type="text" name="system.sourceSection" value="{{system.sourceSection}}" placeholder="Section du livre" />
+<label>Supplement 1934</label>
+        <input type="checkbox" name="system.supplement1934.enabled" data-dtype="Boolean" {{checked system.supplement1934.enabled}} /></div>
+      <h3>Tags</h3>
       <textarea name="system.tagsText" rows="3" placeholder="tags separes par des virgules">{{join system.tags ", "}}</textarea>
     </div>
 

@@ -20,11 +20,11 @@
   </header>
 
 
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="combat">Combat</a>
-    <a class="item" data-tab="profile">Profil</a>
-    <a class="item" data-tab="techniques">Techniques</a>
-    <a class="item" data-tab="regles">Conditions</a>
+  <nav class="sheet-tabs tabs" data-group="primary" aria-label="Sections de la fiche">
+    <a class="item" data-tab="combat"><i class="fas fa-crosshairs" aria-hidden="true"></i><span>Combat</span></a>
+    <a class="item" data-tab="techniques"><i class="fas fa-bolt" aria-hidden="true"></i><span>Techniques</span></a>
+    <a class="item" data-tab="regles"><i class="fas fa-heart-pulse" aria-hidden="true"></i><span>Santé</span></a>
+    <a class="item" data-tab="profile"><i class="fas fa-id-card" aria-hidden="true"></i><span>Profil</span></a>
   </nav>
 
   <section class="sheet-body">
@@ -35,7 +35,7 @@
         <div class="res core-resource"><label>RP</label><div class="pair"><input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" {{#unless canEdit}}disabled{{/unless}} /></div></div>
         <div class="res core-resource"><label>BDP</label><div class="pair"><input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" {{#unless canEdit}}disabled{{/unless}} /></div></div>
       </div>
-<div class="bl-combat-panel"><h2>Actions rapides</h2><div class="bl-combat-shortcuts"><button type="button" class="bl-action-basic-attack">Attaque de base</button><button type="button" class="bl-action-rest">Repos</button></div><details class="bl-action-drawer"><summary>Toutes les actions</summary>  <section class="field action-strip">
+<div class="bl-combat-panel"><h2>Actions rapides</h2><div class="bl-combat-shortcuts"><button type="button" class="bl-action-basic-attack"><i class="fas fa-crosshairs" aria-hidden="true"></i> Attaque de base</button><button type="button" class="bl-action-rest"><i class="fas fa-moon" aria-hidden="true"></i> Repos</button></div><details class="bl-action-drawer"><summary>Toutes les actions</summary>  <section class="field action-strip">
     <div class="grid {{#if isNpcDemon}}bl-demon-action-grid{{else}}four-col{{/if}}">
       {{#if isNpcDemon}}
         {{#each demonQuickAttacks as |it|}}
@@ -195,15 +195,15 @@
             </div>
           {{/if}}
 
-          <h3>Conditions</h3>
+          <h3>Conditions</h3><p class="hint">Condition · Intensité · Tours restants</p>
           {{#if conditionAutomationNotes.length}}
             <small>{{join conditionAutomationNotes " | "}}</small>
           {{/if}}
           {{#each conditionEntries as |entry|}}
             <div class="condition-row">
               <label><input type="checkbox" name="system.conditions.{{entry.key}}.active" data-dtype="Boolean" {{checked entry.state.active}} {{#unless ../canEdit}}disabled{{/unless}} /> {{entry.label}}</label>
-              <input type="number" name="system.conditions.{{entry.key}}.intensity" value="{{entry.state.intensity}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
-              <input type="number" name="system.conditions.{{entry.key}}.duration" value="{{entry.state.duration}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+              <input type="number" aria-label="{{entry.label}} — intensité" name="system.conditions.{{entry.key}}.intensity" value="{{entry.state.intensity}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+              <input type="number" aria-label="{{entry.label}} — durée en tours" name="system.conditions.{{entry.key}}.duration" value="{{entry.state.duration}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
             </div>
           {{/each}}
         </div>

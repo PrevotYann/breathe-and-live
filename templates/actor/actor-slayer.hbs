@@ -20,14 +20,16 @@
   </header>
 
 
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="combat">Combat</a>
-    <a class="item" data-tab="stats">Caractéristiques</a>
-    <a class="item" data-tab="creation">Création</a>
-    <a class="item" data-tab="breaths">Souffles</a>
-    <a class="item" data-tab="techniques">Techniques</a>
-    <a class="item" data-tab="inventaire">Inventaire</a>
-    <a class="item" data-tab="regles">Regles avancees</a>
+  <nav class="sheet-tabs tabs" data-group="primary" aria-label="Sections de la fiche">
+    <a class="item" data-tab="combat"><i class="fas fa-crosshairs" aria-hidden="true"></i><span>Combat</span></a>
+    <a class="item" data-tab="stats"><i class="fas fa-chart-simple" aria-hidden="true"></i><span>Caractéristiques</span></a>
+    <a class="item" data-tab="techniques"><i class="fas fa-bolt" aria-hidden="true"></i><span>Techniques</span></a>
+    <a class="item" data-tab="breaths"><i class="fas fa-wind" aria-hidden="true"></i><span>Souffles</span></a>
+    <a class="item" data-tab="inventaire"><i class="fas fa-bag-shopping" aria-hidden="true"></i><span>Inventaire</span></a>
+    <a class="item" data-tab="regles"><i class="fas fa-heart-pulse" aria-hidden="true"></i><span>Santé</span></a>
+    <a class="item" data-tab="progression"><i class="fas fa-arrow-trend-up" aria-hidden="true"></i><span>Progression</span></a>
+    <a class="item" data-tab="creation"><i class="fas fa-user-plus" aria-hidden="true"></i><span>Création</span></a>
+    <a class="item" data-tab="reference"><i class="fas fa-book-open" aria-hidden="true"></i><span>Règles</span></a>
   </nav>
 
   <section class="sheet-body">
@@ -65,7 +67,7 @@
           <small>Arme: {{system.profile.primaryWeapon}}</small>
         </div>
       </div>
-<div class="bl-combat-panel"><h2>Actions rapides</h2><div class="bl-combat-shortcuts"><button type="button" class="bl-action-basic-attack">Attaque de base</button><button type="button" class="bl-action-recovery">Récupération</button><button type="button" class="bl-action-rest">Repos</button></div><details class="bl-action-drawer"><summary>Toutes les actions</summary>  <section class="field action-strip">
+<div class="bl-combat-panel"><h2>Actions rapides</h2><div class="bl-combat-shortcuts"><button type="button" class="bl-action-basic-attack"><i class="fas fa-crosshairs" aria-hidden="true"></i> Attaque de base</button><button type="button" class="bl-action-recovery"><i class="fas fa-wind" aria-hidden="true"></i> Récupération</button><button type="button" class="bl-action-rest"><i class="fas fa-moon" aria-hidden="true"></i> Repos</button></div><details class="bl-action-drawer"><summary>Toutes les actions</summary>  <section class="field action-strip">
     <div class="grid five-col">
       <button type="button" class="bl-action-sprint">Sprinter</button>
       <button type="button" class="bl-action-wait">Attendre</button>
@@ -151,71 +153,50 @@
 
     <div class="tab" data-group="primary" data-tab="creation">
       <button type="button" class="bl-starting-equipment">Équipement initial</button>
-<h2>Création et progression</h2><div class="grid four-col summary-grid">
-        <div class="field small">
-          <label>Classe</label>
-          <input type="text" name="system.class.type" value="{{system.class.type}}" {{#unless canEdit}}disabled{{/unless}} />
-        </div>
-        <div class="field small">
-          <label>Rang</label>
-          <select name="system.class.rank" {{#unless canEdit}}disabled{{/unless}}>
-            {{#each rankOptions as |rank|}}
-              <option value="{{rank}}" {{#if (eq ../system.class.rank rank)}}selected{{/if}}>{{rank}}</option>
-            {{/each}}
-          </select>
-        </div>
-        <div class="field small">
-          <label>Niveau</label>
-          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" disabled />
-        </div>
-        <div class="field small">
-          <label>Sous-classe</label>
-          <input type="text" name="system.class.subclass" value="{{system.class.subclass}}" placeholder="Voie / posture" {{#unless canEdit}}disabled{{/unless}} />
-        </div>
-      </div>
+<h2>Création du personnage</h2>
 <div>
-          <h3>Creation & progression</h3>
+
           <div class="grid two-col">
-            <div class="field">
+            <div class="field bl-form-grid">
               <div class="grid two-col">
                 <button type="button" class="bl-apply-human-creation">Assistant creation</button>
                 <button type="button" class="bl-creation-standard-array">Table 0-5</button>
                 <button type="button" class="bl-creation-roll-stats">Tirer 6d6</button>
               </div>
-              <label>Methode de stats</label>
-              <input type="text" name="system.creation.statMethod" value="{{system.creation.statMethod}}" {{#unless canEdit}}disabled{{/unless}} />
-              <label>Jets / valeurs disponibles</label>
-              <input type="text" name="system.creation.statRolls" value="{{system.creation.statRolls}}" placeholder="ex: 0, 1, 2, 3, 4, 5" {{#unless canEdit}}disabled{{/unless}} />
+              <div class="bl-form-field"><label>Methode de stats</label>
+              <input type="text" name="system.creation.statMethod" value="{{system.creation.statMethod}}" {{#unless canEdit}}disabled{{/unless}} /></div>
+              <div class="bl-form-field"><label>Jets / valeurs disponibles</label>
+              <input type="text" name="system.creation.statRolls" value="{{system.creation.statRolls}}" placeholder="ex: 0, 1, 2, 3, 4, 5" {{#unless canEdit}}disabled{{/unless}} /></div>
               <h4>Points de depart <small>{{creationBudget.starting}} / {{creationBudget.startingMax}}</small></h4>
-              <label>Sens extrasensoriels</label>
-              <input class="bl-creation-budget-input" data-creation-group="starting" type="number" name="system.creation.sensePoints" value="{{system.creation.sensePoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
-              <label>Traits surhumains</label>
-              <input class="bl-creation-budget-input" data-creation-group="starting" type="number" name="system.creation.superhumanPoints" value="{{system.creation.superhumanPoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
-              <label>Formes de souffle</label>
-              <input class="bl-creation-budget-input" data-creation-group="starting" type="number" name="system.creation.breathFormPoints" value="{{system.creation.breathFormPoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+              <div class="bl-form-field"><label>Sens extrasensoriels</label>
+              <input class="bl-creation-budget-input" data-creation-group="starting" type="number" name="system.creation.sensePoints" value="{{system.creation.sensePoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div>
+              <div class="bl-form-field"><label>Traits surhumains</label>
+              <input class="bl-creation-budget-input" data-creation-group="starting" type="number" name="system.creation.superhumanPoints" value="{{system.creation.superhumanPoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div>
+              <div class="bl-form-field"><label>Formes de souffle</label>
+              <input class="bl-creation-budget-input" data-creation-group="starting" type="number" name="system.creation.breathFormPoints" value="{{system.creation.breathFormPoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div>
               <small>Restant: {{creationBudget.startingRemaining}}</small>
-              <label>Entraineur</label>
-              <textarea name="system.profile.trainerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.trainerContext}}</textarea>
+<details class="bl-disclosure"><summary>Entraîneur, partenaire et Kasugai</summary>              <div class="bl-form-field"><label>Entraineur</label>
+              <textarea name="system.profile.trainerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.trainerContext}}</textarea></div>
               <div class="grid three-col">
                 <input class="bl-creation-budget-input" data-creation-group="trainer" type="number" name="system.creation.trainerPoints.axis1" value="{{system.creation.trainerPoints.axis1}}" min="0" max="2" {{#unless canEdit}}disabled{{/unless}} />
                 <input class="bl-creation-budget-input" data-creation-group="trainer" type="number" name="system.creation.trainerPoints.axis2" value="{{system.creation.trainerPoints.axis2}}" min="0" max="2" {{#unless canEdit}}disabled{{/unless}} />
                 <input class="bl-creation-budget-input" data-creation-group="trainer" type="number" name="system.creation.trainerPoints.axis3" value="{{system.creation.trainerPoints.axis3}}" min="0" max="2" {{#unless canEdit}}disabled{{/unless}} />
               </div>
               <small>Entraineur: {{creationBudget.trainer}} / {{creationBudget.contextMax}}</small>
-              <label>Partenaire</label>
-              <textarea name="system.profile.partnerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.partnerContext}}</textarea>
+              <div class="bl-form-field"><label>Partenaire</label>
+              <textarea name="system.profile.partnerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.partnerContext}}</textarea></div>
               <div class="grid three-col">
                 <input class="bl-creation-budget-input" data-creation-group="partner" type="number" name="system.creation.partnerPoints.axis1" value="{{system.creation.partnerPoints.axis1}}" min="0" max="2" {{#unless canEdit}}disabled{{/unless}} />
                 <input class="bl-creation-budget-input" data-creation-group="partner" type="number" name="system.creation.partnerPoints.axis2" value="{{system.creation.partnerPoints.axis2}}" min="0" max="2" {{#unless canEdit}}disabled{{/unless}} />
                 <input class="bl-creation-budget-input" data-creation-group="partner" type="number" name="system.creation.partnerPoints.axis3" value="{{system.creation.partnerPoints.axis3}}" min="0" max="2" {{#unless canEdit}}disabled{{/unless}} />
               </div>
               <small>Partenaire: {{creationBudget.partner}} / {{creationBudget.contextMax}}</small>
-              <label>Corbeau Kasugai</label>
-              <input type="text" name="system.profile.kasugaiCrow" value="{{system.profile.kasugaiCrow}}" {{#unless canEdit}}disabled{{/unless}} />
-              <label>Type d'oiseau</label>
-              <input type="text" name="system.creation.kasugaiType" value="{{system.creation.kasugaiType}}" {{#unless canEdit}}disabled{{/unless}} />
-              <label>Commandes connues</label>
-              <input type="text" name="system.creation.kasugaiCommands" value="{{system.creation.kasugaiCommands}}" {{#unless canEdit}}disabled{{/unless}} />
+              <div class="bl-form-field"><label>Corbeau Kasugai</label>
+              <input type="text" name="system.profile.kasugaiCrow" value="{{system.profile.kasugaiCrow}}" {{#unless canEdit}}disabled{{/unless}} /></div>
+              <div class="bl-form-field"><label>Type d'oiseau</label>
+              <input type="text" name="system.creation.kasugaiType" value="{{system.creation.kasugaiType}}" {{#unless canEdit}}disabled{{/unless}} /></div>
+              <div class="bl-form-field"><label>Commandes connues</label>
+              <input type="text" name="system.creation.kasugaiCommands" value="{{system.creation.kasugaiCommands}}" {{#unless canEdit}}disabled{{/unless}} /></div>
               <div class="grid two-col">
                 <button type="button" class="bl-create-kasugai">Creer / ouvrir Kasugai</button>
                 <input type="text" name="system.support.companionName" value="{{system.support.companionName}}" placeholder="Compagnon lie" {{#unless canEdit}}disabled{{/unless}} />
@@ -225,52 +206,9 @@
                 <input class="bl-creation-budget-input" data-creation-group="kasugai" type="number" name="system.creation.kasugaiPoints.axis2" value="{{system.creation.kasugaiPoints.axis2}}" min="0" max="2" {{#unless canEdit}}disabled{{/unless}} />
                 <input class="bl-creation-budget-input" data-creation-group="kasugai" type="number" name="system.creation.kasugaiPoints.axis3" value="{{system.creation.kasugaiPoints.axis3}}" min="0" max="2" {{#unless canEdit}}disabled{{/unless}} />
               </div>
-              <small>Kasugai: {{creationBudget.kasugai}} / {{creationBudget.contextMax}}</small>
+              <small>Kasugai: {{creationBudget.kasugai}} / {{creationBudget.contextMax}}</small></details>
             </div>
-            <div class="field">
-              <label>XP</label>
-              <div class="pair">
-                <input type="number" name="system.progression.xp.value" value="{{system.progression.xp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
-                <span>/</span>
-                <input type="number" name="system.progression.xp.next" value="{{system.progression.xp.next}}" min="1" {{#unless canEdit}}disabled{{/unless}} />
-              </div>
-              <label>Points d'entrainement</label>
-              <input type="number" name="system.progression.training" value="{{system.progression.training}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
-              <label>Emplacements d'etude</label>
-              <div class="pair">
-                <input type="number" name="system.progression.studySlots.value" value="{{system.progression.studySlots.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
-                <span>/</span>
-                <input type="number" name="system.progression.studySlots.max" value="{{system.progression.studySlots.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
-              </div>
-              <label>Emplacements de competence</label>
-              <div class="pair">
-                <input type="number" name="system.progression.skillSlots.value" value="{{system.progression.skillSlots.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
-                <span>/</span>
-                <input type="number" name="system.progression.skillSlots.max" value="{{system.progression.skillSlots.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
-              </div>
-              <h4>Competences acquises</h4>
-              {{#if itemsProgression.length}}
-                <ol class="item-list compact">
-                  {{#each itemsProgression as |it|}}
-                    <li class="item" data-item-id="{{it.id}}">
-                      <div class="name"><a class="item-edit">{{it.name}}</a><br><small>{{it.system.rank}} {{#if it.system.slotCost}}- {{it.system.slotCost}} slot{{/if}}</small></div>
-                      <div class="controls">
-                        <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
-                        <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
-                      </div>
-                    </li>
-                  {{/each}}
-                </ol>
-              {{else}}
-                <small>Glisse une competence depuis le compendium de progression.</small>
-              {{/if}}
-              <h4>Deblocages superieurs</h4>
-              <div class="tag-row">
-                {{#each advancedFeatureUnlocks as |unlock|}}
-                  <span class="tag">{{unlock.label}}: {{#if unlock.unlocked}}debloque{{else}}rang {{unlock.level}}{{/if}}</span>
-                {{/each}}
-              </div>
-            </div>
+
           </div>
         </div>
     </div>
@@ -292,7 +230,7 @@
                     </div>
                     {{#if it.sourceSection}}<small>{{it.sourceSection}}</small>{{/if}}
                     {{#if it.prereqText}}<p>Prerequis: {{it.prereqText}}</p>{{/if}}
-                    {{#if it.description}}<p>{{it.description}}</p>{{/if}}
+                    {{#if it.description}}<details class="bl-disclosure"><summary>Description</summary><p>{{it.description}}</p></details>{{/if}}
                     {{#if it.itemSpecials.length}}
                       <div class="tag-row">
                         {{#each it.itemSpecials as |special|}}
@@ -313,7 +251,7 @@
           {{/if}}
         </div>
 
-        <div class="field">
+        <details class="bl-disclosure"><summary>Configurer les souffles et passifs</summary><div class="field">
           <h3>Activation & passifs</h3>
           <div class="grid two-col breath-toggle-grid">
             {{#each breathEntries as |entry|}}
@@ -334,7 +272,7 @@
               </div>
             {{/each}}
           </div>
-        </div>
+        </div></details>
       </div>
 
       <h3>Maitrises avancees</h3>
@@ -376,7 +314,7 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="inventaire">
-      <div class="grid two-col">
+      <details class="bl-disclosure"><summary>Poison actif et effets</summary><div class="grid two-col">
         <div class="field">
           <h3>Poison actif</h3>
           <div class="rule-pills">
@@ -404,7 +342,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div></details>
 
       <h3>Poisons</h3>
       <header class="list-header">
@@ -496,27 +434,11 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="regles">
-      <div class="grid three-col">
-        <div class="field">
-          <h3>Economies d'action</h3>
-          <label>Actions / tour</label>
-          <input type="number" name="system.combat.actionEconomy.actionsPerTurn" value="{{system.combat.actionEconomy.actionsPerTurn}}" min="1" {{#unless canEdit}}disabled{{/unless}} />
-          <label>Actions bonus</label>
-          <input type="number" name="system.combat.actionEconomy.bonusActions" value="{{system.combat.actionEconomy.bonusActions}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
-          <label>Deplacement (m)</label>
-          <input type="number" name="system.combat.actionEconomy.movementMeters" value="{{system.combat.actionEconomy.movementMeters}}" min="0" step="0.5" {{#unless canEdit}}disabled{{/unless}} />
-          <small>Effectif: {{system.combat.actionEconomy.effectiveMovementMeters}} m{{#if system.combat.injuries.noFlight}} - vol impossible{{/if}}</small>
-          {{#if system.combat.injuries.limbEffectSummary.length}}
-            <small>{{join system.combat.injuries.limbEffectSummary ", "}}</small>
-          {{/if}}
-          <label>Reaction medicale</label>
-          <input type="checkbox" name="system.support.medicalTraining" data-dtype="Boolean" {{checked system.support.medicalTraining}} {{#unless canEdit}}disabled{{/unless}} />
-          <label>Degats temporaires</label>
-          <input type="number" name="system.combat.damageFlat" value="{{system.combat.damageFlat}}" {{#unless canEdit}}disabled{{/unless}} />
-        </div>
+      <div class="grid two-col">
+
 
         <div class="field">
-          <h3>Conditions</h3>
+          <h3>Conditions</h3><p class="hint">Condition · Intensité · Tours restants</p>
           {{#if conditionAutomationNotes.length}}
             <small>{{join conditionAutomationNotes " | "}}</small>
           {{/if}}
@@ -527,8 +449,8 @@
                   <input type="checkbox" name="system.conditions.{{entry.key}}.active" data-dtype="Boolean" {{checked entry.state.active}} {{#unless ../canEdit}}disabled{{/unless}} />
                   {{entry.label}}
                 </label>
-                <input type="number" name="system.conditions.{{entry.key}}.intensity" value="{{entry.state.intensity}}" min="0" placeholder="Niv." {{#unless ../canEdit}}disabled{{/unless}} />
-                <input type="number" name="system.conditions.{{entry.key}}.duration" value="{{entry.state.duration}}" min="0" placeholder="Tours" {{#unless ../canEdit}}disabled{{/unless}} />
+                <input type="number" aria-label="{{entry.label}} — intensité" name="system.conditions.{{entry.key}}.intensity" value="{{entry.state.intensity}}" min="0" placeholder="Niv." {{#unless ../canEdit}}disabled{{/unless}} />
+                <input type="number" aria-label="{{entry.label}} — durée en tours" name="system.conditions.{{entry.key}}.duration" value="{{entry.state.duration}}" min="0" placeholder="Tours" {{#unless ../canEdit}}disabled{{/unless}} />
               </div>
             {{/each}}
           </div>
@@ -566,6 +488,94 @@
           </div>
         {{/each}}
       </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="progression">
+<h2>Progression</h2><div class="grid four-col summary-grid">
+        <div class="field small">
+          <label>Classe</label>
+          <input type="text" name="system.class.type" value="{{system.class.type}}" {{#unless canEdit}}disabled{{/unless}} />
+        </div>
+        <div class="field small">
+          <label>Rang</label>
+          <select name="system.class.rank" {{#unless canEdit}}disabled{{/unless}}>
+            {{#each rankOptions as |rank|}}
+              <option value="{{rank}}" {{#if (eq ../system.class.rank rank)}}selected{{/if}}>{{rank}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="field small">
+          <label>Niveau</label>
+          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" disabled />
+        </div>
+        <div class="field small">
+          <label>Sous-classe</label>
+          <input type="text" name="system.class.subclass" value="{{system.class.subclass}}" placeholder="Voie / posture" {{#unless canEdit}}disabled{{/unless}} />
+        </div>
+      </div><div class="field bl-form-grid">
+              <div class="bl-form-field"><label>XP</label>
+              <div class="pair">
+                <input type="number" name="system.progression.xp.value" value="{{system.progression.xp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+                <span>/</span>
+                <input type="number" name="system.progression.xp.next" value="{{system.progression.xp.next}}" min="1" {{#unless canEdit}}disabled{{/unless}} />
+              </div></div>
+              <div class="bl-form-field"><label>Points d'entrainement</label>
+              <input type="number" name="system.progression.training" value="{{system.progression.training}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div>
+              <div class="bl-form-field"><label>Emplacements d'etude</label>
+              <div class="pair">
+                <input type="number" name="system.progression.studySlots.value" value="{{system.progression.studySlots.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+                <span>/</span>
+                <input type="number" name="system.progression.studySlots.max" value="{{system.progression.studySlots.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+              </div></div>
+              <div class="bl-form-field"><label>Emplacements de competence</label>
+              <div class="pair">
+                <input type="number" name="system.progression.skillSlots.value" value="{{system.progression.skillSlots.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+                <span>/</span>
+                <input type="number" name="system.progression.skillSlots.max" value="{{system.progression.skillSlots.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+              </div></div>
+              <h4>Competences acquises</h4>
+              {{#if itemsProgression.length}}
+                <ol class="item-list compact">
+                  {{#each itemsProgression as |it|}}
+                    <li class="item" data-item-id="{{it.id}}">
+                      <div class="name"><a class="item-edit">{{it.name}}</a><br><small>{{it.system.rank}} {{#if it.system.slotCost}}- {{it.system.slotCost}} slot{{/if}}</small></div>
+                      <div class="controls">
+                        <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+                        <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+                      </div>
+                    </li>
+                  {{/each}}
+                </ol>
+              {{else}}
+                <small>Glisse une competence depuis le compendium de progression.</small>
+              {{/if}}
+              <h4>Deblocages superieurs</h4>
+              <div class="tag-row">
+                {{#each advancedFeatureUnlocks as |unlock|}}
+                  <span class="tag">{{unlock.label}}: {{#if unlock.unlocked}}debloque{{else}}rang {{unlock.level}}{{/if}}</span>
+                {{/each}}
+              </div>
+            </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="reference">
+<h2>Règles de combat</h2><div class="field bl-form-grid">
+          <h3>Economies d'action</h3>
+          <div class="bl-form-field"><label>Actions / tour</label>
+          <input type="number" name="system.combat.actionEconomy.actionsPerTurn" value="{{system.combat.actionEconomy.actionsPerTurn}}" min="1" {{#unless canEdit}}disabled{{/unless}} /></div>
+          <div class="bl-form-field"><label>Actions bonus</label>
+          <input type="number" name="system.combat.actionEconomy.bonusActions" value="{{system.combat.actionEconomy.bonusActions}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div>
+          <div class="bl-form-field"><label>Deplacement (m)</label>
+          <input type="number" name="system.combat.actionEconomy.movementMeters" value="{{system.combat.actionEconomy.movementMeters}}" min="0" step="0.5" {{#unless canEdit}}disabled{{/unless}} /></div>
+          <small>Effectif: {{system.combat.actionEconomy.effectiveMovementMeters}} m{{#if system.combat.injuries.noFlight}} - vol impossible{{/if}}</small>
+          {{#if system.combat.injuries.limbEffectSummary.length}}
+            <small>{{join system.combat.injuries.limbEffectSummary ", "}}</small>
+          {{/if}}
+          <div class="bl-form-field"><label>Reaction medicale</label>
+          <input type="checkbox" name="system.support.medicalTraining" data-dtype="Boolean" {{checked system.support.medicalTraining}} {{#unless canEdit}}disabled{{/unless}} /></div>
+          <div class="bl-form-field"><label>Degats temporaires</label>
+          <input type="number" name="system.combat.damageFlat" value="{{system.combat.damageFlat}}" {{#unless canEdit}}disabled{{/unless}} /></div>
+        </div>
     </div>
   </section>
 </form>

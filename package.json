@@ -6,6 +6,7 @@
     "dev": "vite",
     "test": "node --test tests/*.test.mjs",
     "test:v14": "node tests/v14-smoke.mjs",
+    "test:sheets": "node tests/v14-sheets.mjs",
     "build": "vite build && node resources/scripts/package-system.mjs",
     "repair:pack-ids": "node resources/scripts/repair-pack-ids.mjs",
     "clean:packs": "node resources/scripts/clean-compendiums.mjs",

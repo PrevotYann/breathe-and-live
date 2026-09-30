@@ -1,4 +1,5 @@
 import { BREATH_KEYS, BREATH_SPECIAL_ALIASES, SYSTEM_ID } from "../config/rule-data.mjs";
+import { activateSheetNavigation } from "./sheet-navigation.mjs";
 
 function getBreathDefinition(key) {
   return BREATH_KEYS.find((entry) => entry.key === key) || null;
@@ -87,6 +88,11 @@ export class BLBreathSheet extends foundry.appv1.sheets.ItemSheet {
     data.isSupplement1934Content = inferSupplement1934Content(this.item, sys);
 
     return data;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    activateSheetNavigation(this, html);
   }
 
   async _updateObject(event, formData) {

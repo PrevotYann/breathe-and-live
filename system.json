@@ -2,7 +2,7 @@
   "id": "breathe-and-live",
   "title": "Breathe and Live - Demon Slayer RPG",
   "description": "Adaptation du systeme JDR Breathe and Live (Demon Slayer) pour Foundry VTT.",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "socket": true,
   "compatibility": {
     "minimum": "14",
@@ -132,7 +132,7 @@
   "scripts": [],
   "url": "https://github.com/PrevotYann/breathe-and-live",
   "manifest": "https://github.com/PrevotYann/breathe-and-live/releases/latest/download/manifest.json",
-  "download": "https://github.com/PrevotYann/breathe-and-live/releases/download/v0.2.2/breathe-and-live.zip",
+  "download": "https://github.com/PrevotYann/breathe-and-live/releases/download/v0.3.0/breathe-and-live.zip",
   "license": "LICENSE.txt",
   "documentTypes": {
     "Actor": {

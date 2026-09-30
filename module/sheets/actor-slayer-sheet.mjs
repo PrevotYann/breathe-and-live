@@ -1,3 +1,4 @@
+import { activateSheetNavigation } from "./sheet-navigation.mjs";
 import {
   ADVANCED_STATES,
   BREATH_KEYS,
@@ -365,8 +366,8 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["breathe-and-live", "sheet", "actor", "slayer"],
-      width: 1180,
-      height: 900,
+      width: 1040,
+      height: 800,
       tabs: [
         {
           navSelector: ".sheet-tabs",
@@ -2048,6 +2049,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html);
+    activateSheetNavigation(this, html);
     const canEdit = game.user?.isGM || this.actor.isOwner;
     const canRoll =
       canEdit || this.actor.testUserPermission?.(game.user, "OBSERVER") || false;

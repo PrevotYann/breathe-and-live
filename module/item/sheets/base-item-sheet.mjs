@@ -1,3 +1,4 @@
+import { activateSheetNavigation } from "../../sheets/sheet-navigation.mjs";
 import {
   POISON_APPLICATION_OPTIONS,
   POISON_PROFILE_OPTIONS,
@@ -59,6 +60,7 @@ export class BLBaseItemSheet extends foundry.appv1.sheets.ItemSheet {
 
   activateListeners(html) {
     super.activateListeners(html);
+    activateSheetNavigation(this, html);
 
     // Synchronise tagsText <-> system.tags
     html.on("change", '[name="system.tagsText"]', (ev) => {

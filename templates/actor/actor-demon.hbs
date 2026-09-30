@@ -20,13 +20,14 @@
   </header>
 
 
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="combat">Combat</a>
-    <a class="item" data-tab="stats">Caractéristiques</a>
-    <a class="item" data-tab="body">Corps</a>
-    <a class="item" data-tab="techniques">Arts demoniaques</a>
-    <a class="item" data-tab="inventaire">Inventaire</a>
-    <a class="item" data-tab="regles">États & règles</a>
+  <nav class="sheet-tabs tabs" data-group="primary" aria-label="Sections de la fiche">
+    <a class="item" data-tab="combat"><i class="fas fa-crosshairs" aria-hidden="true"></i><span>Combat</span></a>
+    <a class="item" data-tab="stats"><i class="fas fa-chart-simple" aria-hidden="true"></i><span>Caractéristiques</span></a>
+    <a class="item" data-tab="techniques"><i class="fas fa-bolt" aria-hidden="true"></i><span>Arts démoniaques</span></a>
+    <a class="item" data-tab="inventaire"><i class="fas fa-bag-shopping" aria-hidden="true"></i><span>Inventaire</span></a>
+    <a class="item" data-tab="health"><i class="fas fa-heart-pulse" aria-hidden="true"></i><span>Santé</span></a>
+    <a class="item" data-tab="body"><i class="fas fa-dna" aria-hidden="true"></i><span>Corps</span></a>
+    <a class="item" data-tab="regles"><i class="fas fa-heart-pulse" aria-hidden="true"></i><span>Références</span></a>
   </nav>
 
   <section class="sheet-body">
@@ -65,7 +66,7 @@
           <small>Attaque de base: {{system.demonology.basicDamage}}</small>
         </div>
       </div>
-<div class="bl-combat-panel"><h2>Actions rapides</h2><div class="bl-combat-shortcuts"><button type="button" class="bl-action-basic-attack">Attaque de base</button><button type="button" class="bl-action-rest">Repos</button></div><details class="bl-action-drawer"><summary>Toutes les actions</summary>  <section class="field action-strip">
+<div class="bl-combat-panel"><h2>Actions rapides</h2><div class="bl-combat-shortcuts"><button type="button" class="bl-action-basic-attack"><i class="fas fa-crosshairs" aria-hidden="true"></i> Attaque de base</button><button type="button" class="bl-action-rest"><i class="fas fa-moon" aria-hidden="true"></i> Repos</button></div><details class="bl-action-drawer"><summary>Toutes les actions</summary>  <section class="field action-strip">
     <div class="grid bl-demon-action-grid">
       {{#each demonQuickAttacks as |it|}}
         <button type="button" class="bl-demon-basic-attack" data-item-id="{{it.itemId}}" data-attack-key="{{it.key}}" data-attack-name="{{it.name}}" data-attack-damage="{{it.damage}}" data-attack-range="{{it.range}}">{{it.name}}</button>
@@ -270,8 +271,7 @@
             <p class="hint">Aucun paquet de rang connu pour ce demon.</p>
           {{/if}}
 
-          <h3>Rappels de regles</h3>
-          <div class="rule-pills">
+<details class="bl-disclosure"><summary>Rappels de règles</summary><div class="rule-pills">
             <div class="rule-pill">
               <span>Creation</span>
               <strong>0 / 1 / 2 / 3 / 3 / 5 + rang</strong>
@@ -296,7 +296,7 @@
               <span>Degats stat</span>
               <strong>Force / Finesse a moitie</strong>
             </div>
-          </div>
+          </div></details>
         </div>
     </div>
 
@@ -329,7 +329,7 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="inventaire">
-      <div class="grid two-col">
+      <details class="bl-disclosure"><summary>Poison actif et effets</summary><div class="grid two-col">
         <div class="field">
           <h3>Poison actif</h3>
           <div class="rule-pills">
@@ -356,7 +356,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div></details>
 
       <h3>Poisons</h3>
       <header class="list-header">
@@ -394,7 +394,7 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="regles">
-      <div class="grid three-col">
+      <div class="grid two-col">
         <div class="field">
           <h3>Repere bestiaire du livre</h3>
           <p class="hint">Valeurs de reference pour un demon de ce rang. Elles ne remplacent pas automatiquement les formules de la fiche.</p>
@@ -441,8 +441,13 @@
           </div>
         </div>
 
-        <div class="field">
-          <h3>Conditions & mutilation</h3>
+
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="health">
+<div class="field">
+          <h3>Conditions et blessures</h3><p class="hint">Condition · Intensité · Tours restants</p>
           {{#if conditionAutomationNotes.length}}
             <small>{{join conditionAutomationNotes " | "}}</small>
           {{/if}}
@@ -450,8 +455,8 @@
             {{#each conditionEntries as |entry|}}
               <div class="condition-row">
                 <label><input type="checkbox" name="system.conditions.{{entry.key}}.active" data-dtype="Boolean" {{checked entry.state.active}} {{#unless ../canEdit}}disabled{{/unless}} /> {{entry.label}}</label>
-                <input type="number" name="system.conditions.{{entry.key}}.intensity" value="{{entry.state.intensity}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
-                <input type="number" name="system.conditions.{{entry.key}}.duration" value="{{entry.state.duration}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+                <input type="number" aria-label="{{entry.label}} — intensité" name="system.conditions.{{entry.key}}.intensity" value="{{entry.state.intensity}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+                <input type="number" aria-label="{{entry.label}} — durée en tours" name="system.conditions.{{entry.key}}.duration" value="{{entry.state.duration}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
               </div>
             {{/each}}
           </div>
@@ -467,7 +472,6 @@
             {{/each}}
           </div>
         </div>
-      </div>
     </div>
   </section>
 </form>

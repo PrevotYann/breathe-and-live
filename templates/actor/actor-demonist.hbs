@@ -20,13 +20,15 @@
   </header>
 
 
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="combat">Combat</a>
-    <a class="item" data-tab="stats">Caractéristiques</a>
-    <a class="item" data-tab="creation">Création</a>
-    <a class="item" data-tab="techniques">Techniques</a>
-    <a class="item" data-tab="inventaire">Inventaire</a>
-    <a class="item" data-tab="regles">États & règles</a>
+  <nav class="sheet-tabs tabs" data-group="primary" aria-label="Sections de la fiche">
+    <a class="item" data-tab="combat"><i class="fas fa-crosshairs" aria-hidden="true"></i><span>Combat</span></a>
+    <a class="item" data-tab="stats"><i class="fas fa-chart-simple" aria-hidden="true"></i><span>Caractéristiques</span></a>
+    <a class="item" data-tab="techniques"><i class="fas fa-bolt" aria-hidden="true"></i><span>Techniques</span></a>
+    <a class="item" data-tab="inventaire"><i class="fas fa-bag-shopping" aria-hidden="true"></i><span>Inventaire</span></a>
+    <a class="item" data-tab="regles"><i class="fas fa-heart-pulse" aria-hidden="true"></i><span>Santé</span></a>
+    <a class="item" data-tab="progression"><i class="fas fa-arrow-trend-up" aria-hidden="true"></i><span>Progression</span></a>
+    <a class="item" data-tab="demonism"><i class="fas fa-droplet" aria-hidden="true"></i><span>Démonisme</span></a>
+    <a class="item" data-tab="creation"><i class="fas fa-user-plus" aria-hidden="true"></i><span>Création</span></a>
   </nav>
 
   <section class="sheet-body">
@@ -38,13 +40,13 @@
         <div class="res core-resource"><label>BDP</label><div class="pair"><input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
         <div class="res core-resource"><label>Demonisation</label><div class="pair"><input type="number" name="system.resources.demonisation" value="{{system.resources.demonisation}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.demonisationMax" value="{{system.resources.demonisationMax}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
       </div>
-<div class="bl-combat-panel"><h2>Actions rapides</h2><div class="bl-combat-shortcuts"><button type="button" class="bl-action-basic-attack">Attaque de base</button><button type="button" class="bl-action-demonist-heal">Soin 1 RP</button><button type="button" class="bl-action-rest">Repos</button></div><details class="bl-action-drawer"><summary>Toutes les actions</summary>  <section class="field action-strip">
+<div class="bl-combat-panel"><h2>Actions rapides</h2><div class="bl-combat-shortcuts"><button type="button" class="bl-action-basic-attack"><i class="fas fa-crosshairs" aria-hidden="true"></i> Attaque de base</button><button type="button" class="bl-action-demonist-heal"><i class="fas fa-heart-pulse" aria-hidden="true"></i> Soin 1 RP</button><button type="button" class="bl-action-rest"><i class="fas fa-moon" aria-hidden="true"></i> Repos</button></div><details class="bl-action-drawer"><summary>Toutes les actions</summary>  <section class="field action-strip">
     <div class="grid three-col">
       <button type="button" class="bl-action-repeated-attack">Action repetee</button>
       <button type="button" class="bl-action-demon-flesh">Consommer chair</button>
       <button type="button" class="bl-action-demonist-heal-max">Soin max 2 RP</button>
       <button type="button" class="bl-action-demonist-enhance">Amelioration RP</button>
-      <button type="button" class="bl-action-recovery">Souffle de recuperation</button>
+      <button type="button" class="bl-action-recovery"><i class="fas fa-wind" aria-hidden="true"></i> Souffle de recuperation</button>
       <button type="button" class="bl-action-sprint">Sprinter</button>
       <button type="button" class="bl-action-wait">Attendre</button>
       <button type="button" class="bl-action-assistance">Assistance</button>
@@ -129,39 +131,18 @@
 
     <div class="tab" data-group="primary" data-tab="creation">
       <button type="button" class="bl-starting-equipment">Équipement initial</button>
-<h2>Création et progression</h2><div class="grid four-col summary-grid">
-        <div class="field small">
-          <label>Classe</label>
-          <input type="text" name="system.class.type" value="{{system.class.type}}" {{#unless canEdit}}disabled{{/unless}} />
-        </div>
-        <div class="field small">
-          <label>Rang</label>
-          <select name="system.class.rank" {{#unless canEdit}}disabled{{/unless}}>
-            {{#each rankOptions as |rank|}}
-              <option value="{{rank}}" {{#if (eq ../system.class.rank rank)}}selected{{/if}}>{{rank}}</option>
-            {{/each}}
-          </select>
-        </div>
-        <div class="field small">
-          <label>Niveau</label>
-          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" disabled />
-        </div>
-        <div class="field small">
-          <label>Sous-classe</label>
-          <input type="text" name="system.class.subclass" value="{{system.class.subclass}}" {{#unless canEdit}}disabled{{/unless}} />
-        </div>
-      </div>
-<div class="field">
+<h2>Création du personnage</h2>
+<div class="field bl-form-grid">
           <h3>Support</h3>
           <div class="grid two-col">
             <button type="button" class="bl-apply-human-creation">Assistant creation</button>
             <button type="button" class="bl-creation-standard-array">Table 0-5</button>
             <button type="button" class="bl-creation-roll-stats">Tirer 6d6</button>
           </div>
-          <label>Methode de stats</label>
-          <input type="text" name="system.creation.statMethod" value="{{system.creation.statMethod}}" {{#unless canEdit}}disabled{{/unless}} />
-          <label>Jets / valeurs disponibles</label>
-          <input type="text" name="system.creation.statRolls" value="{{system.creation.statRolls}}" {{#unless canEdit}}disabled{{/unless}} />
+          <div class="bl-form-field"><label>Methode de stats</label>
+          <input type="text" name="system.creation.statMethod" value="{{system.creation.statMethod}}" {{#unless canEdit}}disabled{{/unless}} /></div>
+          <div class="bl-form-field"><label>Jets / valeurs disponibles</label>
+          <input type="text" name="system.creation.statRolls" value="{{system.creation.statRolls}}" {{#unless canEdit}}disabled{{/unless}} /></div>
           <h4>Points de depart <small>{{creationBudget.starting}} / {{creationBudget.startingMax}}</small></h4>
           <label>Sens / Formes / Traits</label>
           <div class="grid three-col">
@@ -170,38 +151,10 @@
             <input class="bl-creation-budget-input" data-creation-group="starting" type="number" name="system.creation.superhumanPoints" value="{{system.creation.superhumanPoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
           </div>
           <small>Restant: {{creationBudget.startingRemaining}}</small>
-          <label>Reaction de soin demoniste</label>
-          <input type="checkbox" name="system.support.demonistHealingReaction" data-dtype="Boolean" {{checked system.support.demonistHealingReaction}} {{#unless canEdit}}disabled{{/unless}} />
-          <label>Medecine active demoniste</label>
-          <input type="checkbox" name="system.support.activeDemonistMedicine" data-dtype="Boolean" {{checked system.support.activeDemonistMedicine}} {{#unless canEdit}}disabled{{/unless}} />
-          <label>Sang demon recent</label>
-          <input type="text" name="system.support.recentDemonFleshRank" value="{{system.support.recentDemonFleshRank}}" {{#unless canEdit}}disabled{{/unless}} />
-          <label>Emplacements de competence</label>
-          <div class="pair">
-            <input type="number" name="system.progression.skillSlots.value" value="{{system.progression.skillSlots.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
-            <span>/</span>
-            <input type="number" name="system.progression.skillSlots.max" value="{{system.progression.skillSlots.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
-          </div>
-          <h4>Competences acquises</h4>
-          {{#if itemsProgression.length}}
-            <ol class="item-list compact">
-              {{#each itemsProgression as |it|}}
-                <li class="item" data-item-id="{{it.id}}">
-                  <div class="name"><a class="item-edit">{{it.name}}</a><br><small>{{it.system.rank}} {{#if it.system.slotCost}}- {{it.system.slotCost}} slot{{/if}}</small></div>
-                  <div class="controls">
-                    <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
-                    <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
-                  </div>
-                </li>
-              {{/each}}
-            </ol>
-          {{else}}
-            <small>Glisse une competence depuis le compendium de progression.</small>
-          {{/if}}
-          <label>Contexte entraineur</label>
-          <textarea name="system.profile.trainerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.trainerContext}}</textarea>
-          <label>Corbeau Kasugai</label>
-          <input type="text" name="system.profile.kasugaiCrow" value="{{system.profile.kasugaiCrow}}" {{#unless canEdit}}disabled{{/unless}} />
+          <div class="bl-form-field"><label>Contexte entraineur</label>
+          <textarea name="system.profile.trainerContext" rows="2" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.trainerContext}}</textarea></div>
+          <div class="bl-form-field"><label>Corbeau Kasugai</label>
+          <input type="text" name="system.profile.kasugaiCrow" value="{{system.profile.kasugaiCrow}}" {{#unless canEdit}}disabled{{/unless}} /></div>
         </div>
     </div>
 
@@ -235,7 +188,7 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="inventaire">
-      <div class="grid two-col">
+      <details class="bl-disclosure"><summary>Poison actif et effets</summary><div class="grid two-col">
         <div class="field">
           <h3>Poison actif</h3>
           <div class="rule-pills">
@@ -262,7 +215,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div></details>
 
       <h3>Poisons</h3>
       <header class="list-header">
@@ -325,15 +278,15 @@
     <div class="tab" data-group="primary" data-tab="regles">
       <div class="grid two-col">
         <div class="field">
-          <h3>Conditions</h3>
+          <h3>Conditions</h3><p class="hint">Condition · Intensité · Tours restants</p>
           {{#if conditionAutomationNotes.length}}
             <small>{{join conditionAutomationNotes " | "}}</small>
           {{/if}}
           {{#each conditionEntries as |entry|}}
             <div class="condition-row">
               <label><input type="checkbox" name="system.conditions.{{entry.key}}.active" data-dtype="Boolean" {{checked entry.state.active}} {{#unless ../canEdit}}disabled{{/unless}} /> {{entry.label}}</label>
-              <input type="number" name="system.conditions.{{entry.key}}.intensity" value="{{entry.state.intensity}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
-              <input type="number" name="system.conditions.{{entry.key}}.duration" value="{{entry.state.duration}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+              <input type="number" aria-label="{{entry.label}} — intensité" name="system.conditions.{{entry.key}}.intensity" value="{{entry.state.intensity}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+              <input type="number" aria-label="{{entry.label}} — durée en tours" name="system.conditions.{{entry.key}}.duration" value="{{entry.state.duration}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
             </div>
           {{/each}}
         </div>
@@ -350,6 +303,63 @@
           {{/each}}
         </div>
       </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="progression">
+<h2>Progression</h2><div class="grid four-col summary-grid">
+        <div class="field small">
+          <label>Classe</label>
+          <input type="text" name="system.class.type" value="{{system.class.type}}" {{#unless canEdit}}disabled{{/unless}} />
+        </div>
+        <div class="field small">
+          <label>Rang</label>
+          <select name="system.class.rank" {{#unless canEdit}}disabled{{/unless}}>
+            {{#each rankOptions as |rank|}}
+              <option value="{{rank}}" {{#if (eq ../system.class.rank rank)}}selected{{/if}}>{{rank}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="field small">
+          <label>Niveau</label>
+          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" disabled />
+        </div>
+        <div class="field small">
+          <label>Sous-classe</label>
+          <input type="text" name="system.class.subclass" value="{{system.class.subclass}}" {{#unless canEdit}}disabled{{/unless}} />
+        </div>
+      </div><div class="field">          <label>Emplacements de competence</label>
+          <div class="pair">
+            <input type="number" name="system.progression.skillSlots.value" value="{{system.progression.skillSlots.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+            <span>/</span>
+            <input type="number" name="system.progression.skillSlots.max" value="{{system.progression.skillSlots.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} />
+          </div>
+          <h4>Competences acquises</h4>
+          {{#if itemsProgression.length}}
+            <ol class="item-list compact">
+              {{#each itemsProgression as |it|}}
+                <li class="item" data-item-id="{{it.id}}">
+                  <div class="name"><a class="item-edit">{{it.name}}</a><br><small>{{it.system.rank}} {{#if it.system.slotCost}}- {{it.system.slotCost}} slot{{/if}}</small></div>
+                  <div class="controls">
+                    <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+                    <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+                  </div>
+                </li>
+              {{/each}}
+            </ol>
+          {{else}}
+            <small>Glisse une competence depuis le compendium de progression.</small>
+          {{/if}}
+</div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="demonism">
+<h2>Sang et soins démonistes</h2><div class="field bl-form-grid">          <div class="bl-form-field"><label>Reaction de soin demoniste</label>
+          <input type="checkbox" name="system.support.demonistHealingReaction" data-dtype="Boolean" {{checked system.support.demonistHealingReaction}} {{#unless canEdit}}disabled{{/unless}} /></div>
+          <div class="bl-form-field"><label>Medecine active demoniste</label>
+          <input type="checkbox" name="system.support.activeDemonistMedicine" data-dtype="Boolean" {{checked system.support.activeDemonistMedicine}} {{#unless canEdit}}disabled{{/unless}} /></div>
+          <div class="bl-form-field"><label>Sang demon recent</label>
+          <input type="text" name="system.support.recentDemonFleshRank" value="{{system.support.recentDemonFleshRank}}" {{#unless canEdit}}disabled{{/unless}} /></div>
+</div>
     </div>
   </section>
 </form>
