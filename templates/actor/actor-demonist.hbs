@@ -5,7 +5,6 @@
       <div class="hero-topline">
         {{#if supplement1934Active}}<div class="eyebrow">Supplement 1934 actif{{#unless supplement1934Global}} sur cette fiche uniquement{{/unless}}</div>{{/if}}
         <div class="eyebrow">Demoniste • {{system.class.rank}}</div>
-        <div class="eyebrow">BDP: {{system.resources.bdp.value}} / {{system.resources.bdp.max}} • Demonisation: {{system.resources.demonisation}}</div>
       </div>
       <h1 class="charname">
         <input name="name" type="text" value="{{actor.name}}" {{#unless canEdit}}disabled{{/unless}} />
@@ -17,7 +16,120 @@
         <span class="sheet-badge bdp">BDP {{system.resources.bdp.value}}/{{system.resources.bdp.max}}</span>
         <span class="sheet-badge danger">Dem {{system.resources.demonisation}}/{{system.resources.demonisationMax}}</span>
       </div>
-      <div class="grid four-col summary-grid">
+    </div>
+  </header>
+
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="combat">Combat</a>
+    <a class="item" data-tab="stats">Caractéristiques</a>
+    <a class="item" data-tab="creation">Création</a>
+    <a class="item" data-tab="techniques">Techniques</a>
+    <a class="item" data-tab="inventaire">Inventaire</a>
+    <a class="item" data-tab="regles">États & règles</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab" data-group="primary" data-tab="combat">
+<div class="grid five-col">
+        <div class="res core-resource"><label>PV</label><div class="pair"><input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
+        <div class="res core-resource"><label>E</label><div class="pair"><input type="number" name="system.resources.e.value" value="{{system.resources.e.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.e.max" value="{{system.resources.e.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
+        <div class="res core-resource"><label>RP</label><div class="pair"><input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
+        <div class="res core-resource"><label>BDP</label><div class="pair"><input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
+        <div class="res core-resource"><label>Demonisation</label><div class="pair"><input type="number" name="system.resources.demonisation" value="{{system.resources.demonisation}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.demonisationMax" value="{{system.resources.demonisationMax}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
+      </div>
+<div class="bl-combat-panel"><h2>Actions rapides</h2><div class="bl-combat-shortcuts"><button type="button" class="bl-action-basic-attack">Attaque de base</button><button type="button" class="bl-action-demonist-heal">Soin 1 RP</button><button type="button" class="bl-action-rest">Repos</button></div><details class="bl-action-drawer"><summary>Toutes les actions</summary>  <section class="field action-strip">
+    <div class="grid three-col">
+      <button type="button" class="bl-action-repeated-attack">Action repetee</button>
+      <button type="button" class="bl-action-demon-flesh">Consommer chair</button>
+      <button type="button" class="bl-action-demonist-heal-max">Soin max 2 RP</button>
+      <button type="button" class="bl-action-demonist-enhance">Amelioration RP</button>
+      <button type="button" class="bl-action-recovery">Souffle de recuperation</button>
+      <button type="button" class="bl-action-sprint">Sprinter</button>
+      <button type="button" class="bl-action-wait">Attendre</button>
+      <button type="button" class="bl-action-assistance">Assistance</button>
+      <button type="button" class="bl-action-kakushi">Kakushi</button>
+      <button type="button" class="bl-action-counter">Riposte 1 RP</button>
+      <button type="button" class="bl-action-counter-assured">Coup assure 2 RP</button>
+      <button type="button" class="bl-action-draw">Degainage 1 RP</button>
+      <button type="button" class="bl-action-draw-attack">Degainage+attaque 2 RP</button>
+    </div>
+  </section>
+</details></div>
+      <div class="bl-status-summary">
+        <h2>État actuel</h2>
+        <div class="tag-row">
+          {{#each activeConditionEntries as |entry|}}<span class="tag">{{entry.label}}{{#if entry.state.intensity}} · {{entry.state.intensity}}{{/if}}</span>{{/each}}
+          {{#each injuredLimbEntries as |entry|}}<span class="tag">{{entry.label}} · {{entry.injuryLabel}}</span>{{/each}}
+          {{#unless activeConditionEntries.length}}{{#unless injuredLimbEntries.length}}<small>Aucune condition ni blessure de membre.</small>{{/unless}}{{/unless}}
+        </div>
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="stats">
+<h2>Caractéristiques</h2><div class="field">
+          <h3>Caracteristiques</h3>
+          <div class="grid stats-base">
+            <button type="button" class="bl-roll-base" data-stat="force" data-label="Force">Force</button><input type="number" name="system.stats.base.force" value="{{system.stats.base.force}}" {{#unless canEdit}}disabled{{/unless}} />
+            <button type="button" class="bl-roll-base" data-stat="finesse" data-label="Finesse">Finesse</button><input type="number" name="system.stats.base.finesse" value="{{system.stats.base.finesse}}" {{#unless canEdit}}disabled{{/unless}} />
+            <button type="button" class="bl-roll-base" data-stat="courage" data-label="Courage">Courage</button><input type="number" name="system.stats.base.courage" value="{{system.stats.base.courage}}" {{#unless canEdit}}disabled{{/unless}} />
+            <button type="button" class="bl-roll-base" data-stat="vitesse" data-label="Vitesse">Vitesse</button><input type="number" name="system.stats.base.vitesse" value="{{system.stats.base.vitesse}}" {{#unless canEdit}}disabled{{/unless}} />
+            <button type="button" class="bl-roll-base" data-stat="social" data-label="Social">Social</button><input type="number" name="system.stats.base.social" value="{{system.stats.base.social}}" {{#unless canEdit}}disabled{{/unless}} />
+            <button type="button" class="bl-roll-base" data-stat="intellect" data-label="Intellect">Intellect</button><input type="number" name="system.stats.base.intellect" value="{{system.stats.base.intellect}}" {{#unless canEdit}}disabled{{/unless}} />
+          </div>
+        </div>
+
+
+      <h3>Competences derivees</h3>
+      <div class="grid six-col">
+        <div class="group">
+          <h4>Force <small>{{derivedBudget.force.spent}} / {{derivedBudget.force.base}} depenses - {{#if derivedBudget.force.over}}depassement {{derivedBudget.force.over}}{{else}}reste {{derivedBudget.force.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.force as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Finesse <small>{{derivedBudget.finesse.spent}} / {{derivedBudget.finesse.base}} depenses - {{#if derivedBudget.finesse.over}}depassement {{derivedBudget.finesse.over}}{{else}}reste {{derivedBudget.finesse.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.finesse as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Courage <small>{{derivedBudget.courage.spent}} / {{derivedBudget.courage.base}} depenses - {{#if derivedBudget.courage.over}}depassement {{derivedBudget.courage.over}}{{else}}reste {{derivedBudget.courage.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.courage as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Vitesse <small>{{derivedBudget.vitesse.spent}} / {{derivedBudget.vitesse.base}} depenses - {{#if derivedBudget.vitesse.over}}depassement {{derivedBudget.vitesse.over}}{{else}}reste {{derivedBudget.vitesse.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.vitesse as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Social <small>{{derivedBudget.social.spent}} / {{derivedBudget.social.base}} depenses - {{#if derivedBudget.social.over}}depassement {{derivedBudget.social.over}}{{else}}reste {{derivedBudget.social.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.social as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+        <div class="group">
+          <h4>Intellect <small>{{derivedBudget.intellect.spent}} / {{derivedBudget.intellect.base}} depenses - {{#if derivedBudget.intellect.over}}depassement {{derivedBudget.intellect.over}}{{else}}reste {{derivedBudget.intellect.remaining}}{{/if}}</small></h4>
+          {{#each derived.groups.intellect as |k|}}
+            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
+            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
+          {{/each}}
+        </div>
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="creation">
+      <button type="button" class="bl-starting-equipment">Équipement initial</button>
+<h2>Création et progression</h2><div class="grid four-col summary-grid">
         <div class="field small">
           <label>Classe</label>
           <input type="text" name="system.class.type" value="{{system.class.type}}" {{#unless canEdit}}disabled{{/unless}} />
@@ -39,61 +151,7 @@
           <input type="text" name="system.class.subclass" value="{{system.class.subclass}}" {{#unless canEdit}}disabled{{/unless}} />
         </div>
       </div>
-    </div>
-  </header>
-
-  <section class="field action-strip">
-    <div class="grid three-col">
-      <button type="button" class="bl-action-basic-attack">Attaque de base</button>
-      <button type="button" class="bl-action-repeated-attack">Action repetee</button>
-      <button type="button" class="bl-action-demon-flesh">Consommer chair</button>
-      <button type="button" class="bl-action-demonist-heal">Soin demoniste 1 RP</button>
-      <button type="button" class="bl-action-demonist-heal-max">Soin max 2 RP</button>
-      <button type="button" class="bl-action-demonist-enhance">Amelioration RP</button>
-      <button type="button" class="bl-action-recovery">Souffle de recuperation</button>
-      <button type="button" class="bl-action-sprint">Sprinter</button>
-      <button type="button" class="bl-action-wait">Attendre</button>
-      <button type="button" class="bl-action-rest">Repos</button>
-      <button type="button" class="bl-action-assistance">Assistance</button>
-      <button type="button" class="bl-action-kakushi">Kakushi</button>
-      <button type="button" class="bl-starting-equipment">Equipement initial</button>
-      <button type="button" class="bl-action-counter">Riposte 1 RP</button>
-      <button type="button" class="bl-action-counter-assured">Coup assure 2 RP</button>
-      <button type="button" class="bl-action-draw">Degainage 1 RP</button>
-      <button type="button" class="bl-action-draw-attack">Degainage+attaque 2 RP</button>
-    </div>
-  </section>
-
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="sheet">Fiche</a>
-    <a class="item" data-tab="techniques">Techniques</a>
-    <a class="item" data-tab="inventaire">Inventaire</a>
-    <a class="item" data-tab="regles">Regles</a>
-  </nav>
-
-  <section class="sheet-body">
-    <div class="tab" data-group="primary" data-tab="sheet">
-      <div class="grid five-col">
-        <div class="res core-resource"><label>PV</label><div class="pair"><input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
-        <div class="res core-resource"><label>E</label><div class="pair"><input type="number" name="system.resources.e.value" value="{{system.resources.e.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.e.max" value="{{system.resources.e.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
-        <div class="res core-resource"><label>RP</label><div class="pair"><input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
-        <div class="res core-resource"><label>BDP</label><div class="pair"><input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
-        <div class="res core-resource"><label>Demonisation</label><div class="pair"><input type="number" name="system.resources.demonisation" value="{{system.resources.demonisation}}" min="0" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.demonisationMax" value="{{system.resources.demonisationMax}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></div></div>
-      </div>
-
-      <div class="grid two-col">
-        <div class="field">
-          <h3>Caracteristiques</h3>
-          <div class="grid stats-base">
-            <button type="button" class="bl-roll-base" data-stat="force" data-label="Force">Force</button><input type="number" name="system.stats.base.force" value="{{system.stats.base.force}}" {{#unless canEdit}}disabled{{/unless}} />
-            <button type="button" class="bl-roll-base" data-stat="finesse" data-label="Finesse">Finesse</button><input type="number" name="system.stats.base.finesse" value="{{system.stats.base.finesse}}" {{#unless canEdit}}disabled{{/unless}} />
-            <button type="button" class="bl-roll-base" data-stat="courage" data-label="Courage">Courage</button><input type="number" name="system.stats.base.courage" value="{{system.stats.base.courage}}" {{#unless canEdit}}disabled{{/unless}} />
-            <button type="button" class="bl-roll-base" data-stat="vitesse" data-label="Vitesse">Vitesse</button><input type="number" name="system.stats.base.vitesse" value="{{system.stats.base.vitesse}}" {{#unless canEdit}}disabled{{/unless}} />
-            <button type="button" class="bl-roll-base" data-stat="social" data-label="Social">Social</button><input type="number" name="system.stats.base.social" value="{{system.stats.base.social}}" {{#unless canEdit}}disabled{{/unless}} />
-            <button type="button" class="bl-roll-base" data-stat="intellect" data-label="Intellect">Intellect</button><input type="number" name="system.stats.base.intellect" value="{{system.stats.base.intellect}}" {{#unless canEdit}}disabled{{/unless}} />
-          </div>
-        </div>
-        <div class="field">
+<div class="field">
           <h3>Support</h3>
           <div class="grid two-col">
             <button type="button" class="bl-apply-human-creation">Assistant creation</button>
@@ -145,53 +203,6 @@
           <label>Corbeau Kasugai</label>
           <input type="text" name="system.profile.kasugaiCrow" value="{{system.profile.kasugaiCrow}}" {{#unless canEdit}}disabled{{/unless}} />
         </div>
-      </div>
-
-      <h3>Competences derivees</h3>
-      <div class="grid six-col">
-        <div class="group">
-          <h4>Force <small>{{derivedBudget.force.spent}} / {{derivedBudget.force.base}} depenses - {{#if derivedBudget.force.over}}depassement {{derivedBudget.force.over}}{{else}}reste {{derivedBudget.force.remaining}}{{/if}}</small></h4>
-          {{#each derived.groups.force as |k|}}
-            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
-            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
-          {{/each}}
-        </div>
-        <div class="group">
-          <h4>Finesse <small>{{derivedBudget.finesse.spent}} / {{derivedBudget.finesse.base}} depenses - {{#if derivedBudget.finesse.over}}depassement {{derivedBudget.finesse.over}}{{else}}reste {{derivedBudget.finesse.remaining}}{{/if}}</small></h4>
-          {{#each derived.groups.finesse as |k|}}
-            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
-            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
-          {{/each}}
-        </div>
-        <div class="group">
-          <h4>Courage <small>{{derivedBudget.courage.spent}} / {{derivedBudget.courage.base}} depenses - {{#if derivedBudget.courage.over}}depassement {{derivedBudget.courage.over}}{{else}}reste {{derivedBudget.courage.remaining}}{{/if}}</small></h4>
-          {{#each derived.groups.courage as |k|}}
-            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
-            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
-          {{/each}}
-        </div>
-        <div class="group">
-          <h4>Vitesse <small>{{derivedBudget.vitesse.spent}} / {{derivedBudget.vitesse.base}} depenses - {{#if derivedBudget.vitesse.over}}depassement {{derivedBudget.vitesse.over}}{{else}}reste {{derivedBudget.vitesse.remaining}}{{/if}}</small></h4>
-          {{#each derived.groups.vitesse as |k|}}
-            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
-            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
-          {{/each}}
-        </div>
-        <div class="group">
-          <h4>Social <small>{{derivedBudget.social.spent}} / {{derivedBudget.social.base}} depenses - {{#if derivedBudget.social.over}}depassement {{derivedBudget.social.over}}{{else}}reste {{derivedBudget.social.remaining}}{{/if}}</small></h4>
-          {{#each derived.groups.social as |k|}}
-            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
-            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
-          {{/each}}
-        </div>
-        <div class="group">
-          <h4>Intellect <small>{{derivedBudget.intellect.spent}} / {{derivedBudget.intellect.base}} depenses - {{#if derivedBudget.intellect.over}}depassement {{derivedBudget.intellect.over}}{{else}}reste {{derivedBudget.intellect.remaining}}{{/if}}</small></h4>
-          {{#each derived.groups.intellect as |k|}}
-            <button type="button" class="bl-roll-derived" data-derived="{{k}}" data-label="{{lookup ../derived.labels k}}">{{lookup ../derived.labels k}}</button>
-            <input type="number" name="system.stats.derived.{{k}}" value="{{lookup ../system.stats.derived k}}" min="0" {{#unless ../canEdit}}disabled{{/unless}} />
-          {{/each}}
-        </div>
-      </div>
     </div>
 
     <div class="tab" data-group="primary" data-tab="techniques">

@@ -23,6 +23,7 @@
 
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="stats">Donnees</a>
+    <a class="item" data-tab="prereq">Prérequis</a>
     <a class="item" data-tab="flags">Effets</a>
     <a class="item" data-tab="tags">Tags</a>
     <a class="item" data-tab="desc">Description</a>
@@ -73,6 +74,12 @@
         <label>Activation</label>
         <input type="text" name="system.activation" value="{{system.activation}}" placeholder="action / reaction / passive" />
 
+      </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="prereq">
+      <h2>Prérequis et usage</h2>
+      <div class="grid two-col">
         <label>Prerequis classe</label>
         <input type="text" name="system.prerequisites.class" value="{{system.prerequisites.class}}" />
 

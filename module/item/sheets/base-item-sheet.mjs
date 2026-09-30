@@ -49,6 +49,7 @@ export class BLBaseItemSheet extends foundry.appv1.sheets.ItemSheet {
       this.item.type === "craftingRecipe" ||
       this.item.type === "craftingComponent" ||
       !!sys.crafting?.enabled;
+    data.hasSpecialOptions = data.isPoison || data.isModification || data.isFeature || data.isClothing || data.isCrafting;
     data.supplement1934Global = !!game.settings.get(SYSTEM_ID, "enableSupplement1934");
     data.isSupplement1934Content = inferSupplement1934Content(this.item, sys);
     data.poisonProfileOptions = POISON_PROFILE_OPTIONS;

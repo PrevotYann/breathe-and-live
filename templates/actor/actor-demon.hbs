@@ -16,76 +16,22 @@
         <span class="sheet-badge bdp">BDP {{system.resources.bdp.value}}/{{system.resources.bdp.max}}</span>
         <span class="sheet-badge ca">CA {{system.resources.ca}}</span>
       </div>
-      <div class="grid four-col summary-grid">
-        <div class="field small">
-          <label>Rang</label>
-          <select name="system.class.rank" {{#unless canEdit}}disabled{{/unless}}>
-            {{#each rankOptions as |rank|}}
-              <option value="{{rank}}" {{#if (eq ../system.class.rank rank)}}selected{{/if}}>{{rank}}</option>
-            {{/each}}
-          </select>
-        </div>
-        <div class="field small">
-          <label>Niveau</label>
-          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" disabled />
-          <small>Auto selon le rang</small>
-        </div>
-        <div class="field small">
-          <label>Lignee</label>
-          <input type="text" list="bl-demon-bloodlines" name="system.demonology.sharedBloodline" value="{{system.demonology.sharedBloodline}}" placeholder="Branche / lune" {{#unless canEdit}}disabled{{/unless}} />
-          <datalist id="bl-demon-bloodlines">
-            {{#each demonBloodlineOptions as |opt|}}
-              <option value="{{opt}}"></option>
-            {{/each}}
-          </datalist>
-          <small>Suggestions du supplement 1934</small>
-        </div>
-        <div class="field small">
-          <label>Style</label>
-          <input type="text" name="system.profile.combatStyle" value="{{system.profile.combatStyle}}" {{#unless canEdit}}disabled{{/unless}} />
-        </div>
-      </div>
-      {{#if demonBloodlineDetail}}
-        <div class="field demon-bloodline-summary">
-          <div class="shared-action">
-            <div>
-              <strong>{{demonBloodlineDetail.name}}</strong>
-              <small>{{demonBloodlineDetail.traits}}</small>
-              <small>{{demonBloodlineDataLabel}}</small>
-            </div>
-            <div class="controls">
-              <button type="button" class="bl-import-demon-bloodline">Importer pouvoirs</button>
-            </div>
-          </div>
-        </div>
-      {{/if}}
     </div>
   </header>
 
-  <section class="field action-strip">
-    <div class="grid bl-demon-action-grid">
-      <button type="button" class="bl-action-basic-attack">Attaque de base</button>
-      {{#each demonQuickAttacks as |it|}}
-        <button type="button" class="bl-demon-basic-attack" data-item-id="{{it.itemId}}" data-attack-key="{{it.key}}" data-attack-name="{{it.name}}" data-attack-damage="{{it.damage}}" data-attack-range="{{it.range}}">{{it.name}}</button>
-      {{/each}}
-      <button type="button" class="bl-action-sprint">Sprinter</button>
-      <button type="button" class="bl-action-wait">Attendre</button>
-      <button type="button" class="bl-action-rest">Repos</button>
-      <button type="button" class="bl-action-counter">Riposte 1 RP</button>
-      <button type="button" class="bl-action-counter-assured">Coup assure 2 RP</button>
-    </div>
-  </section>
 
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="sheet">Fiche</a>
+    <a class="item" data-tab="combat">Combat</a>
+    <a class="item" data-tab="stats">Caractéristiques</a>
+    <a class="item" data-tab="body">Corps</a>
     <a class="item" data-tab="techniques">Arts demoniaques</a>
     <a class="item" data-tab="inventaire">Inventaire</a>
-    <a class="item" data-tab="regles">Corps & regles</a>
+    <a class="item" data-tab="regles">États & règles</a>
   </nav>
 
   <section class="sheet-body">
-    <div class="tab" data-group="primary" data-tab="sheet">
-      <div class="grid four-col">
+    <div class="tab" data-group="primary" data-tab="combat">
+<div class="grid four-col">
         <div class="res core-resource">
           <label>PV</label>
           <div class="pair">
@@ -119,6 +65,27 @@
           <small>Attaque de base: {{system.demonology.basicDamage}}</small>
         </div>
       </div>
+<div class="bl-combat-panel"><h2>Actions rapides</h2><div class="bl-combat-shortcuts"><button type="button" class="bl-action-basic-attack">Attaque de base</button><button type="button" class="bl-action-rest">Repos</button></div><details class="bl-action-drawer"><summary>Toutes les actions</summary>  <section class="field action-strip">
+    <div class="grid bl-demon-action-grid">
+      {{#each demonQuickAttacks as |it|}}
+        <button type="button" class="bl-demon-basic-attack" data-item-id="{{it.itemId}}" data-attack-key="{{it.key}}" data-attack-name="{{it.name}}" data-attack-damage="{{it.damage}}" data-attack-range="{{it.range}}">{{it.name}}</button>
+      {{/each}}
+      <button type="button" class="bl-action-sprint">Sprinter</button>
+      <button type="button" class="bl-action-wait">Attendre</button>
+      <button type="button" class="bl-action-counter">Riposte 1 RP</button>
+      <button type="button" class="bl-action-counter-assured">Coup assure 2 RP</button>
+    </div>
+  </section>
+</details></div>
+      <div class="bl-status-summary">
+        <h2>État actuel</h2>
+        <div class="tag-row">
+          {{#each activeConditionEntries as |entry|}}<span class="tag">{{entry.label}}{{#if entry.state.intensity}} · {{entry.state.intensity}}{{/if}}</span>{{/each}}
+          {{#each injuredLimbEntries as |entry|}}<span class="tag">{{entry.label}} · {{entry.injuryLabel}}</span>{{/each}}
+          {{#unless activeConditionEntries.length}}{{#unless injuredLimbEntries.length}}<small>Aucune condition ni blessure de membre.</small>{{/unless}}{{/unless}}
+        </div>
+      </div>
+
 
       {{#if demonQuickAttacks.length}}
         <div class="field">
@@ -136,9 +103,10 @@
           </div>
         </div>
       {{/if}}
+    </div>
 
-      <div class="grid two-col">
-        <div class="field">
+    <div class="tab" data-group="primary" data-tab="stats">
+<h2>Caractéristiques</h2><div class="field">
           <h3>Caracteristiques</h3>
           <div class="grid stats-base">
             <button type="button" class="bl-roll-base" data-stat="force" data-label="Force">Force</button><input type="number" name="system.stats.base.force" value="{{system.stats.base.force}}" {{#unless canEdit}}disabled{{/unless}} />
@@ -195,8 +163,53 @@
             </div>
           </div>
         </div>
+    </div>
 
-        <div class="field">
+    <div class="tab" data-group="primary" data-tab="body">
+<h2>Corps démoniaque</h2><div class="grid four-col summary-grid">
+        <div class="field small">
+          <label>Rang</label>
+          <select name="system.class.rank" {{#unless canEdit}}disabled{{/unless}}>
+            {{#each rankOptions as |rank|}}
+              <option value="{{rank}}" {{#if (eq ../system.class.rank rank)}}selected{{/if}}>{{rank}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="field small">
+          <label>Niveau</label>
+          <input type="number" name="system.class.level" value="{{system.class.level}}" min="1" disabled />
+          <small>Auto selon le rang</small>
+        </div>
+        <div class="field small">
+          <label>Lignee</label>
+          <input type="text" list="bl-demon-bloodlines" name="system.demonology.sharedBloodline" value="{{system.demonology.sharedBloodline}}" placeholder="Branche / lune" {{#unless canEdit}}disabled{{/unless}} />
+          <datalist id="bl-demon-bloodlines">
+            {{#each demonBloodlineOptions as |opt|}}
+              <option value="{{opt}}"></option>
+            {{/each}}
+          </datalist>
+          <small>Suggestions du supplement 1934</small>
+        </div>
+        <div class="field small">
+          <label>Style</label>
+          <input type="text" name="system.profile.combatStyle" value="{{system.profile.combatStyle}}" {{#unless canEdit}}disabled{{/unless}} />
+        </div>
+      </div>
+      {{#if demonBloodlineDetail}}
+        <div class="field demon-bloodline-summary">
+          <div class="shared-action">
+            <div>
+              <strong>{{demonBloodlineDetail.name}}</strong>
+              <small>{{demonBloodlineDetail.traits}}</small>
+              <small>{{demonBloodlineDataLabel}}</small>
+            </div>
+            <div class="controls">
+              <button type="button" class="bl-import-demon-bloodline">Importer pouvoirs</button>
+            </div>
+          </div>
+        </div>
+      {{/if}}
+<div class="field">
           <h3>Corps demoniaque</h3>
           <div class="rule-pills">
             <div class="rule-pill">
@@ -285,7 +298,6 @@
             </div>
           </div>
         </div>
-      </div>
     </div>
 
     <div class="tab" data-group="primary" data-tab="techniques">

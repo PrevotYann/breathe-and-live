@@ -13,7 +13,8 @@
   </header>
 
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="stats">Donnees</a>
+    <a class="item" data-tab="stats">Utilisation</a>
+    {{#if hasSpecialOptions}}<a class="item" data-tab="options">Spécificités</a>{{/if}}
     <a class="item" data-tab="tags">Tags</a>
     <a class="item" data-tab="desc">Description</a>
   </nav>
@@ -69,6 +70,13 @@
         <label>Note d'usage</label>
         <textarea name="system.usageNote" rows="3">{{system.usageNote}}</textarea>
 
+      </div>
+    </div>
+
+    {{#if hasSpecialOptions}}
+    <div class="tab" data-group="primary" data-tab="options">
+      <h2>Spécificités</h2>
+      <div class="grid two-col">
         {{#if isPoison}}
           <label>Puissance</label>
           <input type="number" name="system.potency" value="{{system.potency}}" min="1" />
@@ -184,6 +192,7 @@
         {{/if}}
       </div>
     </div>
+    {{/if}}
 
     <div class="tab" data-group="primary" data-tab="tags">
       <label>Tags</label>

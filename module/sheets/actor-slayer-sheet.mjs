@@ -371,7 +371,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
         {
           navSelector: ".sheet-tabs",
           contentSelector: ".sheet-body",
-          initial: "sheet",
+          initial: "combat",
         },
       ],
     });
@@ -885,6 +885,13 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
           broken: false,
           notes: "",
         },
+      }));
+    data.activeConditionEntries = data.conditionEntries.filter((entry) => entry.state.active);
+    data.injuredLimbEntries = data.limbEntries
+      .filter((entry) => entry.state.injured || entry.state.broken || entry.state.severed)
+      .map((entry) => ({
+        ...entry,
+        injuryLabel: entry.state.severed ? "sectionné" : entry.state.broken ? "cassé" : "blessé",
       }));
 
     data.rankOptions = this._rankOptions();

@@ -16,18 +16,27 @@
         <span class="sheet-badge ca">CA {{system.resources.ca}}</span>
         {{#if isNpcDemon}}<span class="sheet-badge bdp">BDP {{system.resources.bdp.value}}/{{system.resources.bdp.max}}</span>{{/if}}
       </div>
-      <div class="grid four-col summary-grid">
-        <div class="field small"><label>Type</label><input type="text" name="system.class.type" value="{{system.class.type}}" {{#unless canEdit}}disabled{{/unless}} /></div>
-        <div class="field small"><label>Rang</label><input type="text" name="system.class.rank" value="{{system.class.rank}}" {{#unless canEdit}}disabled{{/unless}} /></div>
-        <div class="field small"><label>Role</label><input type="text" name="system.npc.role" value="{{system.npc.role}}" {{#unless canEdit}}disabled{{/unless}} /></div>
-        <div class="field small"><label>Menace</label><input type="text" name="system.npc.threat" value="{{system.npc.threat}}" {{#unless canEdit}}disabled{{/unless}} /></div>
-      </div>
     </div>
   </header>
 
-  <section class="field action-strip">
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="combat">Combat</a>
+    <a class="item" data-tab="profile">Profil</a>
+    <a class="item" data-tab="techniques">Techniques</a>
+    <a class="item" data-tab="regles">Conditions</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab" data-group="primary" data-tab="combat">
+<div class="grid four-col">
+        <div class="res core-resource"><label>PV</label><div class="pair"><input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" {{#unless canEdit}}disabled{{/unless}} /></div></div>
+        <div class="res core-resource"><label>CA</label><input type="number" name="system.resources.ca" value="{{system.resources.ca}}" {{#unless canEdit}}disabled{{/unless}} /></div>
+        <div class="res core-resource"><label>RP</label><div class="pair"><input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" {{#unless canEdit}}disabled{{/unless}} /></div></div>
+        <div class="res core-resource"><label>BDP</label><div class="pair"><input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" {{#unless canEdit}}disabled{{/unless}} /></div></div>
+      </div>
+<div class="bl-combat-panel"><h2>Actions rapides</h2><div class="bl-combat-shortcuts"><button type="button" class="bl-action-basic-attack">Attaque de base</button><button type="button" class="bl-action-rest">Repos</button></div><details class="bl-action-drawer"><summary>Toutes les actions</summary>  <section class="field action-strip">
     <div class="grid {{#if isNpcDemon}}bl-demon-action-grid{{else}}four-col{{/if}}">
-      <button type="button" class="bl-action-basic-attack">Attaque de base</button>
       {{#if isNpcDemon}}
         {{#each demonQuickAttacks as |it|}}
           <button type="button" class="bl-demon-basic-attack" data-item-id="{{it.itemId}}" data-attack-key="{{it.key}}" data-attack-name="{{it.name}}" data-attack-damage="{{it.damage}}" data-attack-range="{{it.range}}">{{it.name}}</button>
@@ -35,28 +44,31 @@
       {{/if}}
       <button type="button" class="bl-action-sprint">Sprinter</button>
       <button type="button" class="bl-action-wait">Attendre</button>
-      <button type="button" class="bl-action-rest">Repos</button>
       <button type="button" class="bl-action-assistance">Assistance</button>
       <button type="button" class="bl-action-kakushi">Kakushi</button>
       <button type="button" class="bl-action-counter">Riposte 1 RP</button>
       <button type="button" class="bl-action-counter-assured">Coup assure 2 RP</button>
     </div>
   </section>
-
-  <nav class="sheet-tabs tabs" data-group="primary">
-    <a class="item" data-tab="sheet">Resume</a>
-    <a class="item" data-tab="techniques">Techniques</a>
-    <a class="item" data-tab="regles">Conditions</a>
-  </nav>
-
-  <section class="sheet-body">
-    <div class="tab" data-group="primary" data-tab="sheet">
-      <div class="grid four-col">
-        <div class="res core-resource"><label>PV</label><div class="pair"><input type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" {{#unless canEdit}}disabled{{/unless}} /></div></div>
-        <div class="res core-resource"><label>CA</label><input type="number" name="system.resources.ca" value="{{system.resources.ca}}" {{#unless canEdit}}disabled{{/unless}} /></div>
-        <div class="res core-resource"><label>RP</label><div class="pair"><input type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" {{#unless canEdit}}disabled{{/unless}} /></div></div>
-        <div class="res core-resource"><label>BDP</label><div class="pair"><input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" {{#unless canEdit}}disabled{{/unless}} /></div></div>
+</details></div>
+      <div class="bl-status-summary">
+        <h2>État actuel</h2>
+        <div class="tag-row">
+          {{#each activeConditionEntries as |entry|}}<span class="tag">{{entry.label}}{{#if entry.state.intensity}} · {{entry.state.intensity}}{{/if}}</span>{{/each}}
+          {{#each injuredLimbEntries as |entry|}}<span class="tag">{{entry.label}} · {{entry.injuryLabel}}</span>{{/each}}
+          {{#unless activeConditionEntries.length}}{{#unless injuredLimbEntries.length}}<small>Aucune condition ni blessure de membre.</small>{{/unless}}{{/unless}}
+        </div>
       </div>
+    </div>
+
+    <div class="tab" data-group="primary" data-tab="profile">
+<h2>Profil</h2><div class="grid four-col summary-grid">
+        <div class="field small"><label>Type</label><input type="text" name="system.class.type" value="{{system.class.type}}" {{#unless canEdit}}disabled{{/unless}} /></div>
+        <div class="field small"><label>Rang</label><input type="text" name="system.class.rank" value="{{system.class.rank}}" {{#unless canEdit}}disabled{{/unless}} /></div>
+        <div class="field small"><label>Role</label><input type="text" name="system.npc.role" value="{{system.npc.role}}" {{#unless canEdit}}disabled{{/unless}} /></div>
+        <div class="field small"><label>Menace</label><input type="text" name="system.npc.threat" value="{{system.npc.threat}}" {{#unless canEdit}}disabled{{/unless}} /></div>
+      </div>
+
 
       {{#if isNpcDemon}}
         <div class="field">
