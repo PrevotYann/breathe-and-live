@@ -1,4 +1,6 @@
 import { BLBaseItemSheet } from "./base-item-sheet.mjs";
+import { getWeaponLoadout } from "../../rules/weapon-loadout.mjs";
+import { rollBasicAttack } from "../../rules/action-engine.mjs";
 
 export class BLWeaponSheet extends BLBaseItemSheet {
   get template() {
@@ -9,8 +11,16 @@ export class BLWeaponSheet extends BLBaseItemSheet {
     const data = await super.getData(options);
     data.isProjectile = this.item.type === "projectile";
     data.isExplosive = this.item.type === "explosive";
+    data.hasBayonet = !!this.item.parent && getWeaponLoadout(this.item.parent, this.item).bayonet;
     data.modificationOptions = Array.from(this.item.parent?.items ?? []).filter(i => i.type === "modification").map(i => ({ id: i.id, name: i.name, selected: !!this.item.system?.attachedModifications?.[i.id] }));
     data.ammunitionOptions = Array.from(this.item.parent?.items ?? []).filter(i => i.type === "ammunition").map(i => ({ id: i.id, name: i.name, selected: this.item.system?.ammunitionId === i.id }));
     return data;
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    html.on("click", ".bl-bayonet", async event => {
+      event.preventDefault();
+      if (this.item.parent?.isOwner || game.user.isGM) await rollBasicAttack(this.item.parent, { item: this.item, sourceOptions: { bayonet: true } });
+    });
   }
 }

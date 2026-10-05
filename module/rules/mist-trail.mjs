@@ -50,7 +50,7 @@ export function registerMistHooks() {
   Hooks.on("deleteCombat", async (combat, options, userId) => {
     if (!isAutomationAuthority(userId)) return;
     for (const scene of game.scenes ?? []) {
-      const ids = scene.regions.filter(r => r.flags[SYSTEM_ID]?.kind === "mistTrail" && r.flags[SYSTEM_ID]?.combatId === combat.id).map(r => r.id);
+      const ids = scene.regions.filter(r => ["mistTrail", "mist"].includes(r.flags[SYSTEM_ID]?.kind) && (!r.flags[SYSTEM_ID]?.combatId || r.flags[SYSTEM_ID].combatId === combat.id)).map(r => r.id);
       if (ids.length) await scene.deleteEmbeddedDocuments("Region", ids);
     }
     for (const actor of new Set(Array.from(combat.combatants ?? [], c => c.actor).filter(Boolean))) {

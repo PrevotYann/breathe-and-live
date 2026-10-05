@@ -5,8 +5,10 @@ import { activateSubclassStance } from "../rules/subclass-passives.mjs";
 import { checkTechniqueUses, consumeTechniqueUse } from "../rules/technique-limits.mjs";
 import { runSourceTechnique } from "../rules/source-technique-workflows.mjs";
 import { beginMistTrail } from "../rules/mist-trail.mjs";
-import { attachSourceReactions } from "../rules/source-reactions.mjs";
-import { sourceTrait } from "../rules/character-capabilities.mjs";
+import { promptSourceMovement } from "../rules/source-movement.mjs";
+import { attachSourceReactions, permitAvoidanceCounter } from "../rules/source-reactions.mjs";
+import { sourceTrait, envelopingAttackPenalty } from "../rules/character-capabilities.mjs";
+import { resolveDeflectStance } from "../rules/deflect-reflection.mjs";
 import { applyPreHit, applyOnHit, getActiveBreaths } from "../rules/breath-effects.mjs";
 import { applyEffectsList } from "../rules/effects-engine.mjs";
 import { canHealActor, lockRedBladeHealing } from "../rules/combat-state.mjs";
@@ -148,6 +150,11 @@ async function pickTarget(excludeTokenId = null) {
 
 async function placeMistTemplate(targetToken) {
   if (!canvas.scene) return;
+  const radius = await new Promise(resolve => new Dialog({ title: "Nuage manuel — arbitrage MJ",
+    content: "<p>La Brume automatique couvre les cases traversées. Pour ce nuage supplémentaire, le MJ fixe le rayon en mètres.</p><input name='mistRadius' type='number' min='0.1' step='0.1' placeholder='Rayon en mètres' />",
+    buttons: { apply: { label: "Placer", callback: html => { const value = Number(html.find('[name="mistRadius"]').val()); resolve(Number.isFinite(value) && value > 0 ? value : null); } }, cancel: { label: "Annuler", callback: () => resolve(null) } }, close: () => resolve(null),
+  }).render(true));
+  if (!radius) return;
   await canvas.scene.createEmbeddedDocuments("Region", [
     {
       name: "Brume",
@@ -156,14 +163,14 @@ async function placeMistTemplate(targetToken) {
         type: "circle",
         x: targetToken.center.x,
         y: targetToken.center.y,
-        radius: 3 * (canvas.grid.size || 100) / METERS_PER_SQUARE,
+        radius: radius * (canvas.grid.size || 100) / METERS_PER_SQUARE,
       }],
       levels: targetToken.document?.level ? [targetToken.document.level] : [],
       visibility: CONST.REGION_VISIBILITY.ALWAYS,
       ownership: { [game.user.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER },
       hidden: false,
       flags: {
-        [SYSTEM_ID]: { kind: "mist", expireRound: game.combat?.round ?? null },
+        [SYSTEM_ID]: { kind: "mist", combatId: game.combat?.id || null },
       },
     },
   ]);
@@ -185,22 +192,6 @@ async function simpleDash(attackerToken, distanceMeters = 6) {
     x: px - attackerToken.w / 2,
     y: py - attackerToken.h / 2,
   });
-}
-
-async function spendResource(actor, path, cost, label, { sourceItem = null } = {}) {
-  if (!cost) return { ok: true, note: null };
-  const current = Number(FU.getProperty(actor, path) ?? 0) || 0;
-  if (current < cost) {
-    ui.notifications.warn(`Pas assez de ${label}. Requis: ${cost}, actuel: ${current}`);
-    return { ok: false, note: null };
-  }
-  await actor.update({ [path]: current - cost });
-  const demonisationGain =
-    path === "system.resources.bdp.value"
-      ? await applyDemonisationGain(actor, sourceItem, { reason: sourceItem?.name || label })
-      : 0;
-  const demonisationNote = demonisationGain ? `, Demonisation +${demonisationGain}` : "";
-  return { ok: true, note: `${label} -${cost}${demonisationNote}` };
 }
 
 function getTechniqueRange(item, ctx = {}) {
@@ -792,7 +783,7 @@ async function promptStoneHeadMode(attacker, item) {
 }
 
 async function promptTechniqueMode(item) {
-  if (item.system?.automation?.alternativeMode !== "deflect") return "attack";
+  if (item.system?.automation?.alternativeMode !== "deflect" && !(normalizeBreathName(item.system?.breathKey) === "flame" && Number(item.system?.form) === 4)) return "attack";
   return new Promise((resolve) => {
     new Dialog(
       {
@@ -815,6 +806,8 @@ async function activateDeflectStance(actor, item) {
     itemId: item.id,
     itemName: item.name,
     round,
+    combatId: game.combat?.id,
+    reflectAllRound: normalizeBreathName(item.system?.breathKey) === "flame" && Number(item.system?.form) === 4,
   });
 }
 
@@ -835,7 +828,7 @@ async function applyTechniqueDamage({
   const currentHp = Number(FU.getProperty(actor, hpPath) ?? 0) || 0;
   const nextHp = Math.max(0, currentHp - damage);
   const appliedDamage = await applyHpDamage(actor, damage);
-  await noteActorDamageTaken(actor, damage);
+  await noteActorDamageTaken(actor, damage, { attackerUuid: attacker.uuid, melee: !item.system?.ranged && Number(item.system?.range ?? 1.5) <= 1.5 });
   if (ctx.targetLimb) await applyTargetedLimbDamage(actor, ctx.targetLimb, damage);
   if (damage > 0 && ["technique", "subclassTechnique"].includes(item.type) && attacker.system?.states?.lameRouge && ["demon", "npcDemon"].includes(actor.type)) {
     await lockRedBladeHealing(actor);
@@ -964,6 +957,9 @@ async function executeTechnique(attacker, item, { controlledToken = null } = {})
   if (utilityKind) {
     return useDemonistUtility(attacker, item, utilityKind);
   }
+  if (!String(item.system?.damage || "").trim() && !item.system?.automation?.noDamage && !item.system?.automation?.summonFormula && !item.system?.automation?.teleportToBurned && !item.system?.automation?.alternativeMode) {
+    return ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: attacker }), content: `<div class="bl-card"><strong>${item.name}</strong><p>${item.system?.usageNote || item.system?.description || "Données mécaniques à renseigner par le MJ."}</p><small>Réaction contextuelle : utiliser cette capacité depuis la carte de l'attaque entrante ou résoudre le contexte avec le MJ. Aucun dégât par défaut n'est ajouté.</small></div>` });
+  }
 
   let attackerToken = resolveCanvasToken(controlledToken, attacker);
   if (!attackerToken) {
@@ -1008,17 +1004,12 @@ async function executeTechnique(attacker, item, { controlledToken = null } = {})
 
   const mode = await promptTechniqueMode(item);
   if (mode === "deflect") {
-    const eSpend = await spendResource(
-      attacker,
-      "system.resources.e.value",
-      Number(item.system?.costE ?? 0) || 0,
-      "E"
-    );
-    if (!eSpend.ok) return;
+    if (!(game.combat?.round > 0)) return ui.notifications.warn("Démarrez un combat pour suivre cette posture jusqu'à la fin du round.");
+    if (!(await spendTechniqueUtilityCosts(attacker, item))) return;
     await activateDeflectStance(attacker, item);
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
-      content: `<div class="bl-card"><b>${attacker.name}</b> adopte la posture <b>${item.name}</b> jusqu'a la fin du round pour annuler une prochaine attaque.</div>`,
+      content: `<div class="bl-card"><b>${attacker.name}</b> adopte la posture <b>${item.name}</b> jusqu'à la fin du round. ${attacker.getFlag(SYSTEM_ID,"deflectStance")?.reflectAllRound ? "Tous les dégâts peuvent être renvoyés vers une cible choisie." : "La prochaine attaque peut être annulée."}</div>`,
     });
     return;
   }
@@ -1088,7 +1079,7 @@ async function executeTechnique(attacker, item, { controlledToken = null } = {})
     const bonus = stat in base ? Number(base[stat]) - 1 : Number(derived[stat] || 0);
     const hits = [];
     for (const target of targetTokens) {
-      const edge = Number(pre.rollEdge?.attack || 0) - (target.actor.system?.states?.mondeTransparent ? 1 : 0);
+      const edge = Number(pre.rollEdge?.attack || 0) - (target.actor.system?.states?.mondeTransparent ? 1 : 0) - envelopingAttackPenalty(attacker);
       const roll = await new Roll(`${edge > 0 ? "2d20kh" : edge < 0 ? "2d20kl" : "1d20"} + ${bonus}`).evaluate();
       await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: attacker }), flavor: `${item.name} : toucher ${target.name}, CA ${target.actor.system.resources.ca}` });
       if (roll.total >= Number(target.actor.system.resources.ca)) hits.push(target);
@@ -1150,7 +1141,7 @@ async function executeTechnique(attacker, item, { controlledToken = null } = {})
   }
 
   const damageEdge = (Number(pre.rollEdge?.damage ?? 0) || 0) + (breathKey && attacker.system?.states?.marque ? 1 : 0);
-  if (!breathKey && attacker.system?.states?.mondeTransparent) pre.dmgExpr = `(${pre.dmgExpr}) * 2`;
+  if (!breathKey && attacker.system?.states?.mondeTransparent && !(item.system?.ranged && attacker.system?.progression?.flags?.firearmTraining)) pre.dmgExpr = `(${pre.dmgExpr}) * 2`;
   const damageEval = await evaluateTechniqueDamageRoll(
     buildFormulaWithActorStats(pre.dmgExpr || "1d8", attacker, ctx),
     damageEdge
@@ -1158,7 +1149,7 @@ async function executeTechnique(attacker, item, { controlledToken = null } = {})
   const damageRoll = damageEval.roll;
   const activeCoating = getActivePoisonCoating(attacker);
 
-  const noteEntries = [...(pre.notes || []), ...(item.system?.specialLines || [])];
+  const noteEntries = [...(pre.notes || []), ...(item.system?.specialLines || []), item.system?.description].filter(Boolean);
   if (damageEval.altRoll) {
     noteEntries.push(
       `${damageEval.mode === "advantage" ? "Jet secondaire favorable" : "Jet secondaire defavorable"} : ${damageEval.altRoll.total}`
@@ -1169,7 +1160,7 @@ async function executeTechnique(attacker, item, { controlledToken = null } = {})
     .map((targetToken) => {
       const extraButtons = [
         pre.ui?.canDislocate && String(targetToken?.actor?.type || "").toLowerCase().includes("demon")
-          ? `<button class="bl-dislocate" data-target-token="${targetToken.id}" data-damage="${damageRoll.total}">Dislocation</button>`
+          ? `<button class="bl-dislocate" data-target-token="${targetToken.id}" data-damage="${damageRoll.total}" disabled>Dislocation après réaction</button>`
           : "",
         activeCoating
           ? `<button class="bl-takedmg-poison" data-target-token="${targetToken.id}" data-damage="${damageRoll.total}">Prendre + ${activeCoating.itemName}</button>`
@@ -1201,7 +1192,7 @@ async function executeTechnique(attacker, item, { controlledToken = null } = {})
       }
       ${
         pre.ui?.canMist
-          ? `<button class="bl-mist" data-target-token="${firstTarget.id}">Brume (3 m)</button>`
+          ? `<button class="bl-mist" data-target-token="${firstTarget.id}">Nuage manuel (MJ)</button>`
           : ""
       }
       ${
@@ -1263,6 +1254,7 @@ registerCardType("technique", async (card, html, on) => {
   const disableTargetButtons = (tokenId) => {
     html.find(`button[data-target-token="${tokenId}"]`).prop("disabled", true);
   };
+  const permitBeastDislocation = tokenId => html.find(`.bl-dislocate[data-target-token="${tokenId}"]`).prop("disabled", false).attr("data-reaction-used", "true");
 
   on(".bl-dodge", async (event) => {
     const button = $(event.currentTarget);
@@ -1276,6 +1268,8 @@ registerCardType("technique", async (card, html, on) => {
       .html("<em>Esquive reussie : degats annules.</em>");
     await applyOnHit(attacker, token, item, ctx, { tookDamage: false });
     disableTargetButtons(token.id);
+    permitBeastDislocation(token.id);
+    permitAvoidanceCounter(html, token.id);
   });
 
   on(".bl-deflect", async (event) => {
@@ -1290,6 +1284,8 @@ registerCardType("technique", async (card, html, on) => {
       .html("<em>Deviation reussie : degats annules. Redirection manuelle.</em>");
     await applyOnHit(attacker, token, item, ctx, { tookDamage: false });
     disableTargetButtons(token.id);
+    permitBeastDislocation(token.id);
+    permitAvoidanceCounter(html, token.id);
   });
 
   on(".bl-stance-deflect", async (event) => {
@@ -1297,10 +1293,11 @@ registerCardType("technique", async (card, html, on) => {
     const token = canvas.tokens.get(String(button.attr("data-target-token")));
     const actor = token?.actor;
     if (!actor || !canInteractWithToken(token)) return;
-    await consumeDeflectStance(actor);
+    const result = await resolveDeflectStance(actor, Number(html.find(`.bl-target-row[data-target-token="${token.id}"] .bl-takedmg`).attr("data-damage")) || 0);
+    if (!result) return;
     html
       .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
-      .html("<em>Posture defensive consommee : degats annules.</em>");
+      .text(result);
     disableTargetButtons(token.id);
   });
 
@@ -1309,8 +1306,10 @@ registerCardType("technique", async (card, html, on) => {
     const token = canvas.tokens.get(tokenId);
     if (!token || !canInteractWithToken(token)) return;
     if (getConditionActionRestriction(attacker, "rp").blocked) return;
+    const movement = await promptSourceMovement(attacker, 6);
+    if (!movement) return;
     if (!(await spendResourceCosts(attacker, [{ path: "system.resources.rp.value", cost: 1, label: "RP" }]))) return;
-    await simpleDash(token, 6);
+    await token.document.update(movement.destination, { animate: false });
   });
 
   on(".bl-mist", async () => {
@@ -1324,13 +1323,13 @@ registerCardType("technique", async (card, html, on) => {
       return;
     }
     html.find(".bl-quickshot").prop("disabled", true);
-    await rollBasicAttack(attacker, { item: weapon, free: true });
+    await rollBasicAttack(attacker, { item: weapon, free: true, sourceOptions: { noAutoHit: true } });
   });
 
   on(".bl-dislocate", async (event) => {
     const button = $(event.currentTarget);
     const token = canvas.tokens.get(String(button.attr("data-target-token")));
-    if (!token?.actor || !canInteractWithToken(attackerToken)) return;
+    if (!token?.actor || !canInteractWithToken(attackerToken) || button.attr("data-reaction-used") !== "true") return;
 
     const armKey = await applyBeastDislocation(attacker);
     const damage = Number(button.attr("data-damage")) || 0;

@@ -1,5 +1,7 @@
 # Module Coverage Map
 
+Current audited coverage (v0.5.1): [full report](audit-2026-10-05.md) and [137-page matrix](rulebook-coverage.json). These supersede the initial extraction notes below.
+
 This file maps the rulebook sections from `AGENTS.md` and `resources/rules/regles-physiques-v1.1.txt`
 to the current repository modules so missing coverage stays explicit.
 
@@ -84,5 +86,5 @@ to the current repository modules so missing coverage stays explicit.
 - Several homebrew / supplement breath passives still need full numeric extraction from the PDF or detailed forms sheet.
 - Demon rank changes now apply the fixed rank package and benchmark refresh from the rulebook, but several 1934 bloodline trees remain only partially extractible from the text export.
 - Shared demon actions such as healing, regrowth, execution and infection are now automated; the remaining gap is mostly the numeric extraction of additional 1934 bloodline trees.
-- Sheet-side guided character creation wizard is not yet implemented; schema and examples are in place first.
+- Sheet-side guided creation, learning and rank progression are implemented; incomplete source values require explicit GM arbitration.
 - TODO-RULEBOOK-AMBIGUITY: Demonist enhancement reaction duration is not explicit in the PDF; automation applies it until round end through temporary effects.

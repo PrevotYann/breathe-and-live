@@ -1,0 +1,1804 @@
+{
+  "sourceDate": "2026-10-05",
+  "sourceUrl": "https://docs.google.com/presentation/d/1v8MuzzgndlBA5djtzvsO1-m5RMda2pf02qQ9LYE4N9E/edit",
+  "pages": [
+    {
+      "page": 1,
+      "slideId": "p",
+      "title": "Système JDR",
+      "section": "Présentation et sommaire",
+      "status": "reference",
+      "modules": [
+        "module/breathe-and-live.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 2,
+      "slideId": "g10dc8d3c03a_0_0",
+      "title": "Table des matières",
+      "section": "Présentation et sommaire",
+      "status": "reference",
+      "modules": [
+        "module/breathe-and-live.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 3,
+      "slideId": "g10dc8d3c03a_0_16",
+      "title": "Création de personnage",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 4,
+      "slideId": "g25c4dc19df6_1_0",
+      "title": "Lancers de dés",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 5,
+      "slideId": "g10dc8d3c03a_0_188",
+      "title": "Déterminer les PV, la CA et les Réactions",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 6,
+      "slideId": "g10dc8d3c03a_0_142",
+      "title": "Décider des Statistiques de base",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 7,
+      "slideId": "g22c08bbc8b9_0_1",
+      "title": "Statistiques dérivées",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 8,
+      "slideId": "g22ba16ae445_0_15",
+      "title": "Force",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 9,
+      "slideId": "g22ba16ae445_0_22",
+      "title": "Finesse",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 10,
+      "slideId": "g22ba16ae445_0_29",
+      "title": "Courage (Stats dérivées)",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 11,
+      "slideId": "g22ba16ae445_0_36",
+      "title": "Vitesse (Stats dérivées)",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 12,
+      "slideId": "g22ba16ae445_0_43",
+      "title": "Social",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 13,
+      "slideId": "g22ba16ae445_0_50",
+      "title": "Intellect (Stats dérivées)",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 14,
+      "slideId": "g10dc8d3c03a_0_173",
+      "title": "Contexte (Entraîneur)",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 15,
+      "slideId": "g25ea7bf22fc_9_13",
+      "title": "Contexte (Partenaire)",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 16,
+      "slideId": "g1135a692ddc_0_152",
+      "title": "Corbeau Kasugai",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 17,
+      "slideId": "g10dc8d3c03a_0_149",
+      "title": "Compétences de départ",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 18,
+      "slideId": "g10dc8d3c03a_0_155",
+      "title": "Capacités extrasensorielles",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 19,
+      "slideId": "g10dc8d3c03a_0_165",
+      "title": "Caractéristiques surhumaines",
+      "section": "Création, statistiques, compétences, sens et traits",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/actor-derived-formulas.mjs",
+        "module/rules/character-capabilities.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 20,
+      "slideId": "g2d03ebea96e_0_10",
+      "title": "Capacités humaines",
+      "section": "Actions humaines, réactions et attaques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/combat-actions.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 21,
+      "slideId": "g3837a166f1e_1_16",
+      "title": "Capacités humaines",
+      "section": "Actions humaines, réactions et attaques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/combat-actions.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 22,
+      "slideId": "g2c0c3a3e1d0_2_2",
+      "title": "Utilisation de Points de Réaction (RP)",
+      "section": "Actions humaines, réactions et attaques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/combat-actions.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 23,
+      "slideId": "g238a3db08d2_3_0",
+      "title": "Lames",
+      "section": "Actions humaines, réactions et attaques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/combat-actions.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 24,
+      "slideId": "g30064baf099_4_64",
+      "title": "Choisir de la Classe",
+      "section": "Actions humaines, réactions et attaques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/combat-actions.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 25,
+      "slideId": "g2d03ebea96e_0_15",
+      "title": "Economie d’action",
+      "section": "Combat, états et mutilation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/effects-engine.mjs",
+        "module/rules/automation-authority.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 26,
+      "slideId": "g300bbe134d3_0_6",
+      "title": "Action",
+      "section": "Combat, états et mutilation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/effects-engine.mjs",
+        "module/rules/automation-authority.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 27,
+      "slideId": "g374f9fdc1a8_1_0",
+      "title": "Combat",
+      "section": "Combat, états et mutilation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/effects-engine.mjs",
+        "module/rules/automation-authority.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 28,
+      "slideId": "g374f9fdc1a8_1_5",
+      "title": "Brûlure",
+      "section": "Combat, états et mutilation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/effects-engine.mjs",
+        "module/rules/automation-authority.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 29,
+      "slideId": "g38198925cbb_7_0",
+      "title": "Anosmie",
+      "section": "Combat, états et mutilation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/effects-engine.mjs",
+        "module/rules/automation-authority.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 30,
+      "slideId": "g374f9fdc1a8_1_12",
+      "title": "Aide à la lecture",
+      "section": "Combat, états et mutilation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/effects-engine.mjs",
+        "module/rules/automation-authority.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 31,
+      "slideId": "g2d03ebea96e_0_5",
+      "title": "Classe du Pourfendeur de Démons",
+      "section": "Classe Pourfendeur et progression",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 32,
+      "slideId": "g30064baf099_4_43",
+      "title": "Niveau 1",
+      "section": "Classe Pourfendeur et progression",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 33,
+      "slideId": "g10dc8d3c03a_0_21",
+      "title": "Compétences de Classe du Pourfendeur de Démons",
+      "section": "Classe Pourfendeur et progression",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/config/rule-data.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 34,
+      "slideId": "g238ce5c5592_0_0",
+      "title": "Techniques de Souffle",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 35,
+      "slideId": "g1e60874786c_0_21",
+      "title": "Techniques de Souffle",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 36,
+      "slideId": "g25d2f383003_1_15",
+      "title": "Description générale des styles de danse, leurs mouvements caractéristiques et les traits de personnalité communs à leurs pratiquants.",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 37,
+      "slideId": "g3636b752d34_0_2",
+      "title": "Forme #",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 38,
+      "slideId": "g10dc8d3c03a_0_48",
+      "title": "Le Souffle du Soleil est sans aucun doute la technique de Souffle la plus puissante qui existe. Ceux qui maîtrisent cette technique parviennent à exécuter des coups de sabre précis et rapides, et maîtrisent parfaitement toutes les techniques d'épée. Les flammes éclatantes, plus chaudes que le soleil, que cette technique génère, inspirent une telle terreur aux démons qu'elles peuvent les plonger dans la panique. Les utilisateurs de cette technique dégagent souvent une aura d'une intensité rare et, paradoxalement, une grande douceur.",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 39,
+      "slideId": "g10dc8d3c03a_0_60",
+      "title": "Souffle de la Lune",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 40,
+      "slideId": "g10dc8d3c03a_0_68",
+      "title": "40",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 41,
+      "slideId": "g10dc8d3c03a_0_64",
+      "title": "41",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 42,
+      "slideId": "g10dc8d3c03a_0_76",
+      "title": "42",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 43,
+      "slideId": "g10dc8d3c03a_0_80",
+      "title": "43",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 44,
+      "slideId": "g10dc8d3c03a_0_72",
+      "title": "44",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 45,
+      "slideId": "g10dc8d3c03a_0_100",
+      "title": "45",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 46,
+      "slideId": "g10dc8d3c03a_0_124",
+      "title": "46",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 47,
+      "slideId": "g10dc8d3c03a_0_116",
+      "title": "47",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 48,
+      "slideId": "g10dc8d3c03a_0_108",
+      "title": "48",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 49,
+      "slideId": "g10dc8d3c03a_0_112",
+      "title": "49",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 50,
+      "slideId": "g10dc8d3c03a_0_104",
+      "title": "50",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 51,
+      "slideId": "g10dc8d3c03a_0_120",
+      "title": "51",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 52,
+      "slideId": "g1e60874786c_0_26",
+      "title": "Techniques de Souffle",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 53,
+      "slideId": "g1e60874786c_0_4",
+      "title": "53",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 54,
+      "slideId": "g1ef33f28d3c_1_2",
+      "title": "54",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 55,
+      "slideId": "g377bfa8ee0d_0_6",
+      "title": "55",
+      "section": "Souffles standards et homebrew",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/chat/use-technique.mjs",
+        "module/rules/mist-trail.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 56,
+      "slideId": "g258026cd10f_0_7",
+      "title": "56",
+      "section": "Construction de souffle personnalisé",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/custom-breath-builder.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 57,
+      "slideId": "g32cadbcc6d0_0_65",
+      "title": "Sous-Classes du Pourfendeur de Démons",
+      "section": "Construction de souffle personnalisé",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/custom-breath-builder.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 58,
+      "slideId": "g3724764f948_0_0",
+      "title": "58",
+      "section": "Sous-classes et techniques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/subclass-passives.mjs",
+        "module/rules/source-technique-workflows.mjs",
+        "module/rules/source-reactions.mjs",
+        "module/rules/source-movement.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 59,
+      "slideId": "g2d890f9c68f_0_42",
+      "title": "59",
+      "section": "Sous-classes et techniques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/subclass-passives.mjs",
+        "module/rules/source-technique-workflows.mjs",
+        "module/rules/source-reactions.mjs",
+        "module/rules/source-movement.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 60,
+      "slideId": "g2d890f9c68f_0_59",
+      "title": "60",
+      "section": "Sous-classes et techniques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/subclass-passives.mjs",
+        "module/rules/source-technique-workflows.mjs",
+        "module/rules/source-reactions.mjs",
+        "module/rules/source-movement.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 61,
+      "slideId": "g32cadbcc6d0_0_28",
+      "title": "61",
+      "section": "Sous-classes et techniques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/subclass-passives.mjs",
+        "module/rules/source-technique-workflows.mjs",
+        "module/rules/source-reactions.mjs",
+        "module/rules/source-movement.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 62,
+      "slideId": "g32cadbcc6d0_0_45",
+      "title": "Lame torsadée Nichirin",
+      "section": "Sous-classes et techniques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/subclass-passives.mjs",
+        "module/rules/source-technique-workflows.mjs",
+        "module/rules/source-reactions.mjs",
+        "module/rules/source-movement.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 63,
+      "slideId": "g32cadbcc6d0_0_9",
+      "title": "Pointe acérée Nichirin",
+      "section": "Sous-classes et techniques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/subclass-passives.mjs",
+        "module/rules/source-technique-workflows.mjs",
+        "module/rules/source-reactions.mjs",
+        "module/rules/source-movement.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 64,
+      "slideId": "g32cadbcc6d0_0_19",
+      "title": "Masse Nichirin",
+      "section": "Sous-classes et techniques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/subclass-passives.mjs",
+        "module/rules/source-technique-workflows.mjs",
+        "module/rules/source-reactions.mjs",
+        "module/rules/source-movement.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 65,
+      "slideId": "g32cadbcc6d0_0_37",
+      "title": "Lame Fouet Nichirin",
+      "section": "Sous-classes et techniques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/subclass-passives.mjs",
+        "module/rules/source-technique-workflows.mjs",
+        "module/rules/source-reactions.mjs",
+        "module/rules/source-movement.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 66,
+      "slideId": "g32cadbcc6d0_0_41",
+      "title": "Épées-chaînes jumelles Nichirin",
+      "section": "Sous-classes et techniques",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/subclass-passives.mjs",
+        "module/rules/source-technique-workflows.mjs",
+        "module/rules/source-reactions.mjs",
+        "module/rules/source-movement.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 67,
+      "slideId": "g2d03ebea96e_0_0",
+      "title": "Classe Démoniste",
+      "section": "Démoniste : progression, chair, BDP, démonisation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/config/rule-data.mjs",
+        "module/rules/regeneration.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 68,
+      "slideId": "g30064baf099_4_22",
+      "title": "Niveau 1",
+      "section": "Démoniste : progression, chair, BDP, démonisation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/config/rule-data.mjs",
+        "module/rules/regeneration.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 69,
+      "slideId": "g10dc8d3c03a_0_26",
+      "title": "Compétences de la classe Démoniste",
+      "section": "Démoniste : progression, chair, BDP, démonisation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/config/rule-data.mjs",
+        "module/rules/regeneration.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 70,
+      "slideId": "g30064baf099_4_0",
+      "title": "Démoniste",
+      "section": "Démoniste : progression, chair, BDP, démonisation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/config/rule-data.mjs",
+        "module/rules/regeneration.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 71,
+      "slideId": "gd1fa95e073_0_10",
+      "title": "La transformation en démon comporte un certain risque : l'utilisation de points de sang transforme progressivement le personnage en un démon à part entière. Le niveau de démonisation, exprimé en points, augmente à chaque point de sang utilisé.",
+      "section": "Démoniste : progression, chair, BDP, démonisation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/config/rule-data.mjs",
+        "module/rules/regeneration.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 72,
+      "slideId": "g10dc8d3c03a_2_116",
+      "title": "Points de Démonisation",
+      "section": "Démoniste : progression, chair, BDP, démonisation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/config/rule-data.mjs",
+        "module/rules/regeneration.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 73,
+      "slideId": "g363a7d51904_0_14",
+      "title": "Sous-classes Démonistes",
+      "section": "Démoniste : progression, chair, BDP, démonisation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/config/rule-data.mjs",
+        "module/rules/regeneration.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 74,
+      "slideId": "g32cadbcc6d0_0_3",
+      "title": "Wakizashi Nichirin",
+      "section": "Démoniste : progression, chair, BDP, démonisation",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/config/rule-data.mjs",
+        "module/rules/regeneration.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 75,
+      "slideId": "g300bbe134d3_0_1",
+      "title": "Monter de Niveau",
+      "section": "Étude, compétences et formations",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/mission-progression.mjs",
+        "packs/progression-features.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 76,
+      "slideId": "g27a2bbd73a3_0_2",
+      "title": "Augmenter les compétences",
+      "section": "Étude, compétences et formations",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/mission-progression.mjs",
+        "packs/progression-features.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 77,
+      "slideId": "g26aa6952627_0_0",
+      "title": "Les joueurs obtiennent de nouvelles compétences lorsqu'ils montent de niveau, mais ce n'est pas le seul moyen d'acquérir de nouvelles compétences.",
+      "section": "Étude, compétences et formations",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/mission-progression.mjs",
+        "packs/progression-features.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 78,
+      "slideId": "g30064baf099_4_83",
+      "title": "Liste des compétences de progression de niveau",
+      "section": "Étude, compétences et formations",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/mission-progression.mjs",
+        "packs/progression-features.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 79,
+      "slideId": "g30064baf099_4_74",
+      "title": "Compétences de Démonistes (Tous niveaux confondus)",
+      "section": "Étude, compétences et formations",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/mission-progression.mjs",
+        "packs/progression-features.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 80,
+      "slideId": "g10dc8d3c03a_2_93",
+      "title": "Formation au combat à mains nues :",
+      "section": "Étude, compétences et formations",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/mission-progression.mjs",
+        "packs/progression-features.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 81,
+      "slideId": "g28afe2aa403_0_9",
+      "title": "Liste des compétences de progression de niveau",
+      "section": "Étude, compétences et formations",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/mission-progression.mjs",
+        "packs/progression-features.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 82,
+      "slideId": "g28afe2aa403_0_16",
+      "title": "Liste des compétences de progression de niveau",
+      "section": "Étude, compétences et formations",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/mission-progression.mjs",
+        "packs/progression-features.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 83,
+      "slideId": "g28afe2aa403_0_23",
+      "title": "Liste des compétences de progression de niveau",
+      "section": "Étude, compétences et formations",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/mission-progression.mjs",
+        "packs/progression-features.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 84,
+      "slideId": "g28afe2aa403_0_30",
+      "title": "Liste des compétences de progression de niveau",
+      "section": "Étude, compétences et formations",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/sheets/actor-slayer-sheet.mjs",
+        "module/rules/mission-progression.mjs",
+        "packs/progression-features.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 85,
+      "slideId": "g2be31bcf8ac_0_35",
+      "title": "Souffle de Concentration Intégral : Constant",
+      "section": "Forme Marquée, Monde Transparent et Lame Rouge",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/rules/combat-state.mjs",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 86,
+      "slideId": "g2be31bcf8ac_0_46",
+      "title": "Forme Marquée",
+      "section": "Forme Marquée, Monde Transparent et Lame Rouge",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/rules/combat-state.mjs",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 87,
+      "slideId": "g2be31bcf8ac_0_51",
+      "title": "Monde Transparent",
+      "section": "Forme Marquée, Monde Transparent et Lame Rouge",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/breath-effects.mjs",
+        "module/rules/combat-state.mjs",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 88,
+      "slideId": "g2be31bcf8ac_0_56",
+      "title": "88",
+      "section": "Armes, munitions, modifications et zones",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/weapon-loadout.mjs",
+        "packs/items-weapons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 89,
+      "slideId": "g2df7752572f_0_0",
+      "title": "Outils & Objets",
+      "section": "Armes, munitions, modifications et zones",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/weapon-loadout.mjs",
+        "packs/items-weapons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 90,
+      "slideId": "g363a3b84ee3_0_0",
+      "title": "90",
+      "section": "Armes, munitions, modifications et zones",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/weapon-loadout.mjs",
+        "packs/items-weapons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 91,
+      "slideId": "g22ba16ae445_0_68",
+      "title": "91",
+      "section": "Armes, munitions, modifications et zones",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/weapon-loadout.mjs",
+        "packs/items-weapons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 92,
+      "slideId": "g2e04c286293_0_0",
+      "title": "92",
+      "section": "Armes, munitions, modifications et zones",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/weapon-loadout.mjs",
+        "packs/items-weapons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 93,
+      "slideId": "g230ced29ca9_0_26",
+      "title": "93",
+      "section": "Armes, munitions, modifications et zones",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/weapon-loadout.mjs",
+        "packs/items-weapons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 94,
+      "slideId": "g26aa6952627_0_21",
+      "title": "94",
+      "section": "Armes, munitions, modifications et zones",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/weapon-loadout.mjs",
+        "packs/items-weapons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 95,
+      "slideId": "g239322a2ab3_0_9",
+      "title": "95",
+      "section": "Armes, munitions, modifications et zones",
+      "status": "automated-with-source-gaps",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/weapon-loadout.mjs",
+        "packs/items-weapons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 96,
+      "slideId": "g1135a692ddc_0_62",
+      "title": "Poison et Culture",
+      "section": "Médecine, outils et équipements",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/poison-utils.mjs",
+        "packs/items-medical-utility.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 97,
+      "slideId": "g1135a692ddc_0_4",
+      "title": "Fabrication",
+      "section": "Médecine, outils et équipements",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/poison-utils.mjs",
+        "packs/items-medical-utility.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 98,
+      "slideId": "g10dc8d3c03a_2_66",
+      "title": "Attention médicale",
+      "section": "Médecine, outils et équipements",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/poison-utils.mjs",
+        "packs/items-medical-utility.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 99,
+      "slideId": "g1135a692ddc_0_57",
+      "title": "Équipement médical",
+      "section": "Médecine, outils et équipements",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/poison-utils.mjs",
+        "packs/items-medical-utility.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 100,
+      "slideId": "g22ba16ae445_0_7",
+      "title": "Équipement médical",
+      "section": "Médecine, outils et équipements",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/poison-utils.mjs",
+        "packs/items-medical-utility.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 101,
+      "slideId": "g21864289447_3_7",
+      "title": "101",
+      "section": "Médecine, outils et équipements",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/poison-utils.mjs",
+        "packs/items-medical-utility.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 102,
+      "slideId": "g22ba16ae445_0_2",
+      "title": "Transport",
+      "section": "Transport, vêtements, repas et mort",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/character-capabilities.mjs",
+        "packs/items-medical-utility.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 103,
+      "slideId": "g1135a692ddc_0_47",
+      "title": "Vêtements",
+      "section": "Transport, vêtements, repas et mort",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/character-capabilities.mjs",
+        "packs/items-medical-utility.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 104,
+      "slideId": "g1135a692ddc_0_67",
+      "title": "Nourriture",
+      "section": "Transport, vêtements, repas et mort",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/character-capabilities.mjs",
+        "packs/items-medical-utility.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 105,
+      "slideId": "g230ced29ca9_0_0",
+      "title": "105",
+      "section": "Transport, vêtements, repas et mort",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/character-capabilities.mjs",
+        "packs/items-medical-utility.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 106,
+      "slideId": "g278a486bfff_0_0",
+      "title": "Il est indéniable que la mort est injuste.",
+      "section": "Transport, vêtements, repas et mort",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/rules/action-engine.mjs",
+        "module/rules/character-capabilities.mjs",
+        "packs/items-medical-utility.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 107,
+      "slideId": "g1e60874786c_0_32",
+      "title": "Démons",
+      "section": "Démons jouables : rangs et capacités",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/config/rule-data.mjs",
+        "module/rules/action-engine.mjs",
+        "module/rules/regeneration.mjs",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 108,
+      "slideId": "g27a34fd64ea_0_1",
+      "title": "À quoi ressemble ton corps de démon ? (PV)",
+      "section": "Démons jouables : rangs et capacités",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/config/rule-data.mjs",
+        "module/rules/action-engine.mjs",
+        "module/rules/regeneration.mjs",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 109,
+      "slideId": "g1135a692ddc_0_22",
+      "title": "Rangs démoniaques",
+      "section": "Démons jouables : rangs et capacités",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/config/rule-data.mjs",
+        "module/rules/action-engine.mjs",
+        "module/rules/regeneration.mjs",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 110,
+      "slideId": "g1e60874786c_0_37",
+      "title": "Pour définir les caractéristiques de base d'un démon, les joueurs doivent commencer par la configuration standard de création de personnage, avec les valeurs suivantes : (0, 1, 2, 3, 3, 5).",
+      "section": "Démons jouables : rangs et capacités",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/config/rule-data.mjs",
+        "module/rules/action-engine.mjs",
+        "module/rules/regeneration.mjs",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 111,
+      "slideId": "g276966e04cb_0_0",
+      "title": "Art de  Sang Démoniaque",
+      "section": "Démons jouables : rangs et capacités",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/config/rule-data.mjs",
+        "module/rules/action-engine.mjs",
+        "module/rules/regeneration.mjs",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 112,
+      "slideId": "g2be31bcf8ac_0_0",
+      "title": "Stats de démons ennemis",
+      "section": "Démons jouables : rangs et capacités",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/config/rule-data.mjs",
+        "module/rules/action-engine.mjs",
+        "module/rules/regeneration.mjs",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 113,
+      "slideId": "g3717f2f2049_1_4",
+      "title": "Puissance",
+      "section": "Démons jouables : rangs et capacités",
+      "status": "automated-and-guided",
+      "modules": [
+        "module/config/rule-data.mjs",
+        "module/rules/action-engine.mjs",
+        "module/rules/regeneration.mjs",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 114,
+      "slideId": "g25d2f383003_1_48",
+      "title": "Breathe and Live",
+      "section": "Contexte 1934, Hashira et variants",
+      "status": "reference-and-guided",
+      "modules": [
+        "module/breathe-and-live.mjs",
+        "packs/supplement-1934-actors.db",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 115,
+      "slideId": "g1135a692ddc_0_27",
+      "title": "L’état du Corps de Chasseurs de Démons",
+      "section": "Contexte 1934, Hashira et variants",
+      "status": "reference-and-guided",
+      "modules": [
+        "module/breathe-and-live.mjs",
+        "packs/supplement-1934-actors.db",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 116,
+      "slideId": "g1135a692ddc_0_42",
+      "title": "Pourfendeurs et Kakushi",
+      "section": "Contexte 1934, Hashira et variants",
+      "status": "reference-and-guided",
+      "modules": [
+        "module/breathe-and-live.mjs",
+        "packs/supplement-1934-actors.db",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 117,
+      "slideId": "g1135a692ddc_0_32",
+      "title": "Le Maître",
+      "section": "Contexte 1934, Hashira et variants",
+      "status": "reference-and-guided",
+      "modules": [
+        "module/breathe-and-live.mjs",
+        "packs/supplement-1934-actors.db",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 118,
+      "slideId": "g1135a692ddc_0_37",
+      "title": "Les Hashira actuels",
+      "section": "Contexte 1934, Hashira et variants",
+      "status": "reference-and-guided",
+      "modules": [
+        "module/breathe-and-live.mjs",
+        "packs/supplement-1934-actors.db",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 119,
+      "slideId": "g3169c948a84_3_0",
+      "title": "Hashira de l’Océan",
+      "section": "Contexte 1934, Hashira et variants",
+      "status": "reference-and-guided",
+      "modules": [
+        "module/breathe-and-live.mjs",
+        "packs/supplement-1934-actors.db",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 120,
+      "slideId": "g258026cd10f_0_2",
+      "title": "Nouvelle Ère Démoniaque",
+      "section": "Contexte 1934, Hashira et variants",
+      "status": "reference-and-guided",
+      "modules": [
+        "module/breathe-and-live.mjs",
+        "packs/supplement-1934-actors.db",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 121,
+      "slideId": "g25d2620300e_0_27",
+      "title": "Variants démoniaques",
+      "section": "Contexte 1934, Hashira et variants",
+      "status": "reference-and-guided",
+      "modules": [
+        "module/breathe-and-live.mjs",
+        "packs/supplement-1934-actors.db",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 122,
+      "slideId": "g3636b752d34_0_18",
+      "title": "Variantes | Arts Sanguinaires Démoniaques",
+      "section": "Contexte 1934, Hashira et variants",
+      "status": "reference-and-guided",
+      "modules": [
+        "module/breathe-and-live.mjs",
+        "packs/supplement-1934-actors.db",
+        "packs/abilities-demons.db"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 123,
+      "slideId": "g3717f2f2049_3_0",
+      "title": "Art Sanguinaire Démoniaque | Lune d’Or",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 124,
+      "slideId": "g37190c41858_9_0",
+      "title": "Art Sanguinaire Démoniaque | Lune Brûlante",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 125,
+      "slideId": "g37190c41858_9_11",
+      "title": "Art Sanguinaire Démoniaque | Lune Enragée",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 126,
+      "slideId": "g37190c41858_9_22",
+      "title": "Art Sanguinaire Démoniaque | Lune Mécanique",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 127,
+      "slideId": "g37b74a3aad6_2_19",
+      "title": "Art Sanguinaire Démoniaque | Lune Ancienne",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 128,
+      "slideId": "g37b74a3aad6_2_30",
+      "title": "Art Sanguinaire Démoniaque | Lune Miroir",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 129,
+      "slideId": "g37b74a3aad6_2_41",
+      "title": "Art Sanguinaire Démoniaque | Lune Ombragée",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 130,
+      "slideId": "g37b74a3aad6_2_52",
+      "title": "Art Sanguinaire Démoniaque | Lune Endeuillée",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 131,
+      "slideId": "g37b74a3aad6_2_63",
+      "title": "Art Sanguinaire Démoniaque | Lune Jardin",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 132,
+      "slideId": "g37b74a3aad6_2_79",
+      "title": "Art Sanguinaire Démoniaque | Lune Artisane",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 133,
+      "slideId": "g37b74a3aad6_2_103",
+      "title": "Art Sanguinaire Démoniaque | Lune Submergée",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 134,
+      "slideId": "g37b74a3aad6_2_90",
+      "title": "Art Sanguinaire Démoniaque | Lune Patchwork",
+      "section": "Fiches des Lunes et lignées 1934",
+      "status": "source-incomplete",
+      "modules": [
+        "packs/abilities-demons.db",
+        "packs/supplement-1934-techniques.db",
+        "module/chat/use-technique.mjs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 135,
+      "slideId": "g1135a692ddc_0_72",
+      "title": "Annexes PNJ",
+      "section": "Annexes et fiches vierges",
+      "status": "reference",
+      "modules": [
+        "templates/actor/actor-slayer.hbs",
+        "templates/actor/actor-demonist.hbs",
+        "templates/actor/actor-demon.hbs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 136,
+      "slideId": "g3837a166f1e_1_4",
+      "title": "Fiche de personnage vierge (image)",
+      "section": "Annexes et fiches vierges",
+      "status": "reference",
+      "modules": [
+        "templates/actor/actor-slayer.hbs",
+        "templates/actor/actor-demonist.hbs",
+        "templates/actor/actor-demon.hbs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    },
+    {
+      "page": 137,
+      "slideId": "g3837a166f1e_1_10",
+      "title": "Fiche de personnage vierge (image)",
+      "section": "Annexes et fiches vierges",
+      "status": "reference",
+      "modules": [
+        "templates/actor/actor-slayer.hbs",
+        "templates/actor/actor-demonist.hbs",
+        "templates/actor/actor-demon.hbs"
+      ],
+      "notes": "Consulter le rapport pour les arbitrages et limites ; les contextes narratifs restent guidés par le MJ."
+    }
+  ]
+}

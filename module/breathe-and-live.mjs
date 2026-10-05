@@ -39,7 +39,7 @@ import { registerMigrationSetting, runSystemMigrations } from "./migrations.mjs"
 import { prepareSubclassPassives } from "./rules/subclass-passives.mjs";
 import { startRegeneration } from "./rules/regeneration.mjs";
 import { registerMistHooks, mistContainsToken, toggleMistCover } from "./rules/mist-trail.mjs";
-import { traitDerivedBonus, perceptionContext } from "./rules/character-capabilities.mjs";
+import { traitDerivedBonus, perceptionContext, drivingBonus } from "./rules/character-capabilities.mjs";
 import { registerEffectHooks, applyTemporaryModifiers } from "./rules/effects-engine.mjs";
 import { normalizeTechniqueItemData, validateTechniqueOwnership, actorHasBreath } from "./rules/technique-utils.mjs";
 import {
@@ -766,6 +766,7 @@ class BLActor extends Actor {
         effectiveBase,
         sys.progression.bonuses.endurance
       );
+      if (["npc", "npcHuman"].includes(this.type) && Number(sys.resources.e.overrideMax) > 0) sys.resources.e.max = Number(sys.resources.e.overrideMax);
       sys.resources.e.value = clamp(toNumber(sys.resources.e.value, sys.resources.e.max), 0, sys.resources.e.max + sys.resources.e.temporary);
       sys.combat.actionEconomy.effectiveMovementMeters = applyLimbMovementEffects(
         sys,
@@ -879,7 +880,7 @@ Hooks.once("ready", async () => {
 export async function rollBaseCheck(actor, statKey, label = "") {
   const key = normalizeBaseStatKey(statKey);
   const b = getEffectiveBaseStats(actor);
-  const mod = toNumber(b[key], 0) - 1;
+  const mod = toNumber(b[key], 0) - 1 + drivingBonus(actor, key);
   const r = await new Roll(`1d20 + ${mod}`).evaluate();
   return r.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),

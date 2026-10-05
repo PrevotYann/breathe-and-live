@@ -613,8 +613,10 @@ export function getTechniqueCooldown(actor, item) {
   return Number(cooldowns?.[item?.id] || 0) || 0;
 }
 
-export async function noteActorDamageTaken(actor, amount) {
+export async function noteActorDamageTaken(actor, amount, context = {}) {
   if (!actor || amount <= 0) return;
+  await actor.setFlag(SYSTEM_ID, "lastIncomingAttack", { damage: Math.max(0, amount),
+    combatId: game.combat?.id || "", round: game.combat?.round, turn: game.combat?.turn, ...context });
   const flag = FU.duplicate(actor.getFlag(SYSTEM_ID, "damageTakenByRound") || {});
   const round = currentCombatRound();
   if ((flag.round ?? round) !== round) {

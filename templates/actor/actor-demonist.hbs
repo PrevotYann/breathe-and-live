@@ -258,10 +258,12 @@
               {{/if}}
               {{#if (eq it.type "transport")}}
                 <a class="item-control bl-drive-relaxed" title="Conduite detendue"><i class="fas fa-road"></i></a>
+                <a class="item-control bl-drive-stop" title="Terminer la conduite"><i class="fas fa-circle-stop"></i></a>
                 <a class="item-control bl-drive-danger" title="Conduite dangereuse"><i class="fas fa-triangle-exclamation"></i></a>
               {{/if}}
               {{#if (eq it.type "vehicle")}}
                 <a class="item-control bl-drive-relaxed" title="Conduite detendue"><i class="fas fa-road"></i></a>
+                <a class="item-control bl-drive-stop" title="Terminer la conduite"><i class="fas fa-circle-stop"></i></a>
                 <a class="item-control bl-drive-danger" title="Conduite dangereuse"><i class="fas fa-triangle-exclamation"></i></a>
               {{/if}}
               {{#if it.system.crafting.enabled}}

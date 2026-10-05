@@ -4,7 +4,7 @@ export function sourceTrait(actor, key) {
   return Array.from(actor?.items ?? []).find(item => item.system?.traitKey === key || aliases[key]?.test(normalize(item.name)));
 }
 export function traitCombatBonuses(actor) {
-  if (!(game.combat?.round > 0)) return {};
+  if (!(game.combat?.round > 0) || !Array.from(game.combat.combatants ?? []).some(c=>c.actor?.uuid === actor.uuid)) return {};
   return { force: sourceTrait(actor, "strength") ? 3 : 0, finesse: sourceTrait(actor, "agility") ? 3 : 0, intellect: sourceTrait(actor, "intellect") ? 3 : 0 };
 }
 export function traitDerivedBonus(actor, key) {
@@ -14,6 +14,16 @@ export function traitDerivedBonus(actor, key) {
 export function reinforcedDamageReduction(actor, limb) {
   return limb && sourceTrait(actor, "reinforced")?.system?.reinforcedLimb === limb ? 8 : 0;
 }
+export function drivingBonus(actor, key) {
+  const vehicle = actor.items?.find(i => i.id === actor.getFlag("breathe-and-live", "drivingVehicleId"));
+  return (Number(vehicle?.system?.vehicleBonus?.all) || 0) + (Number(vehicle?.system?.vehicleBonus?.[key]) || 0);
+}
+export function envelopingAttackPenalty(actor) {
+  const token = actor.getActiveTokens?.()[0];
+  if (!token || !(game.combat?.round > 0)) return 0;
+  return canvas.tokens.placeables.some(t => t.actor?.uuid !== actor.uuid && t.actor?.getFlag("breathe-and-live", "envelopingAttack") &&
+    Math.max(Math.abs(token.center.x-t.center.x),Math.abs(token.center.y-t.center.y)) / canvas.grid.size * (canvas.scene?.grid?.distance || 1.5) < 9) ? 1 : 0;
+}
 const senses = [ ["vue","Vue"], ["ouie","Ouïe"], ["odorat","Odorat"], ["gout","Goût"], ["toucher","Toucher"] ];
 export async function perceptionContext(actor, key, label) {
   let socialBonus = 0;
@@ -21,7 +31,7 @@ export async function perceptionContext(actor, key, label) {
     const external = await Dialog.confirm({ title: "Maîtrise des compétences sociales", content: "<p>Ce test social concerne-t-il une personne extérieure au groupe ?</p>" });
     if (external) socialBonus = Number(actor.system.progression.bonuses.socialExternal);
   }
-  if (key !== "perception") return { label, bonus: socialBonus };
+  if (key !== "perception") return { label, bonus: socialBonus + drivingBonus(actor, key) };
   let sense = senses.find(([value]) => normalize(label).includes(value))?.[0];
   if (!sense) sense = await new Promise(resolve => new Dialog({ title: "Sens utilisé pour la Perception",
     content: `<select name="sense">${senses.map(([key, text]) => `<option value="${key}">${text}</option>`).join("")}</select>`,
@@ -29,7 +39,7 @@ export async function perceptionContext(actor, key, label) {
   }).render(true));
   if (!sense) return null;
   const rank = Math.max(0, ...Array.from(actor.items ?? []).filter(i => i.type === "sense" && normalize(i.system?.senseType) === sense).map(i => Number(i.system.rank) || 0));
-  return { label: `${label || "Perception"} (${senses.find(([key]) => key === sense)?.[1]})`, bonus: socialBonus + (rank ? Math.min(3, rank) + 2 : 0) };
+  return { label: `${label || "Perception"} (${senses.find(([key]) => key === sense)?.[1]})`, bonus: socialBonus + drivingBonus(actor, key) + (rank ? Math.min(3, rank) + 2 : 0) };
 }
 
 export async function useExtrasensoryAbility(actor, item) {

@@ -20,6 +20,7 @@
 
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="stats">
+      {{#if hasBayonet}}<button class="bl-bayonet" type="button">Attaquer à la baïonnette (1d8)</button>{{/if}}
       {{#if system.ruleSource.missingFields.length}}
         <p>Valeurs absentes du livre : {{join system.ruleSource.missingFields ", "}}</p>
         <label><input type="checkbox" name="system.ruleSource.approved" data-dtype="Boolean" {{checked system.ruleSource.approved}} /> Valeurs validées par le MJ</label>

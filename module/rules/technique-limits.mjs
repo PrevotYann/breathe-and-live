@@ -1,6 +1,6 @@
 import { SYSTEM_ID } from "../config/rule-data.mjs";
 
-export const normalizeRuleName = value => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+export const normalizeRuleName = value => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[’‘]/g, "'").replace(/[–—]/g, "-").toLowerCase().trim();
 const daily = new Set(["tsunami", "briseur d'os", "charge frenetique", "dents invisibles", "attaque des huit crocs", "charge souterraine", "danse perforante", "coup de foudre", "coup de hache en arc de cercle", "execution coordonnee", "laceration enchainee", "elegance lunaire", "typhon tourbillonnant", "fureur sanguinaire"]);
 const encounter = new Set(["coupe-pierre", "flammes etourdissantes", "double-tap"]);
 export function sourceUseLimit(item) {

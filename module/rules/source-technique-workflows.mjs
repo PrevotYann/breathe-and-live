@@ -104,6 +104,19 @@ export async function runSourceTechnique(actor, item, context = {}) {
   const name = normalizeRuleName(item.name);
   const movement = await runSourceMovement(actor, item);
   if (movement !== undefined) return movement;
+  if (name === "attaque enveloppante") {
+    if (!(game.combat?.round > 0)) return ui.notifications.warn("Démarrez un combat pour suivre cette aura.");
+    // TODO-RULEBOOK-AMBIGUITY: p.65 specifies 9 m but no duration. Require an explicit GM duration.
+    const rounds = await new Promise(resolve => new Dialog({ title: "Attaque enveloppante — durée MJ",
+      content: '<p>La source ne précise pas la durée du désavantage à moins de 9 m. Indiquez le nombre de rounds, incluant le round actuel.</p><input name="rounds" type="number" min="1" />',
+      buttons: { apply: { label: "Attaquer", callback: html => { const n = Number(html.find('[name="rounds"]').val()); resolve(Number.isInteger(n) && n > 0 ? n : null); } }, cancel: { label: "Annuler", callback: () => resolve(null) } }, close: () => resolve(null),
+    }).render(true));
+    if (!rounds || !(await spendCombatAction(actor, { reaction: true, costs: [{ path: "system.resources.rp.value", cost: Number(item.system.costRp) || 0, label: "RP" }] }))) return null;
+    const result = await rollBasicAttack(actor, { free: true });
+    if (!result) return null;
+    await applyEffectsList({ source: actor, target: actor, effects: [{ path: "flags.breathe-and-live.envelopingAttack", mode: "set", value: 1, duration: `custom:${rounds}`, label: "Attaque enveloppante : désavantage aux attaques à moins de 9 m (durée MJ)" }] });
+    return result;
+  }
   if (name === "reflux brutal") {
     const incoming = actor.getFlag(SYSTEM_ID, "lastIncomingAttack"), target = Array.from(game.user.targets ?? []).find(t => t.actor);
     const token = actor.getActiveTokens?.()[0], range = Number(actor.items.find(i => i.type === "weapon")?.system?.range || 1.5);

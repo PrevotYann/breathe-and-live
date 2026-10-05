@@ -38,6 +38,7 @@ export function resolveCanvasToken(tokenLike, actor = null) {
 export function getDeflectStance(actor) {
   const stance = actor?.getFlag(SYSTEM_ID, "deflectStance");
   if (!stance) return null;
+  if (stance.combatId && stance.combatId !== game.combat?.id) return null;
   if (game.combat && stance.round && Number(stance.round) !== Number(game.combat.round)) {
     return null;
   }
@@ -46,6 +47,7 @@ export function getDeflectStance(actor) {
 
 export async function consumeDeflectStance(actor) {
   if (!actor) return;
+  if (getDeflectStance(actor)?.reflectAllRound) return;
   await actor.unsetFlag(SYSTEM_ID, "deflectStance").catch(() => {});
 }
 

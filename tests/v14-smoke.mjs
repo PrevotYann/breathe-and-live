@@ -29,8 +29,10 @@ try {
     await page.locator("button[name=join]").click();
   }
   await ready();
+  await page.evaluate(async () => { for (const combat of [...game.combats]) await combat.delete(); });
   result.version = await page.evaluate(() => game.version);
   assert.equal(result.version, manifest.compatibility.verified);
+  assert.equal(await page.evaluate(() => game.system.version),manifest.version);
   await page.evaluate(async () => {
     for (const [kind, types] of Object.entries(game.system.documentTypes)) {
       for (const type of Object.keys(types)) {
@@ -63,6 +65,8 @@ try {
       const cls = getDocumentClass(pack.documentName);
       const imported = await cls.createDocuments(docs.map(doc => collection.fromCompendium(doc)));
       if (imported.length !== docs.length) throw new Error(`Incomplete import: ${pack.collection}`);
+      const yosuke = imported.find(d=>d.name === "Yosuke Wōkuo — Hashira de l’Océan");
+      if (yosuke && (yosuke.system.resources.hp.max !== 100 || yosuke.system.resources.e.max !== 120 || yosuke.system.resources.rp.max !== 25)) throw new Error("Printed NPC resources were replaced by generic formulas");
       packs.push({ name: pack.metadata.name, count: docs.length });
     }
     return packs;
@@ -143,6 +147,8 @@ try {
   assert.equal(await page.evaluate(id => game.actors.get(id).system.resources.e.value, actors[0]), 18);
   await page.reload(); await ready(); await page.waitForFunction(() => canvas.ready);
   await page.locator(`[data-message-id="${techniqueMessage}"] .bl-mist`).first().evaluate(button => button.click());
+  await page.locator('[name="mistRadius"]').fill("3");
+  await page.locator('.dialog button[data-button="apply"]').click();
   await page.waitForFunction(() => canvas.scene.regions.some(region => region.flags["breathe-and-live"]?.kind === "mist"));
   assert.deepEqual(await page.evaluate(() => {
     const region = canvas.scene.regions.find(region => region.flags["breathe-and-live"]?.kind === "mist");
@@ -233,6 +239,34 @@ try {
     return { burnTicks: 2, expired: true, rpPreserved: true, regenerationTested: !!regen, mistTrail: true };
   }, actors);
   console.log("PASS: actual Foundry turn changes expire wounds and preserve RP");
+  await page.evaluate(async ids => {
+    const defender = game.actors.get(ids[0]), attacker = game.actors.get(ids[1]);
+    const combat = await Combat.create({ scene: canvas.scene.id, active: true });
+    await combat.createEmbeddedDocuments("Combatant", ids.map((id,index) => ({ actorId: id, tokenId: game.actors.get(id).getActiveTokens()[0].id, initiative: 20-index*10 })));
+    await combat.startCombat();
+    await new Promise(resolve=>setTimeout(resolve,500));
+    const origin = defender.getActiveTokens()[0].document;
+    await attacker.getActiveTokens()[0].document.update({ x: origin.x + 100, y: origin.y }, { animate: false });
+    await defender.createEmbeddedDocuments("Item", [
+      { name: "QA Flame", type: "breath", system: { key: "flame", enabled: false } },
+      { name: "QA Flame form 4", type: "technique", system: { breathKey: "flame", form: 4, costE: 4, damage: "1d12 + Finesse", range: 1.5 } },
+    ]);
+    globalThis.qaFlame = game.system.api.useTechnique(defender, defender.items.getName("QA Flame form 4"), { controlledToken: defender.getActiveTokens()[0] });
+  },actors);
+  await page.locator('.dialog button[data-button="deflect"]').click();
+  await page.evaluate(async () => { await globalThis.qaFlame; });
+  const reflection = await page.evaluate(async ids => {
+    const defender = game.actors.get(ids[0]), attacker = game.actors.get(ids[1]), combat = game.combat;
+    const hit = await game.system.api.rollBasicAttack(attacker, { targetToken: defender.getActiveTokens()[0], attackMode: "force", targetLimb: "", free: true, forceAutoHit: true });
+    return { combatId: combat.id, messageId: hit.chatMessage.id, targetId: defender.getActiveTokens()[0].id, redirectId: attacker.getActiveTokens()[0].id, hp: defender.system.resources.hp.value, enemyHp: attacker.system.resources.hp.value };
+  },actors);
+  await page.locator(`.chat-message[data-message-id="${reflection.messageId}"] .bl-stance-deflect`).first().evaluate(button=>button.click());
+  await page.locator('.dialog select[name="target"]').selectOption(reflection.redirectId);
+  await page.locator('.dialog button[data-button="apply"]').click();
+  await page.waitForFunction(({first,second,hp,enemyHp}) => game.actors.get(first).system.resources.hp.value === hp && game.actors.get(second).system.resources.hp.value < enemyHp, {first:actors[0],second:actors[1],hp:reflection.hp,enemyHp:reflection.enemyHp});
+  assert.equal(await page.evaluate(id => !!game.actors.get(id).getFlag("breathe-and-live","deflectStance")?.reflectAllRound, actors[0]),true);
+  await page.evaluate(id=>game.combats.get(id).delete(),reflection.combatId);
+  console.log("PASS: Flame reflection applies redirected damage and retains its round posture");
   assert.deepEqual(errors, [], "Browser errors");
   console.log("PASS: medicine, conditions, limb movement, rest, stat rolls and persistence");
   console.log(JSON.stringify(result, null, 2));

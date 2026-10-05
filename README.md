@@ -1,6 +1,6 @@
 # Breathe and Live Foundry VTT System
 
-Version 0.3.0 — Foundry VTT 14.368
+Version 0.5.1 — Foundry VTT 14.368
 
 French Demon Slayer / Breathe and Live system with Slayer, Demonist, Demon and NPC sheets, breathing techniques, combat reactions, progression, equipment, and the 1934 supplement.
 
@@ -19,8 +19,8 @@ Click **Install**. The same URL supports future updates. The repository and rele
 To publish a release, commit and push the changes, then push a tag matching the version in `system.json`:
 
 ```sh
-git tag v0.3.0
-git push origin v0.3.0
+git tag v0.5.1
+git push origin v0.5.1
 ```
 
 The GitHub Actions release workflow runs the tests, builds the system and compendiums, and publishes `manifest.json`, `system.json`, and `breathe-and-live.zip`. For later releases, increment `system.json`'s version and update its versioned `download` URL before tagging. The build generates `dist/manifest.json` from the packaged `system.json`, so no second manifest needs manual maintenance. The ZIP contains the built files at its root; GitHub's automatic source-code ZIP is not an installable build.
@@ -39,3 +39,9 @@ La transcription texte complète des règles de la version physique est incluse 
 
 - `resources/rules/regles-physiques-v1.1.txt`
 - `resources/rules/checklist-couverture-regles.md` (checklist de couverture)
+
+## Audit du livre français — v0.5.1
+
+Voir [le rapport complet](resources/rules/audit-2026-10-05.md) pour la correspondance des 137 diapositives, les corrections, les essais et les arbitrages MJ. Les 140 formes du tableur lié sont présentes ; 34 ont des valeurs absentes de la source et nécessitent une validation MJ avant exécution.
+
+Après une régénération des packs par les anciens scripts : `npm run sync:rules`, puis `npm run verify:rules`. Les objets déjà importés dans un monde conservent leurs valeurs ; comparer ou réimporter les entrées corrigées.

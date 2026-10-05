@@ -1,0 +1,15 @@
+import fs from "node:fs";
+import assert from "node:assert/strict";
+await import("./audit-rulebook.mjs");
+const root = new URL("../../", import.meta.url);
+const read = name => JSON.parse(fs.readFileSync(new URL(name,root),"utf8"));
+const report = read("resources/rules/rulebook-audit-data.json");
+assert.equal(report.forms.length,140,"Every source form must be present");
+assert.equal([...report.forms,...report.embeddedForms].filter(f=>f.differences.length).length,0,"Numeric source drift; run npm run sync:rules");
+const formFiles = fs.readdirSync(new URL("packs/_source/techniques-breaths/",root),{recursive:true}).filter(f=>f.endsWith(".json") && !f.split(/[\\/]/).at(-1).startsWith("_"));
+const forms = new Map(formFiles.map(f=>{const d=read(`packs/_source/techniques-breaths/${f}`);return [d._id,d];}));
+for (const row of report.forms) assert.deepEqual(forms.get(row.id)?.system.ruleSource?.missingFields,row.missingFields,`Missing source warning: ${row.name}`);
+const coverage = read("resources/rules/rulebook-coverage.json");
+assert.deepEqual(coverage.pages.map(p=>p.page),Array.from({length:137},(_,i)=>i+1));
+for (const row of coverage.pages) for (const path of row.modules) assert.ok(fs.existsSync(new URL(path,root)),`Unknown module: ${path}`);
+console.log("Rulebook verification OK: 137 pages mapped, 140 forms compared, incomplete source data explicitly marked.");

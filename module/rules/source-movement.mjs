@@ -8,7 +8,8 @@ import { noteActorDamageTaken } from "./technique-utils.mjs";
 import { applyEffectsList } from "./effects-engine.mjs";
 import { cardFlags, registerCardType } from "../chat/persistent-cards.mjs";
 import { buildReactionTargetRow, canInteractWithToken, consumeDeflectStance } from "../chat/reaction-card.mjs";
-import { attachSourceReactions } from "./source-reactions.mjs";
+import { attachSourceReactions, permitAvoidanceCounter } from "./source-reactions.mjs";
+import { resolveDeflectStance } from "./deflect-reflection.mjs";
 
 const movementRules = {
   "vents froids": { half: true, damage: true }, "ruee sauvage": { distance: 6, attacks: true },
@@ -29,7 +30,10 @@ registerCardType("sourceDamage", async (card, html, on) => {
     if (!token?.actor || !canInteractWithToken(token)) return;
     let text;
     if (mode === "dodge") { if (!(await spendRp(token.actor, 1))) return; text = "Esquive : dégâts annulés."; }
-    else if (mode === "stance") { await consumeDeflectStance(token.actor); text = "Posture consommée : dégâts annulés."; }
+    else if (mode === "stance") {
+      text = await resolveDeflectStance(token.actor, Number(html.find(`.bl-target-row[data-target-token="${token.id}"] .bl-takedmg`).attr("data-damage")) || 0);
+      if (!text) return;
+    }
     else {
       const damage = Math.max(0, Number(button.attr("data-damage")) || 0);
       await applyHpDamage(token.actor, damage); await noteActorDamageTaken(token.actor, damage);
@@ -37,6 +41,7 @@ registerCardType("sourceDamage", async (card, html, on) => {
     }
     const row = html.find(`.bl-target-row[data-target-token="${token.id}"]`);
     row.find("button").prop("disabled", true); row.find(".bl-target-result").text(text);
+    if (mode === "dodge") permitAvoidanceCounter(html, token.id);
   };
   on(".bl-dodge", event => resolve(event, "dodge"));
   on(".bl-stance-deflect", event => resolve(event, "stance"));
@@ -87,7 +92,8 @@ export async function runSourceMovement(actor, item) {
   await token.document.update(move.destination, { animate: false });
   const enemies = move.crossed.filter(t => t.document.disposition !== token.document.disposition);
   if (rule.damage && enemies.length) await publishFixedDamage(actor, enemies, Number(actor.system.stats.effectiveBase?.vitesse ?? actor.system.stats.base.vitesse) || 0, item.name);
-  if (rule.attacks) for (const target of enemies) await rollBasicAttack(actor, { targetToken: target, free: true, targetLimb: "" });
+  // Attacks occur while crossing each enemy, rather than from the final destination.
+  if (rule.attacks) for (const target of enemies) await rollBasicAttack(actor, { targetToken: target, free: true, targetLimb: "", sourceOptions: { pathAttack: true } });
   if (rule.modifiers) for (const target of move.crossed) await target.actor.setFlag(SYSTEM_ID, "nextAttackMovementBonus", { value: target.document.disposition === token.document.disposition ? 2 : -2, source: item.name });
   if (rule.firstProne && enemies[0]) await applyEffectsList({ source: actor, target: enemies[0], effects: [{ path: "flags.breathe-and-live.prone", mode: "set", value: 1, duration: "ownerTurns:1", label: "Charge souterraine : à terre jusqu'au prochain tour" }] });
   return true;

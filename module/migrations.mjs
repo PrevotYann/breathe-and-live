@@ -2,7 +2,7 @@ import { LIMB_DEFINITIONS, SYSTEM_ID } from "./config/rule-data.mjs";
 import { normalizeDerivedStats } from "./rules/actor-derived-formulas.mjs";
 
 const FU = foundry.utils;
-const MIGRATION_VERSION = "0.2.0";
+const MIGRATION_VERSION = "0.5.1";
 
 function ensureActorUpdate(actor) {
   const update = {};

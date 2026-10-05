@@ -43,6 +43,18 @@ async function resolveResourceCosts(actor, costs) {
 export function applyHpDamage(actor, amount) {
   return serializeResources(actor, () => resolveHpDamage(actor, amount));
 }
+export function restoreHp(actor, amount, { full = false, restoreWounds = false, extra = {} } = {}) {
+  return serializeResources(actor, async () => {
+    const hp = actor.system.resources.hp, current = Number(hp.value) || 0;
+    const maximum = Number(restoreWounds ? hp.max : hp.healableMax ?? hp.max) || 0;
+    const nextHp = Math.max(current, Math.min(maximum, current + (full ? maximum : Math.max(0, Number(amount) || 0))));
+    const update = { ...extra, "system.resources.hp.value": nextHp };
+    if (restoreWounds) Object.assign(update, { "system.combat.injuries.severeWounds": 0, "system.combat.injuries.nearDeathWounds": 0, "system.resources.hp.healableMax": maximum });
+    if (nextHp > current && nextHp > 0) update["system.death.state"] = "alive";
+    await actor.update(update);
+    return { healed: nextHp - current, nextHp };
+  });
+}
 
 async function resolveHpDamage(actor, amount) {
   const damage = Math.max(0, Number(amount) || 0);

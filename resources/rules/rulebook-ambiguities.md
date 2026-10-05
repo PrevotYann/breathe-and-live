@@ -1,20 +1,36 @@
-# Rulebook Ambiguities And External Data
+﻿# Arbitrages de règles — audit v0.5.1
 
-Source de reference : `resources/rules/Breathe-and-Live.pdf`.
+Référence actuelle : [livre français](https://docs.google.com/presentation/d/1v8MuzzgndlBA5djtzvsO1-m5RMda2pf02qQ9LYE4N9E/edit), 137 diapositives au 5 octobre 2026. Ce registre remplace les constats incomplets de l'ancien export PDF. Les valeurs du tableur des formes sont comparées dans `rulebook-audit-data.json`.
 
-Ce registre liste les zones ou l'automatisation ne doit pas inventer de valeurs. Les entrees ci-dessous doivent etre reliees a un `TODO-RULEBOOK-AMBIGUITY:` dans le code quand une decision technique temporaire est prise.
-
-| Domaine | Donnee manquante ou ambigue | Implementation reversible actuelle |
+| Domaine | Ambiguïté ou absence | Traitement réversible |
 | --- | --- | --- |
-| Reaction d'amelioration demoniste | La duree exacte de l'amelioration Force/Vitesse n'est pas explicite dans les extraits disponibles. | Effet temporaire jusqu'a fin de round dans `module/rules/action-engine.mjs`. |
-| Souffles et formes detaillees | Le PDF reference des donnees de formes qui peuvent etre externalisees ou difficiles a extraire exhaustivement. | Framework et champs structures presents ; les formes sans valeur detaillee doivent garder une note `TODO-RULEBOOK-AMBIGUITY` ou une section source explicite. |
-| Appendices demoniaques | Le livre distingue ailes, queues et tentacules, mais les acteurs n'indiquent pas toujours combien d'appendices existent. | Quatre emplacements generiques `tentacle1..4`, une entree `tail`, une entree `wings`, masques sur non-demons. |
-| Ciblage vital tete/torse | Les consequences exactes d'une mutilation tete/torse peuvent dependre du MJ. | Seuils suivis comme membres a 20%, sans effet instant-kill automatique. |
-| Creation entraineur/partenaire/Kasugai | Les noms precis des trois axes peuvent varier selon la mise en page/source. | Trois axes numeriques generiques controles a 0-2 et total 3, avec champs texte pour nommer le contexte. |
-| Equipement initial automatique | Certains choix de depart dependent du souffle, de l'arme de souffle et du choix de kit medical. | Import automatique depuis compendiums avec un kit par defaut ; choix fin a remplacer par un assistant. |
-| Contenu 1934 et lignages | Plusieurs variantes/lignages de demons demandent des donnees numeriques detaillees. | Toggle et packs partiels ; contenu marque optionnel jusqu'a extraction complete. |
-| Fabrication | Le livre donne le DD par nombre de composants, mais ne fixe pas une competence unique pour tous les tests. | Dialogue de fabrication avec competence derivee choisie par le MJ, `sciences` par defaut, et DD structure dans la recette. |
-| Expulsion demoniste | L'extraction indique a la fois suppression de tous les points de demonisation et suppression de la moitie du total. | Implementation reversible : cout PV = moitie des PV de base ; demonisation actuelle divisee par deux. |
-| Blocage/esquive demoniaque | Les actions sont listees, mais l'effet numerique exact de blocage/esquive n'est pas detaille dans les donnees extraites. | Depense 1 RP et pose une posture defensive consommable sur la prochaine carte d'attaque. |
-| Armes alternatives TBD | Naginata, Cimeterre, Patta et Epee crochet sont notees TBD dans le backlog issu du PDF. | Entrees compendium importables marquees `TODO-RULEBOOK-AMBIGUITY`, avec degats/portee a renseigner avant usage automatique. |
-| Explosifs/profils de zone | Les valeurs precises de rayon/DD/degats pour certains explosifs demandent confirmation dans la source complete. | Profils jouables conservateurs dans `items-weapons`, avec note d'usage indiquant l'arbitrage MJ et le suivi manuel des conditions. |
+| 34 formes | Soleil 13, Océan 7, Ouest 13 et coût `x` du Vent | Valeurs conservées éditables, exécution bloquée avant validation MJ. |
+| Armes TBD | Naginata, Cimeterre, Patta, Épée crochet p.90 | Profil incomplet signalé ; validation nécessaire. |
+| Grenades/Molotov/bombe | Portée de lancer non chiffrée ; difficulté/rayon de bombe absents | Champs éditables et validation ; dégâts/rayons connus conservés. |
+| Double épée-chaîne | 3 m p.23, 1,5 m p.66 | 3 m de la table générale, note visible. |
+| Pierre : changement de tête | Gratuit et « bonus » mentionnés p.44 | Choix de tête guidé ; coût à arbitrer selon économie de table. |
+| Repousse p.72/111 | Vitesse lente ou selon rang, sans nombre de tours | Durée obligatoire demandée au MJ, puis compteur réel. |
+| Amélioration démoniste | Pas de durée précise | Effet jusqu'à fin de round, note TODO dans `action-engine`. |
+| Chair démoniaque | « Récemment » non quantifié | Dernier/plus haut rang consommé suivi, durée narrative contrôlée par MJ. |
+| Attaque répétée/bonus de chair | Totaux p.68 contre prose incrémentale p.69 | Table de totaux conservée, notes de progression. |
+| Expulsion | Suppression totale et moitié mentionnées | Moitié des PV de base en coût, moitié de démonisation retirée. |
+| Tête/torse | Aucun seuil universel de mutilation vitale p.30 | Pas de faux seuil de 20 % ; résolution MJ, PV/décapitation suivis séparément. |
+| Blocage démoniaque | Pas de formule chiffrée | Posture préparée, dégâts absorbés demandés au MJ. |
+| DD médicaux | Chirurgie/sang nécessitent Médecine mais sans DD | Valeur obligatoire demandée ; échec critique peut tuer uniquement après confirmation de la conséquence MJ. |
+| Sang démoniaque | Effets secondaires après trois injections sans détail | Compteur et avertissement, pas de malus inventé. |
+| DD de conduite | Aucun DD universel p.102 | MJ choisit, permis automatique en conduite normale. |
+| Acrobatie/Force de volonté/Vigueur | Noms de compétences sans mapping canonique ou DD | Choix MJ, jet et résultat appliqués ensuite. |
+| Postures de sous-classe | Durée/activation non précisées | Activation/désactivation explicites, pas de coût inventé. |
+| Attaque enveloppante p.65 | Désavantage à moins de 9 m mais sans durée | Durée en rounds demandée au MJ, aura puis expiration automatique. |
+| Pacte de contrôle mental | Durée d'immobilisation non précisée | Fin de round, TODO visible. |
+| Plaisir de servir | Pronom ambigu sur l'échange | Échange avec l'allié protégé, TODO visible. |
+| Double-tap | Copie du dernier tir, munitions/changement de cible non précisés | Confirmation explicite du replay même cible/arme avec une munition. |
+| Orochi/Athlétisme/Réaction | Certains bonus ou réactions incomplets | Entrées de règles disponibles ; mapping/valeurs à valider avec le MJ. |
+| Dents invisibles | Couverture la plus proche/contextes d'invisibilité | Attaque exécutable, couverture/retrait à résoudre avec le MJ. |
+| Furtivité/social/vêtements | Situation narrative, mapping de Discrétion, PNJ extérieur au Corps | Bonus contextuels et contrôle MJ ; pas d'application aveugle à tous les jets. |
+| Petit/Grand art sanguinaire | Niveaux de puissance, pas de valeurs génériques officielles | Exemples personnalisables explicitement bloqués avant choix du profil MJ. |
+| Lune Brûlante p.124 | Portées absentes ; Incinération/Crémation vides | Effets connus présents, champs manquants et attaques nommées à compléter. |
+| Onze lignées p.123–134 | Arbres principalement vides | Marqueurs distinctifs, entrées narratives. Six attaques de Lune Endeuillée nommées sans valeurs. |
+| Yosuke p.119 | Variante du passif Océan et attaques spécifiques | PNJ dédié avec profils fixes et variante du passif ; les valeurs des sept formes restent à compléter depuis la source. |
+
+Les obstacles, couverture, eau/terre, portée visuelle et personnes réellement traversées doivent être confirmés par le MJ. Les valeurs inconnues ne sont jamais présentées comme officielles. Voir `audit-2026-10-05.md` pour les limites et les notes de migration.

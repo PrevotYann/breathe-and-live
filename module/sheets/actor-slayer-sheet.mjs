@@ -2235,6 +2235,12 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
       await runTransportDriveCheck(this.actor, item, { mode: "relaxed" });
     });
 
+    html.on("click", ".bl-drive-stop", async (event) => {
+      event.preventDefault();
+      await this.actor.unsetFlag(SYSTEM_ID, "drivingVehicleId");
+      ui.notifications.info("Conduite terminée : bonus du véhicule retirés.");
+    });
+
     html.on("click", ".bl-drive-danger", async (event) => {
       event.preventDefault();
       const li = event.currentTarget.closest(".item");

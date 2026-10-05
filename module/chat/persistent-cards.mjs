@@ -44,7 +44,7 @@ export async function executeCardRequest(request) {
     throw new Error("Le MJ doit ouvrir la scene de cette attaque pour resoudre la reaction.");
   }
   const attackerAction = button.is(".bl-dash, .bl-mist, .bl-quickshot, .bl-dislocate, .bl-poison-purify");
-  const actor = attackerAction
+  const actor = button.is(".bl-pacte, .bl-service") ? canvas.tokens.get(String(button.attr("data-ability-token")))?.actor : attackerAction
     ? await fromUuid(card.actorUuid)
     : canvas.tokens.get(String(button.attr("data-target-token")))?.actor;
   if (!canRequestCardAction(user, actor)) return;

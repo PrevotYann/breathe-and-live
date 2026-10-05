@@ -19,13 +19,14 @@ import {
 import { applyEffectsList, consumeEffectsByOrigin } from "./effects-engine.mjs";
 import { applyPreHit, applyOnHit, initializeCombatBreaths, getActiveBreaths } from "./breath-effects.mjs";
 import { canHealActor, lockRedBladeHealing } from "./combat-state.mjs";
-import { applyHpDamage, spendResourceCosts } from "./resource-costs.mjs";
+import { applyHpDamage, restoreHp, spendResourceCosts } from "./resource-costs.mjs";
 import { refreshCombatActions, spendCombatAction } from "./combat-actions.mjs";
 import { subclassAttackModifiers, onBasicAttackResolved, onSubclassWeaponHit, beginSubclassTurn, noteSubclassMovement } from "./subclass-passives.mjs";
-import { sourceTrait, perceptionContext, reinforcedDamageReduction } from "./character-capabilities.mjs";
+import { sourceTrait, perceptionContext, reinforcedDamageReduction, drivingBonus, envelopingAttackPenalty } from "./character-capabilities.mjs";
 import { resolveSourceComboDamage } from "./source-technique-workflows.mjs";
 import { getWeaponLoadout, loadedAmmunition } from "./weapon-loadout.mjs";
-import { attachSourceReactions } from "./source-reactions.mjs";
+import { attachSourceReactions, permitAvoidanceCounter } from "./source-reactions.mjs";
+import { resolveDeflectStance } from "./deflect-reflection.mjs";
 import { promptRegenerationDuration, startRegeneration, tickRegeneration, restoreLimbs } from "./regeneration.mjs";
 import {
   buildPoisonApplicationUpdate,
@@ -348,7 +349,7 @@ export async function rollBaseCheck(actor, statKey, label = "") {
   if (!actor || !statKey) return null;
   const key = normalizeBaseStatKey(statKey);
   const base = getEffectiveBaseStats(actor);
-  const mod = toNumber(base[key], 0) - 1;
+  const mod = toNumber(base[key], 0) - 1 + drivingBonus(actor, key);
   const roll = await new Roll(`1d20 + ${mod}`).evaluate();
   await roll.toMessage({
     speaker: actorSpeaker(actor),
@@ -1100,18 +1101,18 @@ async function promptTargetLimb(targetActor) {
   });
 }
 
-async function rollNoRpEvade(actor, attackTotal, attacker = null) {
+export async function rollNoRpEvade(actor, attackTotal, attacker = null) {
   const base = getEffectiveBaseStats(actor);
   let mod = toNumber(base.finesse, 0) - 1;
   const breaths = getActiveBreaths(actor);
   const flower = actor.getFlag(SYSTEM_ID, "flowerFocus");
   if (breaths.flower?.enabled && breaths.flower.specials?.concentrationFlorissante && flower?.combatId === game.combat?.id && flower.targetId === attacker?.uuid) mod += toNumber(flower.stack, 0) * 2;
-  if (breaths.insect?.enabled && breaths.insect.specials?.ecraserSousLePied && attacker?.system?.conditions?.poisoned?.active) mod *= 2;
+  const doubled = breaths.insect?.enabled && breaths.insect.specials?.ecraserSousLePied && attacker?.system?.conditions?.poisoned?.active;
   const roll = await new Roll(`1d20 + ${mod}`).evaluate();
-  const total = toNumber(roll.total, 0);
+  const total = toNumber(roll.total, 0) * (doubled ? 2 : 1);
   await roll.toMessage({
     speaker: actorSpeaker(actor),
-    flavor: `Eviter sans RP contre ${attackTotal}`,
+    flavor: `Eviter sans RP contre ${attackTotal}${doubled ? ` — Insecte : résultat doublé, ${total}` : ""}`,
   });
   return { roll, total, success: total > toNumber(attackTotal, 0) };
 }
@@ -1315,11 +1316,20 @@ export async function rollBasicAttack(
   const target = targetToken || (await pickTargetToken({ excludeTokenId: attackerToken?.id }));
   if (!target?.actor) return null;
 
-  const weapon =
+  let weapon =
     item ??
     (repeatedAction
       ? actor.items.find((entry) => entry.type === "weapon")
       : actor.items.find((entry) => ["weapon", "firearm"].includes(entry.type)));
+  if (sourceOptions.bayonet) {
+    if (!getWeaponLoadout(actor, weapon).bayonet) { ui.notifications.warn("Cette arme n'a pas de baïonnette montée."); return null; }
+    weapon = { id: weapon.id, uuid: weapon.uuid, name: `${weapon.name} — baïonnette`, type: "weapon",
+      system: { damage: "1d8", range: 1.5, weaponFamily: "bayonet", usesAmmo: false, isNichirin: false } };
+  }
+  if (weapon?.system?.ruleSource?.missingFields?.length && !weapon.system.ruleSource.approved) {
+    ui.notifications.warn(`${weapon.name} : renseignez et validez les données manquantes avec le MJ (${weapon.system.ruleSource.missingFields.join(", ")}).`);
+    return null;
+  }
   const isFirearm = ["firearm"].includes(weapon?.type) || weapon?.system?.weaponFamily === "firearm";
   const progressionBonuses = actor.system?.progression?.bonuses ?? {};
   const loadout = getWeaponLoadout(actor, weapon);
@@ -1327,7 +1337,7 @@ export async function rollBasicAttack(
 
   const range = (weapon?.system?.rangeFormula ? Number((await new Roll(replaceStats(weapon.system.rangeFormula, actor)).evaluate()).total) :
     toNumber(weapon?.system?.range, isFirearm ? 30 : 1.5)) * loadout.rangeMultiplier + toNumber(weapon?.system?.rangeBonus, 0);
-  if (attackerToken && distMetersChebyshev(attackerToken, target) > range) {
+  if (!sourceOptions.pathAttack && attackerToken && distMetersChebyshev(attackerToken, target) > range) {
     ui.notifications.warn(`La cible est hors portee (${range} m).`);
     return null;
   }
@@ -1384,7 +1394,7 @@ export async function rollBasicAttack(
     attackMode = "finesse";
     const spentRp = target.actor.getFlag(SYSTEM_ID, "rpSpentBoundary");
     const rpUsed = spentRp?.combatId === game.combat?.id && spentRp.round === game.combat?.round && spentRp.turn === game.combat?.turn;
-    autoHit = forceAutoHit || !!actor.system?.combat?.basicAttack?.autoHitFirearm || !!(sourceTrait(actor, "firearm") && game.combat?.combatant?.actor?.uuid === actor.uuid && !rpUsed);
+    autoHit = !sourceOptions.noAutoHit && (forceAutoHit || !!actor.system?.combat?.basicAttack?.autoHitFirearm || !!(sourceTrait(actor, "firearm") && game.combat?.combatant?.actor?.uuid === actor.uuid && !rpUsed));
   } else {
     const chosenMode = ["force", "finesse"].includes(requestedAttackMode)
       ? requestedAttackMode
@@ -1406,6 +1416,9 @@ export async function rollBasicAttack(
   if (!sourceOptions.noAmmoCost && weaponUsesAmmo(weapon) && toNumber(weapon.system?.ammo?.value, 0) <= 0) {
     ui.notifications.warn("Cette arme n'a plus de munitions."); return null;
   }
+  // Explicit NPC attack profiles preserve unique printed stat blocks (p.119).
+  const printedAttack = weapon?.system?.attackProfiles?.[attackMode];
+  if (printedAttack) { attackBonus = Number(printedAttack.hit) || 0; damageBonus = Number(printedAttack.damage) || 0; }
   const subclassPassive = subclassAttackModifiers(actor, target.actor);
   const costs = reactionRpCost ? [{ path: "system.resources.rp.value", cost: reactionRpCost, label: "RP" }] : [];
   if (reactionRpCost && getConditionActionRestriction(actor, "rp").blocked) return null;
@@ -1454,7 +1467,7 @@ export async function rollBasicAttack(
   }
   const passive = await applyPreHit(actor, target, { system: { damage: "BL_DAMAGE", costE: 0 } }, { attackerToken, basicAttack: true, weapon });
   const sniper = isFirearm && actor.system?.progression?.flags?.sniperTraining &&
-    /fusil|rifle/i.test(weapon.name) && loadout.modifications.some(i => normalizeRuleText(i.name) === "lunette");
+    /fusil|rifle/i.test([weapon.name, ...(weapon.system.tags || []), ...(weapon.system.properties || [])].join(" ")) && loadout.modifications.some(i => normalizeRuleText(i.name) === "lunette");
   let attackRoll = null;
   let attackTotal = targetCa;
 
@@ -1462,7 +1475,7 @@ export async function rollBasicAttack(
     attackTotal = sourceOptions.replay.attackTotal;
     autoHit = !!sourceOptions.replay.autoHit;
   } else if (!autoHit) {
-    const edge = passive.rollEdge.attack + subclassPassive.edge + (sniper ? 1 : 0) - (target.actor.system?.states?.mondeTransparent ? 1 : 0);
+    const edge = passive.rollEdge.attack + subclassPassive.edge + (sniper ? 1 : 0) - (target.actor.system?.states?.mondeTransparent ? 1 : 0) - envelopingAttackPenalty(actor);
     const die = edge > 0 ? "2d20kh" : edge < 0 ? "2d20kl" : "1d20";
     attackRoll = await new Roll(`${die} + ${attackBonus}`).evaluate();
     attackTotal = toNumber(attackRoll.total, 0);
@@ -1543,7 +1556,7 @@ export async function rollBasicAttack(
     bloodFuryLine = `<div>Fureur sanguinaire : +${furyDamage}, ${remaining} charge(s) restante(s).</div>`;
   }
 
-  if (actor.system?.states?.mondeTransparent) {
+  if (actor.system?.states?.mondeTransparent && !(isFirearm && actor.system?.progression?.flags?.firearmTraining)) {
     damageExpr = `(${damageExpr}) * 2`;
   }
   damageExpr = passive.dmgExpr.replaceAll("BL_DAMAGE", `(${damageExpr})`);
@@ -1647,6 +1660,7 @@ export async function rollBasicAttack(
       actorUuid: actor.uuid, weaponUuid: weapon?.uuid ?? null,
       sceneId: canvas.scene.id, damageTotal: damageRoll.total, isFirearm, targetLimb,
       attackTotal,
+      attackBonus, autoHit, targetCa,
       comboId: sourceOptions.comboId || "", comboIndex: sourceOptions.comboIndex ?? 0,
     }),
     speaker: actorSpeaker(actor),
@@ -2095,10 +2109,8 @@ export async function runCraftingCheck(actor, item) {
 
 async function promptDriveOptions(item, mode) {
   const dangerous = mode === "danger";
-  const defaultDc = toNumber(
-    dangerous ? item.system?.drive?.dangerDc : item.system?.drive?.relaxedDc,
-    dangerous ? 15 : 10
-  );
+  // TODO-RULEBOOK-AMBIGUITY: p.102 gives no driving DC; require a GM value.
+  const defaultDc = "";
   return new Promise((resolve) => {
     new Dialog(
       {
@@ -2113,10 +2125,10 @@ async function promptDriveOptions(item, mode) {
         buttons: {
           ok: {
             label: "Conduire",
-            callback: (html) =>
-              resolve({
-                dc: Math.max(0, toNumber(dialogValue(html, "#bl-drive-dc"), defaultDc)),
-              }),
+            callback: (html) => {
+              const raw = String(dialogValue(html, "#bl-drive-dc") ?? "").trim();
+              resolve(raw && Number.isFinite(Number(raw)) && Number(raw) >= 0 ? { dc: Number(raw) } : null);
+            },
           },
           cancel: { label: "Annuler", callback: () => resolve(null) },
         },
@@ -2134,6 +2146,7 @@ export async function runTransportDriveCheck(actor, item, { mode = "relaxed" } =
     return null;
   }
   if (mode !== "danger" && actor.system?.progression?.flags?.drivingLicense) {
+    await actor.setFlag(SYSTEM_ID, "drivingVehicleId", item.id);
     await ChatMessage.create({ speaker: actorSpeaker(actor), content: `<em>Permis de conduire : ${actor.name} conduit ${item.name} sans test en situation normale.</em>` });
     return { roll: null, success: true, mode };
   }
@@ -2144,8 +2157,10 @@ export async function runTransportDriveCheck(actor, item, { mode = "relaxed" } =
   const mod = dangerous
     ? toNumber(actor.system?.stats?.derived?.reflexes, 0)
     : toNumber(actor.system?.stats?.base?.finesse, 0) - 1;
-  const roll = await new Roll(`1d20 + ${mod}`).evaluate();
+  const vehicleBonus = Number(item.system?.vehicleBonus?.all || 0) + Number(item.system?.vehicleBonus?.[dangerous ? "reflexes" : "finesse"] || 0);
+  const roll = await new Roll(`1d20 + ${mod + vehicleBonus}`).evaluate();
   const success = toNumber(roll.total, 0) >= options.dc;
+  if (success) await actor.setFlag(SYSTEM_ID, "drivingVehicleId", item.id);
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
     content: `
@@ -2387,10 +2402,15 @@ async function resolveMedicalItem(
   }
 
   const hasEnduranceGain = !!String(item.system?.enduranceGain || "").trim();
-  const hasHpHealing = !!item.system?.maxHeal || !!String(item.system?.healing || "").trim();
+  const healingFormula = String(item.system?.healing || "").trim();
+  const hasHpHealing = !!item.system?.maxHeal || !!(healingFormula && healingFormula !== "0");
   if (hasEnduranceGain) {
     const enduranceResult = await applyEnduranceGain(actor, item, { maximize });
     if (!hasHpHealing) return enduranceResult;
+  }
+  if (!hasHpHealing && !item.system?.removeConditions?.length && !item.system?.stabilizes) {
+    await ChatMessage.create({ speaker: actorSpeaker(actor), content: `<em>${actor.name} utilise ${item.name}.</em><p>${item.system?.description || item.system?.usageNote || ""}</p>` });
+    return true;
   }
 
   const selectedTargetActor =
@@ -2405,13 +2425,7 @@ async function resolveMedicalItem(
   if (item.system?.maxHeal || injection) {
     if (surgery || injection || itemKey.includes("medecin")) {
       const hpMax = toNumber(target.system?.resources?.hp?.max, healableMax);
-      await target.update({
-        "system.combat.injuries.severeWounds": 0,
-        "system.combat.injuries.nearDeathWounds": 0,
-        "system.resources.hp.healableMax": hpMax,
-        "system.resources.hp.value": hpMax,
-        "system.death.state": "alive",
-      });
+      await restoreHp(target, 0, { full: true, restoreWounds: true });
       await restoreLimbs(target, Object.entries(target.system?.combat?.injuries?.limbs ?? {})
         .filter(([, state]) => state.broken && !state.severed).map(([key]) => key));
       if (injection) {
@@ -2425,23 +2439,22 @@ async function resolveMedicalItem(
       });
       return hpMax - hpValue;
     }
-    const update = { "system.resources.hp.value": healableMax };
-    if (healableMax > 0) update["system.death.state"] = "alive";
-    await target.update(update);
+    const healing = await restoreHp(target, 0, { full: true });
     await ChatMessage.create({
       speaker: actorSpeaker(actor),
       content: `<em>${actor.name} soigne completement ${target.name} avec ${item.name}.</em>`,
     });
-    return healableMax - hpValue;
+    return healing.healed;
   }
 
   const medBonus = toNumber(actor.system?.stats?.effectiveDerived?.medecine ?? actor.system?.stats?.derived?.medecine, 0);
   const healExpr = medicalKnowledge && sourceTrait(actor, "medicine") && hasHpHealing ? "1d6 + 2" : replaceStats(item.system?.healing || "0", actor, "0");
   const roll = await new Roll(healExpr).evaluate();
   const amount = maximize ? maxFormulaTotal(healExpr) : toNumber(roll.total, 0);
-  const next = clamp(hpValue + amount + (hasHpHealing && !medicalKnowledge ? medBonus : 0), 0, healableMax);
+  const healing = await restoreHp(target, amount + (hasHpHealing && !medicalKnowledge ? medBonus : 0));
+  const next = healing.nextHp;
 
-  const update = { "system.resources.hp.value": next };
+  const update = {};
   const deathState = String(target.system?.death?.state || "alive");
   if (item.system?.stabilizes && hpValue <= 0 && next <= 0) {
     update["system.death.state"] = "critical";
@@ -2462,13 +2475,20 @@ async function resolveMedicalItem(
 
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
-    content: `<em>${actor.name} utilise ${item.name} sur ${target.name} et restaure ${next - hpValue} PV.</em>`,
+    content: `<em>${actor.name} utilise ${item.name} sur ${target.name} et restaure ${healing.healed} PV.</em>`,
   });
 
-  return next - hpValue;
+  return healing.healed;
 }
 
-export async function useMedicalItem(actor, item, options = {}) {
+const medicalQueues = new WeakMap();
+export function useMedicalItem(actor, item, options = {}) {
+  if (!actor || !item) return Promise.resolve(null);
+  const next = (medicalQueues.get(item) ?? Promise.resolve()).catch(error => console.error("BL | Medical item", error))
+    .then(() => executeMedicalItem(actor, item, options));
+  medicalQueues.set(item, next); return next;
+}
+async function executeMedicalItem(actor, item, options = {}) {
   if (!actor || !item) return null;
   const quantity = toNumber(item.system?.quantity, 1);
   const charges = item.system?.uses;
@@ -2964,6 +2984,7 @@ registerCardType("basicAttack", async (card, html, on) => {
       .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
       .html("<em>Esquive reussie : degats annules.</em>");
     disableTargetButtons(token.id);
+    permitAvoidanceCounter(html, token.id);
   });
 
   on(".bl-deflect", async (event) => {
@@ -2979,6 +3000,7 @@ registerCardType("basicAttack", async (card, html, on) => {
       .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
       .html("<em>Deviation reussie : degats annules. Redirection manuelle.</em>");
     disableTargetButtons(token.id);
+    permitAvoidanceCounter(html, token.id);
   });
 
   on(".bl-stance-deflect", async (event) => {
@@ -2987,10 +3009,11 @@ registerCardType("basicAttack", async (card, html, on) => {
     const targetActor = token?.actor;
     if (!targetActor || !canInteractWithToken(token)) return;
 
-    await consumeDeflectStance(targetActor);
+      const result = await resolveDeflectStance(targetActor, Number(html.find(`.bl-target-row[data-target-token="${token.id}"] .bl-takedmg`).attr("data-damage")) || 0);
+      if (!result) return;
     html
       .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
-      .html("<em>Posture defensive consommee : degats annules.</em>");
+        .text(result);
     disableTargetButtons(token.id);
   });
 

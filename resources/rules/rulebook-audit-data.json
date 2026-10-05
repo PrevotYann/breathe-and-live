@@ -1249,6 +1249,185 @@
       "differences": []
     }
   ],
+  "embeddedForms": [
+    {
+      "id": "ei7d6e7e50b717b2",
+      "name": "Feu Inconscient",
+      "breath": "flame",
+      "form": 1,
+      "missingFields": [],
+      "differences": [],
+      "pack": "actors-slayers",
+      "actor": "Renjiro - Hashira de la Flamme"
+    },
+    {
+      "id": "eibe436d89efd0ee",
+      "name": "Rengoku",
+      "breath": "flame",
+      "form": 9,
+      "missingFields": [],
+      "differences": [],
+      "pack": "actors-slayers",
+      "actor": "Renjiro - Hashira de la Flamme"
+    },
+    {
+      "id": "ei9a2f469fb67828",
+      "name": "Pas Léger",
+      "breath": "snow",
+      "form": 1,
+      "missingFields": [],
+      "differences": [],
+      "pack": "actors-slayers",
+      "actor": "Yuki Isaribi - Neige 1934"
+    },
+    {
+      "id": "ei9266e2f2235264",
+      "name": "Enterrement Silencieux",
+      "breath": "snow",
+      "form": 8,
+      "missingFields": [],
+      "differences": [],
+      "pack": "actors-slayers",
+      "actor": "Yuki Isaribi - Neige 1934"
+    },
+    {
+      "id": "eib3b9ed2fc9bcb0",
+      "name": "Surface de l'eau coupée",
+      "breath": "water",
+      "form": 1,
+      "missingFields": [],
+      "differences": [],
+      "pack": "actors-slayers",
+      "actor": "Aoi Mizunoe - Eau"
+    },
+    {
+      "id": "eif446750c014ea0",
+      "name": "Pluie miséricordieuse par temps sec",
+      "breath": "water",
+      "form": 5,
+      "missingFields": [],
+      "differences": [],
+      "pack": "actors-slayers",
+      "actor": "Aoi Mizunoe - Eau"
+    },
+    {
+      "id": "2079ab2d74dd4615",
+      "name": "Mer des Épées",
+      "breath": "ocean",
+      "form": 1,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": [],
+      "pack": "supplement-1934-actors",
+      "actor": "Yosuke Wōkuo — Hashira de l’Océan"
+    },
+    {
+      "id": "fa8cb52486e22686",
+      "name": "Saut du Carpe Chagrin",
+      "breath": "ocean",
+      "form": 2,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": [],
+      "pack": "supplement-1934-actors",
+      "actor": "Yosuke Wōkuo — Hashira de l’Océan"
+    },
+    {
+      "id": "e650ede86b16b8d5",
+      "name": "Brèche",
+      "breath": "ocean",
+      "form": 3,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts"
+      ],
+      "differences": [],
+      "pack": "supplement-1934-actors",
+      "actor": "Yosuke Wōkuo — Hashira de l’Océan"
+    },
+    {
+      "id": "8f5fa3f972ac3583",
+      "name": "Raie emportée par le vent, gracieux vol",
+      "breath": "ocean",
+      "form": 4,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": [],
+      "pack": "supplement-1934-actors",
+      "actor": "Yosuke Wōkuo — Hashira de l’Océan"
+    },
+    {
+      "id": "091c8f617ad7b101",
+      "name": "Blocus des Récifs en Larmes",
+      "breath": "ocean",
+      "form": 5,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": [],
+      "pack": "supplement-1934-actors",
+      "actor": "Yosuke Wōkuo — Hashira de l’Océan"
+    },
+    {
+      "id": "e6b9a2dc3dbcc7fb",
+      "name": "Plongeuse Ama en Surface",
+      "breath": "ocean",
+      "form": 6,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": [],
+      "pack": "supplement-1934-actors",
+      "actor": "Yosuke Wōkuo — Hashira de l’Océan"
+    },
+    {
+      "id": "3988cf5527792803",
+      "name": "Fracas de l’Umibozu",
+      "breath": "ocean",
+      "form": 7,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": [],
+      "pack": "supplement-1934-actors",
+      "actor": "Yosuke Wōkuo — Hashira de l’Océan"
+    },
+    {
+      "id": "ei9a2f469fb67828",
+      "name": "Pas Léger",
+      "breath": "snow",
+      "form": 1,
+      "missingFields": [],
+      "differences": [],
+      "pack": "supplement-1934-actors",
+      "actor": "Yuki Isaribi - Neige 1934"
+    },
+    {
+      "id": "ei9266e2f2235264",
+      "name": "Enterrement Silencieux",
+      "breath": "snow",
+      "form": 8,
+      "missingFields": [],
+      "differences": [],
+      "pack": "supplement-1934-actors",
+      "actor": "Yuki Isaribi - Neige 1934"
+    }
+  ],
   "packs": [
     {
       "name": "actors-slayers",
@@ -3091,15 +3270,27 @@
     },
     {
       "name": "abilities-demons",
-      "count": 34,
+      "count": 42,
       "items": [
         {
           "name": "Lune Brulante - Flamme devastatrice",
           "type": "bda"
         },
         {
+          "name": "Lune Brûlante — Crémation (à compléter)",
+          "type": "bda"
+        },
+        {
+          "name": "Lune Endeuillée — Enveloppe Bleue (à compléter)",
+          "type": "bda"
+        },
+        {
           "name": "Lignee - Lune Ombree",
           "type": "demonAbility"
+        },
+        {
+          "name": "Lune Endeuillée — Anneau (à compléter)",
+          "type": "bda"
         },
         {
           "name": "Soin demoniaque",
@@ -3118,12 +3309,20 @@
           "type": "demonAbility"
         },
         {
+          "name": "Lune Endeuillée — Enveloppe Rouge (à compléter)",
+          "type": "bda"
+        },
+        {
           "name": "Art de Sang Demoniaque - Petit",
           "type": "bda"
         },
         {
           "name": "Lignee - Lune Submergee",
           "type": "demonAbility"
+        },
+        {
+          "name": "Lune Endeuillée — Enveloppe Rose (à compléter)",
+          "type": "bda"
         },
         {
           "name": "Expulsion",
@@ -3158,8 +3357,16 @@
           "type": "bda"
         },
         {
+          "name": "Lune Endeuillée — Enveloppe Noire (à compléter)",
+          "type": "bda"
+        },
+        {
           "name": "Guerison demoniaque",
           "type": "demonAbility"
+        },
+        {
+          "name": "Lune Brûlante — Incinération (à compléter)",
+          "type": "bda"
         },
         {
           "name": "Lignee - Lune Ancienne",
@@ -3228,13 +3435,21 @@
         {
           "name": "Lignee - Lune Mecanique",
           "type": "demonAbility"
+        },
+        {
+          "name": "Lune Endeuillée — Bouquet (à compléter)",
+          "type": "bda"
         }
       ]
     },
     {
       "name": "supplement-1934-actors",
-      "count": 4,
+      "count": 5,
       "items": [
+        {
+          "name": "Yosuke Wōkuo — Hashira de l’Océan",
+          "type": "npcHuman"
+        },
         {
           "name": "Yuki Isaribi - Neige 1934",
           "type": "slayer"

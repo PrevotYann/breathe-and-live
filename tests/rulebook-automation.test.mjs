@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
-import { MockActor, gm, player, fire, hooks, makeCombat, NS, chatMessages } from "./foundry-mocks.mjs";
+import { MockActor, gm, player, fire, hooks, makeCombat, NS, chatMessages, tokenFor } from "./foundry-mocks.mjs";
 import { setConditionState, processConditionTurnStart, processConditionTurnEnd, registerActionHooks, useMedicalItem, runRestRefresh, runDemonHeal } from "../module/rules/action-engine.mjs";
-import { spendResourceCosts, applyHpDamage } from "../module/rules/resource-costs.mjs";
+import { spendResourceCosts, applyHpDamage, restoreHp } from "../module/rules/resource-costs.mjs";
+import { drivingBonus, envelopingAttackPenalty } from "../module/rules/character-capabilities.mjs";
+import { getDeflectStance, consumeDeflectStance } from "../module/chat/reaction-card.mjs";
 import { refreshCombatActions, spendCombatAction } from "../module/rules/combat-actions.mjs";
 import { startRegeneration, tickRegeneration } from "../module/rules/regeneration.mjs";
 import { lockRedBladeHealing, healingIsBlocked } from "../module/rules/combat-state.mjs";
@@ -149,7 +151,8 @@ test("blindness does not disable auditory Perception; paresthesia does not inven
 });
 test("moon mastery adds the matching die to another breathing style", async () => {
   const actor = character(); actor.system.breaths = { moon: { enabled: true, specials: { bonusSolo: true } } };
-  const demon = character("demon"); const pre = await applyPreHit(actor, { actor: demon }, { system: { breathKey: "water", damage: "2d8", costE: 4 } });
+  const demon = character("demon"); const token = tokenFor(actor); token.document = { disposition: 1 }; canvas.tokens.placeables = [token];
+  const pre = await applyPreHit(actor, { actor: demon }, { system: { breathKey: "water", damage: "2d8", costE: 4 } }, { attackerToken: token });
   assert.equal(pre.dmgExpr, "2d8 + 1d8");
 });
 test("snow mastery applies AC effects on ordinary weapon hits", async () => {
@@ -232,4 +235,61 @@ test("medical help clears analgesic damage debt, without removing other temporar
   await actor.update({ "system.resources.hp.temporary": actor.system.resources.hp.temporary + 3 });
   await fire("updateWorldTime", 3600, 3600, {}, gm.id);
   assert.equal(actor.system.resources.hp.value, hp); assert.equal(actor.system.resources.hp.temporary, 3);
+});
+
+test("simultaneous healing and damage preserve both operations and the wound cap", async () => {
+  const actor = character(); await actor.update({ "system.resources.hp.healableMax": 12 });
+  const [healing] = await Promise.all([restoreHp(actor, 9), applyHpDamage(actor, 4)]);
+  assert.equal(healing.healed, 2); assert.equal(actor.system.resources.hp.value, 8);
+  await Promise.all([restoreHp(actor, 1), restoreHp(actor, 1)]);
+  assert.equal(actor.system.resources.hp.value, 10);
+});
+test("two clicks cannot consume or heal twice with a single remaining bandage", async () => {
+  const actor = character(), bandage = item("Bandage", { quantity: 1, healing: "1" });
+  const results = await Promise.all([useMedicalItem(actor, bandage), useMedicalItem(actor, bandage)]);
+  assert.equal(actor.system.resources.hp.value, 13); assert.equal(bandage.system.quantity, 0);
+  assert.equal(results.filter(v => v !== null).length, 1);
+});
+test("snacks do not heal, resurrect or remove conditions", async () => {
+  const actor = character(); await actor.update({ "system.resources.hp.value": 0, "system.death.state": "dead" });
+  await useMedicalItem(actor, item("Dango", { healing: "", enduranceGain: "", type: "food" }));
+  assert.equal(actor.system.resources.hp.value, 0); assert.equal(actor.system.death.state, "dead");
+});
+test("vehicle bonuses apply only while that owned vehicle is being driven", async () => {
+  const actor = character(); actor.items.push({ id: "car", system: { vehicleBonus: { all: 1, dexterite: 2 } } });
+  assert.equal(drivingBonus(actor, "dexterite"), 0);
+  await actor.setFlag(NS, "drivingVehicleId", "car");
+  assert.equal(drivingBonus(actor, "dexterite"), 3); assert.equal(drivingBonus(actor, "finesse"), 1);
+  await actor.unsetFlag(NS, "drivingVehicleId"); assert.equal(drivingBonus(actor, "dexterite"), 0);
+});
+test("Flame's fourth form remains usable for the round but never leaks into a new encounter", async () => {
+  const actor = character(); game.combat = makeCombat([actor]);
+  await actor.setFlag(NS, "deflectStance", { combatId: game.combat.id, round: game.combat.round, reflectAllRound: true });
+  await consumeDeflectStance(actor); assert.ok(getDeflectStance(actor));
+  game.combat.round++; assert.equal(getDeflectStance(actor), null);
+  game.combat.round--; game.combat.id = "next-combat"; assert.equal(getDeflectStance(actor), null);
+});
+test("enveloping attacks apply disadvantage within nine meters and clear with the chosen rounds", async () => {
+  const defender = character(), attacker = new MockActor("enemy", character().system);
+  const first = tokenFor(defender), second = tokenFor(attacker); attacker.getActiveTokens = () => [second];
+  canvas.tokens.placeables = [first,second]; second.center.x = 500;
+  game.combat = makeCombat([defender,attacker]);
+  await applyEffectsList({ source: defender, target: defender, effects: [{ path: "flags.breathe-and-live.envelopingAttack", mode: "set", value: 1, duration: "custom:1" }] });
+  assert.equal(envelopingAttackPenalty(attacker), 1); second.center.x = 600; assert.equal(envelopingAttackPenalty(attacker), 0);
+  second.center.x = 500; await purgeExpiredEffects({ when: "roundEnd", actors: [defender] });
+  assert.equal(envelopingAttackPenalty(attacker), 0);
+});
+test("healing never damages an actor whose HP is already above a reduced healing cap", async () => {
+  const actor = character(); await actor.update({ "system.resources.hp.healableMax": 8 });
+  const result = await restoreHp(actor, 4); assert.equal(result.healed, 0); assert.equal(actor.system.resources.hp.value, 10);
+});
+test("antidotes with zero healing remove poison without adding the Medicine stat to HP", async () => {
+  const actor = character(); await setConditionState(actor,"poisoned",{active:true,intensity:1});
+  await useMedicalItem(actor,item("Antidote",{healing:"0",removeConditions:["poisoned"]}));
+  assert.equal(actor.system.resources.hp.value,10); assert.equal(actor.system.conditions.poisoned.active,false);
+});
+test("physical combat traits do not boost actors absent from the active encounter", () => {
+  const actor = character(); actor.items.push({name:"Force physique accrue",system:{traitKey:"strength"}});
+  game.combat = makeCombat([new MockActor("other",character().system)]);
+  assert.equal(getEffectiveBaseStats(actor).force,4);
 });

@@ -421,7 +421,12 @@ export async function applyPreHit(attacker, targetToken, item, ctx = {}) {
     notes.push("Bete - Dislocation : possibilite de forcer l'impact sur un demon");
   }
 
-  if (itemBreathKey === "ocean" && breaths.ocean?.enabled && breaths.ocean.specials?.jambesDeLaMer) {
+  if (attacker.system?.combat?.oceanNpcVariant && (ctx.basicAttack || itemBreathKey)) {
+    const inWater = await resolveOceanEnvironment(attacker);
+    const ranged = ctx.weapon ? Number(ctx.weapon.system?.range || 1.5) > 1.5 : !!(itemAutomation.ranged || item.system?.ranged);
+    damageMultiplier *= inWater ? 1.5 : ranged ? 0.5 : 1;
+    notes.push(`Maîtrise des mers (PNJ p.119) : dégâts ×${inWater ? 1.5 : ranged ? 0.5 : 1}.`);
+  } else if (itemBreathKey === "ocean" && breaths.ocean?.enabled && breaths.ocean.specials?.jambesDeLaMer) {
     const inWater = await resolveOceanEnvironment(attacker);
     damageMultiplier *= inWater ? 1.5 : 0.5;
     notes.push(
@@ -431,7 +436,7 @@ export async function applyPreHit(attacker, targetToken, item, ctx = {}) {
     );
   }
 
-  if (itemBreathKey === "west" && breaths.west?.enabled && breaths.west.specials?.sixCoups) {
+  if (itemBreathKey && breaths.west?.enabled && breaths.west.specials?.sixCoups) {
     ui.canQuickShot = attacker.items?.some((owned) => owned.type === "firearm");
     notes.push(
       ui.canQuickShot

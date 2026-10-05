@@ -210,7 +210,7 @@ Use this when automated testing is not practical inside the Foundry runtime.
   - Confirm the header badges fit on Slayer, Demonist, Demon and NPC sheets at default Foundry popout size.
   - Confirm condition automation notes do not overlap condition inputs when several restrictive conditions are active.
 
-- Multiplayer regression checks (Foundry v12.343)
+  - Multiplayer regression checks (Foundry v14.368)
   - Restart the world after this update: `system.json` now enables the system socket used by chat reactions.
   - Connect one GM and two players. Keep the GM on the attack scene. Post a basic attack and a breath technique as player A; resolve damage/dodge as the owning defender, player B. Confirm HP/RP changes once and results appear on every client.
   - Reload player B before reacting to a newly created card. Confirm its buttons still work. Reload after resolving it and confirm its target buttons remain disabled.
@@ -222,3 +222,14 @@ Use this when automated testing is not practical inside the Foundry runtime.
   - Apply a `turnEnd` effect to each combatant. End one combatant's turn and confirm only its effect expires. Apply `custom:3`, reload after one round, and confirm it expires after the remaining two rounds.
   - Use a technique with E/RP/BDP costs while short of RP, then while short of BDP. Confirm no resource changes in either failure. Restore resources and confirm all costs are deducted once.
   - Apply Neige's temporary CA penalty, change Vitesse or equipped armor, and reload. Confirm the penalty remains on the current derived CA and expiration restores the current unmodified CA.
+
+## Compléments de revue v0.5.1 — Foundry 14.368
+
+- Avec un MJ et deux propriétaires différents, proposer Pacte après l'esquive du défenseur et Plaisir de servir depuis l'allié ; vérifier que seul le propriétaire du réacteur peut dépenser ses ressources.
+- Réflexe d'esquive : annuler le choix de DD/statistique sans dépenser de RP ; réussir puis riposter avec une action disponible ; recharger la carte et vérifier que les choix résolus restent désactivés.
+- Flamme forme 4 : renvoyer deux attaques dans le même round vers des cibles choisies ; passer au round suivant puis créer un autre combat au round 1, sans réactiver l'ancienne posture.
+- Démarrer une repousse de deux tours sur un démoniste ; appliquer Lame Rouge, avancer les tours puis confirmer reprise, expiration et restauration du membre.
+- Récompenser une mission réussie pour le souffle secondaire ; vérifier doublon de mission/forme et absence de coût de slot d'étude. Vérifier la compétence d'une victoire solo contre une Lune.
+- Yosuke : importer le PNJ, vérifier PV 100/E 120/RP 25, choisir Force (+9 et 7d6+9) ou Finesse (+12 et 7d6+12), puis contrôler la variante de Maîtrise des mers sur terre/dans l'eau.
+- Vérifier avec le MJ les cases traversées, murs, couverture de Dents invisibles et zones renforcées. Ne pas valider les 34 formes ou les attaques de lignées incomplètes avant de fournir leurs données.
+- Conduire un véhicule possédé, contrôler ses bonus, puis terminer la conduite ; appliquer nourriture normale/temporaire et une collation sans soin.
