@@ -2,8 +2,16 @@
   "id": "breathe-and-live",
   "title": "Breathe and Live - Demon Slayer RPG",
   "description": "Adaptation du systeme JDR Breathe and Live (Demon Slayer) pour Foundry VTT.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "socket": true,
+  "background": "systems/breathe-and-live/assets/art/system-cover.png",
+  "media": [
+    {
+      "type": "setup",
+      "url": "systems/breathe-and-live/assets/art/system-cover.png",
+      "thumbnail": "systems/breathe-and-live/assets/art/system-cover.png"
+    }
+  ],
   "compatibility": {
     "minimum": "14",
     "verified": "14.368",
@@ -129,10 +137,50 @@
       "system": "breathe-and-live"
     }
   ],
+  "packFolders": [
+    {
+      "name": "Breathe and Live",
+      "sorting": "m",
+      "color": "#176b63",
+      "packs": [],
+      "folders": [
+        {
+          "name": "Personnages et bestiaire",
+          "sorting": "m",
+          "color": "#176b63",
+          "packs": ["actors-slayers", "actors-demonists", "actors-demons"]
+        },
+        {
+          "name": "Souffles",
+          "sorting": "m",
+          "color": "#365e8d",
+          "packs": ["breaths-styles", "techniques-breaths"]
+        },
+        {
+          "name": "Capacités et progression",
+          "sorting": "m",
+          "color": "#70419a",
+          "packs": ["progression-features", "techniques-subclasses", "abilities-demons"]
+        },
+        {
+          "name": "Équipement et soins",
+          "sorting": "m",
+          "color": "#895812",
+          "packs": ["items-weapons", "items-medical-utility"]
+        },
+        {
+          "name": "Supplément 1934",
+          "sorting": "m",
+          "color": "#a32e46",
+          "packs": ["supplement-1934-actors", "supplement-1934", "supplement-1934-breaths", "supplement-1934-techniques"]
+        }
+      ]
+    }
+  ],
   "scripts": [],
   "url": "https://github.com/PrevotYann/breathe-and-live",
   "manifest": "https://github.com/PrevotYann/breathe-and-live/releases/latest/download/manifest.json",
-  "download": "https://github.com/PrevotYann/breathe-and-live/releases/download/v0.3.0/breathe-and-live.zip",
+  "download": "https://github.com/PrevotYann/breathe-and-live/releases/download/v0.4.0/breathe-and-live.zip",
   "license": "LICENSE.txt",
   "documentTypes": {
     "Actor": {

@@ -26,7 +26,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
-        run: >-
-          gh release create "$RELEASE_TAG"
-          dist/manifest.json dist/system.json breathe-and-live.zip
-          --verify-tag --title "Breathe and Live $RELEASE_TAG" --generate-notes
+        run: |
+          notes_file="resources/rules/release-${RELEASE_TAG#v}.md"
+          notes_args=(--generate-notes)
+          if [[ -f "$notes_file" ]]; then
+            notes_args=(--notes-file "$notes_file")
+          fi
+          gh release create "$RELEASE_TAG" \
+            dist/manifest.json dist/system.json breathe-and-live.zip \
+            --verify-tag --title "Breathe and Live $RELEASE_TAG" "${notes_args[@]}"

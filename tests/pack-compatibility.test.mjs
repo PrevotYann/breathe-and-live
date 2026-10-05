@@ -8,6 +8,21 @@ const read = name => JSON.parse(fs.readFileSync(new URL(name, root), "utf8"));
 const manifest = read("system.json");
 const template = read("module/data/document-defaults.json");
 
+test("every compendium belongs to exactly one declared folder", () => {
+  const assigned = [];
+  const visit = (folders, depth = 0) => {
+    assert.ok(depth < 4, "Foundry folder depth limit");
+    for (const folder of folders) {
+      assert.ok(folder.name);
+      assigned.push(...(folder.packs ?? []));
+      visit(folder.folders ?? [], depth + 1);
+    }
+  };
+  visit(manifest.packFolders);
+  assert.equal(new Set(assigned).size, assigned.length, "duplicate pack assignment");
+  assert.deepEqual(assigned.sort(), manifest.packs.map(pack => pack.name).sort());
+});
+
 test("V14 declares every existing actor and item type without changing saved schemas", () => {
   for (const kind of ["Actor", "Item"]) {
     assert.deepEqual(Object.keys(manifest.documentTypes[kind]).sort(), [...template[kind].types].sort());

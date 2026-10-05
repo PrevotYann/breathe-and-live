@@ -42,6 +42,12 @@ try {
     }, { kind, type });
     const sheet = page.locator(`[id="${id}"]`);
     await page.waitForFunction(id => getComputedStyle(document.getElementById(id)).opacity === "1", id);
+    if (kind === "Actor") {
+      const palette = { slayer: "#176b63", demonist: "#70419a", demon: "#a32e46",
+        npcDemon: "#a32e46", companion: "#895812", npc: "#365e8d", npcHuman: "#365e8d" };
+      assert.equal(await sheet.evaluate(el => getComputedStyle(el).getPropertyValue("--bl-accent").trim()),
+        palette[type], `${type}: actor palette reaches the window`);
+    }
     const tabs = await sheet.locator(".sheet-tabs [data-tab]").evaluateAll(els => els.map(el => el.dataset.tab));
     assert.ok(tabs.length >= 2, `${type}: missing navigation`);
     for (const width of [kind === "Actor" ? 1040 : 780, 560]) {
@@ -79,7 +85,7 @@ try {
         report.push(result);
       }
       await sheet.locator(`.sheet-tabs [data-tab="${tabs[0]}"]`).click();
-      if (["slayer", "demonist", "demon", "weapon", "technique", "breath"].includes(type)) {
+      if (["slayer", "demonist", "demon", "companion", "npcDemon", "weapon", "technique", "breath"].includes(type)) {
         await sheet.screenshot({ path: `${output}/${type}-${width}.png` });
       }
     }
