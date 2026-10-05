@@ -30,8 +30,10 @@
   </nav>
 
   <section class="sheet-body">
+    <label><input type="checkbox" name="system.flags.ultimate" data-dtype="Boolean" {{checked system.flags.ultimate}} /> Forme ultime (capacité Esprit)</label>
     <div class="tab" data-group="primary" data-tab="stats">
       <h2>Utilisation</h2><div class="grid four-col bl-cost-grid"><div class="field"><label>Endurance</label><input type="number" name="system.costE" value="{{system.costE}}" min="0" /></div><div class="field"><label>Réaction</label><input type="number" name="system.costRp" value="{{system.costRp}}" min="0" /></div><div class="field"><label>Sang démon</label><input type="number" name="system.costBdp" value="{{system.costBdp}}" min="0" /></div><div class="field"><label>Démonisation</label><input type="number" name="system.demonisationGain" value="{{system.demonisationGain}}" min="0" step="0.5" /></div></div>
+      {{#if system.ruleSource.missingFields.length}}<p class="bl-rules-review">Valeurs absentes du livre : {{join system.ruleSource.missingFields ", "}}. Renseignez les valeurs ci-dessous selon l'arbitrage du MJ.</p><label><input type="checkbox" name="system.ruleSource.approved" data-dtype="Boolean" {{checked system.ruleSource.approved}} /> Valeurs validées par le MJ</label>{{/if}}
 <h3>Résolution</h3>
       <div class="grid two-col">
 

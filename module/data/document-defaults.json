@@ -235,6 +235,14 @@
         },
         "conditions": {},
         "combat": {
+          "subclassStance": "",
+          "regeneration": {
+            "active": false,
+            "limbs": [],
+            "remainingTurns": 0,
+            "demonisationPerTurn": 0,
+            "sourceName": ""
+          },
           "damageFlat": 0,
           "movementBonus": 0,
           "activePoison": {
@@ -253,6 +261,8 @@
             "appliedRound": 0
           },
           "actionEconomy": {
+            "remainingActions": 0,
+            "waiting": false,
             "actionsPerTurn": 1,
             "bonusActions": 0,
             "movementMeters": 9,
@@ -262,9 +272,9 @@
           },
           "reactions": {
             "dodge": true,
-            "counterAttack": true,
-            "draw": true,
-            "medical": true,
+            "counterAttack": false,
+            "draw": false,
+            "medical": false,
             "special": ""
           },
           "injuries": {
@@ -512,6 +522,7 @@
         "activation": "action",
         "quantity": 1,
         "usageNote": "",
+        "ruleSource": { "url": "", "checkedAt": "", "missingFields": [], "approved": false },
         "prerequisites": {
           "class": "",
           "rank": "",

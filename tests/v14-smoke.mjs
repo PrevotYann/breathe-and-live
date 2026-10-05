@@ -128,10 +128,10 @@ try {
   }, actors);
   await page.locator(".dialog button[data-button=ok]").click();
   const attack = await page.evaluate(async () => { const r = await globalThis.qaAttack; return { id: r.chatMessage.id, damage: r.damageRoll.total }; });
-  assert.equal(attack.damage, 4);
+  assert.equal(attack.damage, 3);
   await page.locator(`[data-message-id="${attack.id}"] .bl-takedmg`).first().evaluate(button => button.click());
   await page.waitForFunction(id => game.messages.get(id).flavor.includes("disabled"), attack.id);
-  assert.equal(await page.evaluate(id => game.actors.get(id).system.resources.hp.value, actors[1]), 16);
+  assert.equal(await page.evaluate(id => game.actors.get(id).system.resources.hp.value, actors[1]), 17);
 
   const techniqueMessage = await page.evaluate(async ([attackerId, defenderId]) => {
     const attacker = game.actors.get(attackerId);
@@ -152,7 +152,7 @@ try {
   await page.waitForFunction(id => game.messages.get(id).flavor.includes("disabled"), techniqueMessage);
   assert.deepEqual(await page.evaluate(id => {
     const actor = game.actors.get(id); return [actor.system.resources.hp.value, actor.system.resources.rp.value];
-  }, actors[1]), [16, 4]);
+  }, actors[1]), [17, 4]);
   console.log("PASS: attacks, breath costs, native mist region, damage and dodge after reload");
 
   result.support = await page.evaluate(async ([attackerId, defenderId]) => {
@@ -173,13 +173,66 @@ try {
     return { healed, condition, cleared: !defender.system.conditions.burn.active, injuredMovement, movement,
       hp: defender.system.resources.hp.value, rp: defender.system.resources.rp.value };
   }, actors);
-  assert.equal(result.support.healed, 19);
+  assert.equal(result.support.healed, 20);
   assert.ok(result.support.condition && result.support.cleared);
   assert.equal(result.support.injuredMovement, result.support.movement / 2);
   assert.deepEqual([result.support.hp, result.support.rp], [20, 5]);
   await page.reload(); await ready(); await page.waitForFunction(() => canvas.ready);
   assert.ok(await page.evaluate(id => game.messages.get(id).flavor.includes("disabled"), techniqueMessage));
   assert.equal(await page.evaluate(id => game.actors.get(id).system.resources.hp.value, actors[1]), 20);
+  result.turnAutomation = await page.evaluate(async ids => {
+    const api = game.system.api;
+    const first = game.actors.get(ids[0]), second = game.actors.get(ids[1]);
+    const combat = await Combat.create({ scene: canvas.scene.id, active: true });
+    await combat.createEmbeddedDocuments("Combatant", [first, second].map((actor, index) => ({
+      actorId: actor.id, tokenId: actor.getActiveTokens()[0].id, initiative: 20 - index * 10,
+    })));
+    const settle = async () => {
+      await new Promise(resolve => setTimeout(resolve, 450));
+      // Document update requests finish asynchronously in Foundry Hooks.
+    };
+    await combat.startCombat(); await settle();
+    await api.setConditionState(second, "burn", { active: true, intensity: 1, duration: 2 });
+    await api.setConditionState(second, "offBalance", { active: true });
+    const initialHp = second.system.resources.hp.value, initialRp = second.system.resources.rp.value;
+    await combat.nextTurn(); await settle();
+    if (second.system.conditions.offBalance.active) throw new Error("Off-balance did not expire on actual outgoing turn");
+    if (second.system.resources.hp.value !== initialHp - 1) throw new Error("First burn tick missing or duplicated");
+    await combat.nextTurn(); await settle();
+    if (second.system.conditions.burn.duration !== 1) throw new Error("First outgoing burn countdown missing");
+    await combat.nextTurn(); await settle();
+    if (second.system.resources.hp.value !== initialHp - 2) throw new Error("Second burn tick missing or duplicated");
+    await combat.nextTurn(); await settle();
+    if (second.system.conditions.burn.active || second.system.conditions.burn.duration !== 0) throw new Error("Burn remained active at zero");
+    await combat.nextTurn(); await settle();
+    if (second.system.resources.hp.value !== initialHp - 2) throw new Error("Expired burn still damages");
+    if (second.system.resources.rp.value !== initialRp) throw new Error("Turns incorrectly refreshed RP");
+    const regen = game.system.api.startRegeneration;
+    if (regen) {
+      await api.setLimbState(second, "leftArm", { severed: true });
+      await regen(second, { limbs: ["leftArm"], turns: 2 });
+      await combat.nextTurn(); await settle();
+      await combat.nextTurn(); await settle();
+      if (second.system.combat.regeneration.remainingTurns !== 1) throw new Error("Regeneration first tick missing");
+      await combat.nextTurn(); await settle();
+      await combat.nextTurn(); await settle();
+      if (second.system.combat.injuries.limbs.leftArm.severed) throw new Error("Regeneration failed to restore arm");
+    }
+    await combat.nextTurn(); await settle();
+    await first.update({ "system.stats.base.vitesse": 2 });
+    second.getActiveTokens()[0].setTarget(true, { releaseOthers: true });
+    await api.useTechnique(first, first.items.getName("QA form"), { controlledToken: first.getActiveTokens()[0] });
+    const beforeArmor = first.system.resources.ca;
+    await first.getActiveTokens()[0].document.update({ x: 800 }); await settle();
+    const trail = canvas.scene.regions.find(r => r.flags["breathe-and-live"]?.kind === "mistTrail");
+    if (!trail || trail.shapes.length !== 4 || trail.shapes.some(s => s.type !== "rectangle")) throw new Error("Mist trail failed to cover traversed squares");
+    await api.toggleMistCover(first); await settle();
+    if (first.system.resources.ca !== beforeArmor + beforeArmor - 10) throw new Error("Mist cover armor bonus not doubled");
+    await combat.delete(); await settle();
+    if (canvas.scene.regions.some(r => r.flags["breathe-and-live"]?.kind === "mistTrail")) throw new Error("Mist trail survived encounter end");
+    return { burnTicks: 2, expired: true, rpPreserved: true, regenerationTested: !!regen, mistTrail: true };
+  }, actors);
+  console.log("PASS: actual Foundry turn changes expire wounds and preserve RP");
   assert.deepEqual(errors, [], "Browser errors");
   console.log("PASS: medicine, conditions, limb movement, rest, stat rolls and persistence");
   console.log(JSON.stringify(result, null, 2));

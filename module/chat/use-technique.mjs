@@ -1,7 +1,16 @@
 import { cardFlags, registerCardType } from "./persistent-cards.mjs";
-import { spendResourceCosts } from "../rules/resource-costs.mjs";
+import { spendResourceCosts, applyHpDamage } from "../rules/resource-costs.mjs";
+import { spendCombatAction } from "../rules/combat-actions.mjs";
+import { activateSubclassStance } from "../rules/subclass-passives.mjs";
+import { checkTechniqueUses, consumeTechniqueUse } from "../rules/technique-limits.mjs";
+import { runSourceTechnique } from "../rules/source-technique-workflows.mjs";
+import { beginMistTrail } from "../rules/mist-trail.mjs";
+import { attachSourceReactions } from "../rules/source-reactions.mjs";
+import { sourceTrait } from "../rules/character-capabilities.mjs";
 import { applyPreHit, applyOnHit, getActiveBreaths } from "../rules/breath-effects.mjs";
 import { applyEffectsList } from "../rules/effects-engine.mjs";
+import { canHealActor, lockRedBladeHealing } from "../rules/combat-state.mjs";
+import { promptRegenerationDuration, startRegeneration } from "../rules/regeneration.mjs";
 import {
   buildReactionTargetRow,
   canInteractWithToken,
@@ -27,10 +36,14 @@ import {
   getActivePoisonCoating,
   queueDemonPendingEffect,
   rollBasicAttack,
+  applyTargetedLimbDamage,
+  setConditionState,
+  spendRp,
 } from "../rules/action-engine.mjs";
 import {
   buildPoisonApplicationUpdate,
   inferPoisonApplication,
+  getEffectiveBaseStats,
 } from "../rules/poison-utils.mjs";
 import { getConditionActionRestriction } from "../rules/condition-utils.mjs";
 import { LIMB_DEFINITIONS } from "../config/rule-data.mjs";
@@ -207,8 +220,6 @@ function isTechniqueRanged(item, rangeM) {
 }
 
 function hasLoveFriendlyFireProtection(actor, item) {
-  const breathKey = getTechniqueBreathKey(item);
-  if (breathKey !== "love") return false;
   const breaths = getActiveBreaths(actor);
   return !!(breaths.love?.enabled && breaths.love?.specials?.balancementsAmoureux);
 }
@@ -271,13 +282,23 @@ function getDemonistUtilityKind(item) {
 }
 
 async function spendTechniqueUtilityCosts(actor, item, enduranceCost = item.system?.costE) {
-  const notes = await spendResourceCosts(actor, [
+  let spirit = false;
+  if (Number(enduranceCost) > Number(actor.system?.resources?.e?.value) && item.system?.flags?.ultimate && sourceTrait(actor, "spirit") && game.combat?.round > 0 && actor.getFlag(SYSTEM_ID, "spiritUseCombat") !== game.combat.id) {
+    spirit = await Dialog.confirm({ title: "Esprit", content: "<p>Utiliser cette forme ultime malgré le manque d'Endurance ? Esprit ne peut servir qu'une fois par combat.</p>" });
+    if (spirit) enduranceCost = 0;
+  }
+  const costs = [
     { path: "system.resources.e.value", cost: enduranceCost, label: "E" },
     { path: "system.resources.rp.value", cost: item.system?.costRp, label: "RP" },
     { path: "system.resources.bdp.value", cost: item.system?.costBdp, label: "BDP" },
-  ]);
+  ];
+  if (Number(item.system?.costRp) > 0 && getConditionActionRestriction(actor, "rp").blocked) return null;
+  const notes = await spendCombatAction(actor, { reaction: item.system?.activation === "reaction", costs });
   if (!notes) return null;
-  const gain = await applyDemonisationGain(actor, item, { reason: item.name });
+  if (spirit) await actor.setFlag(SYSTEM_ID, "spiritUseCombat", game.combat.id);
+  await consumeTechniqueUse(actor, item);
+  const continuousRegeneration = /regeneration continue/.test(itemRuleText(item));
+  const gain = continuousRegeneration ? 0 : await applyDemonisationGain(actor, item, { reason: item.name });
   if (gain) notes.push(`Demonisation +${gain}`);
   return notes;
 }
@@ -329,36 +350,37 @@ async function promptRegrowLimb(actor, candidates) {
 }
 
 async function useRegrowPower(actor, item) {
+  if (!canHealActor(actor)) return null;
+  const continuous = itemRuleText(item).includes("regeneration continue des membres");
+  if (continuous && actor.system?.combat?.regeneration?.active) {
+    await actor.update({ "system.combat.regeneration.active": false });
+    return [];
+  }
   const candidates = getDamagedLimbs(actor);
-  if (!candidates.length) {
+  if (!candidates.length && !continuous) {
     ui.notifications.info(`${actor.name} n'a aucun membre coche a regenerer.`);
     return null;
   }
 
-  const continuous = itemRuleText(item).includes("regeneration continue des membres");
   const selectedKeys =
     actor.type === "demonist" && !continuous
       ? [await promptRegrowLimb(actor, candidates)].filter(Boolean)
       : candidates.map((entry) => entry.key);
-  if (!selectedKeys.length) return null;
+  if (!selectedKeys.length && !continuous) return null;
+  const turns = continuous || actor.type !== "demonist"
+    ? await promptRegenerationDuration({ continuous }) : 0;
+  if (turns === null) return null;
 
   const spentNotes = await spendTechniqueUtilityCosts(actor, item);
   if (!spentNotes) return null;
 
-  const updates = {};
-  for (const key of selectedKeys) {
-    updates[`system.combat.injuries.limbs.${key}.injured`] = false;
-    updates[`system.combat.injuries.limbs.${key}.broken`] = false;
-    updates[`system.combat.injuries.limbs.${key}.severed`] = false;
-    updates[`system.combat.injuries.limbs.${key}.notes`] = "";
-    updates[`system.combat.injuries.targetedDamage.${key}`] = 0;
-  }
-  await actor.update(updates);
+  await startRegeneration(actor, { limbs: selectedKeys, turns, continuous,
+    demonisationPerTurn: continuous ? 1 : 0, sourceName: item.name });
 
   const labels = selectedKeys.map(getLimbLabel).join(", ");
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
-    content: `<div class="bl-card"><b>${actor.name}</b> utilise <b>${item.name}</b> et regenere: ${labels}. <small>${spentNotes.join(" • ") || "Sans cout"}</small></div>`,
+    content: `<div class="bl-card"><b>${actor.name}</b> utilise <b>${item.name}</b> sur ${labels}${turns ? ` ; repousse dans ${turns} tour(s), durée choisie par le MJ` : " ; repousse immédiate"}. <small>${spentNotes.join(" • ") || "Sans cout"}</small></div>`,
   });
   return selectedKeys;
 }
@@ -397,6 +419,7 @@ async function promptDemonistHealingRank(actor) {
 }
 
 async function useHealingPower(actor, item) {
+  if (!canHealActor(actor)) return null;
   let rank = String(actor.system?.class?.rank || "");
   let formula = DEMON_HEALING_BY_RANK[rank];
   if (actor.type === "demonist") {
@@ -460,7 +483,10 @@ async function useDemonFocus(actor, item) {
     ui.notifications.warn(`${actor.name} n'a pas assez de BDP pour Concentration demoniaque.`);
     return null;
   }
-  await actor.update({ [bdpPath]: Math.max(0, current - cost) });
+  if (!(await spendResourceCosts(actor, [{ path: bdpPath, cost, label: "BDP" }]))) return null;
+  if (game.combat?.started) await actor.update({
+    "system.combat.actionEconomy.remainingActions": toNumber(actor.system?.combat?.actionEconomy?.remainingActions, 0) + 1,
+  });
   await actor.setFlag(SYSTEM_ID, "demonFocusExtraAction", {
     itemId: item.id,
     itemName: item.name,
@@ -477,6 +503,7 @@ async function useDemonFocus(actor, item) {
 }
 
 async function useBloodFury(actor, item) {
+  await consumeTechniqueUse(actor, item);
   await actor.setFlag(SYSTEM_ID, "bloodFury", {
     itemId: item.id,
     itemName: item.name,
@@ -510,6 +537,7 @@ async function useStableShot(actor, item) {
 }
 
 async function useSubclassUtility(actor, item) {
+  if (await activateSubclassStance(actor, item)) return true;
   const spentNotes = await spendTechniqueUtilityCosts(actor, item);
   if (!spentNotes) return null;
 
@@ -621,9 +649,10 @@ async function applyBeastDislocation(attacker) {
       ? "rightArm"
       : "leftArm";
   const currentNotes = String(FU.getProperty(attacker, `system.combat.injuries.limbs.${armKey}.notes`) || "");
+  await attacker.setFlag(SYSTEM_ID, "beastDislocation", { armKey, before: structuredClone(limbs[armKey] || {}), combatId: game.combat?.id || "" });
   await attacker.update({
     [`system.combat.injuries.limbs.${armKey}.injured`]: true,
-    [`system.combat.injuries.limbs.${armKey}.notes`]: [currentNotes, "Dislocation du Souffle de la Bete - remise en place manuelle requise."]
+    [`system.combat.injuries.limbs.${armKey}.notes`]: [currentNotes, "Dislocation du Souffle de la Bête — remise en place au prochain tour via action bonus."]
       .filter(Boolean)
       .join(" "),
   });
@@ -698,13 +727,13 @@ async function promptBurnedTarget(attacker) {
   });
 }
 
-function getAoETargets(attackerToken, rangeM, { antiFriendlyFire = false } = {}) {
+function getAoETargets(attackerToken, rangeM, { antiFriendlyFire = false, allInRange = false } = {}) {
   const selected = getSelectedTargets(attackerToken).filter(
     (target) =>
       distMetersChebyshev(attackerToken, target) <= rangeM &&
       (!antiFriendlyFire || target.document.disposition !== attackerToken.document.disposition)
   );
-  if (selected.length) return selected;
+  if (selected.length && !allInRange) return selected;
 
   return canvas.tokens.placeables.filter((token) => {
     if (!token?.actor || token.id === attackerToken?.id || token.document.hidden) return false;
@@ -716,12 +745,14 @@ function getAoETargets(attackerToken, rangeM, { antiFriendlyFire = false } = {})
 
 async function resolveTechniqueTargets(attacker, attackerToken, item, ctx = {}) {
   const rangeM = getTechniqueRange(item, ctx);
-  const area = item.system?.automation?.area || (item.system?.flags?.aoe ? "allInRange" : "single");
+  const area = hasLoveFriendlyFireProtection(attacker, item) ? "allInRange" :
+    item.system?.automation?.area || (item.system?.flags?.aoe ? "allInRange" : "single");
   const antiFriendlyFire =
     !!item.system?.flags?.antiFriendlyFire || hasLoveFriendlyFireProtection(attacker, item);
   if (area === "allInRange" || area === "cone") {
     const targets = getAoETargets(attackerToken, rangeM, {
       antiFriendlyFire,
+      allInRange: area === "allInRange",
     });
     if (!targets.length) {
       ui.notifications.warn("Aucune cible valide dans la zone.");
@@ -803,12 +834,16 @@ async function applyTechniqueDamage({
   const hpPath = "system.resources.hp.value";
   const currentHp = Number(FU.getProperty(actor, hpPath) ?? 0) || 0;
   const nextHp = Math.max(0, currentHp - damage);
-  await actor.update({ [hpPath]: nextHp });
+  const appliedDamage = await applyHpDamage(actor, damage);
   await noteActorDamageTaken(actor, damage);
+  if (ctx.targetLimb) await applyTargetedLimbDamage(actor, ctx.targetLimb, damage);
+  if (damage > 0 && ["technique", "subclassTechnique"].includes(item.type) && attacker.system?.states?.lameRouge && ["demon", "npcDemon"].includes(actor.type)) {
+    await lockRedBladeHealing(actor);
+  }
 
   await applyOnHit(attacker, targetToken, item, ctx, {
     tookDamage: true,
-    wasKilled: nextHp === 0,
+    wasKilled: appliedDamage.nextHp === 0,
   });
 
   const afflictionStacks = Number(item.system?.automation?.afflictionStacks ?? 0) || 0;
@@ -829,9 +864,10 @@ async function applyTechniqueDamage({
   if (conditionKey) {
     const currentState = FU.getProperty(actor, `system.conditions.${conditionKey}`) || {};
     const currentIntensity = Math.max(0, Number(currentState.intensity || 0));
-    await actor.update({
-      [`system.conditions.${conditionKey}.active`]: true,
-      [`system.conditions.${conditionKey}.intensity`]: Math.max(1, currentIntensity + Math.max(1, conditionStacks || 1)),
+    await setConditionState(actor, conditionKey, {
+      active: true,
+      intensity: Math.max(1, currentIntensity + Math.max(1, conditionStacks || 1)),
+      duration: Number(item.system?.automation?.afflictionDuration ?? currentState.duration ?? 0),
     });
   }
 
@@ -878,14 +914,28 @@ async function applyTechniqueDamage({
     }
   }
 
-  return { currentHp, nextHp, coatedPoisonResult };
+  return { currentHp, nextHp: appliedDamage.nextHp, coatedPoisonResult };
 }
 
-export async function useTechnique(attacker, item, { controlledToken = null } = {}) {
+const techniqueQueues = new WeakMap();
+export function useTechnique(attacker, item, options = {}) {
+  if (!attacker) return Promise.resolve();
+  const next = (techniqueQueues.get(attacker) ?? Promise.resolve()).catch(error => console.error("BL | Technique", error))
+    .then(() => executeTechnique(attacker, item, options));
+  techniqueQueues.set(attacker, next);
+  return next;
+}
+async function executeTechnique(attacker, item, { controlledToken = null } = {}) {
   if (!attacker || !item) return;
+  if (item.system?.ruleSource?.missingFields?.length && !item.system.ruleSource.approved) {
+    return ui.notifications.warn(`${item.name} : données absentes du livre (${item.system.ruleSource.missingFields.join(", ")}). Renseignez et validez les valeurs sur la fiche de technique.`);
+  }
 
   if (!(game.user.isGM || attacker.isOwner)) {
     return ui.notifications.warn("Tu n'es pas autorise a utiliser les techniques de cet acteur.");
+  }
+  if (item.system?.activation === "passive") {
+    return ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: attacker }), content: `<strong>${item.name}</strong><p>${item.system.description || item.system.usageNote || "Passif : consulter la fiche."}</p>` });
   }
 
   if (attacker.getFlag(SYSTEM_ID, "mustRest")) {
@@ -898,6 +948,10 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
   if (restriction.blocked) {
     return ui.notifications.warn(`${attacker.name} ne peut pas utiliser cette technique. ${restriction.reason}`);
   }
+  if (!checkTechniqueUses(attacker, item)) return;
+  if (Number(item.system?.costRp) > 0 && getConditionActionRestriction(attacker, "rp").blocked) return;
+  const sourceResult = await runSourceTechnique(attacker, item, { controlledToken });
+  if (sourceResult !== undefined) return sourceResult;
 
   const breathKey = item.system?.breathKey || normalizeBreathName(item.system?.breath);
   if (item.type === "technique" && breathKey && !actorHasBreath(attacker, breathKey)) {
@@ -935,6 +989,7 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
     );
   }
   if (chargeTurns > 0 && (!chargeState || chargeState.itemId !== item.id)) {
+    if (!(await spendCombatAction(attacker))) return;
     const started = await startTechniqueCharge(attacker, item, chargeTurns);
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: attacker }),
@@ -1024,6 +1079,23 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
 
   const spentNotes = await spendTechniqueUtilityCosts(attacker, item, pre.cost ?? item.system?.costE);
   if (!spentNotes) return;
+  if (breathKey) await beginMistTrail(attacker);
+
+  if (!breathKey && !item.system?.autoHit && !automation.noDamage) {
+    const stat = String(item.system?.attackStat || "finesse");
+    const base = getEffectiveBaseStats(attacker);
+    const derived = attacker.system?.stats?.effectiveDerived || attacker.system?.stats?.derived || {};
+    const bonus = stat in base ? Number(base[stat]) - 1 : Number(derived[stat] || 0);
+    const hits = [];
+    for (const target of targetTokens) {
+      const edge = Number(pre.rollEdge?.attack || 0) - (target.actor.system?.states?.mondeTransparent ? 1 : 0);
+      const roll = await new Roll(`${edge > 0 ? "2d20kh" : edge < 0 ? "2d20kl" : "1d20"} + ${bonus}`).evaluate();
+      await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: attacker }), flavor: `${item.name} : toucher ${target.name}, CA ${target.actor.system.resources.ca}` });
+      if (roll.total >= Number(target.actor.system.resources.ca)) hits.push(target);
+    }
+    targetTokens = hits;
+    if (!targetTokens.length) return null;
+  }
 
   if (automation.noDamage && Number(automation.delayedDamageRounds ?? 0) > 0) {
     const formula = String(automation.delayedDamageFormula || item.system?.damage || "0");
@@ -1051,10 +1123,7 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
       const currentState = FU.getProperty(targetActor, `system.conditions.${automation.afflictionCondition}`) || {};
       const nextIntensity =
         Math.max(0, Number(currentState.intensity || 0)) + Math.max(1, Number(automation.afflictionIntensity || 1));
-      await targetActor.update({
-        [`system.conditions.${automation.afflictionCondition}.active`]: true,
-        [`system.conditions.${automation.afflictionCondition}.intensity`]: Math.max(1, nextIntensity),
-      });
+      await setConditionState(targetActor, automation.afflictionCondition, { active: true, intensity: Math.max(1, nextIntensity), duration: Number(automation.afflictionDuration || 0) });
       if (automation.markAsh) {
         await targetActor.setFlag(SYSTEM_ID, "burnMoonAsh", true);
       }
@@ -1080,7 +1149,8 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
     console.error("BL | applyEffectsList (self) failed:", error);
   }
 
-  const damageEdge = (Number(pre.rollEdge?.damage ?? 0) || 0) + (attacker.system?.states?.marque ? 1 : 0);
+  const damageEdge = (Number(pre.rollEdge?.damage ?? 0) || 0) + (breathKey && attacker.system?.states?.marque ? 1 : 0);
+  if (!breathKey && attacker.system?.states?.mondeTransparent) pre.dmgExpr = `(${pre.dmgExpr}) * 2`;
   const damageEval = await evaluateTechniqueDamageRoll(
     buildFormulaWithActorStats(pre.dmgExpr || "1d8", attacker, ctx),
     damageEdge
@@ -1157,6 +1227,7 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
       actorUuid: attacker.uuid, itemUuid: item.uuid,
       sceneId: canvas.scene.id, attackerTokenId: attackerToken.id,
       firstTargetId: firstTarget.id, context: cardContext,
+      ranged: isTechniqueRanged(item, rangeM),
     }),
     speaker: ChatMessage.getSpeaker({ actor: attacker }),
     flavor: `
@@ -1178,12 +1249,14 @@ export async function useTechnique(attacker, item, { controlledToken = null } = 
   if (Number(automation.cooldownTurns ?? 0) > 0) {
     await setTechniqueCooldown(attacker, item, Number(automation.cooldownTurns));
   }
+  return chatMessage;
 }
 
 registerCardType("technique", async (card, html, on) => {
   const attacker = await fromUuid(card.actorUuid);
   const item = await fromUuid(card.itemUuid);
   if (!attacker || !item) throw new Error("Acteur ou technique introuvable.");
+  attachSourceReactions(card, html, on, attacker);
   const attackerToken = canvas.tokens.get(card.attackerTokenId);
   const firstTarget = canvas.tokens.get(card.firstTargetId);
   const ctx = { ...card.context, attackerToken };
@@ -1197,12 +1270,7 @@ registerCardType("technique", async (card, html, on) => {
     const actor = token?.actor;
     if (!actor || !canInteractWithToken(token)) return;
 
-    const currentRp = Number(FU.getProperty(actor, "system.resources.rp.value") ?? 0) || 0;
-    if (currentRp < 1) {
-      ui.notifications.warn(`Pas assez de RP (1 requis, actuel ${currentRp}).`);
-      return;
-    }
-    await actor.update({ "system.resources.rp.value": currentRp - 1 });
+    if (!(await spendRp(actor, 1, "esquive de technique"))) return;
     html
       .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
       .html("<em>Esquive reussie : degats annules.</em>");
@@ -1216,12 +1284,7 @@ registerCardType("technique", async (card, html, on) => {
     const actor = token?.actor;
     if (!actor || !canInteractWithToken(token)) return;
 
-    const currentRp = Number(FU.getProperty(actor, "system.resources.rp.value") ?? 0) || 0;
-    if (currentRp < 1) {
-      ui.notifications.warn(`Pas assez de RP (1 requis, actuel ${currentRp}).`);
-      return;
-    }
-    await actor.update({ "system.resources.rp.value": currentRp - 1 });
+    if (!(await spendRp(actor, 1, "déviation de technique"))) return;
     html
       .find(`.bl-target-row[data-target-token="${token.id}"] .bl-target-result`)
       .html("<em>Deviation reussie : degats annules. Redirection manuelle.</em>");
@@ -1245,6 +1308,8 @@ registerCardType("technique", async (card, html, on) => {
     const tokenId = String(html.find(".bl-dash").attr("data-attacker-token"));
     const token = canvas.tokens.get(tokenId);
     if (!token || !canInteractWithToken(token)) return;
+    if (getConditionActionRestriction(attacker, "rp").blocked) return;
+    if (!(await spendResourceCosts(attacker, [{ path: "system.resources.rp.value", cost: 1, label: "RP" }]))) return;
     await simpleDash(token, 6);
   });
 
@@ -1259,7 +1324,7 @@ registerCardType("technique", async (card, html, on) => {
       return;
     }
     html.find(".bl-quickshot").prop("disabled", true);
-    await rollBasicAttack(attacker, { item: weapon });
+    await rollBasicAttack(attacker, { item: weapon, free: true });
   });
 
   on(".bl-dislocate", async (event) => {

@@ -218,6 +218,7 @@
         <div class="field">
           <h3>Souffles possedes</h3>
           <button type="button" class="bl-custom-breath-builder">Calculateur souffle maison</button>
+          <button type="button" class="bl-mist-hide">Se cacher / sortir de la brume</button>
           {{#if ownedBreathItems.length}}
             <div class="breath-card-list">
               {{#each ownedBreathItems as |it|}}
@@ -434,6 +435,9 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="regles">
+      {{#if system.combat.sourceStunned}}<p><strong>Assommé</strong> — effet temporaire actif.</p>{{/if}}
+      {{#if system.combat.sourceImmobilized}}<p><strong>Déplacement nul</strong> — effet temporaire actif.</p>{{/if}}
+      {{#if system.combat.regeneration.active}}<p><strong>Repousse :</strong> {{system.combat.regeneration.remainingTurns}} tour(s) restant(s).</p>{{/if}}
       <div class="grid two-col">
 
 
@@ -480,7 +484,7 @@
         {{#each limbEntries as |entry|}}
           <div class="field">
             <strong>{{entry.label}}</strong>
-            <small>Seuil {{entry.thresholdPercent}}% - suivi: {{entry.targetedDamage}}</small>
+            <small>{{#if entry.thresholdPercent}}Seuil {{entry.thresholdPercent}}%{{else}}Conséquences vitales : arbitrage MJ{{/if}} - suivi: {{entry.targetedDamage}}</small>
             <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.injured" data-dtype="Boolean" {{checked entry.state.injured}} {{#unless ../canEdit}}disabled{{/unless}} /> Blesse</label>
             <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.broken" data-dtype="Boolean" {{checked entry.state.broken}} {{#unless ../canEdit}}disabled{{/unless}} /> Casse</label>
             <label><input type="checkbox" name="system.combat.injuries.limbs.{{entry.key}}.severed" data-dtype="Boolean" {{checked entry.state.severed}} {{#unless ../canEdit}}disabled{{/unless}} /> Sectionne</label>
@@ -491,6 +495,7 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="progression">
+      {{#if canEdit}}<button type="button" class="bl-secondary-mission">Mission réussie : forme du souffle secondaire</button>{{/if}}
 <h2>Progression</h2><div class="grid four-col summary-grid">
         <div class="field small">
           <label>Classe</label>
@@ -568,6 +573,7 @@
           <div class="bl-form-field"><label>Deplacement (m)</label>
           <input type="number" name="system.combat.actionEconomy.movementMeters" value="{{system.combat.actionEconomy.movementMeters}}" min="0" step="0.5" {{#unless canEdit}}disabled{{/unless}} /></div>
           <small>Effectif: {{system.combat.actionEconomy.effectiveMovementMeters}} m{{#if system.combat.injuries.noFlight}} - vol impossible{{/if}}</small>
+          <label>Actions restantes ce tour <input type="number" name="system.combat.actionEconomy.remainingActions" value="{{system.combat.actionEconomy.remainingActions}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></label>
           {{#if system.combat.injuries.limbEffectSummary.length}}
             <small>{{join system.combat.injuries.limbEffectSummary ", "}}</small>
           {{/if}}

@@ -1,6 +1,6 @@
 import { registerPersistentCardHooks } from "./chat/persistent-cards.mjs";
 import { registerSystemDataModels } from "./data/system-models.mjs";
-import { isAutomationAuthority, isCombatTurnStart } from "./rules/automation-authority.mjs";
+import { isAutomationAuthority, isCombatTurnStart, registerCombatAutomation } from "./rules/automation-authority.mjs";
 import {
   ADVANCED_STATES,
   BREATH_KEYS,
@@ -36,8 +36,12 @@ import {
   openCustomBreathBuilder,
 } from "./rules/custom-breath-builder.mjs";
 import { registerMigrationSetting, runSystemMigrations } from "./migrations.mjs";
+import { prepareSubclassPassives } from "./rules/subclass-passives.mjs";
+import { startRegeneration } from "./rules/regeneration.mjs";
+import { registerMistHooks, mistContainsToken, toggleMistCover } from "./rules/mist-trail.mjs";
+import { traitDerivedBonus, perceptionContext } from "./rules/character-capabilities.mjs";
 import { registerEffectHooks, applyTemporaryModifiers } from "./rules/effects-engine.mjs";
-import { normalizeTechniqueItemData, validateTechniqueOwnership } from "./rules/technique-utils.mjs";
+import { normalizeTechniqueItemData, validateTechniqueOwnership, actorHasBreath } from "./rules/technique-utils.mjs";
 import {
   ensurePoisonStateDefaults,
   getEffectiveBaseStats,
@@ -302,6 +306,7 @@ function applyLimbMovementEffects(sys, baseMovement) {
   let movement = Math.max(0, toNumber(baseMovement, 0));
   const notes = [];
   let noFlight = false;
+  let movementPenaltyRatio = 0;
 
   const disabledLeg = ["leftLeg", "rightLeg"].some((key) => isLimbDisabled(limbStates[key]));
   if (disabledLeg) {
@@ -321,13 +326,14 @@ function applyLimbMovementEffects(sys, baseMovement) {
       notes.push(`${definition.label}: -${definition.movementFlatPenalty} m`);
     }
     if (definition.movementPenaltyRatio) {
-      movement *= Math.max(0, 1 - toNumber(definition.movementPenaltyRatio, 0));
+      movementPenaltyRatio += toNumber(definition.movementPenaltyRatio, 0);
       notes.push(`${definition.label}: -${Math.round(definition.movementPenaltyRatio * 100)}%`);
     }
   }
 
   sys.combat.injuries.limbEffectSummary = notes;
   sys.combat.injuries.noFlight = noFlight;
+  movement *= Math.max(0, 1 - movementPenaltyRatio);
   return Number(Math.max(0, movement).toFixed(1));
 }
 
@@ -572,6 +578,7 @@ class BLActor extends Actor {
     const actorLevel = toNumber(sys.class.level, 1);
     if (this.type === "slayer") {
       sys.progression.tcbConstantUnlocked ||= actorLevel >= 3;
+      sys.progression.tcbConstantUnlocked ||= actorHasBreath(this, "sun");
       sys.progression.markedUnlocked ||= actorLevel >= 6;
       sys.progression.transparentWorldUnlocked ||= actorLevel >= 8;
       sys.progression.redBladeUnlocked ||= actorLevel >= 10;
@@ -635,13 +642,13 @@ class BLActor extends Actor {
         0,
         toNumber(value, 0) +
           toNumber(derivedBonuses[key], 0) -
-          toNumber(conditionDerivedPenalties[key], 0)
+          toNumber(conditionDerivedPenalties[key], 0) + traitDerivedBonus(this, key) - toNumber(poisonRuntime.derivedPenalty?.[key], 0)
       );
     }
     sys.stats.effectiveDerived = effectiveDerived;
     sys.conditions.automation = {
-      ...getConditionAutomationSummary(sys),
-      notes: buildConditionAutomationNotes(sys),
+      ...getConditionAutomationSummary(this),
+      notes: buildConditionAutomationNotes(this),
       derivedPenalties: conditionDerivedPenalties,
     };
     sys.conditions.poisoned.runtime = poisonRuntime;
@@ -681,6 +688,7 @@ class BLActor extends Actor {
 
     const equippedArmorBonus = getEquippedArmorBonus(this);
     sys.resources.ca = calculateArmorClass(effectiveBase) + equippedArmorBonus;
+    if (this.getFlag(SYSTEM_ID, "mistHidden") && mistContainsToken(this, this.getActiveTokens?.()[0])) sys.resources.ca += Math.max(0, sys.resources.ca - 10);
     sys.resources.armorBonus = equippedArmorBonus;
     sys.resources.rp.max = calculateHumanReactionMax(
       effectiveBase,
@@ -737,7 +745,7 @@ class BLActor extends Actor {
       ].includes(sys.class.rank);
       sys.demonology.halfReactionRule = true;
       sys.demonology.halfDamageStatRule = true;
-      sys.demonology.benchmark = {
+      sys.demonology.benchmark = { ...benchmark, /* Saved custom benchmarks are refreshed with the rank. */
         force: toNumber(sys.demonology.benchmark.force, benchmark.force ?? 0),
         finesse: toNumber(sys.demonology.benchmark.finesse, benchmark.finesse ?? 0),
         courage: toNumber(sys.demonology.benchmark.courage, benchmark.courage ?? 0),
@@ -751,13 +759,14 @@ class BLActor extends Actor {
         bda: sys.demonology.benchmark.bda || benchmark.bda || "",
         rp: toNumber(sys.demonology.benchmark.rp, benchmark.rp ?? sys.resources.rp.max),
       };
+      Object.assign(sys.demonology.benchmark, benchmark);
       delete sys.resources.e;
     } else {
       sys.resources.e.max = calculateHumanEnduranceMax(
         effectiveBase,
         sys.progression.bonuses.endurance
       );
-      sys.resources.e.value = clamp(toNumber(sys.resources.e.value, sys.resources.e.max), 0, sys.resources.e.max);
+      sys.resources.e.value = clamp(toNumber(sys.resources.e.value, sys.resources.e.max), 0, sys.resources.e.max + sys.resources.e.temporary);
       sys.combat.actionEconomy.effectiveMovementMeters = applyLimbMovementEffects(
         sys,
         sys.combat.actionEconomy.movementMeters
@@ -781,7 +790,7 @@ class BLActor extends Actor {
         sys.resources.bdp.max = calculateDemonistBdpMax(effectiveBase);
         sys.resources.bdp.value = clamp(toNumber(sys.resources.bdp.value, 0), 0, sys.resources.bdp.max);
         sys.resources.demonisation = Math.max(0, toNumber(sys.resources.demonisation, 0));
-        sys.resources.demonisationMax = calculateDemonisationMax(effectiveBase);
+        sys.resources.demonisationMax = calculateDemonisationMax(rawBase);
       } else {
         sys.resources.bdp = { value: 0, max: 0 };
         sys.resources.demonisation = 0;
@@ -796,8 +805,10 @@ class BLActor extends Actor {
       sys.resources.ca = 3;
       sys.resources.rp.max = 0;
       sys.resources.rp.value = 0;
+      sys.combat.actionEconomy.actionsPerTurn = 1;
     }
 
+    prepareSubclassPassives(this);
     sys.resources.ca = applyTemporaryModifiers(this, "system.resources.ca", sys.resources.ca);
 
     sys.progression.studySlots.value = clamp(
@@ -817,6 +828,7 @@ class BLActor extends Actor {
 
 // Attach listeners before the initial chat log renders during world setup.
 Hooks.once("setup", registerPersistentCardHooks);
+Hooks.once("setup", registerMistHooks);
 
 Hooks.once("ready", async () => {
   await runSystemMigrations();
@@ -849,6 +861,8 @@ Hooks.once("ready", async () => {
     setConditionState,
     setLimbState,
     useMedicalItem,
+    startRegeneration,
+    toggleMistCover,
   };
 
   const mod = game.modules.get(SYSTEM_ID);
@@ -875,6 +889,9 @@ export async function rollBaseCheck(actor, statKey, label = "") {
 
 export async function rollDerivedCheck(actor, derivedKey, label = "") {
   const key = normalizeDerivedStatKey(derivedKey);
+  const context = await perceptionContext(actor, key, label);
+  if (!context) return null;
+  label = context.label;
   const autoFailures = conditionAutoFailDerived(actor, key, label);
   if (autoFailures.length) {
     return ChatMessage.create({
@@ -883,7 +900,7 @@ export async function rollDerivedCheck(actor, derivedKey, label = "") {
     });
   }
   const derived = actor.system?.stats?.effectiveDerived || actor.system?.stats?.derived || {};
-  const mod = toNumber(derived[key], 0);
+  const mod = toNumber(derived[key], 0) + context.bonus;
   const r = await new Roll(`1d20 + ${mod}`).evaluate();
   return r.toMessage({
     speaker: ChatMessage.getSpeaker({ actor }),
@@ -917,7 +934,7 @@ async function blSetUnconscious(actor, tokenOrCombatant) {
   });
 }
 
-Hooks.on("updateCombat", async (combat, changed, options, userId) => {
+registerCombatAutomation(40, async (combat, changed, options, userId) => {
   if (!isAutomationAuthority(userId)) return;
   if (!isCombatTurnStart(combat, changed)) return;
 
@@ -958,7 +975,7 @@ Hooks.on("updateCombat", async (combat, changed, options, userId) => {
   }
 });
 
-Hooks.on("updateCombat", async (combat, changed, options, userId) => {
+registerCombatAutomation(5, async (combat, changed, options, userId) => {
   if (!isAutomationAuthority(userId)) return;
   if (changed.round === undefined) return;
   for (const combatant of combat.combatants) {

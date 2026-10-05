@@ -460,8 +460,8 @@ export const CONDITION_DEFINITIONS = [
 ];
 
 export const LIMB_DEFINITIONS = [
-  { key: "head", label: "Tete", thresholdRatio: 0.2, category: "vital" },
-  { key: "torso", label: "Torse", thresholdRatio: 0.2, category: "vital" },
+  { key: "head", label: "Tete", category: "vital" },
+  { key: "torso", label: "Torse", category: "vital" },
   { key: "leftArm", label: "Bras gauche", thresholdRatio: 0.2, category: "arm" },
   { key: "rightArm", label: "Bras droit", thresholdRatio: 0.2, category: "arm" },
   { key: "leftLeg", label: "Jambe gauche", thresholdRatio: 0.2, category: "leg", movementMultiplier: 0.5 },
@@ -717,7 +717,7 @@ export const DEMON_RANK_PACKAGES = {
       bite: "1d4+3",
       claw: "4",
       bda: "1d6+3",
-      rp: 4,
+      rp: 9,
     },
   },
   "Disciple de Lune inferieure": {
@@ -734,7 +734,7 @@ export const DEMON_RANK_PACKAGES = {
       bite: "1d6+4",
       claw: "5-8",
       bda: "1d8+4",
-      rp: 9,
+      rp: 14,
     },
   },
   "Lune inferieure": {
@@ -751,7 +751,7 @@ export const DEMON_RANK_PACKAGES = {
       bite: "1d8+6",
       claw: "7-11",
       bda: "1d12+6",
-      rp: 14,
+      rp: 25,
     },
   },
   "Disciple de Lune superieure": {
@@ -768,7 +768,7 @@ export const DEMON_RANK_PACKAGES = {
       bite: "1d10+8",
       claw: "10-15",
       bda: "1d20",
-      rp: 25,
+      rp: 32,
     },
   },
   "Lune superieure": {

@@ -1,3 +1,4 @@
+import { traitCombatBonuses, sourceTrait } from "./character-capabilities.mjs";
 const BASE_STAT_KEYS = ["force", "finesse", "courage", "vitesse", "social", "intellect"];
 
 export const POISON_PROFILE_OPTIONS = [
@@ -81,7 +82,9 @@ export function getPoisonApplicationLabel(application) {
 }
 
 export function getEffectiveBaseStats(actor) {
-  return actor?.system?.stats?.effectiveBase || actor?.system?.stats?.base || {};
+  const stats = actor?.system?.stats?.effectiveBase || actor?.system?.stats?.base || {};
+  const bonuses = traitCombatBonuses(actor);
+  return Object.fromEntries(Object.entries(stats).map(([key, value]) => [key, Number(value) + (bonuses[key] || 0)]));
 }
 
 export function ensurePoisonStateDefaults(state = {}) {
@@ -112,7 +115,9 @@ export function resolvePoisonRuntime(state = {}, actor = null) {
   const moonImmune = !!poison.ignoreMoonDemons && isMoonRank(actor?.system?.class?.rank);
   const glycineOnly = profiles.length > 0 && profiles.every((profile) => profile.startsWith("glycine"));
   const blockedByTargetType = (!!poison.demonOnly || glycineOnly) && !demonLike;
-  const active = !!poison.active && intensity > 0 && !moonImmune && !blockedByTargetType;
+  const rankImmune = sourceTrait(actor, "blood") && poison.sourceRank !== undefined && poison.sourceRank !== "" &&
+    Number(poison.sourceRank) <= Number(actor?.system?.class?.level);
+  const active = !!poison.active && intensity > 0 && !moonImmune && !blockedByTargetType && !rankImmune;
 
   const runtime = {
     active,
@@ -123,6 +128,7 @@ export function resolvePoisonRuntime(state = {}, actor = null) {
     blockedByTargetType,
     moonImmune,
     statPenalty: blankPenaltyMap(),
+    derivedPenalty: {},
     turnDamage: { kind: "none", value: 0, formula: "", parts: [] },
   };
 
@@ -144,7 +150,8 @@ export function resolvePoisonRuntime(state = {}, actor = null) {
   }
   if (glycineWeakening) {
     runtime.statPenalty.force += glycineWeakening;
-    runtime.statPenalty.finesse += glycineWeakening;
+    runtime.derivedPenalty.dexterite = glycineWeakening * Math.max(1, Number(poison.elapsedTurns) || 1);
+    runtime.statPenalty.force += glycineWeakening * Math.max(0, (Number(poison.elapsedTurns) || 1) - 1);
   }
   if (glycineDamaging) {
     damageParts.push({
@@ -273,6 +280,8 @@ export function buildPoisonApplicationUpdate(currentState = {}, patch = {}) {
     profile,
     stacks,
     damageFormula: patch.damageFormula ?? current.damageFormula ?? "",
+    sourceRank: patch.sourceRank ?? current.sourceRank ?? "",
+    elapsedTurns: current.active ? toNumber(current.elapsedTurns, 0) : 0,
     demonOnly:
       patch.demonOnly !== undefined ? !!patch.demonOnly : !!current.demonOnly,
     ignoreMoonDemons:

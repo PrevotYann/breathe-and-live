@@ -2,7 +2,7 @@ import { LIMB_DEFINITIONS, SYSTEM_ID } from "./config/rule-data.mjs";
 import { normalizeDerivedStats } from "./rules/actor-derived-formulas.mjs";
 
 const FU = foundry.utils;
-const MIGRATION_VERSION = "0.1.6";
+const MIGRATION_VERSION = "0.2.0";
 
 function ensureActorUpdate(actor) {
   const update = {};
@@ -11,6 +11,9 @@ function ensureActorUpdate(actor) {
   };
 
   setIfMissing("system.resources.hp.temporary", 0);
+  setIfMissing("system.combat.actionEconomy.remainingActions", 0);
+  setIfMissing("system.combat.actionEconomy.waiting", false);
+  setIfMissing("system.combat.regeneration", { active: false, limbs: [], remainingTurns: 0, continuous: false, cycleTurns: 0, demonisationPerTurn: 0, sourceName: "" });
   if (FU.hasProperty(actor, "system.resources.e")) {
     setIfMissing("system.resources.e.temporary", 0);
   }
@@ -138,7 +141,8 @@ export async function runSystemMigrations() {
     }
   }
 
-  for (const item of game.items?.contents ?? []) {
+  const items = new Set([...(game.items?.contents ?? []), ...(game.actors?.contents ?? []).flatMap(actor => Array.from(actor.items ?? []))]);
+  for (const item of items) {
     const update = ensureItemUpdate(item);
     if (Object.keys(update).length) {
       await item.update(update);

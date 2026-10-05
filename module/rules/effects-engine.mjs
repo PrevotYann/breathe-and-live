@@ -1,5 +1,6 @@
-import { isAutomationAuthority, isCombatTurnStart, combatActors } from "./automation-authority.mjs";
-// Moteur d'effets temporaires (Foundry v12.343)
+import { isAutomationAuthority, isCombatTurnStart, combatActors, registerCombatAutomation } from "./automation-authority.mjs";
+import { currentCombatBoundary } from "./combat-state.mjs";
+// Moteur d'effets temporaires (Foundry v14.368)
 // - Mémorise la valeur "base" des champs persistés au 1er effet
 // - La CA est modifiée pendant prepareDerivedData, sans figer sa base
 // - Recalcule: base -> apply effets (ordre d'application: add/mul/set selon l'effet)
@@ -9,6 +10,12 @@ import { isAutomationAuthority, isCombatTurnStart, combatActors } from "./automa
 
 const NS = "breathe-and-live";
 const FU = foundry.utils;
+const effectQueues = new WeakMap();
+function serializeEffects(actor, action) {
+  const next = (effectQueues.get(actor) ?? Promise.resolve()).catch(error => console.error("BL | Effects", error)).then(action);
+  effectQueues.set(actor, next);
+  return next;
+}
 
 /* --------------------- Helpers get/set --------------------- */
 function fuGet(obj, path, d = undefined) {
@@ -53,7 +60,7 @@ async function _ensureBase(actor, path) {
   if (Object.prototype.hasOwnProperty.call(baseMap, path)) return;
   // mémorise la valeur actuelle comme base
   const current = fuGet(actor, path);
-  baseMap[path] = Number.isFinite(current) ? current : current;
+  baseMap[path] = current ?? 0;
   await _setBaseMap(actor, baseMap);
 }
 
@@ -122,6 +129,7 @@ async function _applySingleEffect({ actor, eff }) {
     label: eff.label ?? "Effet",
     origin: eff.origin ?? null,
     _appliedAt: Date.now(),
+    _appliedBoundary: currentCombatBoundary(),
   };
   list.push(entry);
   await _setEffects(actor, list);
@@ -143,14 +151,34 @@ export function applyTemporaryModifiers(actor, path, baseValue) {
     return value + delta;
   }, baseValue);
 }
+export function consumeEffectsByOrigin(actor, origin) {
+  return serializeEffects(actor, async () => {
+    const list = _getEffects(actor), removed = list.filter(e => e.origin === origin);
+    if (!removed.length) return;
+    const keep = list.filter(e => e.origin !== origin);
+    await _setEffects(actor, keep);
+    for (const path of new Set(removed.map(e => e.path))) {
+      if (keep.some(e => e.path === path)) await _recomputePath(actor, path);
+      else await _clearBaseIfUnused(actor, path);
+    }
+  });
+}
 
-export async function purgeExpiredEffects({ when, actors }) {
+export async function purgeExpiredEffects({ when, actors, combat = game.combat }) {
   for (const actor of new Set(actors)) {
+    await serializeEffects(actor, async () => {
     const list = _getEffects(actor);
     const touched = new Set();
     let changed = false;
     const keep = list.filter(effect => {
       let expire = effect.duration === when;
+      if (when === "combatEnd" && /^(turnEnd|currentTurnEnd|roundEnd|custom:\d+|ownerTurns:\d+)$/.test(effect.duration)) expire = true;
+      if (when === "turnEnd" && /^ownerTurns:(\d+)$/i.test(effect.duration)) {
+        const boundary = effect._appliedBoundary, previous = combat?.previous;
+        if (boundary && boundary.combatId === combat?.id && boundary.round === previous?.round && boundary.turn === previous?.turn) return true;
+        const left = Math.max(0, Number(effect.duration.split(":")[1]) - 1);
+        effect.duration = `ownerTurns:${left}`; expire = left === 0; changed = true;
+      }
       if (when === "roundEnd" && /^custom:(\d+)$/i.test(effect.duration)) {
         const left = Math.max(0, Number(effect.duration.split(":")[1]) - 1);
         effect.duration = `custom:${left}`;
@@ -163,17 +191,21 @@ export async function purgeExpiredEffects({ when, actors }) {
       }
       return !expire;
     });
-    if (!changed) continue;
+    if (!changed) return;
     await _setEffects(actor, keep);
     for (const path of touched) {
       if (keep.some(effect => effect.path === path)) await _recomputePath(actor, path);
       else await _clearBaseIfUnused(actor, path);
     }
+    });
   }
 }
 
+let registered = false;
 export function registerEffectHooks() {
-  Hooks.on("updateCombat", async (combat, change, options, userId) => {
+  if (registered) return;
+  registered = true;
+  registerCombatAutomation(10, async (combat, change, options, userId) => {
     if (!isAutomationAuthority(userId)) return;
     if (!isCombatTurnStart(combat, change)) return;
     const previous = combat.previous;
@@ -183,7 +215,8 @@ export function registerEffectHooks() {
     if (!advanced) return;
     const outgoing = combat.combatants.get(previous.combatantId)?.actor ??
       combat.turns?.[previous.turn]?.actor;
-    if (outgoing) await purgeExpiredEffects({ when: "turnEnd", actors: [outgoing] });
+    if (outgoing) await purgeExpiredEffects({ when: "turnEnd", actors: [outgoing], combat });
+    await purgeExpiredEffects({ when: "currentTurnEnd", actors: combatActors(combat), combat });
     if (change.round !== undefined && combat.round > previous.round) {
       await purgeExpiredEffects({ when: "roundEnd", actors: combatActors(combat) });
     }
@@ -193,6 +226,7 @@ export function registerEffectHooks() {
     const actors = combatActors(combat);
     await purgeExpiredEffects({ when: "turnEnd", actors });
     await purgeExpiredEffects({ when: "roundEnd", actors });
+    await purgeExpiredEffects({ when: "combatEnd", actors });
   });
 }
 
@@ -203,6 +237,7 @@ export async function applyEffectsList({ source, target, effects, origin }) {
 
   const srcName = _getActorFromTarget(source)?.name ?? source?.name ?? "Source";
 
+  return serializeEffects(actor, async () => {
   for (const eff of effects ?? []) {
     const e = { ...eff, origin: eff.origin || origin || srcName };
     try {
@@ -211,4 +246,5 @@ export async function applyEffectsList({ source, target, effects, origin }) {
       console.error("BL | applyEffectsList error:", err, e);
     }
   }
+  });
 }

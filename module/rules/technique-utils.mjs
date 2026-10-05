@@ -351,7 +351,7 @@ function statTokenMap(actor, context = {}) {
   tokens[normalizeText("Puissance")] = tokens[normalizeText("Force")] ?? 0;
 
   for (const [key, label] of Object.entries(derivedMap)) {
-    tokens[normalizeText(key)] = Number(FU.getProperty(actor, `system.stats.derived.${key}`) ?? 0) || 0;
+    tokens[normalizeText(key)] = Number(FU.getProperty(actor, `system.stats.effectiveDerived.${key}`) ?? FU.getProperty(actor, `system.stats.derived.${key}`) ?? 0) || 0;
     tokens[normalizeText(label)] = tokens[normalizeText(key)];
   }
 
@@ -409,7 +409,8 @@ function isConcretePrerequisite(value) {
 
 function actorHasSense(actor, senseName) {
   if (!actor || !isConcretePrerequisite(senseName)) return true;
-  const wanted = normalizeText(senseName);
+  const text = normalizeText(senseName);
+  const wanted = /audit|audition|ouie/.test(text) ? "ouie" : /olfact|odorat/.test(text) ? "odorat" : /vision|vue/.test(text) ? "vue" : text;
   return actor.items?.some((item) => {
     if (item.type !== "sense") return false;
     return (
@@ -425,6 +426,7 @@ function actorHasTrait(actor, traitName) {
   return actor.items?.some((item) => {
     if (!["feature", "sense"].includes(item.type)) return false;
     const tags = Array.isArray(item.system?.tags) ? item.system.tags.join(" ") : "";
+    if (/corps flexible/.test(wanted) && item.system?.traitKey === "agility") return true;
     return (
       normalizeText(item.name).includes(wanted) ||
       normalizeText(item.system?.family).includes(wanted) ||
@@ -452,14 +454,14 @@ function actorHasWeaponPrereq(actor, weaponName) {
 
 export function validateTechniqueOwnership(actor, itemData) {
   const type = String(itemData?.type || "");
-  if (type !== "technique") return { ok: true, breathKey: "" };
+  if (!["technique", "breath"].includes(type)) return { ok: true, breathKey: "" };
 
   const breathKey =
-    String(itemData?.system?.breathKey || "") ||
+    String(itemData?.system?.breathKey || itemData?.system?.key || "") ||
     normalizeBreathName(itemData?.system?.breath) ||
     normalizeBreathName(itemData?.name);
 
-  const requiresBreath = itemData?.system?.automation?.requiresBreath !== false && !!breathKey;
+  const requiresBreath = type === "technique" && itemData?.system?.automation?.requiresBreath !== false && !!breathKey;
   if (requiresBreath && !actorHasBreath(actor, breathKey)) {
     return {
       ok: false,
@@ -644,6 +646,7 @@ export async function noteActorDamageTaken(actor, amount) {
   }
 
   const damage = Math.max(0, toNumber(amount, 0));
+  if (["demon", "npcDemon"].includes(actor.type)) return;
   if (damage < 13 || !FU.hasProperty(actor, "system.resources.hp.max")) return;
 
   const nearDeath = damage >= 20;
@@ -655,13 +658,11 @@ export async function noteActorDamageTaken(actor, amount) {
   const nextNearDeath = nearDeathWounds + (nearDeath ? 1 : 0);
   const hpMax = toNumber(actor.system?.resources?.hp?.max, 1);
   const healableMax = calculateHealableMax(hpMax, nextSevere + nextNearDeath);
-  const hpValue = toNumber(actor.system?.resources?.hp?.value, 0);
 
   await actor.update({
     [severePath]: nextSevere,
     [nearDeathPath]: nextNearDeath,
     "system.resources.hp.healableMax": healableMax,
-    "system.resources.hp.value": Math.min(hpValue, healableMax),
   });
 
   await ChatMessage.create({

@@ -2,7 +2,7 @@
   "id": "breathe-and-live",
   "title": "Breathe and Live - Demon Slayer RPG",
   "description": "Adaptation du systeme JDR Breathe and Live (Demon Slayer) pour Foundry VTT.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "socket": true,
   "background": "systems/breathe-and-live/assets/art/system-cover.png",
   "media": [

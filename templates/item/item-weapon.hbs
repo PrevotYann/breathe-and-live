@@ -20,6 +20,10 @@
 
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="stats">
+      {{#if system.ruleSource.missingFields.length}}
+        <p>Valeurs absentes du livre : {{join system.ruleSource.missingFields ", "}}</p>
+        <label><input type="checkbox" name="system.ruleSource.approved" data-dtype="Boolean" {{checked system.ruleSource.approved}} /> Valeurs validées par le MJ</label>
+      {{/if}}
       <div class="grid two-col">
 
 
@@ -79,6 +83,9 @@
     </div>
 
     <div class="tab" data-group="primary" data-tab="munitions">
+      <label>Réserve utilisée au rechargement</label><select name="system.ammunitionId"><option value="">Compteur manuel</option>{{#each ammunitionOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}</select>
+      <label><input type="checkbox" name="system.aimed" data-dtype="Boolean" {{checked system.aimed}} /> Tir visé (lunette)</label>
+      {{#each modificationOptions}}<label><input type="checkbox" name="system.attachedModifications.{{id}}" data-dtype="Boolean" {{checked selected}} /> {{name}}</label>{{/each}}
       <div class="grid two-col">
         <label><input type="checkbox" name="system.usesAmmo" data-dtype="Boolean" {{checked system.usesAmmo}} /> Utilise des munitions</label>
 

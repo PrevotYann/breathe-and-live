@@ -1,0 +1,3347 @@
+{
+  "sourceDate": "2026-10-05",
+  "forms": [
+    {
+      "id": "edc27a76318cfdc5",
+      "name": "Premier croc : Pierce",
+      "breath": "beast",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "3a2e4b98e77a24e7",
+      "name": "Second Fang : Déchirer et déchirer",
+      "breath": "beast",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "921d504cf59f9dce",
+      "name": "Troisième Croc : Dévorer",
+      "breath": "beast",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "8b107b7feea99289",
+      "name": "Quatrième Croc : Trancher et Découper",
+      "breath": "beast",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "ff8e22a624853992",
+      "name": "Cinquième Croc : Coupe folle",
+      "breath": "beast",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "aa61f73d26d79bc4",
+      "name": "Sixième Croc : Morsure de Palisade",
+      "breath": "beast",
+      "form": 6,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "3451ff04c200cdb7",
+      "name": "Septième année : Conscience spatiale",
+      "breath": "beast",
+      "form": 7,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "a2750a66bb996864",
+      "name": "Huitième Croc : Ruée explosive",
+      "breath": "beast",
+      "form": 8,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "6661e9ff298ef636",
+      "name": "Neuvième Croc : Extension de Bendy Slash",
+      "breath": "beast",
+      "form": 9,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "ecd0ee4db98fe1d2",
+      "name": "Dixième Croc : Crocs tourbillonnants",
+      "breath": "beast",
+      "form": 10,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "b547f6c16f5ec4a1",
+      "name": "Feu Inconscient",
+      "breath": "flame",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "b36f74cead7aa12b",
+      "name": "Soleil Levant Brûlant",
+      "breath": "flame",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "e647585999616154",
+      "name": "Univers Flamboyant",
+      "breath": "flame",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "42fb3637f905b8b3",
+      "name": "Ondulation de la Flamme en Fleurs",
+      "breath": "flame",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "00a80e51b1041bce",
+      "name": "Tigre de Flamme",
+      "breath": "flame",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "e9d78b11b558f705",
+      "name": "Brasier Déchaîné",
+      "breath": "flame",
+      "form": 6,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "1d3f2c4e85926fbc",
+      "name": "Flamme Purificatrice",
+      "breath": "flame",
+      "form": 7,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "ab787ece356bf759",
+      "name": "Rafale de Flammes Dansantes",
+      "breath": "flame",
+      "form": 8,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "e11a42a1f9281bb5",
+      "name": "Rengoku",
+      "breath": "flame",
+      "form": 9,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "5b076ca86c16ce5a",
+      "name": "Floraison",
+      "breath": "flower",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "bd0623922bfbc94c",
+      "name": "Esprit de prune",
+      "breath": "flower",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "6175adfa25dd0767",
+      "name": "Robe de carthame",
+      "breath": "flower",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "8daa062e6a694351",
+      "name": "Pivoine de la Futilité",
+      "breath": "flower",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "c85403d1bb162642",
+      "name": "Pêche tourbillonnante",
+      "breath": "flower",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "413ca366b4ff2a3d",
+      "name": "Chute de Sakura",
+      "breath": "flower",
+      "form": 6,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "98e714eef8138ce2",
+      "name": "Danse du Papillon : Caprice",
+      "breath": "insect",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "cc1e7d70e1f8b880",
+      "name": "Danse du Dard de l'Abeille : Vrai Battement",
+      "breath": "insect",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "0cbc5125d3bbd2c9",
+      "name": "Danse de la Libellule : Hexagone de l'Œil Composé",
+      "breath": "insect",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "088ef8a7154103c7",
+      "name": "Danse du Mille-pattes : Zigzag aux Cent Pattes",
+      "breath": "insect",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "3ab00feb6e64b53f",
+      "name": "Frissons du Premier Amour",
+      "breath": "love",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "e8fbb2d806587be9",
+      "name": "Douleurs d'Amour",
+      "breath": "love",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "f1815509282d17a1",
+      "name": "Douche de Chat",
+      "breath": "love",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "1225096f22096df1",
+      "name": "Réclusion du Cœur Brisé",
+      "breath": "love",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "e66bfde141739fd8",
+      "name": "Amour Ondulant - Griffe Sauvage",
+      "breath": "love",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "6f95e3e38e82bf28",
+      "name": "Vents d'Amour à Pattes de Chat",
+      "breath": "love",
+      "form": 6,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "744bd0b5710263d5",
+      "name": "Amour à Longue Distance",
+      "breath": "love",
+      "form": 7,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "6093c93e9eabc32f",
+      "name": "Ciel suspendu, brume lointaine",
+      "breath": "mist",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "f7796834427d5194",
+      "name": "Brume à huit couches",
+      "breath": "mist",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "8cf17bf67e8577fb",
+      "name": "Explosion de désembuage",
+      "breath": "mist",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "7363c9366cd06c32",
+      "name": "Barre oblique d'advection",
+      "breath": "mist",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "19e6f5e13a326766",
+      "name": "Mer de nuages ​​et de brume",
+      "breath": "mist",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "5f20ef0f2a03a68d",
+      "name": "Brume au clair de lune",
+      "breath": "mist",
+      "form": 6,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "f261ed548e24f724",
+      "name": "Lune sombre, Palais du soir",
+      "breath": "moon",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "501a9aaf16f5dd12",
+      "name": "Observation de la Lune avec des Fleurs de Perles",
+      "breath": "moon",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "6454de968e3cf832",
+      "name": "Lune Répugnante, chaînes",
+      "breath": "moon",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "773f37f163d68528",
+      "name": "Lune Voilée, Poussière Fantomatique",
+      "breath": "moon",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "acd4b5bf81b36c28",
+      "name": "Esprit Lunaire, Tourbillon Calamiteux",
+      "breath": "moon",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "544febc13f4247d1",
+      "name": "Nuit Éternelle, Lune Solitaire - Sans Fin",
+      "breath": "moon",
+      "form": 6,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "c58d8cd4475cdc15",
+      "name": "Miroir de Malheur, Illuminé par la Lune",
+      "breath": "moon",
+      "form": 7,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "9e0207d77c3b37a4",
+      "name": "Dragon à Queue Annelée",
+      "breath": "moon",
+      "form": 8,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "06ee871ec7b76190",
+      "name": "Chemin de la Lune Décroissante",
+      "breath": "moon",
+      "form": 9,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "dd14dffffd0a5d87",
+      "name": "Percer la Roche, la Lune Entre les Feuilles de Bambou",
+      "breath": "moon",
+      "form": 10,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "f7922abaf75c8c63",
+      "name": "Lune Creuse",
+      "breath": "moon",
+      "form": 11,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "5ce0e5d14f9d526c",
+      "name": "Sécheresse, Ciel Fendu par la Lune",
+      "breath": "moon",
+      "form": 12,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "3c5bc154e962d5cb",
+      "name": "Enterrement de l'Horizon Immobile",
+      "breath": "moon",
+      "form": 13,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "062f9ea786b27016",
+      "name": "Catastrophe, Tenman Lune Croissante",
+      "breath": "moon",
+      "form": 14,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "bf15f0b7833fc662",
+      "name": "Voile de la Dernière Lune",
+      "breath": "moon",
+      "form": 15,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "979179a3c0d896d1",
+      "name": "Arc-en-ciel Lunaire, Croissant de Lune",
+      "breath": "moon",
+      "form": 16,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "2079ab2d74dd4615",
+      "name": "Mer des Épées",
+      "breath": "ocean",
+      "form": 1,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "fa8cb52486e22686",
+      "name": "Saut du Carpe Chagrin",
+      "breath": "ocean",
+      "form": 2,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "e650ede86b16b8d5",
+      "name": "Brèche",
+      "breath": "ocean",
+      "form": 3,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts"
+      ],
+      "differences": []
+    },
+    {
+      "id": "8f5fa3f972ac3583",
+      "name": "Raie emportée par le vent, gracieux vol",
+      "breath": "ocean",
+      "form": 4,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "091c8f617ad7b101",
+      "name": "Blocus des Récifs en Larmes",
+      "breath": "ocean",
+      "form": 5,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "e6b9a2dc3dbcc7fb",
+      "name": "Plongeuse Ama en Surface",
+      "breath": "ocean",
+      "form": 6,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "3988cf5527792803",
+      "name": "Fracas de l’Umibozu",
+      "breath": "ocean",
+      "form": 7,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "609a5f8ddccf40aa",
+      "name": "Serpent sinueux Slash",
+      "breath": "serpent",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "b7ced305543b812b",
+      "name": "Crocs venimeux à tête étroite",
+      "breath": "serpent",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "c7ee8bbfe352502a",
+      "name": "starter à bobine",
+      "breath": "serpent",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "dbad4e87f24e5542",
+      "name": "Reptile à deux têtes",
+      "breath": "serpent",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "2be8ece1e1ffaa51",
+      "name": "Serpent rampant",
+      "breath": "serpent",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "8afa6424c4fea4fc",
+      "name": "Pas Léger",
+      "breath": "snow",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "1f931ecc14e39baa",
+      "name": "Blizzard Nocturne Infini",
+      "breath": "snow",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "6fce7450e52e1f5c",
+      "name": "Grêle de Cendres d'Argent",
+      "breath": "snow",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "e1179a92d6bdb337",
+      "name": "Gelée Soudain, Avalanche",
+      "breath": "snow",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "e1405088cac83a74",
+      "name": "Femme de Neige",
+      "breath": "snow",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "3b6629ee2013d332",
+      "name": "Tranche Fendante du Flocon",
+      "breath": "snow",
+      "form": 6,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "1ad638192d8d69ea",
+      "name": "Forêt de Juhyo en Marche",
+      "breath": "snow",
+      "form": 7,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "a78552b971b8629e",
+      "name": "Enterrement Silencieux",
+      "breath": "snow",
+      "form": 8,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "4ee78271ade18e7f",
+      "name": "Rugir",
+      "breath": "sound",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "76e152189631d856",
+      "name": "Ballade des arcs brisés",
+      "breath": "sound",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "78e62812f4683925",
+      "name": "Prélude d'un cauchemar",
+      "breath": "sound",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "f11425aa560674fe",
+      "name": "Des coups retentissants et constants",
+      "breath": "sound",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "b4f8a19b67ac9599",
+      "name": "Performance des cordes",
+      "breath": "sound",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "bf2649b37be20de3",
+      "name": "Requiem",
+      "breath": "sound",
+      "form": 6,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "f72c5f9f09aaca93",
+      "name": "Serpentine bipolaire",
+      "breath": "stone",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "623e18bfaa5cafe8",
+      "name": "Smash supérieur",
+      "breath": "stone",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "138fc9b16b423e2b",
+      "name": "Réflexion ignée",
+      "breath": "stone",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "27a630fe91a6221f",
+      "name": "Roche volcanique",
+      "breath": "stone",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "fec921f2899fc2f0",
+      "name": "Roue de pierre de la justice",
+      "breath": "stone",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "c225b4bc5c31b3fd",
+      "name": "Valse",
+      "breath": "sun",
+      "form": 1,
+      "missingFields": [
+        "coût d'endurance"
+      ],
+      "differences": []
+    },
+    {
+      "id": "7cef5b5b5cf16b13",
+      "name": "Ciel d'Azur Sans Nuages",
+      "breath": "sun",
+      "form": 2,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts"
+      ],
+      "differences": []
+    },
+    {
+      "id": "7a5a35888ceb64f1",
+      "name": "Soleil Furieux",
+      "breath": "sun",
+      "form": 3,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "71f2d3b47ed70b01",
+      "name": "Os brûlants, Soleil d'été",
+      "breath": "sun",
+      "form": 4,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts"
+      ],
+      "differences": []
+    },
+    {
+      "id": "41623e6b7ba197bc",
+      "name": "Transformation du Soleil Couchant",
+      "breath": "sun",
+      "form": 5,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "837a661c5eaa2c28",
+      "name": "Brume de chaleur solaire",
+      "breath": "sun",
+      "form": 6,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "cb2f6ad87812fceb",
+      "name": "Rayonnement bienfaisant",
+      "breath": "sun",
+      "form": 7,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "cc1d63e9611c33ce",
+      "name": "Estoc de la Fleur Solaire",
+      "breath": "sun",
+      "form": 8,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "60d78f13c8e5fcff",
+      "name": "Dragon du Halo Solaire - Tête Dansante",
+      "breath": "sun",
+      "form": 9,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts"
+      ],
+      "differences": []
+    },
+    {
+      "id": "e1f290d649a68ca0",
+      "name": "Roue de Feu",
+      "breath": "sun",
+      "form": 10,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "f7a9cc36632c7622",
+      "name": "Arc-En-Ciel Factice",
+      "breath": "sun",
+      "form": 11,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "506efa6029da09a8",
+      "name": "Valse enflammée",
+      "breath": "sun",
+      "form": 12,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "fa7c6d6a08624b77",
+      "name": "Treizième Forme",
+      "breath": "sun",
+      "form": 13,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts"
+      ],
+      "differences": []
+    },
+    {
+      "id": "58720ee36c0c742e",
+      "name": "Coup de tonnerre et éclair",
+      "breath": "thunder",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "b7bcafce2ca575bd",
+      "name": "Boule de foudre",
+      "breath": "thunder",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "9184cb0fba447783",
+      "name": "Tonnerre de moustiques bourdonnants",
+      "breath": "thunder",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "ea6754145d5cb4ca",
+      "name": "Tonnerre lointain",
+      "breath": "thunder",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "d78fc90520fb9043",
+      "name": "Foudre de chaleur",
+      "breath": "thunder",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "1a8ea438335c29e4",
+      "name": "Pluie d'éclairs électriques",
+      "breath": "thunder",
+      "form": 6,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "cad6de33e4f6ccc1",
+      "name": "Surface de l'eau coupée",
+      "breath": "water",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "2c24c0509affd3f8",
+      "name": "Roue à eau",
+      "breath": "water",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "4a6423065fb62ee4",
+      "name": "Danse du courant rapide",
+      "breath": "water",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "22234945c6e871fa",
+      "name": "Marée battante",
+      "breath": "water",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "d1909a29a17666f1",
+      "name": "Pluie miséricordieuse par temps sec",
+      "breath": "water",
+      "form": 5,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "b7809c907947c234",
+      "name": "Tourbillon torsadé",
+      "breath": "water",
+      "form": 6,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "d3bf56f739d3eb67",
+      "name": "Goutte de pluie perçante",
+      "breath": "water",
+      "form": 7,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "aa1d6f680a04f4bc",
+      "name": "Bassin de la cascade",
+      "breath": "water",
+      "form": 8,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "f06a26bd193af85a",
+      "name": "Éclaboussure d'eau",
+      "breath": "water",
+      "form": 9,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "15aa99f5c6294d93",
+      "name": "Le dragon du changement",
+      "breath": "water",
+      "form": 10,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "57db3f258a8923ef",
+      "name": "Diable de poussière mercuriel",
+      "breath": "west",
+      "form": 1,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "c887ae099f25d630",
+      "name": "Pionnier",
+      "breath": "west",
+      "form": 2,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "4c43208f233caa03",
+      "name": "Prospection aurifère en bord de rivière",
+      "breath": "west",
+      "form": 3,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "2758cfee50bdbe0e",
+      "name": "Siffleur bleu volant de nuit",
+      "breath": "west",
+      "form": 4,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "4e9edb41a28d8bea",
+      "name": "Coupe-corne du Taureau en charge",
+      "breath": "west",
+      "form": 5,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "0bb0e37f8c9b3722",
+      "name": "Saluer le verger d'os",
+      "breath": "west",
+      "form": 6,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "66175b8c1d1c2228",
+      "name": "Appât corbeau vermillon",
+      "breath": "west",
+      "form": 7,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "c089233e4f876328",
+      "name": "Tonnerre de la rouille d'acier",
+      "breath": "west",
+      "form": 8,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "53da89cb5c279338",
+      "name": "Baston des infidèles",
+      "breath": "west",
+      "form": 9,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "3af738bcab1252e7",
+      "name": "Appel du chœur",
+      "breath": "west",
+      "form": 10,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "672d3f0190b3e6f5",
+      "name": "Mort debout",
+      "breath": "west",
+      "form": 11,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "c01865862c71e431",
+      "name": "Maison du Soleil levant.",
+      "breath": "west",
+      "form": 12,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "0dbfb22cab0f826c",
+      "name": "Dégainé rapide du Pied agile",
+      "breath": "west",
+      "form": 13,
+      "missingFields": [
+        "coût d'endurance",
+        "dégâts",
+        "portée"
+      ],
+      "differences": []
+    },
+    {
+      "id": "c1bbe07f84dab8ab",
+      "name": "Coupe-tourbillon de poussière",
+      "breath": "wind",
+      "form": 1,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "0ec36839f49b02be",
+      "name": "Griffe de Vent Purifiante",
+      "breath": "wind",
+      "form": 2,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "34e4e1ff8ae97f8e",
+      "name": "Nettoyer l'arbre à vent de tempête",
+      "breath": "wind",
+      "form": 3,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "28b61c7ea663e162",
+      "name": "Tempête de poussière montante",
+      "breath": "wind",
+      "form": 4,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "b67948bdd3255a4d",
+      "name": "Coup de vent d'hiver",
+      "breath": "wind",
+      "form": 5,
+      "missingFields": [
+        "coût d'endurance"
+      ],
+      "differences": []
+    },
+    {
+      "id": "ea4c87a674f8e99a",
+      "name": "Brume de la montagne du vent noir",
+      "breath": "wind",
+      "form": 6,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "9ea8f87b10613ad4",
+      "name": "Gale : rafale soudaine",
+      "breath": "wind",
+      "form": 7,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "da87a81b52848d16",
+      "name": "Coup de vent primaire",
+      "breath": "wind",
+      "form": 8,
+      "missingFields": [],
+      "differences": []
+    },
+    {
+      "id": "3eb7dccd7b869cac",
+      "name": "Typhon de l'Est",
+      "breath": "wind",
+      "form": 9,
+      "missingFields": [],
+      "differences": []
+    }
+  ],
+  "packs": [
+    {
+      "name": "actors-slayers",
+      "count": 3,
+      "items": [
+        {
+          "name": "Renjiro - Hashira de la Flamme",
+          "type": "slayer"
+        },
+        {
+          "name": "Yuki Isaribi - Neige 1934",
+          "type": "slayer"
+        },
+        {
+          "name": "Aoi Mizunoe - Eau",
+          "type": "slayer"
+        }
+      ]
+    },
+    {
+      "name": "actors-demonists",
+      "count": 2,
+      "items": [
+        {
+          "name": "Goro - Couteau a viande",
+          "type": "demonist"
+        },
+        {
+          "name": "Mika - Tireuse demoniste",
+          "type": "demonist"
+        }
+      ]
+    },
+    {
+      "name": "actors-demons",
+      "count": 4,
+      "items": [
+        {
+          "name": "Demon errant - test faible",
+          "type": "npcDemon"
+        },
+        {
+          "name": "Demon des rails 1934",
+          "type": "npcDemon"
+        },
+        {
+          "name": "Akari - Braise de Lune",
+          "type": "npcDemon"
+        },
+        {
+          "name": "Shiori - Demon jouable Patchwork",
+          "type": "demon"
+        }
+      ]
+    },
+    {
+      "name": "items-weapons",
+      "count": 44,
+      "items": [
+        {
+          "name": "Arbalete",
+          "type": "projectile"
+        },
+        {
+          "name": "Shuriken",
+          "type": "projectile"
+        },
+        {
+          "name": "Epee crochet Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Chargeur etendu",
+          "type": "modification"
+        },
+        {
+          "name": "Grenade",
+          "type": "explosive"
+        },
+        {
+          "name": "Munitions de fusil",
+          "type": "ammunition"
+        },
+        {
+          "name": "Double epee-chaine Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Cimeterre Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Masse et chaine Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Mauser C96",
+          "type": "firearm"
+        },
+        {
+          "name": "Baionnette",
+          "type": "modification"
+        },
+        {
+          "name": "Katana torsade Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Wakizashi Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Silencieux",
+          "type": "modification"
+        },
+        {
+          "name": "Nambu Type 14",
+          "type": "firearm"
+        },
+        {
+          "name": "Type 38 Arisaka",
+          "type": "firearm"
+        },
+        {
+          "name": "Naginata Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Colt M1911",
+          "type": "firearm"
+        },
+        {
+          "name": "Munitions standard",
+          "type": "ammunition"
+        },
+        {
+          "name": "Cartouches Souffle du Dragon",
+          "type": "ammunition"
+        },
+        {
+          "name": "Crosse renforcee",
+          "type": "modification"
+        },
+        {
+          "name": "Bombe",
+          "type": "explosive"
+        },
+        {
+          "name": "Lames dentelees Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Fusil de tranchee",
+          "type": "firearm"
+        },
+        {
+          "name": "Cartouches de fusil a pompe",
+          "type": "ammunition"
+        },
+        {
+          "name": "Lunette",
+          "type": "modification"
+        },
+        {
+          "name": "Katana Nichirin standard",
+          "type": "weapon"
+        },
+        {
+          "name": "Lame courbee Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Grenade US MK2",
+          "type": "explosive"
+        },
+        {
+          "name": "Fouet Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Odachi Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Patta Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Munitions pointe creuse",
+          "type": "ammunition"
+        },
+        {
+          "name": "Molotov",
+          "type": "explosive"
+        },
+        {
+          "name": "Arc",
+          "type": "projectile"
+        },
+        {
+          "name": "Mauser 98k",
+          "type": "firearm"
+        },
+        {
+          "name": "Pointe d'aiguille Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Winchester 1895",
+          "type": "firearm"
+        },
+        {
+          "name": "Lance-flammes",
+          "type": "firearm"
+        },
+        {
+          "name": "Masse Nichirin",
+          "type": "weapon"
+        },
+        {
+          "name": "Kunai de glycine",
+          "type": "projectile"
+        },
+        {
+          "name": "Pistolet standard",
+          "type": "firearm"
+        },
+        {
+          "name": "Kunai",
+          "type": "projectile"
+        },
+        {
+          "name": "Revolver Kakushi",
+          "type": "firearm"
+        }
+      ]
+    },
+    {
+      "name": "items-medical-utility",
+      "count": 68,
+      "items": [
+        {
+          "name": "Toucher — niveau 2",
+          "type": "sense"
+        },
+        {
+          "name": "Sens auditif — niveau 3",
+          "type": "sense"
+        },
+        {
+          "name": "Medecine Active Demoniste",
+          "type": "medical"
+        },
+        {
+          "name": "Herbes medicinales",
+          "type": "craftingComponent"
+        },
+        {
+          "name": "Vêtements agricoles",
+          "type": "clothing"
+        },
+        {
+          "name": "Vision — niveau 1",
+          "type": "sense"
+        },
+        {
+          "name": "Pansement compressif",
+          "type": "medical"
+        },
+        {
+          "name": "Medecine de Reparation Demoniste",
+          "type": "medical"
+        },
+        {
+          "name": "Miso Ramen",
+          "type": "food"
+        },
+        {
+          "name": "Injecteur de jet de sang démoniaque",
+          "type": "medical"
+        },
+        {
+          "name": "Sens auditif — niveau 2",
+          "type": "sense"
+        },
+        {
+          "name": "Senbei",
+          "type": "food"
+        },
+        {
+          "name": "Kit de culture de poison",
+          "type": "utility"
+        },
+        {
+          "name": "Uniforme de garde",
+          "type": "clothing"
+        },
+        {
+          "name": "Okonomiyaki",
+          "type": "food"
+        },
+        {
+          "name": "Sens auditif — niveau 1",
+          "type": "sense"
+        },
+        {
+          "name": "Vêtements de nuit",
+          "type": "clothing"
+        },
+        {
+          "name": "Toucher — niveau 3",
+          "type": "sense"
+        },
+        {
+          "name": "Sens olfactif — niveau 1",
+          "type": "sense"
+        },
+        {
+          "name": "Boîte à bento",
+          "type": "food"
+        },
+        {
+          "name": "Vision — niveau 3",
+          "type": "sense"
+        },
+        {
+          "name": "Yakitori",
+          "type": "food"
+        },
+        {
+          "name": "Goût — niveau 2",
+          "type": "sense"
+        },
+        {
+          "name": "Bandage",
+          "type": "medical"
+        },
+        {
+          "name": "Sushi Temaki",
+          "type": "food"
+        },
+        {
+          "name": "Vêtements flashy",
+          "type": "clothing"
+        },
+        {
+          "name": "Attelle",
+          "type": "medical"
+        },
+        {
+          "name": "Tonkotsu Ramen",
+          "type": "food"
+        },
+        {
+          "name": "Uniforme de tueur renforce",
+          "type": "clothing"
+        },
+        {
+          "name": "Vêtements élégants",
+          "type": "clothing"
+        },
+        {
+          "name": "Dango",
+          "type": "food"
+        },
+        {
+          "name": "Poison nuisible",
+          "type": "poison"
+        },
+        {
+          "name": "Tenue de police",
+          "type": "clothing"
+        },
+        {
+          "name": "Mitsubishi modèle A",
+          "type": "vehicle"
+        },
+        {
+          "name": "Don Buri",
+          "type": "food"
+        },
+        {
+          "name": "Sens olfactif — niveau 2",
+          "type": "sense"
+        },
+        {
+          "name": "Riz au curry",
+          "type": "food"
+        },
+        {
+          "name": "Ramen",
+          "type": "food"
+        },
+        {
+          "name": "Poison de glycine affaiblissant",
+          "type": "poison"
+        },
+        {
+          "name": "Kit de remede contre le poison des demons",
+          "type": "medical"
+        },
+        {
+          "name": "Nigiri Sushi",
+          "type": "food"
+        },
+        {
+          "name": "Toucher — niveau 1",
+          "type": "sense"
+        },
+        {
+          "name": "Poison de glycine endommageant",
+          "type": "poison"
+        },
+        {
+          "name": "Vision — niveau 2",
+          "type": "sense"
+        },
+        {
+          "name": "Takoyaki (6)",
+          "type": "food"
+        },
+        {
+          "name": "Manju",
+          "type": "food"
+        },
+        {
+          "name": "Sens olfactif — niveau 3",
+          "type": "sense"
+        },
+        {
+          "name": "Sushi",
+          "type": "food"
+        },
+        {
+          "name": "Makis-Sushis",
+          "type": "food"
+        },
+        {
+          "name": "Seringue de sang demon",
+          "type": "medical"
+        },
+        {
+          "name": "Goût — niveau 3",
+          "type": "sense"
+        },
+        {
+          "name": "Recette - remede anti-poison",
+          "type": "craftingRecipe"
+        },
+        {
+          "name": "Uniforme des artistes",
+          "type": "clothing"
+        },
+        {
+          "name": "Rations de mission",
+          "type": "food"
+        },
+        {
+          "name": "Trousse de premiers secours",
+          "type": "medical"
+        },
+        {
+          "name": "Vêtements civils",
+          "type": "clothing"
+        },
+        {
+          "name": "Taiyaki",
+          "type": "food"
+        },
+        {
+          "name": "Tsukemen",
+          "type": "food"
+        },
+        {
+          "name": "Goût — niveau 1",
+          "type": "sense"
+        },
+        {
+          "name": "Poison affaiblissant",
+          "type": "poison"
+        },
+        {
+          "name": "Kit de sauvetage anti-0 PV",
+          "type": "medical"
+        },
+        {
+          "name": "Equipement chirurgical",
+          "type": "medical"
+        },
+        {
+          "name": "Analgesiques",
+          "type": "consumable"
+        },
+        {
+          "name": "Datsun Type 10",
+          "type": "vehicle"
+        },
+        {
+          "name": "Uniforme du Corps",
+          "type": "clothing"
+        },
+        {
+          "name": "Voiture Kakushi",
+          "type": "transport"
+        },
+        {
+          "name": "Ford Modele T",
+          "type": "transport"
+        },
+        {
+          "name": "Sifflet Kasugai",
+          "type": "utility"
+        }
+      ]
+    },
+    {
+      "name": "breaths-styles",
+      "count": 18,
+      "items": [
+        {
+          "name": "Souffle de la Bete",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle Original",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de la Flamme",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de la Fleur",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de l'Insecte",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de l'Amour",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de la Brume",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de la Lune",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de l'Ocean",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle du Serpent",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de la Neige",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle du Son",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de la Pierre",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle du Soleil",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de la Foudre",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de l'Eau",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle de l'Ouest",
+          "type": "breath"
+        },
+        {
+          "name": "Souffle du Vent",
+          "type": "breath"
+        }
+      ]
+    },
+    {
+      "name": "techniques-subclasses",
+      "count": 102,
+      "items": [
+        {
+          "name": "Evasion rythmique",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Carapace reactive",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Ruee Sauvage",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Tir en position stable",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false
+          }
+        },
+        {
+          "name": "Coup de meteore",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Etoile du matin",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true,
+            "basicAttackMod": {
+              "damageBonus": 4
+            }
+          }
+        },
+        {
+          "name": "Pacte de controle mental",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Epee Fouet | Actes de Service - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Katana | Voie de la Sculpture de la Pierre - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "tolerance": 2,
+              "perception": 2
+            }
+          }
+        },
+        {
+          "name": "Danse perforante",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Reflexe d'esquive",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Masse et Chaine | Etoile du Matin - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "endurance": 2
+            },
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Grande epee",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true,
+            "basicAttackMod": {
+              "attackBonus": 2,
+              "damageBonus": 4
+            }
+          }
+        },
+        {
+          "name": "Katana | Voie du Feu Protecteur - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Rideau de fer",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Typhon tourbillonnant",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Pointe aceree | Ecole de la Guepe - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Pointe aceree | Ecole de la Guepe",
+            "derivedStats": {
+              "ruse": 2
+            }
+          }
+        },
+        {
+          "name": "Position Sculpture de la Pierre",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true
+          }
+        },
+        {
+          "name": "Position de combat mysterieuse",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true,
+            "basicAttackMod": {
+              "damageMultiplier": 2,
+              "consumeOnAttack": true
+            }
+          }
+        },
+        {
+          "name": "Tordue | Lame Tsuchinoko - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Tordue | Lame Tsuchinoko",
+            "derivedStats": {
+              "ruse": 2
+            }
+          }
+        },
+        {
+          "name": "Dentelee | Croc de l'Ours - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Masse et Chaine | Grande Epee - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "athletisme": 2,
+              "reflexes": 2
+            }
+          }
+        },
+        {
+          "name": "Arret cardiaque",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true
+          }
+        },
+        {
+          "name": "Masse et Chaine | Grande Epee - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Masse et Chaine | Grande Epee",
+            "derivedStats": {
+              "equilibre": 2
+            }
+          }
+        },
+        {
+          "name": "Execution coordonnee",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Pointe aceree | Ecole de la Guepe - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "vitesse": 2
+            }
+          }
+        },
+        {
+          "name": "Double Tronconneuse | Style Nihon Buyo - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "reflexes": 2,
+              "precision": 2
+            }
+          }
+        },
+        {
+          "name": "Dentelee | Croc du Sanglier - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "athletisme": 2,
+              "mithridatisme": 2
+            }
+          }
+        },
+        {
+          "name": "Double Tronconneuse | Style Nihon Buyo - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Exploit",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Epee Fouet | Actes de Service - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Epee Fouet | Actes de Service",
+            "derivedStats": {
+              "tolerance": 2
+            }
+          }
+        },
+        {
+          "name": "Katana | Voie de la Sculpture de la Pierre - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Katana | Voie de la Sculpture de la Pierre",
+            "derivedStats": {
+              "dexterite": 2
+            }
+          }
+        },
+        {
+          "name": "Katana | Voie du Vent Perce - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Katana | Voie du Vent Perce",
+            "derivedStats": {
+              "rapidite": 2
+            }
+          }
+        },
+        {
+          "name": "Chasseur vorace",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false
+          }
+        },
+        {
+          "name": "Tordue | Lame Tsuchinoko - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Pointe aceree | Ecole de la Guepe - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "agilite": 2,
+              "perception": 2
+            }
+          }
+        },
+        {
+          "name": "Double Tronconneuse | Style Nihon Buyo - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Double Tronconneuse | Style Nihon Buyo",
+            "derivedStats": {
+              "performance": 2
+            }
+          }
+        },
+        {
+          "name": "Posture Suidae",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true
+          }
+        },
+        {
+          "name": "Epee Fouet | Dons de cadeaux - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Epee Fouet | Dons de cadeaux",
+            "derivedStats": {
+              "intuition": 2
+            }
+          }
+        },
+        {
+          "name": "Laceration enchainee",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Contre-Morsure",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Correction",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false
+          }
+        },
+        {
+          "name": "Fendeur de Riviere",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Suppression",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Katana | Voie du Vent Perce - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "finesse": 2
+            }
+          }
+        },
+        {
+          "name": "Posture Ursine",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true
+          }
+        },
+        {
+          "name": "Position du Feu Protecteur",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true,
+            "basicAttackMod": {
+              "selfEffectAfterAttack": {
+                "target": "self",
+                "path": "system.resources.ca",
+                "mode": "add",
+                "value": 4,
+                "duration": "turnEnd",
+                "label": "Feu Protecteur"
+              }
+            }
+          }
+        },
+        {
+          "name": "Tordue | Lame Tsuchinoko - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "athletisme": 2,
+              "intuition": 2
+            }
+          }
+        },
+        {
+          "name": "Fureur sanguinaire",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "bloodFuryCharges": 3
+          }
+        },
+        {
+          "name": "Dentelee | Croc du Sanglier - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Katana | Voie du Feu Protecteur - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "reflexes": 2,
+              "survie": 2
+            }
+          }
+        },
+        {
+          "name": "Concentration demoniaque",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": true,
+            "variableBdpCost": "half-current"
+          }
+        },
+        {
+          "name": "Epee Fouet | Actes de Service - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "endurance": 2,
+              "intuition": 2
+            }
+          }
+        },
+        {
+          "name": "Double-tap",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true
+          }
+        },
+        {
+          "name": "Elegance lunaire",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Katana | Voie de l'Eau Ecrasante - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Katana | Voie de l'Eau Ecrasante",
+            "derivedStats": {
+              "puissanceBrute": 2
+            }
+          }
+        },
+        {
+          "name": "Guepe en essaim",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true
+          }
+        },
+        {
+          "name": "Atlas impavide",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true
+          }
+        },
+        {
+          "name": "Dentelee | Croc du Sanglier - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Dentelee | Croc du Sanglier",
+            "derivedStats": {
+              "puissanceBrute": 2
+            }
+          }
+        },
+        {
+          "name": "Attaque des huit crocs",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Katana | Voie de la Sculpture de la Pierre - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "puissanceBrute": 2
+            }
+          }
+        },
+        {
+          "name": "Posture de l'Eau Ecrasante",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true,
+            "basicAttackMod": {
+              "attackBonus": 2,
+              "damageBonus": 4
+            }
+          }
+        },
+        {
+          "name": "Dentelee | Croc de l'Ours - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Dentelee | Croc de l'Ours",
+            "derivedStats": {
+              "endurance": 2
+            }
+          }
+        },
+        {
+          "name": "Masse et Chaine | Grande Epee - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "finesse": 2
+            }
+          }
+        },
+        {
+          "name": "Vents de Guerre",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": true,
+            "basicAttackMod": {
+              "damageStatDice": {
+                "stat": "vitesse",
+                "faces": 6
+              },
+              "consumeOnAttack": true
+            }
+          }
+        },
+        {
+          "name": "Dents invisibles",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Katana | Voie de l'Eau Ecrasante - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "endurance": 2,
+              "agilite": 2
+            }
+          }
+        },
+        {
+          "name": "Epee Fouet | Dons de cadeaux - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Katana | Voie de l'Eau Ecrasante - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Position des huit tetes",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true
+          }
+        },
+        {
+          "name": "Katana | Voie du Vent Perce - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "agilite": 2,
+              "intuition": 2
+            }
+          }
+        },
+        {
+          "name": "Vents Froids",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Epee Fouet | Dons de cadeaux - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "rapidite": 2,
+              "precision": 2
+            }
+          }
+        },
+        {
+          "name": "Gracieux",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true
+          }
+        },
+        {
+          "name": "Masse et Chaine | Etoile du Matin - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Masse et Chaine | Etoile du Matin",
+            "derivedStats": {
+              "puissanceBrute": 2
+            }
+          }
+        },
+        {
+          "name": "Reaction Orochi",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Coupe-Pierre",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": true,
+            "basicAttackMod": {
+              "autoHitIfTargetCaBelowSelf": true,
+              "consumeOnAttack": true
+            }
+          }
+        },
+        {
+          "name": "Coup de foudre",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Puissance",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true
+          }
+        },
+        {
+          "name": "Charge souterraine",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Flammes Etourdissantes",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Katana | Voie du Feu Protecteur - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Katana | Voie du Feu Protecteur",
+            "derivedStats": {
+              "endurance": 2
+            }
+          }
+        },
+        {
+          "name": "Tsunami",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Coup de hache en arc de cercle",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Piege de diversion",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Dentelee | Croc de l'Ours - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "puissanceBrute": 2,
+              "endurance": 2
+            }
+          }
+        },
+        {
+          "name": "Position Vent Perce",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true
+          }
+        },
+        {
+          "name": "Reflux Brutal",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Masse et Chaine | Etoile du Matin - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Briseur d'Os",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Charge Frenetique",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": true,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Attaque enveloppante",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": true,
+            "combo": false,
+            "subclassUtility": false
+          }
+        },
+        {
+          "name": "Double Tronconneuse | Style Kabuki - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "equilibre": 2,
+              "agilite": 2
+            }
+          }
+        },
+        {
+          "name": "Double Tronconneuse | Style Kabuki - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Double Tronconneuse | Style Kabuki - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Double Tronconneuse | Style Kabuki",
+            "derivedStats": {
+              "puissanceBrute": 2
+            }
+          }
+        },
+        {
+          "name": "Tordue | Lame Orochi - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "agilite": 2,
+              "tromperie": 2
+            }
+          }
+        },
+        {
+          "name": "Tordue | Lame Orochi - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "finesse": 2
+            }
+          }
+        },
+        {
+          "name": "Tordue | Lame Orochi - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Tordue | Lame Orochi",
+            "derivedStats": {
+              "puissanceBrute": 2
+            }
+          }
+        },
+        {
+          "name": "Pointe aceree | Ecole du Scarabee - Kanoe",
+          "type": "feature",
+          "bonuses": {
+            "derivedStats": {
+              "mithridatisme": 2,
+              "puissanceBrute": 2
+            }
+          }
+        },
+        {
+          "name": "Pointe aceree | Ecole du Scarabee - Kinoe",
+          "type": "feature",
+          "bonuses": {
+            "baseStats": {
+              "force": 2
+            }
+          }
+        },
+        {
+          "name": "Pointe aceree | Ecole du Scarabee - Depart",
+          "type": "feature",
+          "bonuses": {
+            "subclass": "Pointe aceree | Ecole du Scarabee",
+            "derivedStats": {
+              "endurance": 2
+            }
+          }
+        },
+        {
+          "name": "Plaisir de servir",
+          "type": "subclassTechnique",
+          "flags": {
+            "reaction": false,
+            "combo": false,
+            "subclassUtility": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "progression-features",
+      "count": 41,
+      "items": [
+        {
+          "name": "Entrainement de Hashira",
+          "type": "feature",
+          "bonuses": {
+            "skillSlots": 1
+          }
+        },
+        {
+          "name": "Ameliorer capacites extrasensorielles",
+          "type": "feature",
+          "bonuses": {
+            "senseTraining": true
+          }
+        },
+        {
+          "name": "Formation au combat a mains nues",
+          "type": "feature",
+          "bonuses": {
+            "unarmedDamage": "1d8 + Force"
+          }
+        },
+        {
+          "name": "Specialiste des poisons",
+          "type": "feature",
+          "bonuses": {
+            "poisonSpecialist": true
+          }
+        },
+        {
+          "name": "Formation a l'utilisation des armes a feu",
+          "type": "feature",
+          "bonuses": {
+            "autoHitFirearm": true
+          }
+        },
+        {
+          "name": "Entrainement au combat",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Entrainement cardio",
+          "type": "feature",
+          "bonuses": {
+            "movement": 4.5
+          }
+        },
+        {
+          "name": "Formation medicale",
+          "type": "feature",
+          "bonuses": {
+            "medicalReaction": true
+          }
+        },
+        {
+          "name": "Augmentation des statistiques de base",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Maîtrise des armes à feu",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Victoire solo contre une Lune",
+          "type": "feature",
+          "bonuses": {
+            "skillSlots": 1
+          }
+        },
+        {
+          "name": "Formation a la guerison demoniste",
+          "type": "feature",
+          "bonuses": {
+            "demonistHealingReaction": true
+          }
+        },
+        {
+          "name": "Entrainement d'endurance",
+          "type": "feature",
+          "bonuses": {
+            "endurance": 15
+          }
+        },
+        {
+          "name": "Changement d'arme rapide",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Maniement parfait",
+          "type": "feature",
+          "bonuses": {
+            "autoHitMelee": true
+          }
+        },
+        {
+          "name": "Bourreau",
+          "type": "feature",
+          "bonuses": {
+            "executionHpBaseLimit": 50
+          }
+        },
+        {
+          "name": "Utilisation de deux armes",
+          "type": "feature",
+          "bonuses": {
+            "dualWield": true
+          }
+        },
+        {
+          "name": "Entraînement à la flexibilité",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Connaissances médicales",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Permis de conduire",
+          "type": "feature",
+          "bonuses": {
+            "drivingLicense": true
+          }
+        },
+        {
+          "name": "Maitrise des competences sociales",
+          "type": "feature",
+          "bonuses": {
+            "socialExternal": 5
+          }
+        },
+        {
+          "name": "Force physique accrue",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Génie",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Lame Rouge",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Formation de tireur d'elite",
+          "type": "feature",
+          "bonuses": {
+            "sniperTraining": true
+          }
+        },
+        {
+          "name": "Estomac d'acier",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "TCB : Constant",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Amelioration de la sante",
+          "type": "feature",
+          "bonuses": {
+            "hpMax": 10
+          }
+        },
+        {
+          "name": "Monde Transparent",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Intelligence supérieure",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Sang résistant",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "L'ombre de la mort",
+          "type": "feature",
+          "bonuses": {
+            "stealthDamageBonus": "3d10"
+          }
+        },
+        {
+          "name": "Pratiquer un souffle secondaire",
+          "type": "feature",
+          "bonuses": {
+            "secondaryBreathTraining": true
+          }
+        },
+        {
+          "name": "Esprit",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Palais raffine du demon",
+          "type": "feature",
+          "bonuses": {
+            "demonFleshExtraDice": 1
+          }
+        },
+        {
+          "name": "Parties du corps renforcées",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Agilité et souplesse accrues",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Augmentation des degats de forme",
+          "type": "feature",
+          "bonuses": {
+            "breathFormBonus": 1
+          }
+        },
+        {
+          "name": "Guillotine",
+          "type": "feature",
+          "bonuses": {
+            "executionHpBaseLimit": 100
+          }
+        },
+        {
+          "name": "Forme Marquee",
+          "type": "feature",
+          "bonuses": {}
+        },
+        {
+          "name": "Amelioration d'armes",
+          "type": "feature",
+          "bonuses": {
+            "firearmModsMax": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "abilities-demons",
+      "count": 34,
+      "items": [
+        {
+          "name": "Lune Brulante - Flamme devastatrice",
+          "type": "bda"
+        },
+        {
+          "name": "Lignee - Lune Ombree",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Soin demoniaque",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Regeneration de membre",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lignee - Lune Miroir",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lignee - Lune Enragee",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Art de Sang Demoniaque - Petit",
+          "type": "bda"
+        },
+        {
+          "name": "Lignee - Lune Submergee",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Expulsion",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lignee - Lune Jardin",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lignee - Lune Endeuillee",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lune Brulante - Porte des Cendres",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Regeneration continue des membres",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lignee - Lune Artisane",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lignee - Lune Patchwork",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lune Brulante - Brulure",
+          "type": "bda"
+        },
+        {
+          "name": "Guerison demoniaque",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lignee - Lune Ancienne",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lignee - Lune d'Or",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Art de Sang Demoniaque - Grand",
+          "type": "bda"
+        },
+        {
+          "name": "Lune Brulante - Allume-feu",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lune Brulante - Embrasement",
+          "type": "bda"
+        },
+        {
+          "name": "Lune Brulante - Flamme ardente",
+          "type": "bda"
+        },
+        {
+          "name": "Force demoniaque",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Executer",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Infecter",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Purification demoniaque",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Repousse",
+          "type": "demonAbility"
+        },
+        {
+          "name": "SOS de lignee",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Vitesse demoniaque",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Stockage d'Art Demoniaque",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lignee - Lune Brulante",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lune Brulante - Peau brulante",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Lignee - Lune Mecanique",
+          "type": "demonAbility"
+        }
+      ]
+    },
+    {
+      "name": "supplement-1934-actors",
+      "count": 4,
+      "items": [
+        {
+          "name": "Yuki Isaribi - Neige 1934",
+          "type": "slayer"
+        },
+        {
+          "name": "Demon des rails 1934",
+          "type": "npcDemon"
+        },
+        {
+          "name": "Akari - Braise de Lune",
+          "type": "npcDemon"
+        },
+        {
+          "name": "Shiori - Demon jouable Patchwork",
+          "type": "demon"
+        }
+      ]
+    },
+    {
+      "name": "supplement-1934",
+      "count": 5,
+      "items": [
+        {
+          "name": "Voiture de mission 1934",
+          "type": "transport"
+        },
+        {
+          "name": "Souffle de l'Ocean",
+          "type": "breath"
+        },
+        {
+          "name": "Art Sanguinaire - Lune d'Or",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Ocean d'epees",
+          "type": "technique",
+          "flags": {
+            "aoe": false,
+            "antiFriendlyFire": false,
+            "mobility": false,
+            "decapitation": false,
+            "charge": 0,
+            "deflect": false
+          }
+        },
+        {
+          "name": "Les carpes tristes sautent",
+          "type": "technique",
+          "flags": {
+            "aoe": false,
+            "antiFriendlyFire": false,
+            "mobility": false,
+            "decapitation": false,
+            "charge": 0,
+            "deflect": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "supplement-1934-breaths",
+      "count": 1,
+      "items": [
+        {
+          "name": "Souffle de l'Ocean",
+          "type": "breath"
+        }
+      ]
+    },
+    {
+      "name": "supplement-1934-techniques",
+      "count": 4,
+      "items": [
+        {
+          "name": "Voiture de mission 1934",
+          "type": "transport"
+        },
+        {
+          "name": "Art Sanguinaire - Lune d'Or",
+          "type": "demonAbility"
+        },
+        {
+          "name": "Ocean d'epees",
+          "type": "technique",
+          "flags": {
+            "aoe": false,
+            "antiFriendlyFire": false,
+            "mobility": false,
+            "decapitation": false,
+            "charge": 0,
+            "deflect": false
+          }
+        },
+        {
+          "name": "Les carpes tristes sautent",
+          "type": "technique",
+          "flags": {
+            "aoe": false,
+            "antiFriendlyFire": false,
+            "mobility": false,
+            "decapitation": false,
+            "charge": 0,
+            "deflect": false
+          }
+        }
+      ]
+    }
+  ]
+}

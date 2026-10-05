@@ -1,4 +1,5 @@
 import { getActiveBreaths } from "../rules/breath-effects.mjs";
+import { sourceReactionButtons } from "../rules/source-reactions.mjs";
 
 const SYSTEM_ID = "breathe-and-live";
 const METERS_PER_SQUARE = 1.5;
@@ -78,7 +79,8 @@ export function buildReactionTargetRow({
       <div class="bl-target-buttons" style="display:flex; gap:.35rem; flex-wrap:wrap; margin-top:.25rem;">
         ${canDodge ? `<button class="bl-dodge" data-target-token="${targetToken.id}" data-damage="${damageTotal}">Esquiver (1 RP)</button>` : ""}
         ${canWaterDeflect ? `<button class="bl-deflect" data-target-token="${targetToken.id}" data-damage="${damageTotal}">Devier (1 RP)</button>` : ""}
-        ${stance ? `<button class="bl-stance-deflect" data-target-token="${targetToken.id}" data-damage="${damageTotal}">${stanceLabel} (${stance.itemName})</button>` : ""}
+        ${stance ? `<button class="${stance.source === "demon-defense" && stance.mode === "block" ? "bl-demon-block" : "bl-stance-deflect"}" data-target-token="${targetToken.id}" data-damage="${damageTotal}">${stanceLabel} (${stance.itemName})</button>` : ""}
+        ${allowReactions ? sourceReactionButtons(targetActor, targetToken.id) : ""}
         ${extraButtonsHtml}
         <button class="bl-takedmg" data-target-token="${targetToken.id}" data-damage="${damageTotal}">${takeDamageLabel}</button>
       </div>

@@ -1,5 +1,6 @@
 import { SYSTEM_ID } from "../config/rule-data.mjs";
 import { normalizeDerivedStatKey, toNumber as formulaToNumber } from "./actor-derived-formulas.mjs";
+import { getActiveBreaths } from "./breath-effects.mjs";
 
 function toNumber(value, fallback = 0) {
   return formulaToNumber(value, fallback);
@@ -37,24 +38,25 @@ function freezeBlocksMovement(source) {
 }
 
 export function getConditionDerivedPenalties(source) {
-  const penalties = {};
-  if (isConditionActive(source, "paresthesia")) {
-    penalties.precision = conditionIntensity(source, "paresthesia");
-  }
-  return penalties;
+  // Paresthésie fait échouer le toucher ; le livre ne retire pas de Précision.
+  void source;
+  return {};
 }
 
 export function getConditionAutomationSummary(source) {
   const actorFlags =
     typeof source?.getFlag === "function" ? source.getFlag(SYSTEM_ID, "conditionTurns") ?? {} : {};
+  const serpent = getActiveBreaths(source).serpent;
+  const freeSerpent = serpent?.enabled && serpent.specials?.formeLibre;
   const movementBlocked =
-    isConditionActive(source, "imprisoned") ||
+    !!getSystem(source).combat?.sourceImmobilized || !!getSystem(source).combat?.sourceStunned ||
+    (!freeSerpent && isConditionActive(source, "imprisoned")) ||
     isConditionActive(source, "paralyzed") ||
     freezeBlocksMovement(source);
   const rpBlocked = isConditionActive(source, "offBalance");
   const controlled = isConditionActive(source, "controlled");
   const fury = isConditionActive(source, "fury");
-  const slowed = isConditionActive(source, "slowed");
+  const slowed = !freeSerpent && isConditionActive(source, "slowed");
   const slowedCanAct = !slowed || actorFlags?.slowedCanAct !== false;
   const sensoryFailures = [];
 
@@ -80,6 +82,7 @@ export function getConditionActionRestriction(actor, kind = "action") {
   const summary = getConditionAutomationSummary(actor);
   const actionKinds = new Set(["action", "basicAttack", "technique", "wait"]);
   const movementKinds = new Set(["movement", "sprint"]);
+  if (getSystem(actor).combat?.sourceStunned) return { blocked: true, reason: "Assommé : attendez la fin de la durée de l'effet." };
 
   if (kind === "rp" && summary.rpBlocked) {
     return {
@@ -124,16 +127,16 @@ export function conditionAutoFailDerived(source, derivedKey, label = "") {
   const text = normalizeText(`${label} ${key}`);
   const failures = [];
 
-  if (isConditionActive(source, "blinded") && (text.includes("vue") || key === "perception")) {
+  if (isConditionActive(source, "blinded") && text.includes("vue")) {
     failures.push("Aveugle");
   }
-  if (isConditionActive(source, "deafened") && (text.includes("ouie") || text.includes("son") || key === "perception")) {
+  if (isConditionActive(source, "deafened") && (text.includes("ouie") || text.includes("auditif"))) {
     failures.push("Assourdi");
   }
-  if (isConditionActive(source, "anosmia") && (text.includes("odorat") || text.includes("odeur") || key === "perception")) {
+  if (isConditionActive(source, "anosmia") && (text.includes("odorat") || text.includes("odeur"))) {
     failures.push("Anosmie");
   }
-  if (isConditionActive(source, "ageusia") && (text.includes("gout") || key === "perception")) {
+  if (isConditionActive(source, "ageusia") && text.includes("gout")) {
     failures.push("Ageusie");
   }
   if (isConditionActive(source, "paresthesia") && text.includes("toucher")) {

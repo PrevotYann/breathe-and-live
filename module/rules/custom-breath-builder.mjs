@@ -4,13 +4,13 @@ function findEntry(table, key, fallback = null) {
   return (CUSTOM_BREATH_COST_TABLES[table] || []).find((entry) => entry.key === key) || fallback;
 }
 
-export function calculateCustomBreathCost({ damageKey = "1d8", rangeKey = "melee", effectKey = "direct" } = {}) {
+export function calculateCustomBreathCost({ damageKey = "1d8", rangeKey = "melee", effectKey = "direct", weaponRange = 0 } = {}) {
   const damage = findEntry("damage", damageKey, CUSTOM_BREATH_COST_TABLES.damage[1]);
   const range = findEntry("range", rangeKey, CUSTOM_BREATH_COST_TABLES.range[0]);
   const effect = findEntry("effects", effectKey, CUSTOM_BREATH_COST_TABLES.effects[0]);
   const rawCost =
     Number(damage?.endurance || 0) +
-    Number(range?.endurance || 0) +
+    (Number(weaponRange) > 1.5 && Number(range?.meters) <= Number(weaponRange) ? 0 : Number(range?.endurance || 0)) +
     Number(effect?.endurance || 0);
 
   return {
@@ -33,20 +33,21 @@ export function buildCustomBreathTechniqueData({
   rangeKey = "melee",
   effectKey = "direct",
   attackStat = "finesse",
+  weaponRange = 0,
 } = {}) {
-  const result = calculateCustomBreathCost({ damageKey, rangeKey, effectKey });
+  const result = calculateCustomBreathCost({ damageKey, rangeKey, effectKey, weaponRange });
   const tags = ["breath", "custom", effectKey].filter(Boolean);
   const automation = {
     requiresBreath: true,
     area: effectKey === "sweep" ? "allInRange" : "single",
     alternativeMode: effectKey === "deflect" ? "deflect" : "",
-    lineOnly: false,
+    lineOnly: effectKey === "direct",
     ranged: effectKey === "ranged",
     unlimitedRange: false,
     chargeTurns: effectKey === "charge" ? 1 : 0,
     cooldownTurns: 0,
-    cannotBeDodged: false,
-    cannotBeReactedTo: false,
+    cannotBeDodged: effectKey === "pursuer",
+    cannotBeReactedTo: effectKey === "pursuer",
     deflect: effectKey === "deflect",
     negateIncomingDamage: effectKey === "deflect",
     afflictionStacks: effectKey === "affliction" ? 1 : 0,
@@ -93,6 +94,7 @@ export function buildCustomBreathTechniqueData({
         rangeKey,
         effectKey,
         rawCost: result.rawCost,
+        weaponRange,
       },
       flags: {
         aoe: effectKey === "sweep",
@@ -126,6 +128,7 @@ export async function openCustomBreathBuilder(actor = null) {
           <div class="form-group"><label>Forme</label><input id="bl-custom-form" type="number" min="1" value="1" /></div>
           <div class="form-group"><label>Degats</label><select id="bl-custom-damage">${optionList("damage")}</select></div>
           <div class="form-group"><label>Portee</label><select id="bl-custom-range">${optionList("range")}</select></div>
+          <div class="form-group"><label>Portée naturelle de l'arme Nichirin (0 sans exemption)</label><input id="bl-custom-weapon-range" type="number" min="0" step="1.5" value="0" /></div>
           <div class="form-group"><label>Effet principal</label><select id="bl-custom-effect">${optionList("effects")}</select></div>
           <div class="form-group"><label>Stat</label><select id="bl-custom-stat"><option value="finesse">Finesse</option><option value="force">Force</option></select></div>
         `,
@@ -139,6 +142,7 @@ export async function openCustomBreathBuilder(actor = null) {
                 form: Number(html.find("#bl-custom-form").val() || 1),
                 damageKey: String(html.find("#bl-custom-damage").val() || "1d8"),
                 rangeKey: String(html.find("#bl-custom-range").val() || "melee"),
+                weaponRange: Number(html.find("#bl-custom-weapon-range").val() || 0),
                 effectKey: String(html.find("#bl-custom-effect").val() || "direct"),
                 attackStat: String(html.find("#bl-custom-stat").val() || "finesse"),
               }),

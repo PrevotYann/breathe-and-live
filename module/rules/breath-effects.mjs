@@ -1,5 +1,6 @@
 import {
   BREATH_SPECIAL_ALIASES,
+  BREATH_KEYS,
   DEMON_RANK_LEVELS,
   SYSTEM_ID,
 } from "../config/rule-data.mjs";
@@ -51,7 +52,7 @@ function toNumber(value, fallback = 0) {
 }
 
 function isActorAlone(attackerToken) {
-  if (!attackerToken || !canvas?.tokens?.placeables) return true;
+  if (!attackerToken || !canvas?.tokens?.placeables) return false;
   const disposition = attackerToken.document?.disposition;
   return !canvas.tokens.placeables.some((token) => {
     if (!token?.actor || token.id === attackerToken.id || token.document?.hidden) return false;
@@ -70,6 +71,8 @@ function getFlowerFocusState(actor) {
     stack: Math.max(0, toNumber(state.stack, 0)),
   };
 }
+
+function targetIdentity(actor) { return String(actor?.uuid || actor?.id || ""); }
 
 function getDemonRankLevel(actor) {
   if (!actor) return 0;
@@ -108,7 +111,7 @@ async function ensureSoundTempoState(attacker, targetActor) {
   const combatId = currentCombatId();
   const round = currentRoundNumber();
   const store = FU.duplicate(attacker.getFlag(SYSTEM_ID, "soundTempo") || {});
-  const key = String(targetActor.id || "");
+  const key = targetIdentity(targetActor);
   let state = store[key];
 
   if (!state || state.combatId !== combatId) {
@@ -119,7 +122,7 @@ async function ensureSoundTempoState(attacker, targetActor) {
     state = {
       combatId,
       targetId: key,
-      startedRound: round,
+      startedRound: 1,
       countdown,
       initialRoll: toNumber(countdownRoll.total, 0),
     };
@@ -128,6 +131,20 @@ async function ensureSoundTempoState(attacker, targetActor) {
   }
 
   return state;
+}
+
+export async function initializeCombatBreaths(combat) {
+  for (const actor of new Set(Array.from(combat.combatants ?? [], c => c.actor).filter(Boolean))) {
+    const breaths = getActiveBreaths(actor);
+    const sunUser = actor.items?.some(i => i.type === "breath" && i.system?.key === "sun") || breaths.sun?.enabled;
+    if (sunUser && Array.from(combat.combatants ?? []).some(c => ["Lune inferieure", "Lune superieure"].includes(c.actor?.system?.class?.rank))) {
+      await actor.update({ "system.progression.markedUnlocked": true });
+    }
+    if (!breaths.sound?.enabled || !breaths.sound.specials?.scoreDeCombat) continue;
+    for (const target of combat.combatants ?? []) {
+      if (target.actor !== actor && isDemonLike(target.actor)) await ensureSoundTempoState(actor, target.actor);
+    }
+  }
 }
 
 async function maybeActivateFlameHeart(attacker) {
@@ -203,7 +220,8 @@ export function getActiveBreaths(actor) {
     result[key] ??= { enabled: false, specials: {} };
     if (value?.enabled) result[key].enabled = true;
     for (const [specialKey, enabled] of Object.entries(value?.specials || {})) {
-      result[key].specials[normalizeSpecialKey(key, specialKey)] = !!enabled;
+      const normalized = normalizeSpecialKey(key, specialKey);
+      result[key].specials[normalized] = result[key].specials[normalized] || !!enabled;
     }
   }
 
@@ -215,10 +233,21 @@ export function getActiveBreaths(actor) {
     result[key] ??= { enabled: false, specials: {} };
     if (item.system?.enabled) result[key].enabled = true;
     for (const [specialKey, enabled] of Object.entries(item.system?.specials || {})) {
-      result[key].specials[normalizeSpecialKey(key, specialKey)] = !!enabled;
+      const normalized = normalizeSpecialKey(key, specialKey);
+      result[key].specials[normalized] = result[key].specials[normalized] || !!enabled;
     }
   }
 
+  const counts = { sun: 13, moon: 16, flame: 9, water: 10, wind: 9, thunder: 6, stone: 5, flower: 6, mist: 6, serpent: 5, sound: 6, insect: 4, love: 7, beast: 10, ocean: 7, west: 13, snow: 8 };
+  for (const definition of BREATH_KEYS) {
+    const forms = new Set(Array.from(actor.items ?? []).filter(i => i.type === "technique" && (i.system?.breathKey || normalizeBreathName(i.system?.breath)) === definition.key).map(i => Number(i.system.form)));
+    const count = counts[definition.key];
+    const mastered = count && Array.from({ length: count }, (_, i) => i + 1).every(n => forms.has(n));
+    if (!mastered) continue;
+    result[definition.key] ??= { enabled: true, specials: {} };
+    result[definition.key].enabled = true; result[definition.key].mastered = true;
+    for (const key of Object.keys(definition.specials)) result[definition.key].specials[normalizeSpecialKey(definition.key, key)] = true;
+  }
   return result;
 }
 
@@ -255,7 +284,7 @@ export async function applyPreHit(attacker, targetToken, item, ctx = {}) {
     canQuickShot: false,
     canDislocate: false,
   };
-  const rollEdge = { damage: 0 };
+  const rollEdge = { damage: 0, attack: 0 };
 
   if (itemAutomation.area === "allInRange" || itemFlags.aoe) {
     notes.push("Technique de zone : toutes les cibles valides a portee");
@@ -278,17 +307,13 @@ export async function applyPreHit(attacker, targetToken, item, ctx = {}) {
   }
 
   if (breaths.sun?.enabled && breaths.sun?.specials?.elu) {
-    if (baseCost > 1) {
-      cost = Math.floor(baseCost / 2);
+    if (baseCost > 0) {
+      cost = baseCost / 2;
       notes.push("Soleil - Elu : cout divise par 2");
-    } else if (baseCost === 1) {
-      cost = 1;
-      notes.push("Soleil - Elu : cout minimum conserve");
     }
   }
 
-  if (baseCost >= 1) cost = Math.max(1, Number.isFinite(cost) ? cost : 1);
-  else cost = Math.max(0, Number.isFinite(cost) ? cost : 0);
+  cost = Math.max(0, Number.isFinite(cost) ? cost : 0);
 
   if (itemBreathKey === "thunder" && breaths.thunder?.enabled && breaths.thunder.specials?.vitesseLumiere) {
     ui.canDash = true;
@@ -304,9 +329,9 @@ export async function applyPreHit(attacker, targetToken, item, ctx = {}) {
     notes.push("Neige - Dents de Katana : malus de CA a l'impact");
   }
 
-  if (itemBreathKey === "flower" && breaths.flower?.enabled && breaths.flower.specials?.concentrationFlorissante) {
+  if (breaths.flower?.enabled && breaths.flower.specials?.concentrationFlorissante) {
     const focus = getFlowerFocusState(attacker);
-    const isFocusedTarget = focus.targetId && focus.targetId === String(targetToken?.actor?.id || "");
+    const isFocusedTarget = focus.targetId && focus.targetId === targetIdentity(targetToken?.actor);
     const flowerBonus = isFocusedTarget ? focus.stack * 2 : 0;
     if (flowerBonus > 0) {
       damageExpr = appendFlatModifier(damageExpr, flowerBonus);
@@ -316,7 +341,7 @@ export async function applyPreHit(attacker, targetToken, item, ctx = {}) {
     }
   }
 
-  if (itemBreathKey === "flame" && breaths.flame?.enabled && breaths.flame.specials?.coeurFlamboyant) {
+  if (breaths.flame?.enabled && breaths.flame.specials?.coeurFlamboyant) {
     const flameHeart = await maybeActivateFlameHeart(attacker);
     if (flameHeart.active) {
       damageMultiplier *= 2;
@@ -349,17 +374,19 @@ export async function applyPreHit(attacker, targetToken, item, ctx = {}) {
     }
   }
 
-  if (itemBreathKey === "sound" && breaths.sound?.enabled && breaths.sound.specials?.scoreDeCombat) {
+  if (breaths.sound?.enabled && breaths.sound.specials?.scoreDeCombat) {
     const state = await ensureSoundTempoState(attacker, targetToken?.actor);
     if (state) {
       const elapsedRounds = Math.max(0, currentRoundNumber() - toNumber(state.startedRound, currentRoundNumber()));
       if (elapsedRounds < toNumber(state.countdown, 0)) {
         rollEdge.damage -= 1;
+        rollEdge.attack -= 1;
         notes.push(
           `Son - Score de combat : desavantage aux degats (${Math.max(0, state.countdown - elapsedRounds)} round(s) restant(s))`
         );
       } else {
         rollEdge.damage += 1;
+        rollEdge.attack += 1;
         notes.push("Son - Score de combat : avantage aux degats");
       }
     } else {
@@ -367,9 +394,10 @@ export async function applyPreHit(attacker, targetToken, item, ctx = {}) {
     }
   }
 
-  if (itemBreathKey === "insect" && breaths.insect?.enabled && breaths.insect.specials?.ecraserSousLePied) {
+  if (breaths.insect?.enabled && breaths.insect.specials?.ecraserSousLePied) {
     if (FU.getProperty(targetToken, "actor.system.conditions.poisoned.active")) {
       rollEdge.damage += 1;
+      rollEdge.attack += 1;
       notes.push("Insecte - Ecraser sous le pied : avantage aux degats contre cible empoisonnee");
     } else {
       notes.push("Insecte - Ecraser sous le pied : en attente d'une cible empoisonnee");
@@ -413,16 +441,16 @@ export async function applyPreHit(attacker, targetToken, item, ctx = {}) {
   }
 
   if (
-    itemBreathKey === "moon" &&
+    !!itemBreathKey &&
     breaths.moon?.enabled &&
     breaths.moon.specials?.bonusSolo &&
     isDemonLike(targetToken?.actor) &&
     isActorAlone(ctx.attackerToken)
   ) {
-    damageExpr = `${damageExpr} + 1d6`;
-    notes.push("Lune - Bonus solitaire : +1d6 contre demon en solitaire");
+    damageExpr = appendMatchingDice(damageExpr, 1);
+    notes.push("Lune - Bonus solitaire : +1 dé du même type contre démon en solitaire");
   } else if (
-    itemBreathKey === "moon" &&
+    !!itemBreathKey &&
     breaths.moon?.enabled &&
     breaths.moon.specials?.bonusSolo &&
     isDemonLike(targetToken?.actor)
@@ -430,14 +458,15 @@ export async function applyPreHit(attacker, targetToken, item, ctx = {}) {
     notes.push("Lune - Bonus solitaire inactif : allies detectes sur la scene");
   }
 
-  if (attacker.system?.states?.lameRouge && isDemonLike(targetToken?.actor)) {
+  const bladeAttack = itemBreathKey || item.type === "subclassTechnique" || ctx.weapon?.system?.isNichirin;
+  if (bladeAttack && attacker.system?.states?.lameRouge && isDemonLike(targetToken?.actor)) {
     damageMultiplier *= 2;
     notes.push("Lame Rouge : degats x2 contre demon");
   }
 
   if (attacker.system?.states?.marque) {
     notes.push("Forme Marquee : degats avec avantage");
-    if (itemBreathKey === "sun" && breaths.sun?.enabled && breaths.sun?.specials?.elu) {
+    if (itemBreathKey && breaths.sun?.enabled && breaths.sun?.specials?.elu) {
       damageMultiplier *= 3;
       notes.push("Soleil - Elu : degats x3 en Marque");
     }
@@ -461,9 +490,21 @@ export async function applyOnHit(
 
   const itemBreathKey = item.system?.breathKey || normalizeBreathName(item.system?.breath);
   const breaths = getActiveBreaths(attacker);
+  const sunUser = attacker.items?.some(i => i.type === "breath" && i.system?.key === "sun") || breaths.sun?.enabled;
+  if (wasKilled && ["Disciple de Lune inferieure", "Lune inferieure", "Disciple de Lune superieure", "Lune superieure"].includes(targetToken?.actor?.system?.class?.rank) && isActorAlone(ctx.attackerToken || attacker.getActiveTokens?.()[0])) {
+    const key = `${game.combat?.id || "free"}:${targetToken.id}`, awarded = attacker.getFlag(SYSTEM_ID, "soloMoonVictories") || [];
+    if (!awarded.includes(key)) {
+      await attacker.update({ "system.progression.skillSlots.value": Number(attacker.system.progression?.skillSlots?.value || 0) + 1,
+        "system.progression.skillSlots.max": Number(attacker.system.progression?.skillSlots?.max || 0) + 1 });
+      await attacker.setFlag(SYSTEM_ID, "soloMoonVictories", [...awarded, key]);
+      await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: attacker }), content: `<em>Victoire solo contre un démon lunaire : ${attacker.name} gagne un slot de compétence (p.77).</em>` });
+    }
+  }
+  if (wasKilled && sunUser && ["Lune inferieure", "Lune superieure"].includes(targetToken?.actor?.system?.class?.rank) && isActorAlone(ctx.attackerToken || attacker.getActiveTokens?.()[0])) {
+    await attacker.update({ "system.progression.transparentWorldUnlocked": true, "system.progression.redBladeUnlocked": true });
+  }
 
   if (
-    itemBreathKey === "snow" &&
     breaths.snow?.enabled &&
     breaths.snow?.specials?.dentsDeKatana
   ) {
@@ -487,8 +528,8 @@ export async function applyOnHit(
   }
 
   if (
-    itemBreathKey === "wind" &&
     wasKilled &&
+    ctx.decapitated &&
     breaths.wind?.enabled &&
     breaths.wind?.specials?.ventsDeGuerre &&
     isDemonLike(targetToken?.actor)
@@ -510,12 +551,11 @@ export async function applyOnHit(
   }
 
   if (
-    itemBreathKey === "flower" &&
     breaths.flower?.enabled &&
     breaths.flower?.specials?.concentrationFlorissante
   ) {
     const current = getFlowerFocusState(attacker);
-    const targetId = String(targetToken?.actor?.id || "");
+    const targetId = targetIdentity(targetToken?.actor);
     const next =
       current.targetId === targetId
         ? { combatId: currentCombatId(), targetId, stack: current.stack + 1 }

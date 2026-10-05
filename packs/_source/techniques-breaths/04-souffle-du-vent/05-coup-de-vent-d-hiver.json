@@ -13,7 +13,7 @@
     "sourceSection": "Souffle du Vent",
     "activation": "action",
     "quantity": 1,
-    "usageNote": "Le tableur source indique un cout d'endurance variable selon la version; la fiche conserve ici la valeur minimale extraite.",
+    "usageNote": "Le tableur source indique un cout d'endurance variable selon la version; la fiche conserve ici la valeur minimale extraite.\nTODO-RULEBOOK-AMBIGUITY: valeurs absentes du tableur : coût d'endurance. Les anciennes valeurs restent éditables et nécessitent une validation MJ sur la fiche.",
     "prerequisites": {
       "class": "",
       "rank": "",
@@ -73,6 +73,14 @@
       "decapitation": false,
       "charge": 0,
       "deflect": false
+    },
+    "ruleSource": {
+      "url": "https://docs.google.com/spreadsheets/d/1v1y8eU4frpKhp4zP40G7VzfwJngzwh03hXMGTFEQeo8/edit",
+      "checkedAt": "2026-10-05",
+      "missingFields": [
+        "coût d'endurance"
+      ],
+      "approved": false
     }
   },
   "folder": "blfwindfldr00000",

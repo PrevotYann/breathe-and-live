@@ -24,6 +24,8 @@ import {
 } from "../config/rule-data.mjs";
 import { useTechnique } from "../chat/use-technique.mjs";
 import { getActiveBreaths } from "../rules/breath-effects.mjs";
+import { sourceTrait, useExtrasensoryAbility } from "../rules/character-capabilities.mjs";
+import { awardSecondaryBreathForm } from "../rules/mission-progression.mjs";
 import { openCustomBreathBuilder } from "../rules/custom-breath-builder.mjs";
 import {
   actorHasBreath,
@@ -878,7 +880,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
       .filter((entry) => !entry.demonOnly || isDemonActorType(this.actor.type))
       .map((entry) => ({
         ...entry,
-        thresholdPercent: Math.round(Number(entry.thresholdRatio || 0.2) * 100),
+        thresholdPercent: entry.thresholdRatio ? Math.round(Number(entry.thresholdRatio) * 100) : null,
         targetedDamage: data.system.combat?.injuries?.targetedDamage?.[entry.key] || 0,
         state: data.system.combat?.injuries?.limbs?.[entry.key] || {
           injured: false,
@@ -940,8 +942,10 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
       skillSlots += Number(step.skillSlots || 0);
       weaponDieSteps += Number(step.weaponDieSteps || 0);
       breathFormBonus += Number(step.breathFormBonus || 0);
-      repeatedActionBonus += Number(step.repeatedActionBonus || 0);
-      demonFleshBonus += Number(step.demonFleshBonus || 0);
+      // TODO-RULEBOOK-AMBIGUITY: p.68 displays totals; p.69 describes +1/+2
+      // increments. Use the latest printed total, including the repeated +4.
+      if (step.repeatedActionBonus) repeatedActionBonus = Number(step.repeatedActionBonus);
+      if (step.demonFleshBonus) demonFleshBonus = Number(step.demonFleshBonus);
       nichirinDamageBonus += Number(step.nichirinDamageBonus || 0);
       if (step.nichirinDamageDie) nichirinDamageDie = step.nichirinDamageDie;
     }
@@ -1322,6 +1326,8 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
         Number(this.actor.system.resources?.rp?.value || 0) + Number(advancement.reactionBonus || 0),
       "system.progression.studySlots.max":
         Number(this.actor.system.progression?.studySlots?.max || 0) + Number(advancement.studySlots || 0),
+      "system.progression.studySlots.value":
+        Number(this.actor.system.progression?.studySlots?.value || 0) + Number(advancement.studySlots || 0),
       "system.progression.skillSlots.max":
         Number(this.actor.system.progression?.skillSlots?.max || 0) + Number(advancement.skillSlots || 0),
       "system.progression.skillSlots.value":
@@ -1335,9 +1341,9 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
       "system.progression.bonuses.breathFormBonus":
         Number(this.actor.system.progression?.bonuses?.breathFormBonus || 0) + Number(advancement.breathFormBonus || 0),
       "system.progression.bonuses.repeatedAction":
-        Number(this.actor.system.progression?.bonuses?.repeatedAction || 0) + Number(advancement.repeatedActionBonus || 0),
+        Number(advancement.repeatedActionBonus || this.actor.system.progression?.bonuses?.repeatedAction || 0),
       "system.progression.bonuses.demonFleshBonus":
-        Number(this.actor.system.progression?.bonuses?.demonFleshBonus || 0) + Number(advancement.demonFleshBonus || 0),
+        Number(advancement.demonFleshBonus || this.actor.system.progression?.bonuses?.demonFleshBonus || 0),
       "system.progression.bonuses.nichirinDamageBonus":
         Number(this.actor.system.progression?.bonuses?.nichirinDamageBonus || 0) + Number(advancement.nichirinDamageBonus || 0),
       "system.progression.bonuses.nichirinDamageDie":
@@ -1484,7 +1490,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
 
     if (this.actor.type === "demonist") {
       update["system.support.demonistHealingReaction"] = true;
-      update["system.resources.bdp.value"] = preset.resources.bdp;
+      update["system.resources.bdp.value"] = 0;
       update["system.resources.bdp.max"] = preset.resources.bdp;
       update["system.resources.demonisation"] = 0;
     }
@@ -1903,7 +1909,9 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
     }
 
     const requiredRank = sys.rank || sys.prerequisites?.rank || "";
-    if (!rankMeetsRequirement(this.actor.type, this.actor.system?.class?.rank, requiredRank)) {
+    const ranks = this.actor.type === "demonist" ? DEMONIST_RANKS : SLAYER_RANKS;
+    const effectiveRank = sourceTrait(this.actor, "genius") ? ranks[Math.min(ranks.length - 1, ranks.indexOf(this.actor.system?.class?.rank) + 2)] : this.actor.system?.class?.rank;
+    if (!rankMeetsRequirement(this.actor.type, effectiveRank, requiredRank)) {
       return {
         ok: false,
         message: `${itemData.name} requiert le rang ${requiredRank}.`,
@@ -2032,7 +2040,12 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
     if (bonuses.unarmedDamage) update["system.combat.basicAttack.unarmedDamage"] = bonuses.unarmedDamage;
     if (bonuses.autoHitMelee !== undefined) update["system.combat.basicAttack.autoHitMelee"] = !!bonuses.autoHitMelee;
     if (bonuses.autoHitFirearm !== undefined) update["system.combat.basicAttack.autoHitFirearm"] = !!bonuses.autoHitFirearm;
-    if (bonuses.medicalReaction !== undefined) update["system.support.medicalTraining"] = !!bonuses.medicalReaction;
+    if (bonuses.medicalReaction !== undefined) {
+      update["system.support.medicalTraining"] = !!bonuses.medicalReaction;
+      update["system.combat.reactions.medical"] = !!bonuses.medicalReaction;
+    }
+    if (/entrainement au combat/.test(normalizeSheetText(item.name))) update["system.combat.reactions.counterAttack"] = true;
+    if (/changement d.arme rapide/.test(normalizeSheetText(item.name))) update["system.combat.reactions.draw"] = true;
     if (bonuses.demonistHealingReaction !== undefined) {
       update["system.support.demonistHealingReaction"] = !!bonuses.demonistHealingReaction;
     }
@@ -2071,6 +2084,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
     }
 
     if (!canEdit) return;
+    html.on("click", ".bl-secondary-mission", async event => { event.preventDefault(); await awardSecondaryBreathForm(this.actor); });
 
     const map = this._derivedToBaseMap();
     html.on("change", 'input[name^="system.stats.derived."]', async (event) => {
@@ -2105,6 +2119,9 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
       event.preventDefault();
       await openCustomBreathBuilder(this.actor);
       this.render(false);
+    });
+    html.on("click", ".bl-mist-hide", async event => {
+      event.preventDefault(); await game.system.api.toggleMistCover(this.actor);
     });
 
     html.on("click", ".bl-creation-standard-array", async (event) => {
@@ -2181,6 +2198,12 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
       const item = li ? this.actor.items.get(li.dataset.itemId) : null;
       if (!item) return;
 
+      if (item.type === "sense") { await useExtrasensoryAbility(this.actor, item); return; }
+      if (item.system?.traitKey === "medicine") {
+        const supplies = this.actor.items.find(i => i.type === "medical" && Number(i.system.quantity) > 0 && i.system.healing && !i.system.maxHeal);
+        if (!supplies) { ui.notifications.warn("Connaissances médicales nécessite des bandages ou du matériel médical disponible."); return; }
+        await useMedicalItem(this.actor, supplies, { medicalKnowledge: true }); return;
+      }
       if (["technique", "subclassTechnique", "bda", "demonAbility"].includes(item.type)) {
         await useTechnique(this.actor, item, { controlledToken: this.actor?.token });
         return;
@@ -2371,6 +2394,11 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
 
   async _onChangeInput(event) {
     const element = event.currentTarget;
+    const condition = element?.name?.match(/^system\.conditions\.([^.]+)\.active$/);
+    if (condition) {
+      await game.system.api.setConditionState(this.actor, condition[1], { active: element.checked });
+      return;
+    }
     if (element?.name === "system.class.rank") {
       if (event.__blRankHandled) return;
       event.__blRankHandled = true;
@@ -2405,8 +2433,53 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
     if (!allowed.length) return [];
     const results = [];
     for (const entry of allowed) {
+      const remainingValidation = this._validateFeatureAcquisition(entry);
+      if (!remainingValidation.ok) { ui.notifications.warn(remainingValidation.message); continue; }
+      const sys = entry.system || {};
+      const fees = {}, oldSenses = [];
+      if (sys.ruleSource?.missingFields?.length && !sys.ruleSource.approved && entry.type === "feature") {
+        ui.notifications.warn(`${entry.name} : décision MJ requise, précisée sur la fiche.`); continue;
+      }
+      if (sys.traitKey || entry.type === "sense") {
+        let path = sys.traitKey ? "system.creation.superhumanPoints" : "system.creation.sensePoints";
+        let cost = Number(sys.startingPointCost) || 0;
+        if (entry.type === "sense") {
+          oldSenses.push(...Array.from(this.actor.items).filter(i => i.type === "sense" && i.system.senseType === sys.senseType));
+          const previousRank = Math.max(0, ...oldSenses.map(i => Number(i.system.rank) || 0));
+          if (Number(sys.rank) !== previousRank + 1) { ui.notifications.warn("Améliorez ce sens d'un seul niveau à la fois, jusqu'au niveau 3."); continue; }
+          if (Number(sys.rank) > 1) { path = "system.progression.studySlots.value"; cost = Number(sys.studyCost) || 1; }
+        }
+        const points = Number(foundry.utils.getProperty(this.actor, path)) || 0;
+        if (points < cost) { ui.notifications.warn(`${entry.name} : ${cost} points requis, ${points} disponibles.`); continue; }
+        fees[path] = points - cost;
+      }
+      if (sys.statChoicePoints) {
+        const allocation = await new Promise(resolve => new Dialog({ title: `${entry.name} — ${sys.statChoicePoints} points`,
+          content: BASE_STAT_OPTIONS.map(s => `<label>${s.label}</label><input name="${s.key}" type="number" min="0" value="0" />`).join(""),
+          buttons: { apply: { label: "Répartir", callback: html => {
+            const values = Object.fromEntries(BASE_STAT_OPTIONS.map(s => [s.key, Number(html.find(`[name="${s.key}"]`).val())]));
+            if (Object.values(values).some(v => !Number.isInteger(v) || v < 0) || Object.values(values).reduce((a,b) => a+b,0) !== Number(sys.statChoicePoints)) {
+              ui.notifications.warn(`Répartissez exactement ${sys.statChoicePoints} points.`); resolve(null);
+            } else resolve(values);
+          } }, cancel: { label: "Annuler", callback: () => resolve(null) } }, close: () => resolve(null),
+        }).render(true));
+        if (!allocation) continue;
+        sys.bonuses = { ...sys.bonuses, baseStats: allocation };
+      }
+      if (sys.traitKey === "reinforced") {
+        const limb = await new Promise(resolve => new Dialog({ title: "Partie du corps renforcée",
+          content: `<select name="limb">${LIMB_DEFINITIONS.map(l => `<option value="${l.key}">${l.label}</option>`).join("")}</select>`,
+          buttons: { apply: { label: "Choisir", callback: html => resolve(html.find('[name="limb"]').val()) }, cancel: { label: "Annuler", callback: () => resolve(null) } }, close: () => resolve(null),
+        }).render(true));
+        if (!limb) continue;
+        sys.reinforcedLimb = limb;
+      }
       const created = await super._onDropItemCreate(entry);
       const createdDocs = (Array.isArray(created) ? created : [created]).filter(Boolean);
+      if (createdDocs.length) {
+        if (Object.keys(fees).length) await this.actor.update(fees);
+        if (oldSenses.length) await this.actor.deleteEmbeddedDocuments("Item", oldSenses.map(i => i.id));
+      }
       for (const document of createdDocs) {
         await this._applyFeatureAcquisition(document, featureSlots.get(entry) || 0);
       }

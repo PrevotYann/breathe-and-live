@@ -2,7 +2,7 @@
 
 ## Mission
 
-Build a complete **Foundry VTT system for v12.343** for the **Demon Slayer / Kimetsu no Yaiba** universe, using the uploaded French rulebook **[FR] Breathe and Live-1.pdf** as the primary rules source.
+Build a complete **Foundry VTT system for v14.368** for the **Demon Slayer / Kimetsu no Yaiba** universe, using the uploaded French rulebook **[FR] Breathe and Live-1.pdf** as the primary rules source.
 
 The system must cover the full playable scope of the rulebook, not just the basics. The book includes character creation, core dice rules, HP/AC/endurance/reaction points, base and derived stats, sensory abilities, superhuman traits, human actions, reaction-point actions, base attacks, combat economy, status effects, limb mutilation, Demon Slayer class progression, many breathing styles, homebrew breathing styles, create-your-own breathing rules, slayer subclasses, demonist class and demonization points, progression, TCB constant, Marked Form, Transparent World, Red Blade, tools and objects, medical systems, transport, clothing, food, death, playable demons, and a 1934 supplement. fileciteturn0file0
 
@@ -360,7 +360,7 @@ Work in this order unless the repository structure strongly suggests another ord
 ## Definition of done
 
 The task is done only when:
-- the Foundry system runs on **v12.343**,
+- the Foundry system runs on **v14.368**,
 - the main classes are playable,
 - breath techniques are usable,
 - compendiums exist for slayers, demonists, demons, items, attacks, breaths, and techniques,
