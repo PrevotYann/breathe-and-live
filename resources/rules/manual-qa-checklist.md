@@ -2,6 +2,17 @@
 
 Use this when automated testing is not practical inside the Foundry runtime.
 
+- Four-actor combat regression
+  - See `combat-audit-2026-10-10.md` for fixtures, repairs and tested limits.
+  - Run `npm test` and `npm run test:combat:v14` in the disposable QA world.
+  - Confirm Wait is refused outside your turn or without an action remaining.
+  - Confirm Controlled/Slowed/Stunned restrictions cover recovery, medicine and reload.
+  - Confirm Red Blade blocks Demonist healing reactions without spending RP.
+  - Confirm short rest preserves RP, full rest preserves HP above a wound cap,
+    and combat/dead actors cannot use rest to refresh or revive.
+  - With actual player and GM clients, resolve a card twice and confirm damage,
+    RP costs and dose consumption occur once after reload.
+
 - Foundry 14.368 upgrade
   - Follow `foundry-v14-migration.md` and run `npm run test:v14` against a disposable QA world.
   - On a backed-up V12 world, compare actor IDs, embedded items, spent resources, ranks, conditions, and limb injuries before and after migration.

@@ -1,5 +1,15 @@
 # Versions
 
+## 0.5.2 — 10 octobre 2026
+
+- Simulations reproductibles de combats avec quatre acteurs : deux Pourfendeurs, une Démoniste équipée d'un fusil et un Démon jouable.
+- Attendre exige le tour du personnage et une action disponible ; les restrictions de conditions s'appliquent aussi aux actions de récupération, de soin et de recharge.
+- La réaction de soin Démoniste respecte la Lame Rouge ; les soins sérialisés préservent les dégâts simultanés et les PV au-dessus du plafond de blessures.
+- Les effets différés utilisent l'utilitaire Foundry v14 ; le repos exige une durée valide entre les combats et ne ressuscite pas les morts.
+- Rapport de combat inclus dans le système et commande `npm run test:combat:v14` pour la QA native.
+
+Validation : 95 tests automatisés, lint, build et scénarios natifs sur Foundry VTT 14.368 réussis. Aucun changement de schéma ; les données de règles manquantes restent explicitement signalées.
+
 ## 0.3.0 — 30 septembre 2026
 
 - Nouveau thème commun : navigation latérale avec icônes, en-tête compact, panneaux clairs et accents par archétype.

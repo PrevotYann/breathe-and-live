@@ -1,7 +1,18 @@
 import { spendResourceCosts } from "./resource-costs.mjs";
+import { getConditionActionRestriction } from "./condition-utils.mjs";
 
-function inCombat(actor) {
+export function inCombat(actor) {
   return game.combat?.round > 0 && Array.from(game.combat.combatants ?? []).some(c => c.actor === actor || c.actor?.uuid === actor.uuid);
+}
+
+export function canWaitForAction(actor) {
+  if (!inCombat(actor)) return true;
+  const current = game.combat.combatant?.actor;
+  if ((current !== actor && current?.uuid !== actor.uuid) || !(actor.system?.combat?.actionEconomy?.remainingActions > 0)) {
+    ui.notifications.warn("Attendre nécessite votre tour et une action disponible.");
+    return false;
+  }
+  return true;
 }
 
 export async function refreshCombatActions(actor) {
@@ -12,6 +23,11 @@ export async function refreshCombatActions(actor) {
 }
 
 export async function spendCombatAction(actor, { free = false, reaction = false, costs = [] } = {}) {
+  const restriction = getConditionActionRestriction(actor, reaction ? "rp" : "action");
+  if (restriction.blocked) {
+    ui.notifications.warn(`${actor.name} : ${restriction.reason}`);
+    return null;
+  }
   const entries = [...costs];
   if (!free && !reaction && inCombat(actor)) {
     const current = game.combat.combatant?.actor;

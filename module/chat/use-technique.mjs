@@ -1,5 +1,5 @@
 import { cardFlags, registerCardType } from "./persistent-cards.mjs";
-import { spendResourceCosts, applyHpDamage } from "../rules/resource-costs.mjs";
+import { spendResourceCosts, applyHpDamage, restoreHp } from "../rules/resource-costs.mjs";
 import { spendCombatAction } from "../rules/combat-actions.mjs";
 import { activateSubclassStance } from "../rules/subclass-passives.mjs";
 import { checkTechniqueUses, consumeTechniqueUse } from "../rules/technique-limits.mjs";
@@ -430,16 +430,8 @@ async function useHealingPower(actor, item) {
   if (!spentNotes) return null;
 
   const roll = await new Roll(formula).evaluate();
-  const hpValue = toNumber(actor.system?.resources?.hp?.value, 0);
-  const hpMax = toNumber(
-    actor.type === "demonist"
-      ? actor.system?.resources?.hp?.healableMax
-      : actor.system?.resources?.hp?.max,
-    hpValue
-  );
-  const healed = Math.max(0, Math.min(hpMax - hpValue, toNumber(roll.total, 0)));
-  const next = Math.max(0, Math.min(hpMax, hpValue + healed));
-  await actor.update({ "system.resources.hp.value": next });
+  const { healed, nextHp: next } = await restoreHp(actor, toNumber(roll.total, 0));
+  const hpValue = next - healed;
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),

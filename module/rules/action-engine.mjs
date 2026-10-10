@@ -20,7 +20,7 @@ import { applyEffectsList, consumeEffectsByOrigin } from "./effects-engine.mjs";
 import { applyPreHit, applyOnHit, initializeCombatBreaths, getActiveBreaths } from "./breath-effects.mjs";
 import { canHealActor, lockRedBladeHealing } from "./combat-state.mjs";
 import { applyHpDamage, restoreHp, spendResourceCosts } from "./resource-costs.mjs";
-import { refreshCombatActions, spendCombatAction } from "./combat-actions.mjs";
+import { refreshCombatActions, spendCombatAction, canWaitForAction, inCombat } from "./combat-actions.mjs";
 import { subclassAttackModifiers, onBasicAttackResolved, onSubclassWeaponHit, beginSubclassTurn, noteSubclassMovement } from "./subclass-passives.mjs";
 import { sourceTrait, perceptionContext, reinforcedDamageReduction, drivingBonus, envelopingAttackPenalty } from "./character-capabilities.mjs";
 import { resolveSourceComboDamage } from "./source-technique-workflows.mjs";
@@ -559,6 +559,7 @@ async function getRecentDemonistRank(actor) {
 
 export async function runDemonistHealingReaction(actor, { maximize = false } = {}) {
   if (!actor || actor.type !== "demonist") return null;
+  if (!canHealActor(actor)) return null;
   if (!actor.system?.support?.demonistHealingReaction) {
     ui.notifications.warn("La reaction de soin demoniste n'est pas debloquee sur cette fiche.");
     return null;
@@ -574,11 +575,8 @@ export async function runDemonistHealingReaction(actor, { maximize = false } = {
   const amount = maximize
     ? maxFormulaTotal(formula)
     : toNumber((await new Roll(formula).evaluate()).total, 0);
-  const hpValue = toNumber(actor.system?.resources?.hp?.value, 0);
-  const healableMax = toNumber(actor.system?.resources?.hp?.healableMax, actor.system?.resources?.hp?.max ?? hpValue);
-  const healed = Math.max(0, Math.min(healableMax - hpValue, amount));
-  const next = clamp(hpValue + healed, 0, healableMax);
-  await actor.update({ "system.resources.hp.value": next });
+  const { healed, nextHp: next } = await restoreHp(actor, amount);
+  const hpValue = next - healed;
 
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
@@ -676,7 +674,7 @@ async function setDemonPendingEffects(actor, effects) {
 export async function queueDemonPendingEffect(actor, effect) {
   const effects = getDemonPendingEffects(actor);
   effects.push({
-    id: randomID(),
+    id: FU.randomID(),
     dueRound: Number(game.combat?.round ?? 0) + Math.max(1, toNumber(effect?.delayedRounds, 1)),
     formula: String(effect?.formula || "0"),
     label: String(effect?.label || "Effet demoniaque"),
@@ -1712,13 +1710,12 @@ export async function runDemonHeal(actor) {
   if (!ok) return null;
 
   const roll = await new Roll(formula).evaluate();
-  const healed = Math.max(0, Math.min(hpMax - hpValue, toNumber(roll.total, 0)));
-  const next = clamp(hpValue + healed, 0, hpMax);
-  await actor.update({ [hpPath]: next });
+  const { healed, nextHp: next } = await restoreHp(actor, toNumber(roll.total, 0));
+  const healedFrom = next - healed;
 
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
-    content: `<em>${actor.name} utilise Guerison et recupere ${healed} PV (${hpValue} -> ${next}).</em>`,
+    content: `<em>${actor.name} utilise Guerison et recupere ${healed} PV (${healedFrom} -> ${next}).</em>`,
   });
   return healed;
 }
@@ -1994,6 +1991,7 @@ export async function runSprint(actor) {
 
 export async function runWait(actor) {
   if (!actor) return null;
+  if (!canWaitForAction(actor)) return null;
   const restriction = getConditionActionRestriction(actor, "wait");
   if (restriction.blocked) {
     ui.notifications.warn(`${actor.name} ne peut pas attendre comme action. ${restriction.reason}`);
@@ -2307,6 +2305,14 @@ export async function runDrawReaction(actor, { attackAndReturn = false } = {}) {
 
 export async function runRestRefresh(actor, { full = true, hours = full ? 8 : 1 } = {}) {
   if (!actor) return null;
+  if (actor.system?.death?.state === "dead" || Number(actor.system?.resources?.hp?.value) <= 0) {
+    ui.notifications.warn("À 0 PV, un repos ne remplace pas les soins immédiats ou l'arbitrage du MJ.");
+    return null;
+  }
+  if (inCombat(actor) || !Number.isFinite(Number(hours)) || Number(hours) <= 0) {
+    ui.notifications.warn("Le repos nécessite une durée positive, entre les combats.");
+    return null;
+  }
   const updates = {};
   if (FU.hasProperty(actor, "system.resources.e.max")) {
     updates["system.resources.e.value"] = toNumber(actor.system.resources.e.max, 0);
@@ -2315,7 +2321,7 @@ export async function runRestRefresh(actor, { full = true, hours = full ? 8 : 1 
     updates["system.resources.rp.value"] = toNumber(actor.system.resources.rp.max, 0);
   }
   if (full && FU.hasProperty(actor, "system.resources.hp.healableMax")) {
-    updates["system.resources.hp.value"] = toNumber(actor.system.resources.hp.healableMax, 0);
+    await restoreHp(actor, 0, { full: true });
   }
   if (full && hours >= 8 && actor.type === "demonist") {
     updates["system.resources.demonisation"] = 0;

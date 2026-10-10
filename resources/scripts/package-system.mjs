@@ -23,7 +23,7 @@ fs.mkdirSync(path.join(output, "module"), { recursive: true });
 fs.writeFileSync(path.join(output, "module/chat-technique.mjs"),
   "export const useTechnique = (...args) => game.system.api.useTechnique(...args);\n");
 fs.mkdirSync(path.join(output,"resources/rules"),{recursive:true});
-for (const file of ["audit-2026-10-05.md", "rulebook-coverage.json", "rulebook-ambiguities.md", "manual-qa-checklist.md", `release-${manifest.version}.md`]) {
+for (const file of ["audit-2026-10-05.md", "combat-audit-2026-10-10.md", "rulebook-coverage.json", "rulebook-ambiguities.md", "manual-qa-checklist.md", `release-${manifest.version}.md`]) {
   fs.copyFileSync(path.join(root,"resources/rules",file),path.join(output,"resources/rules",file));
 }
 
