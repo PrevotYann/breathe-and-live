@@ -31,3 +31,22 @@ Aucune migration de données ni modification des valeurs du livre. Les sections 
 - Captures de contrôle : `tmp/sheet-previews/`. Les contrôles portent sur le monde isolé `bl-v14-qa`, avec les personnages fournis par les compendiums ; aucun monde de campagne n'est modifié.
 
 La mise à jour utilise le manifeste existant. Fermer puis rouvrir les fiches après rechargement du client pour prendre en compte le nouveau thème. La largeur d'une fenêtre déjà mémorisée par Foundry peut être ajustée avec sa poignée habituelle.
+
+# Refonte « fiche papier »
+
+La fiche imprimée du livre (p. 136-137) sert de modèle visuel et d'organisation.
+
+| Page du livre | Onglet | Contenu |
+| --- | --- | --- |
+| p. 136, colonne gauche | Fiche | Stats en ensō, compétences dérivées (ovales), points restants (bulle) |
+| p. 136, colonne droite | Fiche | PV, CA, E, RP ; Souffle (ou Sang) ; Armes ; Techniques ; actions |
+| p. 137, haut | Dossier | Portrait, Contexte de l'entraîneur (p. 14), Corbeau, ¥, Sac |
+| p. 137, bas | Progression | Sens aiguisé, Niveau, Études, Caractéristiques |
+| p. 112-113, 119 | PNJ · Fiche | Bloc de bestiaire : PV / CA / nom, six statistiques, Attaques, Points de réaction, Capacités |
+
+- Sections partagées : `templates/actor/parts/*.hbs`, préchargées comme partiels dans `breathe-and-live.mjs`.
+- Illustrations : `assets/ui/*.svg`, générées par `npm run assets:ink` (procédural, aucune image du livre réutilisée). Polices OFL dans `assets/fonts/` avec leurs licences.
+- Les styles de champs génériques utilisent `:where()` pour que les champs spécialisés (lignes, anneaux, ovales) gardent la priorité.
+- Les trois questions de l'entraîneur sont des boutons radio sur `system.creation.trainerPoints.axis1-3` (0, 1 ou 2 pts) ; les questions partenaire et Kasugai gardent des valeurs numériques, le livre ne fixant pas de correspondance avec ces axes.
+
+Validation : `npm test` (95), `npm run lint`, `npm run test:sheets` (32 types, 258 combinaisons onglet/largeur, contrastes, persistance) et `npm run test:v14` sur Foundry 14.368.

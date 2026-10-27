@@ -1,0 +1,20 @@
+<section class="bl-technique-sheet" aria-label="{{#if sheetTitle}}{{sheetTitle}}{{else}}Techniques{{/if}}">
+  <h2 class="bl-ink-title">{{#if sheetTitle}}{{sheetTitle}}{{else}}Techniques{{/if}}</h2>
+  <div class="bl-frame bl-ruled">
+    <div class="bl-ruled-head" aria-hidden="true"><span></span><span>Coût</span><span>Dégâts</span><span></span></div>
+    <ol class="bl-ruled-list">
+      {{#each itemsTech as |it|}}
+        <li class="item technique-row" data-item-id="{{it.id}}">
+          <a class="item-edit bl-tech-name" title="{{it.system.breathDisplay}}">{{#if it.system.form}}<em>{{it.system.form}}</em>{{/if}}{{it.name}}{{#if it.blMissingBreath}} <small>(souffle manquant)</small>{{/if}}</a>
+          <span class="bl-tech-cost">{{it.blCost}}</span>
+          <span class="bl-tech-damage">{{#if it.system.damage}}{{it.system.damage}}{{else}}—{{/if}}</span>
+          <span class="controls">{{#if it.blUsable}}<a class="item-control item-chat" title="Utiliser {{it.name}}"><i class="fas fa-burst"></i></a>{{/if}}</span>
+        </li>
+      {{else}}
+        <li class="bl-ruled-empty"><small>Glissez des techniques depuis les compendiums.</small></li>
+        <li class="bl-ruled-empty"></li>
+        <li class="bl-ruled-empty"></li>
+      {{/each}}
+    </ol>
+  </div>
+</section>

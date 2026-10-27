@@ -1,0 +1,15 @@
+<div class="shared-actions">
+  {{#each demonSharedActions as |action|}}
+    <div class="shared-action">
+      <div><strong>{{action.label}}</strong><small>{{action.note}}</small></div>
+      <div class="controls">
+        <span class="tag">{{action.cost}}</span>
+        {{#if action.available}}
+          {{#if action.automatable}}<button type="button" class="bl-demon-shared-action bl-stamp" data-action-key="{{action.key}}">Utiliser</button>{{else}}<small>Via réaction</small>{{/if}}
+        {{else}}
+          <small>Rang insuffisant</small>
+        {{/if}}
+      </div>
+    </div>
+  {{/each}}
+</div>

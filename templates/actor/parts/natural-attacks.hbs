@@ -1,0 +1,17 @@
+<section class="bl-weapons bl-natural-attacks" aria-label="Attaques naturelles">
+  <h2 class="bl-ink-title">Attaques</h2>
+  <div class="bl-frame bl-ruled">
+    <ol class="bl-ruled-list">
+      {{#each demonQuickAttacks as |it|}}
+        <li>
+          <span class="bl-tech-name">{{it.name}}</span>
+          <span class="bl-tech-damage">{{#if it.damage}}{{it.damage}}{{else}}—{{/if}}</span>
+          <span class="bl-tech-cost">{{it.range}} m</span>
+          <button type="button" class="bl-demon-basic-attack bl-stamp bl-stamp--small" data-item-id="{{it.itemId}}" data-attack-key="{{it.key}}" data-attack-name="{{it.name}}" data-attack-damage="{{it.damage}}" data-attack-range="{{it.range}}" title="Attaquer : {{it.name}}"><i class="fas fa-paw" aria-hidden="true"></i></button>
+        </li>
+      {{else}}
+        <li class="bl-ruled-empty"><small>Attaque de base : {{system.demonology.basicDamage}}.</small></li>
+      {{/each}}
+    </ol>
+  </div>
+</section>

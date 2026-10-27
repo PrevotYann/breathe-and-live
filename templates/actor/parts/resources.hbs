@@ -1,0 +1,69 @@
+<section class="bl-resource-cluster" aria-label="Ressources">
+  <div class="bl-rings">
+    <div class="bl-ring bl-ring--hp" style="--pct: {{meters.hp}}%">
+      <div class="bl-ring-face">
+        <input class="bl-ring-value" type="number" name="system.resources.hp.value" value="{{system.resources.hp.value}}" min="0" aria-label="PV actuels" {{#unless canEdit}}disabled{{/unless}} />
+        <span class="bl-ring-max">/ <input type="number" name="system.resources.hp.max" value="{{system.resources.hp.max}}" min="0" aria-label="PV maximum" {{#unless canEdit}}disabled{{/unless}} /></span>
+      </div>
+      <span class="bl-ring-label">PV</span>
+      <small>{{#if isDemon}}Corps : {{system.resources.hp.base}}{{else}}Soin max {{system.resources.hp.healableMax}}{{/if}}{{#if system.resources.hp.temporary}} · Temp. {{system.resources.hp.temporary}}{{/if}}</small>
+    </div>
+    <div class="bl-ring bl-ring--ca">
+      <div class="bl-ring-face">
+        <input class="bl-ring-value" type="number" name="system.resources.ca" value="{{system.resources.ca}}" min="0" aria-label="Classe d'armure" {{#unless canEdit}}disabled{{/unless}} />
+      </div>
+      <span class="bl-ring-label">CA</span>
+    </div>
+    {{#if showEndurance}}
+      <div class="bl-ring bl-ring--e" style="--pct: {{meters.e}}%">
+        <div class="bl-ring-face">
+          <input class="bl-ring-value" type="number" name="system.resources.e.value" value="{{system.resources.e.value}}" min="0" aria-label="Endurance actuelle" {{#unless canEdit}}disabled{{/unless}} />
+          <span class="bl-ring-max">/ <input type="number" name="system.resources.e.max" value="{{system.resources.e.max}}" min="0" aria-label="Endurance maximum" {{#unless canEdit}}disabled{{/unless}} /></span>
+        </div>
+        <span class="bl-ring-label">E</span>
+        {{#if system.resources.e.temporary}}<small>Temp. {{system.resources.e.temporary}}</small>{{/if}}
+      </div>
+    {{/if}}
+    <div class="bl-ring bl-ring--rp" style="--pct: {{meters.rp}}%">
+      <div class="bl-ring-face">
+        <input class="bl-ring-value" type="number" name="system.resources.rp.value" value="{{system.resources.rp.value}}" min="0" aria-label="Points de réaction actuels" {{#unless canEdit}}disabled{{/unless}} />
+        <span class="bl-ring-max">/ <input type="number" name="system.resources.rp.max" value="{{system.resources.rp.max}}" min="0" aria-label="Points de réaction maximum" {{#unless canEdit}}disabled{{/unless}} /></span>
+      </div>
+      <span class="bl-ring-label">RP</span>
+      {{#if isDemon}}<small>Règle démon : ÷ 2</small>{{/if}}
+    </div>
+  </div>
+
+  <div class="bl-souffle">
+    {{#if isSlayer}}
+      <span class="bl-ring-label">Souffle</span>
+      <div class="bl-souffle-body">
+        <strong class="bl-souffle-name">{{#if favoredBreathLabel}}{{favoredBreathLabel}}{{else}}Aucun souffle choisi{{/if}}</strong>
+        <div class="tag-row">
+          {{#each activeBreathLabels as |label|}}<span class="tag">{{label}}</span>{{/each}}
+          {{#each activeStateLabels as |label|}}<span class="tag tag--seal">{{label}}</span>{{/each}}
+        </div>
+        <button type="button" class="bl-action-recovery bl-stamp"><i class="fas fa-wind" aria-hidden="true"></i> Souffle de récupération</button>
+      </div>
+    {{else}}
+      <span class="bl-ring-label">Sang</span>
+      <div class="bl-souffle-body bl-blood">
+        <label class="bl-blood-row" style="--pct: {{meters.bdp}}%"><span>BDP</span>
+          <input type="number" name="system.resources.bdp.value" value="{{system.resources.bdp.value}}" min="0" aria-label="BDP actuels" {{#unless canEdit}}disabled{{/unless}} />
+          <span>/</span>
+          <input type="number" name="system.resources.bdp.max" value="{{system.resources.bdp.max}}" min="0" aria-label="BDP maximum" {{#unless canEdit}}disabled{{/unless}} />
+        </label>
+        {{#if isDemonist}}
+          <label class="bl-blood-row bl-blood-row--danger" style="--pct: {{meters.demonisation}}%"><span>Démonisation</span>
+            <input type="number" name="system.resources.demonisation" value="{{system.resources.demonisation}}" min="0" aria-label="Démonisation actuelle" {{#unless canEdit}}disabled{{/unless}} />
+            <span>/</span>
+            <input type="number" name="system.resources.demonisationMax" value="{{system.resources.demonisationMax}}" min="0" aria-label="Démonisation maximum" {{#unless canEdit}}disabled{{/unless}} />
+          </label>
+          <button type="button" class="bl-action-demon-flesh bl-stamp"><i class="fas fa-droplet" aria-hidden="true"></i> Consommer de la chair</button>
+        {{else}}
+          <small>Attaque de base : {{system.demonology.basicDamage}}{{#if system.demonology.sharedBloodline}} · Lignée : {{system.demonology.sharedBloodline}}{{/if}}</small>
+        {{/if}}
+      </div>
+    {{/if}}
+  </div>
+</section>

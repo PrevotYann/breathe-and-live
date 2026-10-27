@@ -1,0 +1,11 @@
+<section class="bl-status-summary" aria-label="État actuel">
+  <h3>État actuel</h3>
+  <div class="tag-row">
+    {{#if system.combat.sourceStunned}}<span class="tag tag--alert">Assommé</span>{{/if}}
+    {{#if system.combat.sourceImmobilized}}<span class="tag tag--alert">Déplacement nul</span>{{/if}}
+    {{#if system.combat.regeneration.active}}<span class="tag">Repousse · {{system.combat.regeneration.remainingTurns}} tour(s)</span>{{/if}}
+    {{#each activeConditionEntries as |entry|}}<span class="tag tag--alert" title="{{entry.note}}">{{entry.label}}{{#if entry.state.intensity}} · {{entry.state.intensity}}{{/if}}{{#if entry.state.duration}} · {{entry.state.duration}} t.{{/if}}</span>{{/each}}
+    {{#each injuredLimbEntries as |entry|}}<span class="tag tag--alert">{{entry.label}} · {{entry.injuryLabel}}</span>{{/each}}
+    {{#unless activeConditionEntries.length}}{{#unless injuredLimbEntries.length}}<small>Aucune condition ni blessure de membre.</small>{{/unless}}{{/unless}}
+  </div>
+</section>

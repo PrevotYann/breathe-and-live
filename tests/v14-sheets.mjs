@@ -69,19 +69,22 @@ try {
           };
           const luminance = c => c.slice(0, 3).map(v => v / 255).map(v => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4)
             .reduce((sum, v, i) => sum + v * [.2126, .7152, .0722][i], 0);
-          const contrast = controls.filter(el => el.type !== "checkbox").map(el => {
+          const ratios = controls.filter(el => !["checkbox", "radio"].includes(el.type)).map(el => {
             const fg = luminance(rgba(getComputedStyle(el).color)), bg = luminance(background(el));
-            return (Math.max(fg, bg) + .05) / (Math.min(fg, bg) + .05);
+            return { el, ratio: (Math.max(fg, bg) + .05) / (Math.min(fg, bg) + .05) };
           });
+          const contrast = ratios.map(entry => entry.ratio);
+          const worst = ratios.sort((a, b) => a.ratio - b.ratio)[0];
+          const worstLabel = worst ? `${worst.el.tagName.toLowerCase()}.${[...worst.el.classList].join(".")} "${(worst.el.value || worst.el.textContent).trim().slice(0, 30)}"` : "";
           return { type, tab, width, active: active.length, key: active[0]?.dataset.tab,
             selected: current?.dataset.tab, overflow: body.scrollWidth - body.clientWidth,
-            contrast: contrast.length ? Math.min(...contrast) : null };
+            contrast: contrast.length ? Math.min(...contrast) : null, worstLabel };
         }, { type, tab, width });
         assert.equal(result.active, 1, `${type}/${tab}: one visible panel`);
         assert.equal(result.key, tab);
         assert.equal(result.selected, tab);
         assert.ok(result.overflow <= 1, `${type}/${tab}/${width}: horizontal overflow ${result.overflow}`);
-        assert.ok(result.contrast === null || result.contrast >= 4.5, `${type}/${tab}: text contrast ${result.contrast}`);
+        assert.ok(result.contrast === null || result.contrast >= 4.5, `${type}/${tab}: text contrast ${result.contrast} on ${result.worstLabel}`);
         report.push(result);
       }
       await sheet.locator(`.sheet-tabs [data-tab="${tabs[0]}"]`).click();

@@ -1,0 +1,14 @@
+<div class="bl-statblock bl-statblock--reference">
+  <div class="bl-sb-row bl-sb-stats">
+    {{#each demonBenchmarkRows as |row|}}<div class="bl-sb-cell"><span class="bl-sb-head">{{row.label}}</span><strong>{{row.value}}</strong></div>{{/each}}
+  </div>
+  <div class="bl-sb-row bl-sb-split">
+    <div class="bl-sb-cell"><span class="bl-sb-head">PV / CA</span><strong>{{demonRankBenchmark.hp}} / {{demonRankBenchmark.ca}}</strong></div>
+    <div class="bl-sb-cell"><span class="bl-sb-head">Points de réaction</span><strong>{{demonRankBenchmark.rp}}</strong></div>
+  </div>
+  <div class="bl-sb-row">
+    <div class="bl-sb-cell bl-sb-attacks"><span class="bl-sb-head">Attaques</span>
+      <span>Morsure : {{demonRankBenchmark.bite}}</span><span>Griffure : {{demonRankBenchmark.claw}}</span><span>BDA : {{demonRankBenchmark.bda}}</span>
+    </div>
+  </div>
+</div>

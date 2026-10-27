@@ -1,0 +1,26 @@
+<section class="bl-stats-column" aria-label="Statistiques">
+  <div class="bl-col-heads" aria-hidden="true"><span class="bl-ink-title">Stats</span><span>Compétences</span><span>Bonus</span></div>
+  {{#each statBlocks as |stat|}}
+    <div class="bl-stat" data-stat="{{stat.key}}">
+      <button type="button" class="bl-stat-name bl-roll-base" data-stat="{{stat.key}}" data-label="{{stat.label}}" title="Test de {{stat.label}}" aria-label="Test de {{stat.label}}">
+        {{#each stat.letters}}<span>{{this}}</span>{{/each}}
+      </button>
+      <div class="bl-enso">
+        <input type="number" name="system.stats.base.{{stat.key}}" value="{{stat.value}}" aria-label="{{stat.label}}" {{#unless ../canEdit}}disabled{{/unless}} />
+        {{#if ../hasDerivedStats}}
+          <span class="bl-enso-bubble {{#if stat.budget.over}}is-over{{/if}}" title="Points de compétence restants : {{stat.budget.spent}} dépensés sur {{stat.budget.base}}">{{stat.budget.remainingSigned}}</span>
+        {{/if}}
+      </div>
+      {{#if ../hasDerivedStats}}
+        <ol class="bl-skills">
+          {{#each stat.skills as |skill|}}
+            <li>
+              <button type="button" class="bl-roll-derived" data-derived="{{skill.key}}" data-label="{{skill.label}}" title="Test de {{skill.label}}">{{skill.label}}</button>
+              <input class="bl-oval" type="number" name="system.stats.derived.{{skill.key}}" value="{{skill.value}}" min="0" aria-label="{{skill.label}}" {{#unless ../../canEdit}}disabled{{/unless}} />
+            </li>
+          {{/each}}
+        </ol>
+      {{/if}}
+    </div>
+  {{/each}}
+</section>

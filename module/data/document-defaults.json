@@ -96,7 +96,12 @@
           "kasugaiCrow": "",
           "primaryWeapon": "",
           "favoredBreath": "",
-          "supplement1934Enabled": false
+          "supplement1934Enabled": false,
+          "age": "",
+          "sex": "",
+          "player": "",
+          "yen": 0,
+          "bag": ""
         },
         "breaths": {
           "sun": {

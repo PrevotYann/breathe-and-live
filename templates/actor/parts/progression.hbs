@@ -1,0 +1,94 @@
+<div class="bl-progression">
+  <div class="bl-ledger-grid bl-progression-ledger">
+    <label class="bl-line"><span>Classe</span><input type="text" name="system.class.type" value="{{system.class.type}}" {{#unless canEdit}}disabled{{/unless}} /></label>
+    <label class="bl-line"><span>Sous-classe</span><input type="text" name="system.class.subclass" value="{{system.class.subclass}}" placeholder="Voie / posture" {{#unless canEdit}}disabled{{/unless}} /></label>
+    <div class="bl-line"><span>XP</span>
+      <span class="pair"><input type="number" name="system.progression.xp.value" value="{{system.progression.xp.value}}" min="0" aria-label="XP actuelle" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.progression.xp.next" value="{{system.progression.xp.next}}" min="1" aria-label="XP du prochain rang" {{#unless canEdit}}disabled{{/unless}} /></span>
+    </div>
+    <label class="bl-line"><span>Entraînement</span><input type="number" name="system.progression.training" value="{{system.progression.training}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></label>
+  </div>
+
+  <div class="bl-sense-row">
+    <section class="bl-souffle bl-sense" aria-label="Sens aiguisé">
+      <span class="bl-ring-label">Sens aiguisé</span>
+      <div class="bl-souffle-body">
+        <ol class="bl-chip-list">
+          {{#each itemsSenses as |it|}}
+            <li class="item" data-item-id="{{it.id}}">
+              <a class="item-edit">{{it.name}}</a>{{#if it.system.rank}} <small>niv. {{it.system.rank}}</small>{{/if}}
+              <a class="item-control item-chat" title="Utiliser {{it.name}}"><i class="fas fa-eye"></i></a>
+            </li>
+          {{else}}
+            <li><small>Aucune capacité extrasensorielle (3 pts chacune).</small></li>
+          {{/each}}
+        </ol>
+      </div>
+    </section>
+    <div class="bl-ring bl-ring--level">
+      <div class="bl-ring-face"><strong class="bl-ring-value">{{system.class.level}}</strong></div>
+      <span class="bl-ring-label">Niveau</span>
+      <small>{{system.class.rank}}</small>
+    </div>
+  </div>
+
+  <div class="bl-page2-grid">
+    <section class="bl-studies" aria-label="Études">
+      <span class="bl-vertical-label bl-vertical-label--big" aria-hidden="true">Études</span>
+      <div class="bl-frame">
+        <div class="bl-slot-counters">
+          <div class="bl-line"><span>Slots d'étude</span>
+            <span class="pair"><input type="number" name="system.progression.studySlots.value" value="{{system.progression.studySlots.value}}" min="0" aria-label="Slots d'étude utilisés" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.progression.studySlots.max" value="{{system.progression.studySlots.max}}" min="0" aria-label="Slots d'étude maximum" {{#unless canEdit}}disabled{{/unless}} /></span>
+          </div>
+          <div class="bl-line"><span>Compétences</span>
+            <span class="pair"><input type="number" name="system.progression.skillSlots.value" value="{{system.progression.skillSlots.value}}" min="0" aria-label="Compétences utilisées" {{#unless canEdit}}disabled{{/unless}} /><span>/</span><input type="number" name="system.progression.skillSlots.max" value="{{system.progression.skillSlots.max}}" min="0" aria-label="Compétences maximum" {{#unless canEdit}}disabled{{/unless}} /></span>
+          </div>
+        </div>
+        <small class="bl-box-caption">Compétences débloquées en montée de rang</small>
+        <ol class="bl-ruled-list">
+          {{#each itemsStudies as |it|}}
+            <li class="item" data-item-id="{{it.id}}">
+              <a class="item-edit">{{it.name}}</a>
+              <small>{{it.system.rank}}{{#if it.system.slotCost}} · {{it.system.slotCost}} slot{{/if}}</small>
+              <span class="controls"><a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a></span>
+            </li>
+          {{else}}
+            <li class="bl-ruled-empty"><small>Glissez une compétence depuis le compendium de progression.</small></li>
+            <li class="bl-ruled-empty"></li>
+          {{/each}}
+        </ol>
+      </div>
+    </section>
+
+    <section class="bl-traits" aria-label="Caractéristiques">
+      <h2 class="bl-ink-title">Caractéristiques</h2>
+      <div class="bl-trait-box">
+        <span class="bl-vertical-label" aria-hidden="true">Surhumaines</span>
+        <ol class="bl-frame bl-ruled-list">
+          {{#each itemsSuperhuman as |it|}}
+            <li class="item" data-item-id="{{it.id}}"><a class="item-edit">{{it.name}}</a><span class="controls"><a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a></span></li>
+          {{else}}
+            <li class="bl-ruled-empty"><small>Aucune caractéristique surhumaine.</small></li>
+          {{/each}}
+        </ol>
+      </div>
+      <div class="bl-trait-box">
+        <span class="bl-vertical-label" aria-hidden="true">Avancées</span>
+        <div class="bl-frame">
+          <ol class="bl-ruled-list">
+            {{#each itemsAdvancedFeatures as |it|}}
+              <li class="item" data-item-id="{{it.id}}"><a class="item-edit">{{it.name}}</a><span class="controls"><a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a></span></li>
+            {{/each}}
+          </ol>
+          {{#if isSlayer}}
+            <div class="tag-row">
+              {{#each advancedFeatureUnlocks as |unlock|}}
+                <span class="tag {{#if unlock.unlocked}}tag--seal{{/if}}">{{unlock.label}} · {{#if unlock.unlocked}}débloqué{{else}}niv. {{unlock.level}}{{/if}}</span>
+              {{/each}}
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    </section>
+  </div>
+  {{#if canEdit}}{{#if isSlayer}}<button type="button" class="bl-secondary-mission bl-stamp"><i class="fas fa-scroll" aria-hidden="true"></i> Mission réussie : forme du souffle secondaire</button>{{/if}}{{/if}}
+</div>

@@ -1,0 +1,47 @@
+<section class="bl-demon-body" aria-label="Corps démoniaque">
+  <h2 class="bl-ink-title">Corps démoniaque</h2>
+  <div class="bl-ledger-grid">
+    <div class="bl-line"><span>Niveau</span><strong>{{system.class.level}}</strong><small>auto selon le rang</small></div>
+    <label class="bl-line"><span>Lignée</span>
+      <input type="text" list="bl-demon-bloodlines-{{actor.id}}" name="system.demonology.sharedBloodline" value="{{system.demonology.sharedBloodline}}" placeholder="Branche / lune" {{#unless canEdit}}disabled{{/unless}} />
+      <datalist id="bl-demon-bloodlines-{{actor.id}}">{{#each demonBloodlineOptions as |opt|}}<option value="{{opt}}"></option>{{/each}}</datalist>
+    </label>
+    <label class="bl-line"><span>Style</span><input type="text" name="system.profile.combatStyle" value="{{system.profile.combatStyle}}" {{#unless canEdit}}disabled{{/unless}} /></label>
+  </div>
+  {{#if demonBloodlineDetail}}
+    <div class="bl-bloodline">
+      <div><strong>{{demonBloodlineDetail.name}}</strong><small>{{demonBloodlineDetail.traits}} · {{demonBloodlineDataLabel}}</small></div>
+      {{#if canEdit}}<button type="button" class="bl-import-demon-bloodline bl-stamp">Importer les pouvoirs</button>{{/if}}
+    </div>
+  {{/if}}
+
+  <h3>Construisez votre corps <small>{{demonCreationBudget.spent}} / {{demonCreationBudget.max}} points · {{#if demonCreationBudget.valid}}reste {{demonCreationBudget.remaining}}{{else}}budget dépassé{{/if}}</small></h3>
+  <div class="bl-body-options">
+    <div class="bl-option-card"><span class="bl-option-title">À quoi ressemble votre corps ?</span>
+      <select name="system.demonology.bodyType" {{#unless canEdit}}disabled{{/unless}}>
+        {{#each demonBodyOptions as |opt|}}<option value="{{opt.key}}" {{#if (eq ../system.demonology.bodyType opt.key)}}selected{{/if}}>{{opt.label}} — {{opt.points}} pt</option>{{/each}}
+      </select>
+      <small>PV de départ du corps</small>
+      <input type="number" name="system.demonology.baseHpChoice" value="{{system.demonology.baseHpChoice}}" min="1" aria-label="PV de départ du corps" {{#unless canEdit}}disabled{{/unless}} />
+    </div>
+    <div class="bl-option-card"><span class="bl-option-title">Comment vous déplacez-vous ?</span>
+      <select name="system.demonology.movementType" {{#unless canEdit}}disabled{{/unless}}>
+        {{#each demonMovementOptions as |opt|}}<option value="{{opt.key}}" {{#if (eq ../system.demonology.movementType opt.key)}}selected{{/if}}>{{opt.label}} — {{opt.points}} pt</option>{{/each}}
+      </select>
+      <small>Base de déplacement (m)</small>
+      <input type="number" name="system.demonology.movementBase" value="{{system.demonology.movementBase}}" min="0" step="0.5" aria-label="Base de déplacement" {{#unless canEdit}}disabled{{/unless}} />
+    </div>
+    <div class="bl-option-card"><span class="bl-option-title">À quel point êtes-vous dangereux ?</span>
+      <select name="system.demonology.dangerLevel" {{#unless canEdit}}disabled{{/unless}}>
+        {{#each demonDangerOptions as |opt|}}<option value="{{opt.key}}" {{#if (eq ../system.demonology.dangerLevel opt.key)}}selected{{/if}}>{{opt.label}} — {{opt.points}} pt</option>{{/each}}
+      </select>
+      <small>Dégâts de base</small>
+      <input type="text" name="system.demonology.basicDamage" value="{{system.demonology.basicDamage}}" aria-label="Dégâts de base" {{#unless canEdit}}disabled{{/unless}} />
+    </div>
+  </div>
+  <div class="bl-button-row">
+    <label class="bl-check"><input type="checkbox" name="system.demonology.canInfect" data-dtype="Boolean" {{checked system.demonology.canInfect}} {{#unless canEdit}}disabled{{/unless}} /> Peut infecter</label>
+    <label class="bl-check"><input type="checkbox" name="system.demonology.canExecute" data-dtype="Boolean" {{checked system.demonology.canExecute}} {{#unless canEdit}}disabled{{/unless}} /> Peut exécuter un humain à 5 PV</label>
+    {{#if canEdit}}<button type="button" class="bl-apply-demon-creation bl-stamp bl-stamp--ink">Appliquer la création</button>{{/if}}
+  </div>
+</section>

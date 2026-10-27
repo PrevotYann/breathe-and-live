@@ -1,0 +1,24 @@
+<section class="bl-weapons" aria-label="Armes">
+  <h2 class="bl-ink-title">Armes</h2>
+  {{#each weaponSlots as |slot|}}
+    <div class="bl-weapon-slot">
+      <span class="bl-slot-label">{{slot.label}}</span>
+      <div class="bl-frame bl-weapon-box {{#if slot.weapon}}item{{/if}}" {{#if slot.weapon}}data-item-id="{{slot.weapon.id}}"{{/if}}>
+        {{#if slot.weapon}}
+          <img src="{{slot.weapon.img}}" alt="" />
+          <div class="bl-weapon-text">
+            <a class="item-edit bl-weapon-name">{{slot.weapon.name}}</a>
+            <small>{{slot.weapon.damage}}{{#if slot.weapon.range}} · {{slot.weapon.range}} m{{/if}}{{#if slot.weapon.usesAmmo}} · Munitions {{slot.weapon.ammo.value}}/{{slot.weapon.ammo.max}}{{/if}}</small>
+          </div>
+          <div class="controls">
+            <a class="item-control bl-weapon-attack" title="Attaquer"><i class="fas fa-khanda"></i></a>
+            {{#if slot.weapon.usesAmmo}}<a class="item-control bl-weapon-reload" title="Recharger"><i class="fas fa-rotate-right"></i></a>{{/if}}
+          </div>
+        {{else}}
+          <small class="bl-empty">Glissez une arme sur la fiche.</small>
+        {{/if}}
+      </div>
+    </div>
+  {{/each}}
+  {{#if extraWeaponCount}}<small class="bl-more">+ {{extraWeaponCount}} autre(s) arme(s) dans le sac.</small>{{/if}}
+</section>

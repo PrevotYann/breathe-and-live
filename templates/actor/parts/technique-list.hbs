@@ -1,0 +1,27 @@
+<div class="bl-toolbar">
+  <label class="bl-search"><i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+    <input type="text" data-tech-filter placeholder="Rechercher : nom, souffle, forme, tag…" aria-label="Rechercher une technique" />
+  </label>
+  {{#if canEdit}}{{#if showBreathBuilder}}<button type="button" class="bl-custom-breath-builder bl-stamp"><i class="fas fa-pen-nib" aria-hidden="true"></i> Souffle maison</button>{{/if}}{{/if}}
+</div>
+<header class="list-header bl-tech-grid">
+  <div>Nom</div><div>Famille</div><div>Forme</div><div>Coût</div><div>Dégâts</div><div></div>
+</header>
+<ol class="item-list bl-tech-list">
+  {{#each itemsTech as |it|}}
+    <li class="item technique-item bl-tech-grid" data-item-id="{{it.id}}" data-search="{{it.name}} {{it.type}} {{it.system.breathDisplay}} {{it.system.tags}}">
+      <div class="name"><img src="{{it.img}}" alt="" /><a class="item-edit">{{it.name}}</a></div>
+      <div>{{#if it.system.breathDisplay}}{{it.system.breathDisplay}}{{else}}{{it.type}}{{/if}}{{#if it.blMissingBreath}} <small>(souffle manquant)</small>{{/if}}</div>
+      <div>{{#if it.system.form}}{{it.system.form}}{{else}}—{{/if}}</div>
+      <div>{{it.blCost}}</div>
+      <div>{{#if it.system.damage}}{{it.system.damage}}{{else}}—{{/if}}</div>
+      <div class="controls">
+        {{#if it.blUsable}}<a class="item-control item-chat" title="Utiliser"><i class="fas fa-burst"></i></a>{{/if}}
+        <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+        <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+      </div>
+    </li>
+  {{else}}
+    <li class="bl-ruled-empty"><small>Aucune technique. Glissez-en depuis les compendiums « Techniques ».</small></li>
+  {{/each}}
+</ol>

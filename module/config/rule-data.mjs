@@ -300,27 +300,27 @@ export const ADVANCED_STATES = [
   {
     key: "tcbActive",
     label: "TCB actif",
-    note: "Concentration totale en cours; le Souffle de recuperation est interdit tant que cet etat est actif.",
+    note: "Concentration totale en cours ; le Souffle de récupération est interdit tant que cet état est actif.",
   },
   {
     key: "tcbPermanent",
     label: "TCB : Constant",
-    note: "Recupere 1 Endurance par tour tant qu'actif.",
+    note: "Récupère 1 Endurance par tour tant qu'actif.",
   },
   {
     key: "marque",
-    label: "Forme Marquee",
-    note: "Les degats de souffle sont lances avec avantage; souffle de recuperation x2.",
+    label: "Forme Marquée",
+    note: "Les dégâts de souffle sont lancés avec avantage ; souffle de récupération ×2.",
   },
   {
     key: "mondeTransparent",
     label: "Monde Transparent",
-    note: "Les attaques non-basees sur le souffle deviennent critiques sur reussite.",
+    note: "Les attaques non basées sur le souffle deviennent critiques sur réussite.",
   },
   {
     key: "lameRouge",
     label: "Lame Rouge",
-    note: "Double les degats contre les demons et bloque leur regeneration jusqu'a la fin du tour.",
+    note: "Double les dégâts contre les démons et bloque leur régénération jusqu'à la fin du tour.",
   },
 ];
 
@@ -361,14 +361,14 @@ export const CUSTOM_BREATH_COST_TABLES = {
 export const CONDITION_DEFINITIONS = [
   {
     key: "burn",
-    label: "Brulure",
-    note: "1 degat de feu par tour.",
+    label: "Brûlure",
+    note: "1 dégât de feu par tour.",
     turnFormula: "1",
   },
   {
     key: "bleed",
     label: "Saignement",
-    note: "1d4 degats par tour jusqu'a soin ou souffle de recuperation.",
+    note: "1d4 dégâts par tour jusqu'à soin ou souffle de récupération.",
     turnFormula: "1d4",
   },
   {
@@ -379,7 +379,7 @@ export const CONDITION_DEFINITIONS = [
   {
     key: "fury",
     label: "Fureur",
-    note: "Attaque toute cible a portee avec des attaques de base.",
+    note: "Attaque toute cible à portée avec des attaques de base.",
   },
   {
     key: "slowed",
@@ -389,78 +389,78 @@ export const CONDITION_DEFINITIONS = [
   {
     key: "sadness",
     label: "Triste",
-    note: "Doit reussir un test d'endurance DD 15.",
+    note: "Doit réussir un test d'endurance DD 15.",
   },
   {
     key: "imprisoned",
-    label: "Emprisonne",
+    label: "Emprisonné",
     note: "Ne peut pas bouger tant que la technique tient.",
   },
   {
     key: "offBalance",
-    label: "Desequilibre",
-    note: "Ouverture immediate; la cible est destabilisee.",
+    label: "Déséquilibré",
+    note: "Ouverture immédiate ; la cible est déstabilisée.",
   },
   {
     key: "paralyzed",
-    label: "Paralyse",
+    label: "Paralysé",
     note: "Ne peut pas agir normalement.",
   },
   {
     key: "controlled",
-    label: "Controle",
+    label: "Contrôlé",
     note: "Sous l'effet d'une contrainte externe.",
   },
   {
     key: "poisoned",
-    label: "Empoisonne",
-    note: "Subit une penalite ou des degats egaux a la puissance du poison.",
+    label: "Empoisonné",
+    note: "Subit une pénalité ou des dégâts égaux à la puissance du poison.",
   },
   {
     key: "charmed",
-    label: "Charme",
+    label: "Charmé",
     note: "Ne peut pas attaquer son charmeur et traite ses ennemis comme siens.",
   },
   {
     key: "blinded",
     label: "Aveugle",
-    note: "Echec auto aux tests lies a la vue.",
+    note: "Échec auto aux tests liés à la vue.",
   },
   {
     key: "deafened",
     label: "Assourdi",
-    note: "Echec auto aux tests lies a l'ouie.",
+    note: "Échec auto aux tests liés à l'ouïe.",
   },
   {
     key: "anosmia",
     label: "Anosmie",
-    note: "Echec auto aux tests lies a l'odorat.",
+    note: "Échec auto aux tests liés à l'odorat.",
   },
   {
     key: "paresthesia",
-    label: "Paresthesie",
-    note: "Le toucher et la precision sont perturbes.",
+    label: "Paresthésie",
+    note: "Le toucher et la précision sont perturbés.",
   },
   {
     key: "ageusia",
     label: "Ageusie",
-    note: "Echec auto aux tests lies au gout.",
+    note: "Échec auto aux tests liés au goût.",
   },
   {
     key: "smoked",
-    label: "Enfume",
+    label: "Enfumé",
     note: "Perd 1 Endurance par tour et par niveau. A 10 niveaux, inconscience.",
     trackIntensity: true,
   },
   {
     key: "cursed",
     label: "Maudit",
-    note: "Effet persistant jusqu'a levee de la malediction ou mort.",
+    note: "Effet persistant jusqu'à levée de la malédiction ou mort.",
   },
 ];
 
 export const LIMB_DEFINITIONS = [
-  { key: "head", label: "Tete", category: "vital" },
+  { key: "head", label: "Tête", category: "vital" },
   { key: "torso", label: "Torse", category: "vital" },
   { key: "leftArm", label: "Bras gauche", thresholdRatio: 0.2, category: "arm" },
   { key: "rightArm", label: "Bras droit", thresholdRatio: 0.2, category: "arm" },
@@ -472,6 +472,16 @@ export const LIMB_DEFINITIONS = [
   { key: "tentacle2", label: "Tentacule 2", thresholdRatio: 0.1, category: "appendage", demonOnly: true, movementPenaltyRatio: 0.1 },
   { key: "tentacle3", label: "Tentacule 3", thresholdRatio: 0.1, category: "appendage", demonOnly: true, movementPenaltyRatio: 0.1 },
   { key: "tentacle4", label: "Tentacule 4", thresholdRatio: 0.1, category: "appendage", demonOnly: true, movementPenaltyRatio: 0.1 },
+];
+
+// Contexte (Entraîneur), p. 14: three questions, each answer worth 0 / 1 / 2 points.
+export const TRAINER_BACKGROUND_QUESTIONS = [
+  { axis: "axis1", label: "Votre entraîneur était…",
+    options: ["Un épéiste ordinaire", "Un ancien Hashira retraité", "Un Hashira en profession"] },
+  { axis: "axis2", label: "Pendant votre formation, vous…",
+    options: ["Avez eu des difficultés, cela a pris plus de temps", "Avez eu une année plutôt classique", "Étiez plein de talent"] },
+  { axis: "axis3", label: "Votre entraîneur vous a envoyé en Sélection Finale avec…",
+    options: ["Pas de vêtements de reconnaissance", "Un vêtement discret permettant de s'identifier", "Un style immédiatement reconnaissable"] },
 ];
 
 export const SLAYER_RANKS = [

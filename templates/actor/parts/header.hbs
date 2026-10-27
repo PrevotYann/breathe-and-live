@@ -1,0 +1,60 @@
+<header class="sheet-header bl-page-head">
+  <div class="bl-crest">
+    <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="" />
+  </div>
+  <div class="header-fields bl-ledger">
+    <div class="bl-ledger-row">
+      <label class="bl-line bl-line--name"><span>Nom :</span>
+        <input name="name" type="text" value="{{actor.name}}" placeholder="Nom du personnage" {{#unless canEdit}}disabled{{/unless}} />
+      </label>
+      {{#if isNpc}}
+        <label class="bl-line"><span>Type :</span>
+          <input type="text" name="system.class.type" value="{{system.class.type}}" {{#unless canEdit}}disabled{{/unless}} />
+        </label>
+      {{else}}
+        <label class="bl-line bl-line--short"><span>Sexe :</span>
+          <input type="text" name="system.profile.sex" value="{{system.profile.sex}}" {{#unless canEdit}}disabled{{/unless}} />
+        </label>
+      {{/if}}
+    </div>
+    <div class="bl-ledger-row">
+      {{#unless isNpc}}
+        <label class="bl-line bl-line--short"><span>Âge :</span>
+          <input type="text" name="system.profile.age" value="{{system.profile.age}}" {{#unless canEdit}}disabled{{/unless}} />
+        </label>
+      {{/unless}}
+      <label class="bl-line"><span>Rang :</span>
+        {{#if isNpc}}
+          <input type="text" name="system.class.rank" value="{{system.class.rank}}" {{#unless canEdit}}disabled{{/unless}} />
+        {{else}}
+          <select name="system.class.rank" {{#unless canEdit}}disabled{{/unless}}>
+            {{#each rankOptions as |rank|}}
+              <option value="{{rank}}" {{#if (eq ../system.class.rank rank)}}selected{{/if}}>{{rank}}</option>
+            {{/each}}
+          </select>
+        {{/if}}
+      </label>
+      {{#if isNpc}}
+        <label class="bl-line"><span>Menace :</span>
+          <input type="text" name="system.npc.threat" value="{{system.npc.threat}}" {{#unless canEdit}}disabled{{/unless}} />
+        </label>
+      {{else}}
+        <label class="bl-line"><span>Joueur :</span>
+          <input type="text" name="system.profile.player" value="{{system.profile.player}}" {{#unless canEdit}}disabled{{/unless}} />
+        </label>
+      {{/if}}
+    </div>
+    <div class="bl-ledger-meta">
+      <span class="eyebrow bl-class-seal">{{classLabel}}{{#if system.class.subclass}} · {{system.class.subclass}}{{/if}}{{#unless isNpc}} · Niv. {{system.class.level}}{{/unless}}</span>
+      {{#if supplement1934Active}}<span class="eyebrow">Supplément 1934{{#unless supplement1934Global}} (fiche){{/unless}}</span>{{/if}}
+      <span class="sheet-badge-row" aria-label="Ressources">
+        <span class="sheet-badge hp">PV {{system.resources.hp.value}}/{{system.resources.hp.max}}</span>
+        {{#if showEndurance}}<span class="sheet-badge endurance">E {{system.resources.e.value}}/{{system.resources.e.max}}</span>{{/if}}
+        <span class="sheet-badge rp">RP {{system.resources.rp.value}}/{{system.resources.rp.max}}</span>
+        {{#if showBdp}}<span class="sheet-badge bdp">BDP {{system.resources.bdp.value}}/{{system.resources.bdp.max}}</span>{{/if}}
+        <span class="sheet-badge ca">CA {{system.resources.ca}}</span>
+      </span>
+    </div>
+  </div>
+  <div class="bl-wordmark" aria-hidden="true">Breathe<small>and</small>Live</div>
+</header>

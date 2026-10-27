@@ -21,6 +21,7 @@ import {
   SLAYER_RANK_PROGRESSION,
   SLAYER_RANKS,
   SYSTEM_ID,
+  TRAINER_BACKGROUND_QUESTIONS,
 } from "../config/rule-data.mjs";
 import { useTechnique } from "../chat/use-technique.mjs";
 import { getActiveBreaths } from "../rules/breath-effects.mjs";
@@ -172,7 +173,7 @@ const DEMON_CREATION_POINT_BUDGET = 3;
 
 const ADVANCED_FEATURE_UNLOCKS = {
   tcbConstantUnlocked: { level: 3, label: "TCB : Constant" },
-  markedUnlocked: { level: 6, label: "Forme Marquee" },
+  markedUnlocked: { level: 6, label: "Forme Marquée" },
   transparentWorldUnlocked: { level: 8, label: "Monde Transparent" },
   redBladeUnlocked: { level: 10, label: "Lame Rouge" },
 };
@@ -369,12 +370,12 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["breathe-and-live", "sheet", "actor", "slayer"],
       width: 1040,
-      height: 800,
+      height: 860,
       tabs: [
         {
           navSelector: ".sheet-tabs",
           contentSelector: ".sheet-body",
-          initial: "combat",
+          initial: "fiche",
         },
       ],
     });
@@ -517,6 +518,11 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
         primaryWeapon: "",
         favoredBreath: "",
         supplement1934Enabled: false,
+        age: "",
+        sex: "",
+        player: "",
+        yen: 0,
+        bag: "",
       },
       combat: {
         damageFlat: 0,
@@ -690,6 +696,11 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
             breathDisplay: item.system?.breathLabel || getBreathLabel(breathKey, item.system?.breath || ""),
           },
           blMissingBreath: requiresBreath && !hasRequiredBreath,
+          blCost: [
+            Number(item.system?.costE) ? `${item.system.costE} E` : "",
+            Number(item.system?.costRp) ? `${item.system.costRp} RP` : "",
+            Number(item.system?.costBdp) ? `${item.system.costBdp} BDP` : "",
+          ].filter(Boolean).join(" · ") || "—",
           blUsable:
             activation !== "passive" &&
             (hasDamage ||
@@ -716,7 +727,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
     data.itemsProgression = allItems.filter((i) => i.type === "feature");
     data.itemsInventory = allItems.filter(
       (i) =>
-        !["technique", "subclassTechnique", "bda", "demonAbility", "breath", "poison", "feature"].includes(i.type)
+        !["technique", "subclassTechnique", "bda", "demonAbility", "breath", "poison", "feature", "sense"].includes(i.type)
     );
     data.itemsOtherInventory = data.itemsInventory.filter(
       (i) =>
@@ -915,8 +926,102 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
     data.isNpc = ["npc", "npcHuman", "npcDemon", "companion"].includes(this.actor.type);
     data.isCompanion = this.actor.type === "companion";
     data.hasDerivedStats = !data.isCompanion;
+    this._prepareSheetLayout(data, allItems);
 
     return data;
+  }
+
+  /** View data for the printed-sheet layout (ensō stats, weapon slots, page 2 boxes). */
+  _prepareSheetLayout(data, allItems) {
+    const sys = data.system;
+    const statLabels = { force: "Force", finesse: "Finesse", courage: "Courage",
+      vitesse: "Vitesse", social: "Social", intellect: "Intellect" };
+    data.statBlocks = Object.entries(statLabels).map(([key, label]) => ({
+      key,
+      label,
+      letters: [...label.toUpperCase()],
+      value: sys.stats?.base?.[key] ?? 0,
+      budget: data.derivedBudget?.[key] || {},
+      skills: (data.derived.groups[key] || []).map((skill) => ({
+        key: skill,
+        label: data.derived.labels[skill] || skill,
+        value: sys.stats?.derived?.[skill] ?? 0,
+      })),
+    }));
+
+    const ratio = (value, max) => {
+      const total = Number(max) || 0;
+      return total > 0 ? Math.max(0, Math.min(100, Math.round((Number(value) || 0) / total * 100))) : 0;
+    };
+    data.meters = {
+      hp: ratio(sys.resources?.hp?.value, sys.resources?.hp?.max),
+      e: ratio(sys.resources?.e?.value, sys.resources?.e?.max),
+      rp: ratio(sys.resources?.rp?.value, sys.resources?.rp?.max),
+      bdp: ratio(sys.resources?.bdp?.value, sys.resources?.bdp?.max),
+      demonisation: ratio(sys.resources?.demonisation, sys.resources?.demonisationMax),
+    };
+
+    // Primary slot: the weapon named on the profile, otherwise equipped weapons first.
+    const primaryKey = normalizeSheetText(sys.profile?.primaryWeapon);
+    const weapons = [...data.itemsWeapons].sort((a, b) => {
+      const score = (item) => (normalizeSheetText(item.name) === primaryKey ? 2 : 0) + (item.system?.equipped ? 1 : 0);
+      return score(b) - score(a);
+    });
+    data.weaponSlots = ["Principale", "Secondaire"].map((label, index) => {
+      const item = weapons[index];
+      return {
+        label,
+        weapon: item ? {
+          id: item.id,
+          name: item.name,
+          img: item.img,
+          damage: item.system?.damage || "—",
+          range: item.system?.range ?? "",
+          usesAmmo: !!item.system?.usesAmmo,
+          ammo: item.system?.ammo || {},
+        } : null,
+      };
+    });
+    data.extraWeaponCount = Math.max(0, weapons.length - 2);
+
+    const features = data.itemsProgression;
+    data.itemsSenses = allItems.filter((item) => item.type === "sense");
+    data.itemsSuperhuman = features.filter((item) => item.system?.family === "superhuman");
+    data.itemsAdvancedFeatures = features.filter((item) => item.system?.family === "advanced");
+    data.itemsStudies = features.filter((item) => !["superhuman", "advanced"].includes(item.system?.family));
+
+    const trainer = sys.creation?.trainerPoints || {};
+    data.trainerQuestions = TRAINER_BACKGROUND_QUESTIONS.map((question) => ({
+      ...question,
+      options: question.options.map((label, points) => ({
+        label,
+        points,
+        checked: (Number(trainer[question.axis]) || 0) === points,
+      })),
+    }));
+
+    const demonType = isDemonActorType(this.actor.type);
+    data.showEndurance = !demonType && this.actor.type !== "companion";
+    data.showBdp = demonType || this.actor.type === "demonist";
+    if (!demonType) data.demonQuickAttacks = [];
+    const naturalIds = new Set(data.demonQuickAttacks.map((entry) => entry.itemId).filter(Boolean));
+    data.itemsTechUsable = data.itemsTech.filter((item) => item.blUsable && !naturalIds.has(item.id));
+    data.itemsTechPassive = data.itemsTech.filter((item) => !item.blUsable);
+
+    for (const entry of data.limbEntries) {
+      const state = entry.state || {};
+      entry.status = state.severed ? "severed" : state.broken ? "broken" : state.injured ? "injured" : "ok";
+    }
+
+    data.favoredBreathLabel = sys.profile?.favoredBreath
+      ? getBreathLabel(sys.profile.favoredBreath, sys.profile.favoredBreath)
+      : "";
+    data.activeBreathLabels = (data.breathEntries || []).filter((entry) => entry.enabled).map((entry) => entry.label);
+    data.activeStateLabels = (data.advancedStateEntries || []).filter((entry) => entry.active).map((entry) => entry.label);
+    data.classLabel = {
+      slayer: "Pourfendeur de démons", demonist: "Démoniste", demon: "Démon",
+      npc: "PNJ", npcHuman: "PNJ humain", npcDemon: "Démon (PNJ)", companion: "Compagnon",
+    }[this.actor.type] || sys.class?.type;
   }
 
   async _promptRankAdvancement(stepEntries) {
@@ -2172,7 +2277,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
           ? ".bl-creation-budget-input[data-creation-group='starting']"
           : `.bl-creation-budget-input[data-creation-group='${group}']`;
       const total = Array.from(html.find(selector)).reduce(
-        (sum, entry) => sum + (Number(entry.value || 0) || 0),
+        (sum, entry) => sum + (entry.type === "radio" && !entry.checked ? 0 : Number(entry.value || 0) || 0),
         0
       );
       if (total > max) {

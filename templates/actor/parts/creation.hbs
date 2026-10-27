@@ -1,0 +1,39 @@
+<div class="bl-creation">
+  <ol class="bl-steps">
+    <li>
+      <h3>1. Statistiques de base</h3>
+      <p class="hint">Deux méthodes du livre : la table 0-1-2-3-4-5 ou six jets. Répartissez ensuite les points de compétence dans les ensō de la Fiche.</p>
+      {{#if canEdit}}
+        <div class="bl-button-row">
+          <button type="button" class="bl-apply-human-creation bl-stamp bl-stamp--ink"><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> Assistant de création</button>
+          <button type="button" class="bl-creation-standard-array bl-stamp">Table 0-5</button>
+          <button type="button" class="bl-creation-roll-stats bl-stamp"><i class="fas fa-dice" aria-hidden="true"></i> Tirer 6d6</button>
+        </div>
+      {{/if}}
+      <div class="bl-ledger-grid">
+        <label class="bl-line"><span>Méthode</span><input type="text" name="system.creation.statMethod" value="{{system.creation.statMethod}}" {{#unless canEdit}}disabled{{/unless}} /></label>
+        <label class="bl-line"><span>Valeurs</span><input type="text" name="system.creation.statRolls" value="{{system.creation.statRolls}}" placeholder="ex : 0, 1, 2, 3, 4, 5" {{#unless canEdit}}disabled{{/unless}} /></label>
+      </div>
+    </li>
+    <li>
+      <h3>2. Style de combat</h3>
+      <p class="hint">{{classLabel}} — rang actuel {{system.class.rank}}. Le rang se modifie dans l'en-tête.</p>
+    </li>
+    <li>
+      <h3>3. Contexte</h3>
+      <p class="hint">Entraîneur, partenaire et corbeau Kasugai se remplissent dans l'onglet <strong>Dossier</strong>.</p>
+    </li>
+    <li>
+      <h3>4. Compétences de départ <small>{{creationBudget.starting}} / {{creationBudget.startingMax}} points · reste {{creationBudget.startingRemaining}}</small></h3>
+      <div class="bl-budget">
+        <label><span>Capacités extrasensorielles</span><input class="bl-creation-budget-input bl-oval" data-creation-group="starting" type="number" name="system.creation.sensePoints" value="{{system.creation.sensePoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></label>
+        <label><span>Caractéristiques surhumaines</span><input class="bl-creation-budget-input bl-oval" data-creation-group="starting" type="number" name="system.creation.superhumanPoints" value="{{system.creation.superhumanPoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></label>
+        <label><span>Formes de souffle</span><input class="bl-creation-budget-input bl-oval" data-creation-group="starting" type="number" name="system.creation.breathFormPoints" value="{{system.creation.breathFormPoints}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></label>
+      </div>
+    </li>
+    <li>
+      <h3>5. Équipement de départ</h3>
+      {{#if canEdit}}<button type="button" class="bl-starting-equipment bl-stamp"><i class="fas fa-box-open" aria-hidden="true"></i> Ajouter l'équipement initial</button>{{/if}}
+    </li>
+  </ol>
+</div>

@@ -1,0 +1,76 @@
+<div class="bl-toolbar">
+  <span class="bl-purse" title="Bourse (modifiable dans le Dossier)">¥ {{system.profile.yen}}</span>
+</div>
+
+<h3>Armes</h3>
+<ol class="item-list bl-ledger-list">
+  {{#each itemsWeapons as |it|}}
+    <li class="item" data-item-id="{{it.id}}">
+      <div class="name"><img src="{{it.img}}" alt="" /><span><a class="item-edit">{{it.name}}</a>
+        <small>{{it.system.damage}}{{#if it.system.range}} · {{it.system.range}} m{{/if}}{{#if it.system.usesAmmo}} · Munitions {{it.system.ammo.value}}/{{it.system.ammo.max}}{{/if}}</small></span></div>
+      <div class="controls">
+        <a class="item-control bl-weapon-attack" title="Attaquer"><i class="fas fa-khanda"></i></a>
+        {{#if it.system.usesAmmo}}<a class="item-control bl-weapon-reload" title="Recharger"><i class="fas fa-rotate-right"></i></a>{{/if}}
+        <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+        <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+      </div>
+    </li>
+  {{else}}<li class="bl-ruled-empty"><small>Aucune arme.</small></li>{{/each}}
+</ol>
+
+<h3>Médical &amp; soutien</h3>
+<ol class="item-list bl-ledger-list">
+  {{#each itemsMedical as |it|}}
+    <li class="item" data-item-id="{{it.id}}">
+      <div class="name"><img src="{{it.img}}" alt="" /><span><a class="item-edit">{{it.name}}</a>{{#if it.system.quantity}}<small>× {{it.system.quantity}}</small>{{/if}}</span></div>
+      <div class="controls">
+        <a class="item-control bl-use-medical" title="Utiliser"><i class="fas fa-kit-medical"></i></a>
+        <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+        <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+      </div>
+    </li>
+  {{else}}<li class="bl-ruled-empty"><small>Aucun soin ni consommable.</small></li>{{/each}}
+</ol>
+
+<h3>Poisons</h3>
+<div class="bl-poison-state">
+  <span><strong>{{activePoisonSummary.title}}</strong> — {{#if activePoisonSummary.active}}dose prête{{else}}aucune dose{{/if}}{{#each activePoisonSummary.lines as |line|}} · {{line}}{{/each}}</span>
+  {{#if activePoisonSummary.active}}<button type="button" class="bl-clear-poison bl-stamp">Retirer l'enduction</button>{{/if}}
+  {{#if poisonStateSummary.intensity}}<small>Empoisonné : {{poisonStateSummary.profileLabel}} · {{poisonStateSummary.intensity}} niveau(x) · {{poisonStateSummary.effectSummary}}{{#if poisonStateSummary.restrictionSummary}} · {{poisonStateSummary.restrictionSummary}}{{/if}}</small>{{/if}}
+</div>
+<ol class="item-list bl-ledger-list">
+  {{#each itemsPoisons as |it|}}
+    <li class="item" data-item-id="{{it.id}}">
+      <div class="name"><img src="{{it.img}}" alt="" /><span><a class="item-edit">{{it.name}}</a><small>{{it.blProfileLabel}} · {{it.blChargeLabel}}</small></span></div>
+      <div class="controls">
+        <a class="item-control bl-apply-poison" title="Enduire une arme"><i class="fas fa-vial"></i></a>
+        <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+        <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+      </div>
+    </li>
+  {{else}}<li class="bl-ruled-empty"><small>Aucun poison.</small></li>{{/each}}
+</ol>
+
+<h3>Objets, vêtements &amp; transport</h3>
+<ol class="item-list bl-ledger-list">
+  {{#each itemsOtherInventory as |it|}}
+    <li class="item" data-item-id="{{it.id}}">
+      <div class="name"><img src="{{it.img}}" alt="" /><span><a class="item-edit">{{it.name}}</a>{{#if it.system.quantity}}<small>× {{it.system.quantity}}</small>{{/if}}</span></div>
+      <div class="controls">
+        {{#if (eq it.type "transport")}}
+          <a class="item-control bl-drive-relaxed" title="Conduite détendue"><i class="fas fa-road"></i></a>
+          <a class="item-control bl-drive-stop" title="Terminer la conduite"><i class="fas fa-circle-stop"></i></a>
+          <a class="item-control bl-drive-danger" title="Conduite dangereuse"><i class="fas fa-triangle-exclamation"></i></a>
+        {{/if}}
+        {{#if (eq it.type "vehicle")}}
+          <a class="item-control bl-drive-relaxed" title="Conduite détendue"><i class="fas fa-road"></i></a>
+          <a class="item-control bl-drive-stop" title="Terminer la conduite"><i class="fas fa-circle-stop"></i></a>
+          <a class="item-control bl-drive-danger" title="Conduite dangereuse"><i class="fas fa-triangle-exclamation"></i></a>
+        {{/if}}
+        {{#if it.system.crafting.enabled}}<a class="item-control bl-crafting-check" title="Fabrication"><i class="fas fa-hammer"></i></a>{{/if}}
+        <a class="item-control item-edit" title="Ouvrir"><i class="fas fa-pen-to-square"></i></a>
+        <a class="item-control item-delete" title="Supprimer"><i class="fas fa-trash"></i></a>
+      </div>
+    </li>
+  {{else}}<li class="bl-ruled-empty"><small>Aucun autre objet.</small></li>{{/each}}
+</ol>

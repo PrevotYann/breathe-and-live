@@ -1,5 +1,6 @@
 import test, { beforeEach } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import {
   NS, MockActor, fire, gm, player, observer, documents, sockets, emitted,
   chatMessages, tokenFor, makeCombat, registeredSheets, loadedTemplates,
@@ -38,7 +39,11 @@ test("V14 init registers the actor class before collections and all document she
   assert.ok(CONFIG.Actor.documentClass.prototype instanceof MockActor);
   assert.equal(registeredSheets.filter(([type]) => type === Actor).length, 1);
   assert.equal(registeredSheets.filter(([type]) => type === Item).length, 5);
-  assert.equal(loadedTemplates.length, 9);
+  // 9 document sheets plus the shared actor-sheet partials; every path must ship.
+  assert.equal(loadedTemplates.length, 26);
+  for (const path of loadedTemplates) {
+    assert.ok(fs.existsSync(new URL(`../${path.replace("systems/breathe-and-live/", "")}`, import.meta.url)), path);
+  }
 });
 
 test("insufficient BDP does not consume E or RP", async () => {

@@ -1,0 +1,68 @@
+<div class="bl-dossier">
+  <figure class="bl-portrait">
+    <div class="bl-frame"><img src="{{actor.img}}" data-edit="img" title="Changer le portrait" alt="Portrait de {{actor.name}}" /></div>
+    <figcaption class="bl-ink-title">Portrait</figcaption>
+  </figure>
+
+  <section class="bl-trainer" aria-label="Contexte de l'entraîneur">
+    {{#each trainerQuestions as |question|}}
+      <fieldset class="bl-question">
+        <legend>{{question.label}}</legend>
+        <div class="bl-choices">
+          {{#each question.options as |option|}}
+            <label class="bl-choice {{#if option.checked}}is-checked{{/if}}">
+              <input type="radio" class="bl-creation-budget-input" data-creation-group="trainer" data-dtype="Number" name="system.creation.trainerPoints.{{question.axis}}" value="{{option.points}}" {{checked option.checked}} {{#unless ../../canEdit}}disabled{{/unless}} />
+              <span>{{option.label}}</span><small>{{option.points}} pt</small>
+            </label>
+          {{/each}}
+        </div>
+      </fieldset>
+    {{/each}}
+    <small>Entraîneur : {{creationBudget.trainer}} / {{creationBudget.contextMax}} points (Contexte, p. 14)</small>
+    <textarea class="bl-lined" name="system.profile.trainerContext" rows="3" placeholder="Sous quelle influence votre escrimeur s'est-il formé ?" aria-label="Récit de l'entraînement" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.trainerContext}}</textarea>
+  </section>
+
+  <section class="bl-crow" aria-label="Corbeau Kasugai">
+    <span class="bl-vertical-label" aria-hidden="true">Corbeau</span>
+    <div class="bl-frame">
+      <label class="bl-line"><span><i class="fas fa-crow" aria-hidden="true"></i> Nom</span>
+        <input type="text" name="system.profile.kasugaiCrow" value="{{system.profile.kasugaiCrow}}" {{#unless canEdit}}disabled{{/unless}} />
+      </label>
+      <label class="bl-line"><span>Oiseau</span>
+        <input type="text" name="system.creation.kasugaiType" value="{{system.creation.kasugaiType}}" placeholder="Corbeau, moineau (1d12)…" {{#unless canEdit}}disabled{{/unless}} />
+      </label>
+      <label class="bl-line"><span>Ordres</span>
+        <input type="text" name="system.creation.kasugaiCommands" value="{{system.creation.kasugaiCommands}}" {{#unless canEdit}}disabled{{/unless}} />
+      </label>
+      <label class="bl-line"><span>Compagnon</span>
+        <input type="text" name="system.support.companionName" value="{{system.support.companionName}}" placeholder="Acteur lié" {{#unless canEdit}}disabled{{/unless}} />
+      </label>
+      <textarea class="bl-lined" name="system.profile.partnerContext" rows="2" placeholder="Que pense votre corbeau de vous ?" aria-label="Contexte du partenaire" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.partnerContext}}</textarea>
+      <div class="bl-points-row">
+        <span>Partenaire</span>
+        <input class="bl-creation-budget-input" data-creation-group="partner" type="number" name="system.creation.partnerPoints.axis1" value="{{system.creation.partnerPoints.axis1}}" min="0" max="2" aria-label="Partenaire, choix 1" {{#unless canEdit}}disabled{{/unless}} />
+        <input class="bl-creation-budget-input" data-creation-group="partner" type="number" name="system.creation.partnerPoints.axis2" value="{{system.creation.partnerPoints.axis2}}" min="0" max="2" aria-label="Partenaire, choix 2" {{#unless canEdit}}disabled{{/unless}} />
+        <input class="bl-creation-budget-input" data-creation-group="partner" type="number" name="system.creation.partnerPoints.axis3" value="{{system.creation.partnerPoints.axis3}}" min="0" max="2" aria-label="Partenaire, choix 3" {{#unless canEdit}}disabled{{/unless}} />
+        <small>{{creationBudget.partner}} / {{creationBudget.contextMax}}</small>
+      </div>
+      <div class="bl-points-row">
+        <span>Kasugai</span>
+        <input class="bl-creation-budget-input" data-creation-group="kasugai" type="number" name="system.creation.kasugaiPoints.axis1" value="{{system.creation.kasugaiPoints.axis1}}" min="0" max="2" aria-label="Kasugai, choix 1" {{#unless canEdit}}disabled{{/unless}} />
+        <input class="bl-creation-budget-input" data-creation-group="kasugai" type="number" name="system.creation.kasugaiPoints.axis2" value="{{system.creation.kasugaiPoints.axis2}}" min="0" max="2" aria-label="Kasugai, choix 2" {{#unless canEdit}}disabled{{/unless}} />
+        <input class="bl-creation-budget-input" data-creation-group="kasugai" type="number" name="system.creation.kasugaiPoints.axis3" value="{{system.creation.kasugaiPoints.axis3}}" min="0" max="2" aria-label="Kasugai, choix 3" {{#unless canEdit}}disabled{{/unless}} />
+        <small>{{creationBudget.kasugai}} / {{creationBudget.contextMax}}</small>
+      </div>
+      {{#if canEdit}}<button type="button" class="bl-create-kasugai bl-stamp"><i class="fas fa-crow" aria-hidden="true"></i> Créer / ouvrir le Kasugai</button>{{/if}}
+    </div>
+  </section>
+
+  <section class="bl-bag" aria-label="Bourse et sac">
+    <label class="bl-purse-field bl-frame"><span aria-hidden="true">¥</span>
+      <input type="number" name="system.profile.yen" value="{{system.profile.yen}}" min="0" aria-label="Yens" {{#unless canEdit}}disabled{{/unless}} />
+    </label>
+    <div class="bl-bag-box">
+      <span class="bl-vertical-label" aria-hidden="true">Sac</span>
+      <textarea class="bl-lined bl-frame" name="system.profile.bag" rows="5" placeholder="Effets personnels, notes de mission…" aria-label="Sac" {{#unless canEdit}}disabled{{/unless}}>{{system.profile.bag}}</textarea>
+    </div>
+  </section>
+</div>

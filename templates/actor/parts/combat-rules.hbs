@@ -1,0 +1,24 @@
+<div class="bl-rules">
+  <section>
+    <h2 class="bl-ink-title">Économie d'action</h2>
+    <div class="bl-ledger-grid">
+      <label class="bl-line"><span>Actions / tour</span><input type="number" name="system.combat.actionEconomy.actionsPerTurn" value="{{system.combat.actionEconomy.actionsPerTurn}}" min="1" {{#unless canEdit}}disabled{{/unless}} /></label>
+      <label class="bl-line"><span>Actions bonus</span><input type="number" name="system.combat.actionEconomy.bonusActions" value="{{system.combat.actionEconomy.bonusActions}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></label>
+      <label class="bl-line"><span>Restantes ce tour</span><input type="number" name="system.combat.actionEconomy.remainingActions" value="{{system.combat.actionEconomy.remainingActions}}" min="0" {{#unless canEdit}}disabled{{/unless}} /></label>
+      <label class="bl-line"><span>Déplacement (m)</span><input type="number" name="system.combat.actionEconomy.movementMeters" value="{{system.combat.actionEconomy.movementMeters}}" min="0" step="0.5" {{#unless canEdit}}disabled{{/unless}} /></label>
+      <label class="bl-line"><span>Dégâts temporaires</span><input type="number" name="system.combat.damageFlat" value="{{system.combat.damageFlat}}" {{#unless canEdit}}disabled{{/unless}} /></label>
+      <label class="bl-check"><input type="checkbox" name="system.support.medicalTraining" data-dtype="Boolean" {{checked system.support.medicalTraining}} {{#unless canEdit}}disabled{{/unless}} /> Réaction médicale</label>
+    </div>
+    <p class="hint">Déplacement effectif : {{system.combat.actionEconomy.effectiveMovementMeters}} m{{#if system.combat.injuries.noFlight}} — vol impossible{{/if}}.</p>
+  </section>
+  <section>
+    <h2 class="bl-ink-title">Rappels</h2>
+    <div class="rule-pills">
+      <div class="rule-pill"><span>Endurance</span><strong>20 + Courage</strong></div>
+      <div class="rule-pill"><span>Classe d'armure</span><strong>10 + Vitesse</strong></div>
+      <div class="rule-pill"><span>Réactions de départ</span><strong>5 + Vitesse + Intellect</strong></div>
+      <div class="rule-pill"><span>À 0 Endurance</span><strong>Doit récupérer un tour ; inconscient sans Souffle de récupération sous 2 rounds</strong></div>
+      <div class="rule-pill"><span>Repos</span><strong>Les RP se régénèrent complètement</strong></div>
+    </div>
+  </section>
+</div>

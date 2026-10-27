@@ -1,5 +1,15 @@
 # Versions
 
+## 0.6.0 — refonte « fiche papier »
+
+- Nouveau thème encre et washi calqué sur la fiche de personnage du livre (p. 136-137) : en-tête gris à bord déchiré, lignes « Nom / Sexe / Âge / Rang / Joueur », ensō peints, cadres au pinceau, polices Cinzel, IM Fell English SC et EB Garamond (OFL, incluses).
+- Onglet **Fiche** = page 1 du livre : colonne Stats avec ensō par caractéristique, compétences dérivées dans des ovales et points restants dans la bulle ; anneaux PV / CA / E / RP avec jauge ; ellipse Souffle (Pourfendeur) ou Sang (BDP, démonisation) ; Armes principale / secondaire ; tableau Techniques (coût, dégâts, utilisation en un clic) ; actions.
+- Onglets **Dossier** et **Progression** = page 2 : portrait, les trois questions de l'entraîneur (p. 14) en choix 0/1/2 pts, corbeau Kasugai, ¥ et Sac ; Sens aiguisé, Niveau, Études, Caractéristiques surhumaines et avancées.
+- PNJ présentés comme les blocs du bestiaire (p. 112-113, 119) : PV, CA, six caractéristiques, Attaques, Points de réaction, Capacités.
+- Santé : silhouette avec l'état de chaque membre, conditions accentuées, mort et blessures graves pour tous les acteurs.
+- Nouveaux champs de profil `age`, `sex`, `player`, `yen`, `bag` (valeurs par défaut, aucune migration nécessaire). Libellés français accentués pour compétences, conditions, membres et maîtrises avancées.
+- Modèles d'acteur factorisés en sections partagées (`templates/actor/parts/`) ; illustrations vectorielles régénérables via `npm run assets:ink`.
+
 ## 0.5.2 — 10 octobre 2026
 
 - Simulations reproductibles de combats avec quatre acteurs : deux Pourfendeurs, une Démoniste équipée d'un fusil et un Démon jouable.
