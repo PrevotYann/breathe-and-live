@@ -1,5 +1,14 @@
 # Versions
 
+## 0.7.0 — 29 octobre 2026 — « Les Lanternes de Hotaru »
+
+- Nouveau compendium **Aventure** `oneshot-lanternes-hotaru` (dossier « Scénarios ») : un one-shot d'initiation de 3 à 4 h, importable en un clic dans un monde.
+- 5 prétirés non canoniques de rang Mizunoto (Eau, Foudre, Flamme, Vent, Démoniste) construits selon les règles de création du livre : tableau (0-5), points dérivés, 15 points de départ, équipement de classe, sous-classe de départ.
+- 2 démons (rang faible et rang élevé) bâtis avec le tableau démon + set de rang ; 3 arts de sang propres au scénario, marqués comme valeurs de MJ.
+- 8 PNJ, objets d'indice, « Livraison Kakushi » (règle de demande d'objets), guide du MJ pas à pas, aides de jeu et pages de présentation des prétirés.
+- Illustrations définitives inspirées de l'anime Demon Slayer : couverture, 3 cartes (grille Foundry 1,5 m), 17 jetons à fond extérieur transparent, dessin de Mii, 3 indices et 2 pouvoirs. Épingles et positions conservées ; miniatures reconstruites par `npm run assets:oneshot`, pack par `npm run build:oneshot`.
+- Validation : import réel testé sur Foundry 14.368 (fiches, pages et scènes rendues sans erreur), nouveau test `tests/oneshot.test.mjs`.
+
 ## 0.6.0 — refonte « fiche papier »
 
 - Nouveau thème encre et washi calqué sur la fiche de personnage du livre (p. 136-137) : en-tête gris à bord déchiré, lignes « Nom / Sexe / Âge / Rang / Joueur », ensō peints, cadres au pinceau, polices Cinzel, IM Fell English SC et EB Garamond (OFL, incluses).

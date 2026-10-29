@@ -3557,6 +3557,15 @@
           }
         }
       ]
+    },
+    {
+      "name": "oneshot-lanternes-hotaru",
+      "count": 1,
+      "items": [
+        {
+          "name": "Les Lanternes de Hotaru — one-shot d'initiation"
+        }
+      ]
     }
   ]
 }

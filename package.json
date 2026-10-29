@@ -17,7 +17,10 @@
     "validate:packs": "node resources/scripts/validate-packs.mjs",
     "verify:ready": "node resources/scripts/verify-system-readiness.mjs",
     "lint": "eslint .",
-    "assets:ink": "node resources/scripts/generate-ink-assets.mjs"
+    "assets:ink": "node resources/scripts/generate-ink-assets.mjs",
+    "assets:oneshot": "node resources/scripts/prepare-oneshot-assets.mjs",
+    "assets:oneshot:layouts": "node resources/scripts/generate-oneshot-assets.mjs",
+    "build:oneshot": "node resources/scripts/build-oneshot-pack.mjs"
   },
   "devDependencies": {
     "@foundryvtt/foundryvtt-cli": "^1.0.3",

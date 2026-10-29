@@ -244,3 +244,17 @@ Use this when automated testing is not practical inside the Foundry runtime.
 - Yosuke : importer le PNJ, vérifier PV 100/E 120/RP 25, choisir Force (+9 et 7d6+9) ou Finesse (+12 et 7d6+12), puis contrôler la variante de Maîtrise des mers sur terre/dans l'eau.
 - Vérifier avec le MJ les cases traversées, murs, couverture de Dents invisibles et zones renforcées. Ne pas valider les 34 formes ou les attaques de lignées incomplètes avant de fournir leurs données.
 - Conduire un véhicule possédé, contrôler ses bonus, puis terminer la conduite ; appliquer nourriture normale/temporaire et une collation sans soin.
+
+## One-shot « Les Lanternes de Hotaru » — Foundry 14.368
+
+- Importer l'Aventure du compendium « One-shot - Les Lanternes de Hotaru » dans un monde vide : 15 acteurs, 10 objets, 3 journaux, 3 scènes et leurs dossiers sont créés sans erreur console.
+- Ouvrir chaque prétiré : PV 20, E = 20 + Courage, RP = 5 + Vitesse + Intellect, CA = 10 + Vitesse, formes de souffle utilisables en un clic, pistolet chargé.
+- Sur la scène du pont, rendre visibles les deux Rôdeurs, lancer un combat et utiliser une forme de souffle : le démon peut dépenser un RP pour esquiver. Après décapitation, Tamaki consomme la chair (Rang faible) et gagne des BDP.
+- Sur la scène de l'atelier, utiliser les trois arts de sang de Tomoshibi : jet de toucher, puis Brûlure / Charmé / Emprisonné appliqués seulement si l'attaque touche.
+- Cliquer sur chaque épingle des cartes : la bonne page du Guide du MJ s'ouvre. Vérifier qu'aucun lien @UUID des journaux n'est cassé.
+- Vérifier les illustrations finales : couverture, trois cartes sans grille dessinée, portraits des cinq prétirés et huit PNJ, Tomoshibi, deux Rôdeurs distincts, lanterne-prison, dessin de Mii, trois indices et deux pouvoirs. Aucun ancien portrait schématique ne doit apparaître.
+- Sur fond clair puis sombre, vérifier les coins transparents des jetons et leur lisibilité à une case de 100 px. Les épingles du four, du pont, des habitations et de la stèle restent sur les bons éléments des cartes.
+- Les mondes ayant déjà importé l'aventure gardent leurs documents : pour obtenir le portrait du Rôdeur long cou et les nouveaux liens d'objets, importer dans un monde de test ou mettre à jour les documents concernés après sauvegarde.
+- Vérifier les illustrations finales : couverture, trois cartes sans grille dessinée, portraits des cinq prétirés et huit PNJ, Tomoshibi, deux Rôdeurs distincts, lanterne-prison, dessin de Mii, trois indices et deux pouvoirs. Aucun ancien portrait schématique ne doit apparaître.
+- Sur fond clair puis sombre, vérifier les coins transparents des jetons et leur lisibilité à une case de 100 px. Les épingles du four, du pont, des habitations et de la stèle restent sur les bons éléments des cartes.
+- Les mondes ayant déjà importé l'aventure gardent leurs documents : pour obtenir le portrait du Rôdeur long cou et les nouveaux liens d'objets, importer dans un monde de test ou mettre à jour les documents concernés après sauvegarde.

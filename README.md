@@ -1,6 +1,6 @@
 # Breathe and Live Foundry VTT System
 
-Version 0.6.0 — Foundry VTT 14.368
+Version 0.7.0 — Foundry VTT 14.368
 
 French Demon Slayer / Breathe and Live system with Slayer, Demonist, Demon and NPC sheets, breathing techniques, combat reactions, progression, equipment, and the 1934 supplement.
 
@@ -19,13 +19,22 @@ Click **Install**. The same URL supports future updates. The repository and rele
 To publish a release, increment `system.json`'s version and push the changes to `master`; GitHub Actions creates the matching tag and release. You can also push a tag matching the version in `system.json`:
 
 ```sh
-git tag v0.6.0
-git push origin v0.6.0
+git tag v0.7.0
+git push origin v0.7.0
 ```
 
 The GitHub Actions release workflow runs the tests, builds the system and compendiums, and publishes `manifest.json`, `system.json`, and `breathe-and-live.zip`. For later releases, increment `system.json`'s version and update its versioned `download` URL before tagging. The build generates `dist/manifest.json` from the packaged `system.json`, so no second manifest needs manual maintenance. The ZIP contains the built files at its root; GitHub's automatic source-code ZIP is not an installable build.
 
 See [V14 migration and validation](resources/rules/foundry-v14-migration.md) for upgrading an existing V12 world and running the browser smoke tests. Back up the world before Foundry performs its core migration.
+
+## One-shot d'initiation : « Les Lanternes de Hotaru »
+
+Le compendium **One-shot - Les Lanternes de Hotaru** (dossier *Scénarios*) contient une Aventure Foundry. Ouvrez-la puis cliquez sur *Importer l'aventure* : acteurs, objets, journaux et scènes sont créés dans des dossiers « Les Lanternes de Hotaru ». Commencez par le journal *Guide du MJ*.
+
+- Sources éditables : `resources/oneshot/lanternes-hotaru/` (prétirés, PNJ, objets, textes, scènes).
+- Illustrations définitives : `assets/oneshot/lanternes-hotaru/` (couverture, 3 cartes, 17 jetons, dessin de Mii, 3 indices et 2 pouvoirs). Les deux Rôdeurs ont chacun leur portrait.
+- `npm run assets:oneshot` vérifie les images et reconstruit les miniatures ; `npm run build:oneshot` reconstruit `packs/oneshot-lanternes-hotaru.db`. Les prompts et les crédits sont documentés dans `resources/oneshot/lanternes-hotaru/art-manifest.json`.
+- `npm run assets:oneshot:layouts` produit seulement les références schématiques dans `tmp/oneshot-layouts/`, sans écraser les illustrations définitives.
 
 ## Fiches 0.3.0
 

@@ -2,7 +2,7 @@
   "id": "breathe-and-live",
   "title": "Breathe and Live - Demon Slayer RPG",
   "description": "Adaptation du systeme JDR Breathe and Live (Demon Slayer) pour Foundry VTT.",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "socket": true,
   "background": "systems/breathe-and-live/assets/art/system-cover.png",
   "media": [
@@ -135,6 +135,13 @@
       "path": "packs/supplement-1934-techniques.db",
       "type": "Item",
       "system": "breathe-and-live"
+    },
+    {
+      "name": "oneshot-lanternes-hotaru",
+      "label": "One-shot - Les Lanternes de Hotaru",
+      "path": "packs/oneshot-lanternes-hotaru.db",
+      "type": "Adventure",
+      "system": "breathe-and-live"
     }
   ],
   "packFolders": [
@@ -173,6 +180,12 @@
           "sorting": "m",
           "color": "#a32e46",
           "packs": ["supplement-1934-actors", "supplement-1934", "supplement-1934-breaths", "supplement-1934-techniques"]
+        },
+        {
+          "name": "Scénarios",
+          "sorting": "m",
+          "color": "#2c4a6b",
+          "packs": ["oneshot-lanternes-hotaru"]
         }
       ]
     }
@@ -180,7 +193,7 @@
   "scripts": [],
   "url": "https://github.com/PrevotYann/breathe-and-live",
   "manifest": "https://github.com/PrevotYann/breathe-and-live/releases/latest/download/manifest.json",
-  "download": "https://github.com/PrevotYann/breathe-and-live/releases/download/v0.6.0/breathe-and-live.zip",
+  "download": "https://github.com/PrevotYann/breathe-and-live/releases/download/v0.7.0/breathe-and-live.zip",
   "license": "LICENSE.txt",
   "documentTypes": {
     "Actor": {

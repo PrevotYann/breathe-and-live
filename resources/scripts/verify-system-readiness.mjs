@@ -69,7 +69,7 @@ function validateManifest() {
     assert(pack.name && !packNames.has(pack.name), `Pack duplique ou sans nom: ${pack.name}`);
     packNames.add(pack.name);
     assert(pack.path && exists(pack.path), `Chemin de pack introuvable: ${pack.name} -> ${pack.path}`);
-    assert(["Actor", "Item"].includes(pack.type), `Type de pack non supporte: ${pack.name} -> ${pack.type}`);
+    assert(["Actor", "Item", "Adventure"].includes(pack.type), `Type de pack non supporte: ${pack.name} -> ${pack.type}`);
   }
 
   for (const packName of [
@@ -106,16 +106,24 @@ function validateDbPack(relativePath, minCount = 1) {
   return docs.length;
 }
 
+function readTemplate(relativePath, ancestors = []) {
+  assert(!ancestors.includes(relativePath), `Inclusion de template circulaire: ${relativePath}`);
+  assert(exists(relativePath), `Template introuvable: ${relativePath}`);
+  const text = fs.readFileSync(path.join(ROOT, relativePath), "utf8");
+  return text.replace(/{{>\s*"systems\/breathe-and-live\/([^"}]+)"\s*}}/g,
+    (_match, partial) => readTemplate(partial, [...ancestors, relativePath]));
+}
+
 function validateTemplates() {
   for (const templatePath of [...REQUIRED_ACTOR_TEMPLATES, ...REQUIRED_ITEM_TEMPLATES]) {
     assert(exists(templatePath), `Template introuvable: ${templatePath}`);
-    const text = fs.readFileSync(path.join(ROOT, templatePath), "utf8");
+    const text = readTemplate(templatePath);
     assert(text.includes("sheet-header"), `${templatePath}: header de fiche manquant`);
     assert(text.includes("sheet-body"), `${templatePath}: body de fiche manquant`);
   }
 
   for (const templatePath of REQUIRED_ACTOR_TEMPLATES) {
-    const text = fs.readFileSync(path.join(ROOT, templatePath), "utf8");
+    const text = readTemplate(templatePath);
     assert(text.includes("sheet-badge-row"), `${templatePath}: badges d'en-tete manquants`);
   }
 }

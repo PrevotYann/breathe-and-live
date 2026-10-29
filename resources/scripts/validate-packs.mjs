@@ -49,6 +49,17 @@ function validatePack(filePath) {
         }
       }
     }
+
+    // Adventure documents carry world actors whose embedded items need the same metadata.
+    for (const actor of Array.isArray(doc.actors) ? doc.actors : []) {
+      for (const item of actor.items ?? []) {
+        if (item?.system && !hasSourceSection(item)) {
+          errors.push(
+            `${path.basename(filePath)}:${entry.line} aventure "${doc.name}" acteur "${actor.name}" item "${item.name}" sans system.sourceSection`
+          );
+        }
+      }
+    }
   }
   return errors;
 }

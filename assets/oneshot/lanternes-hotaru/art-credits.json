@@ -1,0 +1,197 @@
+{
+  "scenario": "Les Lanternes de Hotaru",
+  "generatedOn": "2026-10-29",
+  "generator": "Built-in image_gen",
+  "style": "Final original artwork inspired by the Demon Slayer / Kimetsu no Yaiba anime: precise expressive ink contours, cinematic cel shading, richly painted Taisho-era Japanese materials and environments, restrained paper texture, indigo shadows, warm amber and eerie cyan lighting; no existing franchise characters, no text, no logos, no watermark. A cohesive supernatural lantern-festival adventure.",
+  "assets": [
+    {
+      "id": "cover",
+      "file": "cover.webp",
+      "width": 1600,
+      "height": 900,
+      "bytes": 499512
+    },
+    {
+      "id": "map-village",
+      "file": "maps/hotaru-mura.webp",
+      "width": 4000,
+      "height": 2800,
+      "bytes": 2564016
+    },
+    {
+      "id": "map-bridge",
+      "file": "maps/pont-des-lanternes.webp",
+      "width": 3000,
+      "height": 2000,
+      "bytes": 1288050
+    },
+    {
+      "id": "map-workshop",
+      "file": "maps/atelier-abandonne.webp",
+      "width": 3000,
+      "height": 2200,
+      "bytes": 1219508
+    },
+    {
+      "id": "mizuki-asagiri",
+      "file": "tokens/mizuki-asagiri.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 126116
+    },
+    {
+      "id": "kenta-hayase",
+      "file": "tokens/kenta-hayase.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 114918
+    },
+    {
+      "id": "chiyo-akabane",
+      "file": "tokens/chiyo-akabane.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 114878
+    },
+    {
+      "id": "itsuki-kazahaya",
+      "file": "tokens/itsuki-kazahaya.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 116544
+    },
+    {
+      "id": "tamaki-kurosu",
+      "file": "tokens/tamaki-kurosu.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 94018
+    },
+    {
+      "id": "oume",
+      "file": "tokens/oume.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 116142
+    },
+    {
+      "id": "mii",
+      "file": "tokens/mii.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 110846
+    },
+    {
+      "id": "shinpei-kakushi",
+      "file": "tokens/shinpei-kakushi.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 90548
+    },
+    {
+      "id": "gonbei-arakawa",
+      "file": "tokens/gonbei-arakawa.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 102468
+    },
+    {
+      "id": "okiku",
+      "file": "tokens/okiku.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 101310
+    },
+    {
+      "id": "sota",
+      "file": "tokens/sota.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 90462
+    },
+    {
+      "id": "fumi",
+      "file": "tokens/fumi.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 104442
+    },
+    {
+      "id": "jiro",
+      "file": "tokens/jiro.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 93216
+    },
+    {
+      "id": "rodeur-des-lanternes",
+      "file": "tokens/rodeur-des-lanternes.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 107998
+    },
+    {
+      "id": "rodeur-long-cou",
+      "file": "tokens/rodeur-long-cou.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 99942
+    },
+    {
+      "id": "tomoshibi",
+      "file": "tokens/tomoshibi.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 113782
+    },
+    {
+      "id": "lanterne-prison",
+      "file": "tokens/lanterne-prison.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 108876
+    },
+    {
+      "id": "dessin-de-mii",
+      "file": "handouts/dessin-de-mii.webp",
+      "width": 1200,
+      "height": 900,
+      "bytes": 448722
+    },
+    {
+      "id": "lanterne-bleue",
+      "file": "items/lanterne-bleue.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 47658
+    },
+    {
+      "id": "carnet-kansuke",
+      "file": "items/carnet-kansuke.webp",
+      "width": 768,
+      "height": 768,
+      "bytes": 233436
+    },
+    {
+      "id": "omamori-mii",
+      "file": "items/omamori-mii.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 73210
+    },
+    {
+      "id": "feu-follet-bleu",
+      "file": "abilities/feu-follet-bleu.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 75728
+    },
+    {
+      "id": "lueur-d-oubli",
+      "file": "abilities/lueur-d-oubli.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 92752
+    }
+  ]
+}

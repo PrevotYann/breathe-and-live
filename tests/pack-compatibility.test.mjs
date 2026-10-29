@@ -45,6 +45,17 @@ for (const pack of manifest.packs.filter(pack => pack.path.endsWith(".db"))) {
     const documents = fs.readFileSync(new URL(pack.path, root), "utf8").trim().split(/\r?\n/).map(JSON.parse);
     assert.ok(documents.length);
     checkDocuments(documents, pack.name);
+    if (pack.type === "Adventure") {
+      // Adventures embed whole world documents; check the system-typed ones.
+      for (const adventure of documents) {
+        for (const [key, kind] of [["actors", "Actor"], ["items", "Item"]]) {
+          checkDocuments(adventure[key], `${pack.name}/${key}`);
+          for (const document of adventure[key]) assert.ok(manifest.documentTypes[kind][document.type], document.name);
+        }
+        for (const key of ["journal", "scenes", "folders"]) checkDocuments(adventure[key], `${pack.name}/${key}`);
+      }
+      return;
+    }
     for (const document of documents) assert.ok(manifest.documentTypes[pack.type][document.type]);
   });
 }
