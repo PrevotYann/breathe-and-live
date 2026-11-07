@@ -706,6 +706,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
             Number(item.system?.costBdp) ? `${item.system.costBdp} BDP` : "",
           ].filter(Boolean).join(" · ") || "—",
           blUsable:
+            /regeneration continue des membres/.test(normalizeSheetText(item.name).replace(/-/g, " ")) ||
             activation !== "passive" &&
             (hasDamage ||
               hasActionableAutomation ||
@@ -796,22 +797,40 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
         prereqText: [prereq.sense, prereq.stats, prereq.weapons].filter(Boolean).join(" / "),
         itemSpecials: enabledSpecials,
         actorEnabled: !!activeBreath.enabled,
+        mastered: !!activeBreath.mastered,
+        formsKnown: Number(activeBreath.known) || 0,
+        formsTotal: Number(activeBreath.total) || 0,
+        lockedSpecials: activeBreath.mastered ? [] : mapBreathSpecialEntries(breathKey, {}).map((entry) => entry.label),
       };
     });
 
-    data.breathEntries = BREATH_KEYS.map((entry) => ({
+    // Only breaths the actor actually practises (owned breath items) are listed.
+    data.breathEntries = BREATH_KEYS.filter((entry) => activeBreaths?.[entry.key]?.enabled).map((entry) => ({
       ...entry,
-      enabled: !!activeBreaths?.[entry.key]?.enabled,
-      specialEntries: mapBreathSpecialEntries(
-        entry.key,
-        activeBreaths?.[entry.key]?.specials || {}
-      ),
+      enabled: true,
+      specialEntries: mapBreathSpecialEntries(entry.key, activeBreaths[entry.key].specials || {}),
     }));
-    data.advancedStateEntries = ADVANCED_STATES.map((entry) => ({
-      ...entry,
-      active: !!data.system.states?.[entry.key],
-    }));
+    data.capabilities = {
+      mistCover: !!(activeBreaths.mist?.enabled && activeBreaths.mist.specials?.nuagesTrainants),
+      counterAttack: ["demon", "npcDemon"].includes(this.actor.type) || !!data.system.combat?.reactions?.counterAttack,
+      draw: !!data.system.combat?.reactions?.draw,
+      medical: !!(data.system.combat?.reactions?.medical || data.system.support?.medicalTraining),
+      demonistHealing: this.actor.type === "demonist" && !!data.system.support?.demonistHealingReaction,
+    };
+    data.capabilities.anyReaction = data.capabilities.counterAttack || data.capabilities.draw;
     const actorLevel = Number(data.system.class?.level || 1) || 1;
+    const stateUnlocks = { tcbPermanent: "tcbConstantUnlocked", marque: "markedUnlocked", mondeTransparent: "transparentWorldUnlocked", lameRouge: "redBladeUnlocked" };
+    data.advancedStateEntries = ADVANCED_STATES.map((entry) => {
+      const unlockKey = stateUnlocks[entry.key];
+      const unlocked = !unlockKey || this.actor.type !== "slayer" || !!this.actor.system?.progression?.[unlockKey];
+      const meta = ADVANCED_FEATURE_UNLOCKS[unlockKey];
+      return {
+        ...entry,
+        unlocked,
+        lockNote: unlocked ? "" : `Compétence supérieure acquise au niveau ${meta?.level ?? "?"}.`,
+        active: unlocked && !!this.actor.system?.states?.[entry.key],
+      };
+    });
     data.advancedFeatureUnlocks = Object.entries(ADVANCED_FEATURE_UNLOCKS).map(
       ([key, meta]) => ({
         key,
@@ -1929,24 +1948,51 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
     return created;
   }
 
+  async _promptSlayerStartingKit() {
+    const pistols = ["Pistolet standard", "Colt M1911", "Nambu Type 14", "Mauser C96"];
+    return new Promise((resolve) => new Dialog({
+      title: "Équipement de départ — Pourfendeur",
+      content: `<form>
+        <div class="form-group"><label>Pistolet de votre choix</label>
+          <select name="pistol">${pistols.map((name) => `<option value="${name}">${name}</option>`).join("")}</select></div>
+        <div class="form-group"><label>Soin</label>
+          <select name="care"><option value="Pansement compressif">1 pansement compressif</option><option value="Trousse de premiers secours">1 trousse de premiers secours</option></select></div>
+      </form>`,
+      buttons: {
+        ok: { label: "Ajouter", callback: (html) => resolve({ pistol: String(html.find('[name="pistol"]').val()), care: String(html.find('[name="care"]').val()) }) },
+        cancel: { label: "Annuler", callback: () => resolve(null) },
+      },
+      default: "ok",
+      close: () => resolve(null),
+    }).render(true));
+  }
+
+  /** Breath weapon (p.31): the weapon required by the favoured or owned breath. */
+  _startingBreathWeapon() {
+    const weapons = { stone: "Masse et chaine Nichirin", serpent: "Katana torsade Nichirin", sound: "Double epee-chaine Nichirin",
+      insect: "Pointe d'aiguille Nichirin", love: "Fouet Nichirin", beast: "Lames dentelees Nichirin" };
+    const owned = Array.from(this.actor.items ?? []).find((item) => item.type === "breath")?.system?.key;
+    const key = normalizeBreathName(this.actor.system?.profile?.favoredBreath) || owned || "";
+    return weapons[key] || "Katana Nichirin standard";
+  }
+
   async _addStartingEquipment() {
-    const kits = {
-      // TODO-RULEBOOK-AMBIGUITY: the book says "pistolet au choix" for Slayers;
-      // this imports the current representative pistol from the local pack until
-      // a dedicated chooser exists.
-      slayer: [
-        ["items-weapons", "Katana Nichirin standard"],
-        ["items-weapons", "Pistolet standard"],
+    // Book kits: Slayer p.31 "Arme de Souffle, Pistolet de votre choix, (2x) bandages,
+    // (1x) pansement compressif OU (1x) kit de premiers secours"; Demonist p.69
+    // "Fusil de tranchée, Wakizashi".
+    const kits = { demonist: [["items-weapons", "Fusil de tranchee"], ["items-weapons", "Wakizashi Nichirin"]] };
+    const quantities = {};
+    if (this.actor.type === "slayer") {
+      const choice = await this._promptSlayerStartingKit();
+      if (!choice) return [];
+      kits.slayer = [
+        ["items-weapons", this._startingBreathWeapon()],
+        ["items-weapons", choice.pistol],
         ["items-medical-utility", "Bandage"],
-        ["items-medical-utility", "Pansement compressif"],
-        ["items-medical-utility", "Sifflet Kasugai"],
-      ],
-      demonist: [
-        ["items-weapons", "Fusil de tranchee"],
-        ["items-weapons", "Wakizashi Nichirin"],
-        ["items-medical-utility", "Bandage"],
-      ],
-    };
+        ["items-medical-utility", choice.care],
+      ];
+      quantities.Bandage = 2;
+    }
 
     const kit = kits[this.actor.type];
     if (!kit) {
@@ -1973,6 +2019,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
       }
       const data = document.toObject();
       delete data._id;
+      if (quantities[itemName]) data.system.quantity = quantities[itemName];
       itemData.push(data);
     }
 

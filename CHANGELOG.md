@@ -1,5 +1,29 @@
 # Versions
 
+## 0.8.0 — 7 novembre 2026 — audit complet des règles
+
+- **Souffles** : un souffle n'est pratiqué que si son objet « Souffle » est sur la fiche. Sa compétence spéciale (Brume « Nuages traînants », Eau « Dévier les vagues », Lune « Bonus solitaire », etc.) ne s'active qu'après avoir appris **toutes les formes** du style (livre, « Comment lire les fiches de souffle »). Les cases libres « Activer le souffle / ses passifs » sont supprimées ; la fiche affiche « Formes connues X / N » et les compétences verrouillées. Le MJ peut accorder la maîtrise à un PNJ (case « Maîtrise complète accordée par le MJ » sur l'objet Souffle).
+- Le bouton « Brume : se cacher / sortir » n'apparaît que pour un pratiquant de la Brume ayant maîtrisé le style.
+- **Réactions** : Riposte / Coup assuré, Dégainage et Soin démoniste ne sont affichés que s'ils sont débloqués (Entraînement au combat, Changement d'arme rapide, Formation à la guérison). Les joueurs commencent avec l'esquive seule (livre, Points de réaction).
+- **Compétences supérieures** : TCB Constant, Forme Marquée, Monde Transparent et Lame Rouge restent sans effet tant qu'elles ne sont pas acquises (Kanoto, Tsuchinoe, Hinoe, Kinoe, ou déclencheurs du Souffle du Soleil). Libellés alignés sur le livre (désavantage contre le Monde Transparent, arrêt des saignements par TCB:C).
+- **Arts de sang et valeurs hors livre** : au lieu d'un refus silencieux, le MJ arbitre au moment de l'usage (« Utiliser ces valeurs et les valider ? ») ; la validation est enregistrée sur l'objet. Les arts de sang de Tomoshibi (valeurs propres au scénario) sont livrés validés.
+- Compendiums : Renjiro (Hashira) reçoit la maîtrise accordée par le MJ ; Aoi (niveau 2) perd Riposte (Entraînement au combat, rang Kanoe), Dégainage et Réaction médicale (rang Tsuchinoe). Script `resources/scripts/repair-breath-mastery-packs.mjs`.
+- **Démoniste** : la réaction de soin lançait toujours 1d10 hors rangs lunaires (libellés de rang incompatibles) ; elle utilise désormais la table du livre (Rang élevé 2d10…) sur le démon le plus fort mangé récemment. Une table unique `DEMON_FLESH_RANKS` remplace les trois copies. Le rang « récent » s'efface au repos prolongé.
+- **Régénération continue des membres** (passif, 1 démonisation/tour) peut enfin être activée et désactivée depuis la fiche.
+- **Démons** : la règle « ajout de dégâts réduits de moitié » (p.112) s'applique aussi aux arts de sang (jet de toucher et formules « + Finesse »), plus seulement aux attaques de base.
+- **Équipement de départ** conforme au livre : Pourfendeur = arme du souffle préféré (masse pour la Pierre, fouet pour l'Amour…), pistolet au choix, 2 bandages, pansement compressif OU trousse de premiers secours ; Démoniste = Fusil de tranchée + Wakizashi (le bandage et le sifflet Kasugai ajoutés sans source sont retirés).
+- **Réactions** : nouvelle esquive à 2 RP « tirer une cible à l'abri » pour un allié (p.22), proposée seulement contre les attaques esquivables.
+- **Bourreau / Guillotine** tuent désormais un démon de 50 / 100 PV de base ou moins dès qu'il est touché ; **L'ombre de la mort** ajoute +3d10 aux attaques discrètes ; **Tir en position stable** immobilise réellement le tireur.
+- **0 Endurance** : repos forcé au premier tour, inconscience seulement après deux rounds complets sans Souffle de récupération (p.5) — auparavant après un seul.
+- **Objets** (p.90-103) : Odachi à 3 m de portée (1,5 m + 1,5 m, au lieu de 4,5 m) ; seringue de sang de démon = soins complets avec test et 3 usages ; analgésiques = PV temporaires (¼ des PV max, 1 h) au lieu de +5 E ; Uniforme du Corps +1 CA ; Ford modèle T +1 Dextérité et 600 ¥ ; les bonus de Dextérité des voitures s'appliquent enfin à la conduite ; tenue de police décrite selon le livre. Les entrées sans source (rations, sifflet Kasugai, kit anti-0 PV, uniforme renforcé) sont étiquetées « Hors livre ».
+- **Compétences de rang** : Entraînement au combat est une compétence Kanoe (niveau 4), Changement d'arme rapide et Formation médicale sont Tsuchinoe (niveau 6) ; Mika (niveau 2) et Goro (niveau 4) ne gardent que les réactions qu'ils peuvent avoir.
+- **États** : textes de Déséquilibré, Paralysé, Contrôlé, Emprisonné et Paresthésie alignés sur le livre (p.28-29).
+- Migration 0.8.0 : rien n'est supprimé ; le MJ reçoit la liste des acteurs dont un souffle était coché sans objet Souffle.
+- Nouvelles ambiguïtés documentées : portées des armes à feu, poisons de glycine, PV de base pour Bourreau, jambe humaine, inconscience à 0 E.
+- Mondes existants : les anciennes cases d'activation sont ignorées. Un acteur qui n'a pas l'objet Souffle doit le recevoir depuis « Souffles - Styles » pour utiliser ses formes.
+
+Validation : 118 tests automatisés, lint, vérification du livre (137 pages, 140 formes) et validation des 14 compendiums réussis.
+
 ## 0.7.0 — 29 octobre 2026 — « Les Lanternes de Hotaru »
 
 - Nouveau compendium **Aventure** `oneshot-lanternes-hotaru` (dossier « Scénarios ») : un one-shot d'initiation de 3 à 4 h, importable en un clic dans un monde.

@@ -743,6 +743,7 @@
       ],
       "key": "",
       "enabled": false,
+      "masteryGranted": false,
       "specials": {},
       "prereq": {
         "sense": "",

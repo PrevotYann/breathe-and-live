@@ -26,7 +26,7 @@
         <h3>Actions</h3>
         <div class="bl-combat-shortcuts">
           <button type="button" class="bl-action-basic-attack"><i class="fas fa-khanda" aria-hidden="true"></i> Attaque de base</button>
-          <button type="button" class="bl-action-demonist-heal"><i class="fas fa-heart-pulse" aria-hidden="true"></i> Soin <small>1 RP</small></button>
+          {{#if capabilities.demonistHealing}}<button type="button" class="bl-action-demonist-heal"><i class="fas fa-heart-pulse" aria-hidden="true"></i> Soin <small>1 RP</small></button>{{/if}}
           <button type="button" class="bl-action-recovery"><i class="fas fa-wind" aria-hidden="true"></i> Récupération</button>
           <button type="button" class="bl-action-rest"><i class="fas fa-moon" aria-hidden="true"></i> Repos</button>
         </div>
@@ -34,14 +34,14 @@
           <summary>Toutes les actions</summary>
           <div class="bl-action-grid">
             <button type="button" class="bl-action-repeated-attack">Action répétée</button>
-            <button type="button" class="bl-action-demonist-heal-max">Soin max <small>2 RP</small></button>
+            {{#if capabilities.demonistHealing}}<button type="button" class="bl-action-demonist-heal-max">Soin max <small>2 RP</small></button>{{/if}}
             <button type="button" class="bl-action-demonist-enhance">Amélioration <small>RP</small></button>
             <button type="button" class="bl-action-sprint">Sprinter</button>
             <button type="button" class="bl-action-wait">Attendre</button>
-            <button type="button" class="bl-action-counter">Riposte <small>1 RP</small></button>
-            <button type="button" class="bl-action-counter-assured">Coup assuré <small>2 RP</small></button>
-            <button type="button" class="bl-action-draw">Dégainage <small>1 RP</small></button>
-            <button type="button" class="bl-action-draw-attack">Dégainage + attaque <small>2 RP</small></button>
+            {{#if capabilities.counterAttack}}<button type="button" class="bl-action-counter">Riposte <small>1 RP</small></button>{{/if}}
+            {{#if capabilities.counterAttack}}<button type="button" class="bl-action-counter-assured">Coup assuré <small>2 RP</small></button>{{/if}}
+            {{#if capabilities.draw}}<button type="button" class="bl-action-draw">Dégainage <small>1 RP</small></button>{{/if}}
+            {{#if capabilities.draw}}<button type="button" class="bl-action-draw-attack">Dégainage + attaque <small>2 RP</small></button>{{/if}}
             <button type="button" class="bl-action-assistance">Assistance</button>
             <button type="button" class="bl-action-kakushi">Kakushi</button>
           </div>

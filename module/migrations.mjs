@@ -2,7 +2,7 @@ import { LIMB_DEFINITIONS, SYSTEM_ID } from "./config/rule-data.mjs";
 import { normalizeDerivedStats } from "./rules/actor-derived-formulas.mjs";
 
 const FU = foundry.utils;
-const MIGRATION_VERSION = "0.5.1";
+const MIGRATION_VERSION = "0.8.0";
 
 function ensureActorUpdate(actor) {
   const update = {};
@@ -148,6 +148,20 @@ export async function runSystemMigrations() {
       await item.update(update);
       itemCount += 1;
     }
+  }
+
+  // 0.8.0: breaths are practised through their owned item only (legacy sheet toggles are ignored).
+  // Nothing is deleted; the GM is told which actors need their breath item dragged back in.
+  const orphanBreaths = [];
+  for (const actor of game.actors?.contents ?? []) {
+    if (!["slayer", "demonist"].includes(actor.type)) continue;
+    const owned = new Set(Array.from(actor.items ?? []).filter(i => i.type === "breath").map(i => i.system?.key));
+    const legacy = Object.entries(actor.system?.breaths ?? {}).filter(([key, value]) => value?.enabled && !owned.has(key)).map(([key]) => key);
+    if (legacy.length) orphanBreaths.push(`${actor.name} (${legacy.join(", ")})`);
+  }
+  if (orphanBreaths.length) {
+    await ChatMessage.create({ whisper: ChatMessage.getWhisperRecipients?.("GM") ?? [], content:
+      `<p><strong>Breathe and Live 0.8.0</strong> : un souffle n'est désormais actif que si son objet Souffle est sur la fiche, et sa compétence spéciale exige toutes les formes.</p><p>Souffles cochés sans objet (à glisser depuis « Souffles - Styles ») : ${orphanBreaths.join(" ; ")}.</p>` });
   }
 
   await game.settings.set(SYSTEM_ID, "schemaVersion", MIGRATION_VERSION);

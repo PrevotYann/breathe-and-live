@@ -34,10 +34,10 @@
         <details class="bl-action-drawer">
           <summary>Réactions &amp; soutien</summary>
           <div class="bl-action-grid">
-            <button type="button" class="bl-action-counter">Riposte <small>1 RP</small></button>
-            <button type="button" class="bl-action-counter-assured">Coup assuré <small>2 RP</small></button>
-            <button type="button" class="bl-action-draw">Dégainage <small>1 RP</small></button>
-            <button type="button" class="bl-action-draw-attack">Dégainage + attaque <small>2 RP</small></button>
+            {{#if capabilities.counterAttack}}<button type="button" class="bl-action-counter">Riposte <small>1 RP</small></button>{{/if}}
+            {{#if capabilities.counterAttack}}<button type="button" class="bl-action-counter-assured">Coup assuré <small>2 RP</small></button>{{/if}}
+            {{#if capabilities.draw}}<button type="button" class="bl-action-draw">Dégainage <small>1 RP</small></button>{{/if}}
+            {{#if capabilities.draw}}<button type="button" class="bl-action-draw-attack">Dégainage + attaque <small>2 RP</small></button>{{/if}}
             <button type="button" class="bl-action-assistance">Assistance</button>
             <button type="button" class="bl-action-kakushi">Kakushi</button>
           </div>
@@ -55,7 +55,7 @@
         <h2 class="bl-ink-title">Souffles</h2>
         {{#if canEdit}}
           <button type="button" class="bl-custom-breath-builder bl-stamp"><i class="fas fa-pen-nib" aria-hidden="true"></i> Calculateur de souffle maison</button>
-          <button type="button" class="bl-mist-hide bl-stamp"><i class="fas fa-smog" aria-hidden="true"></i> Brume : se cacher / sortir</button>
+          {{#if capabilities.mistCover}}<button type="button" class="bl-mist-hide bl-stamp" title="Voile de brume : doubler le bonus de CA (compétence spéciale, souffle maîtrisé)"><i class="fas fa-smog" aria-hidden="true"></i> Brume : se cacher / sortir</button>{{/if}}
         {{/if}}
       </div>
       <div class="breath-card-list">
@@ -65,11 +65,13 @@
             <div class="breath-card__body">
               <div class="breath-card__topline">
                 <a class="item-edit">{{it.name}}</a>
-                <span class="tag {{#if it.actorEnabled}}tag--seal{{/if}}">{{#if it.actorEnabled}}Actif{{else}}Inactif{{/if}}</span>
+                <span class="tag {{#if it.mastered}}tag--seal{{/if}}">{{#if it.mastered}}Maîtrisé{{else}}Pratiqué{{/if}}</span>
               </div>
               {{#if it.sourceSection}}<small>{{it.sourceSection}}</small>{{/if}}
               {{#if it.prereqText}}<p><strong>Prérequis :</strong> {{it.prereqText}}</p>{{/if}}
-              {{#if it.itemSpecials.length}}<div class="tag-row">{{#each it.itemSpecials as |special|}}<span class="tag">{{special}}</span>{{/each}}</div>{{/if}}
+              <small>Formes connues : {{it.formsKnown}} / {{it.formsTotal}}</small>
+              {{#if it.itemSpecials.length}}<div class="tag-row">{{#each it.itemSpecials as |special|}}<span class="tag tag--seal" title="Compétence spéciale active">{{special}}</span>{{/each}}</div>{{/if}}
+              {{#if it.lockedSpecials.length}}<div class="tag-row">{{#each it.lockedSpecials as |special|}}<span class="tag" title="Se débloque après avoir maîtrisé toutes les formes">🔒 {{special}}</span>{{/each}}</div>{{/if}}
               {{#if it.description}}<details class="bl-disclosure"><summary>Description</summary><p>{{it.description}}</p></details>{{/if}}
             </div>
             <div class="controls">
@@ -85,27 +87,14 @@
       <h3>Maîtrises avancées</h3>
       <div class="bl-seal-grid">
         {{#each advancedStateEntries as |state|}}
-          <label class="bl-seal {{#if state.active}}is-active{{/if}}" title="{{state.note}}">
-            <input type="checkbox" name="system.states.{{state.key}}" data-dtype="Boolean" {{checked state.active}} {{#unless ../canEdit}}disabled{{/unless}} />
-            <strong>{{state.label}}</strong>
-            <small>{{state.note}}</small>
+          <label class="bl-seal {{#if state.active}}is-active{{/if}} {{#unless state.unlocked}}is-locked{{/unless}}" title="{{state.note}}">
+            <input type="checkbox" name="system.states.{{state.key}}" data-dtype="Boolean" {{checked state.active}} {{#unless ../canEdit}}disabled{{/unless}} {{#unless state.unlocked}}disabled{{/unless}} />
+            <strong>{{#unless state.unlocked}}🔒 {{/unless}}{{state.label}}</strong>
+            <small>{{#if state.unlocked}}{{state.note}}{{else}}{{state.lockNote}}{{/if}}</small>
           </label>
         {{/each}}
       </div>
 
-      <details class="bl-disclosure">
-        <summary>Activer les souffles et leurs passifs</summary>
-        <div class="breath-toggle-grid">
-          {{#each breathEntries as |entry|}}
-            <div class="bl-breath-toggle">
-              <label><input type="checkbox" name="system.breaths.{{entry.key}}.enabled" data-dtype="Boolean" {{checked entry.enabled}} {{#unless ../canEdit}}disabled{{/unless}} /> <strong>{{entry.label}}</strong></label>
-              {{#each entry.specialEntries as |special|}}
-                <label class="small" title="{{special.hint}}"><input type="checkbox" name="system.breaths.{{../key}}.specials.{{special.key}}" data-dtype="Boolean" {{checked special.enabled}} {{#unless ../../canEdit}}disabled{{/unless}} /> {{special.label}}</label>
-              {{/each}}
-            </div>
-          {{/each}}
-        </div>
-      </details>
     </div>
 
     <div class="tab" data-group="primary" data-tab="inventaire">

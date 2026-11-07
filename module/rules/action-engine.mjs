@@ -2,9 +2,11 @@ import { cardFlags, registerCardType } from "../chat/persistent-cards.mjs";
 import { isAutomationAuthority, isCombatTurnStart, combatActors, registerCombatAutomation } from "./automation-authority.mjs";
 import {
   CONDITION_DEFINITIONS,
+  DEMON_FLESH_RANKS,
   DEMON_RANK_PACKAGES,
   DEMON_RANKS,
   LIMB_DEFINITIONS,
+  getDemonFleshRank,
   SLAYER_RANKS,
   SYSTEM_ID,
 } from "../config/rule-data.mjs";
@@ -18,6 +20,7 @@ import {
 } from "./technique-utils.mjs";
 import { applyEffectsList, consumeEffectsByOrigin } from "./effects-engine.mjs";
 import { applyPreHit, applyOnHit, initializeCombatBreaths, getActiveBreaths } from "./breath-effects.mjs";
+import { ensureRuleApproval } from "./rule-source-gate.mjs";
 import { canHealActor, lockRedBladeHealing } from "./combat-state.mjs";
 import { applyHpDamage, restoreHp, spendResourceCosts } from "./resource-costs.mjs";
 import { refreshCombatActions, spendCombatAction, canWaitForAction, inCombat } from "./combat-actions.mjs";
@@ -229,32 +232,8 @@ async function getRepeatedActionBonus(actor) {
   return nextStack;
 }
 
-const DEMON_FLESH_BDP = {
-  "Rang faible": "1d4 + 1",
-  "Rang eleve": "2d4 + 2",
-  "Disciple de Lune inferieure": "1d10 + 3",
-  "Lune inferieure": "2d6 + 4",
-  "Disciple de Lune superieure": "3d6 + 5",
-  "Lune superieure": "1d20 + 8",
-};
-
-const DEMON_HEALING_BY_RANK = {
-  "Demon faible": "1d10",
-  "Demon eleve": "2d10",
-  "Disciple de Lune inferieure": "1d20",
-  "Lune inferieure": "1d20",
-  "Disciple de Lune superieure": "1d100",
-  "Lune superieure": "1d100",
-};
-
-const DEMONIST_FLESH_TO_DEMON_RANK = {
-  "Rang faible": "Demon faible",
-  "Rang eleve": "Demon eleve",
-  "Disciple de Lune inferieure": "Disciple de Lune inferieure",
-  "Lune inferieure": "Lune inferieure",
-  "Disciple de Lune superieure": "Disciple de Lune superieure",
-  "Lune superieure": "Lune superieure",
-};
+const DEMON_FLESH_BDP = Object.fromEntries(DEMON_FLESH_RANKS.map(row => [row.flesh, row.bdp]));
+const DEMON_HEALING_BY_RANK = Object.fromEntries(DEMON_FLESH_RANKS.map(row => [row.demonRank, row.heal]));
 
 const DEMONIST_POWER_DEMONISATION = [
   {
@@ -513,12 +492,9 @@ function maxFormulaTotal(formula) {
 }
 
 async function promptDemonFleshRank(actor, title = "Rang de sang demon consomme") {
-  const stored = String(actor.system?.support?.recentDemonFleshRank || "");
-  const options = Object.keys(DEMON_HEALING_BY_RANK)
-    .map(
-      (rank) =>
-        `<option value="${rank}" ${rank === stored ? "selected" : ""}>${rank}</option>`
-    )
+  const stored = getDemonFleshRank(actor.system?.support?.recentDemonFleshRank)?.flesh || "";
+  const options = DEMON_FLESH_RANKS
+    .map(({ flesh }) => `<option value="${flesh}" ${flesh === stored ? "selected" : ""}>${flesh}</option>`)
     .join("");
   return new Promise((resolve) => {
     new Dialog(
@@ -547,13 +523,13 @@ async function promptDemonFleshRank(actor, title = "Rang de sang demon consomme"
   });
 }
 
-async function getRecentDemonistRank(actor) {
-  const stored = String(actor.system?.support?.recentDemonFleshRank || "");
-  if (DEMON_HEALING_BY_RANK[stored]) return stored;
-  const selected = await promptDemonFleshRank(actor);
-  if (selected) {
-    await actor.update({ "system.support.recentDemonFleshRank": selected });
-  }
+/** p.70: healing and enhancement use the strongest demon eaten recently (flesh-table row). */
+async function getRecentDemonistRank(actor, { strongest = false } = {}) {
+  const support = actor.system?.support ?? {};
+  const row = (strongest && getDemonFleshRank(support.highestDemonFleshRank)) || getDemonFleshRank(support.recentDemonFleshRank);
+  if (row) return row;
+  const selected = getDemonFleshRank(await promptDemonFleshRank(actor));
+  if (selected) await actor.update({ "system.support.recentDemonFleshRank": selected.flesh });
   return selected;
 }
 
@@ -564,14 +540,15 @@ export async function runDemonistHealingReaction(actor, { maximize = false } = {
     ui.notifications.warn("La reaction de soin demoniste n'est pas debloquee sur cette fiche.");
     return null;
   }
-  const rank = actor.system?.support?.highestDemonFleshRank || await getRecentDemonistRank(actor);
-  if (!rank) return null;
+  const fleshRow = await getRecentDemonistRank(actor, { strongest: true });
+  if (!fleshRow) return null;
+  const rank = fleshRow.flesh;
 
   const rpCost = maximize ? 2 : 1;
   const ok = await spendRp(actor, rpCost, maximize ? "reaction de soin demoniste maximale" : "reaction de soin demoniste");
   if (!ok) return null;
 
-  const formula = DEMON_HEALING_BY_RANK[rank] || "1d10";
+  const formula = fleshRow.heal;
   const amount = maximize
     ? maxFormulaTotal(formula)
     : toNumber((await new Roll(formula).evaluate()).total, 0);
@@ -606,8 +583,9 @@ async function promptDemonistEnhancementMode() {
 
 export async function runDemonistEnhancementReaction(actor) {
   if (!actor || actor.type !== "demonist") return null;
-  const rank = await getRecentDemonistRank(actor);
-  if (!rank) return null;
+  const fleshRow = await getRecentDemonistRank(actor);
+  if (!fleshRow) return null;
+  const rank = fleshRow.flesh;
   const mode = await promptDemonistEnhancementMode();
   if (!mode) return null;
 
@@ -615,8 +593,7 @@ export async function runDemonistEnhancementReaction(actor) {
   const ok = await spendRp(actor, cost, "reaction d'amelioration demoniste");
   if (!ok) return null;
 
-  const benchmarkRank = DEMONIST_FLESH_TO_DEMON_RANK[rank] || rank;
-  const benchmark = DEMON_RANK_PACKAGES[benchmarkRank]?.benchmark || {};
+  const benchmark = DEMON_RANK_PACKAGES[fleshRow.demonRank]?.benchmark || {};
   const stats = mode === "both" ? ["force", "vitesse"] : [mode];
   const effects = [];
   for (const stat of stats) {
@@ -1162,6 +1139,24 @@ export async function applyTargetedLimbDamage(actor, limbKey, damage) {
   return { limbKey, damage, accumulated, threshold, severed };
 }
 
+/**
+ * Bourreau / Guillotine (p.83-84): a hit instantly kills a demon whose base HP is at most the
+ * skill's limit. TODO-RULEBOOK-AMBIGUITY: "PV de base" is compared with the demon's maximum HP
+ * (the printed stat-block value), the reading that triggers least often.
+ */
+export async function applyExecutionSkill(attacker, targetActor) {
+  const limit = toNumber(attacker?.system?.progression?.bonuses?.executionHpBaseLimit, 0);
+  if (!limit || !isDemonActor(targetActor)) return false;
+  const current = toNumber(targetActor.system?.resources?.hp?.value, 0);
+  const max = toNumber(targetActor.system?.resources?.hp?.max, current);
+  if (current <= 0 || max > limit) return false;
+  await applyHpDamage(targetActor, current);
+  await noteActorDamageTaken(targetActor, current);
+  await ChatMessage.create({ speaker: actorSpeaker(attacker),
+    content: `<strong>${attacker.name} exécute ${targetActor.name}</strong> (${limit >= 100 ? "Guillotine" : "Bourreau"} : démon de ${max} PV de base ou moins).` });
+  return true;
+}
+
 async function applyBasicAttackDamage({
   attacker,
   targetToken,
@@ -1184,6 +1179,7 @@ async function applyBasicAttackDamage({
     combatId: game.combat?.id || "", round: game.combat?.round, turn: game.combat?.turn,
   });
   await applyTargetedLimbDamage(targetActor, targetLimb, damage);
+  if (result.nextHp > 0 && await applyExecutionSkill(attacker, targetActor)) result.nextHp = 0;
   const reactivatePoison = await onSubclassWeaponHit(attacker, targetActor, damage);
   if (reactivatePoison && targetActor.system?.conditions?.poisoned?.active) {
     const poison = resolvePoisonRuntime(targetActor.system.conditions.poisoned, targetActor);
@@ -1300,9 +1296,7 @@ export async function rollBasicAttack(
   } = {}
 ) {
   if (!actor) return null;
-  if (item?.system?.ruleSource?.missingFields?.length && !item.system.ruleSource.approved) {
-    ui.notifications.warn(`${item.name} : compléter et valider les valeurs absentes du livre sur sa fiche.`); return null;
-  }
+  if (item && !(await ensureRuleApproval(item))) return null;
   if (actor.getFlag(SYSTEM_ID, "mustRest")) { ui.notifications.warn("À 0 Endurance, utilisez le Souffle de récupération avant d'attaquer."); return null; }
   const actionRestriction = getConditionActionRestriction(actor, "basicAttack");
   if (actionRestriction.blocked) {
@@ -1324,10 +1318,7 @@ export async function rollBasicAttack(
     weapon = { id: weapon.id, uuid: weapon.uuid, name: `${weapon.name} — baïonnette`, type: "weapon",
       system: { damage: "1d8", range: 1.5, weaponFamily: "bayonet", usesAmmo: false, isNichirin: false } };
   }
-  if (weapon?.system?.ruleSource?.missingFields?.length && !weapon.system.ruleSource.approved) {
-    ui.notifications.warn(`${weapon.name} : renseignez et validez les données manquantes avec le MJ (${weapon.system.ruleSource.missingFields.join(", ")}).`);
-    return null;
-  }
+  if (weapon?.update && !(await ensureRuleApproval(weapon))) return null;
   const isFirearm = ["firearm"].includes(weapon?.type) || weapon?.system?.weaponFamily === "firearm";
   const progressionBonuses = actor.system?.progression?.bonuses ?? {};
   const loadout = getWeaponLoadout(actor, weapon);
@@ -1504,6 +1495,12 @@ export async function rollBasicAttack(
   }
   if (repeatedActionDamage) {
     damageExpr = appendFlatModifier(damageExpr, repeatedActionDamage);
+  }
+  // L'ombre de la mort (p.84): attacks made stealthily deal +3d10. Stealth is a scene ruling.
+  const stealthBonus = String(progressionBonuses.stealthDamageBonus || "").trim();
+  if (hit && stealthBonus && !free && await Dialog.confirm({ title: "L'ombre de la mort",
+    content: `<p>Cette attaque est-elle effectuée de manière discrète (cible ne vous ayant pas repéré) ? Bonus : +${stealthBonus}.</p>` })) {
+    damageExpr = `${damageExpr} + ${stealthBonus}`;
   }
   if (subclassDamageBonus) {
     damageExpr = appendFlatModifier(damageExpr, subclassDamageBonus);
@@ -2155,7 +2152,9 @@ export async function runTransportDriveCheck(actor, item, { mode = "relaxed" } =
   const mod = dangerous
     ? toNumber(actor.system?.stats?.derived?.reflexes, 0)
     : toNumber(actor.system?.stats?.base?.finesse, 0) - 1;
-  const vehicleBonus = Number(item.system?.vehicleBonus?.all || 0) + Number(item.system?.vehicleBonus?.[dangerous ? "reflexes" : "finesse"] || 0);
+  // p.102: Ford/Datsun bonuses apply to Dextérité (Finesse) handling tests, i.e. casual driving.
+  const vb = item.system?.vehicleBonus || {};
+  const vehicleBonus = Number(vb.all || 0) + (dangerous ? Number(vb.reflexes || 0) : Number(vb.finesse || 0) + Number(vb.dexterite || 0));
   const roll = await new Roll(`1d20 + ${mod + vehicleBonus}`).evaluate();
   const success = toNumber(roll.total, 0) >= options.dc;
   if (success) await actor.setFlag(SYSTEM_ID, "drivingVehicleId", item.id);
@@ -2320,6 +2319,8 @@ export async function runRestRefresh(actor, { full = true, hours = full ? 8 : 1 
   if (hours >= 8 && FU.hasProperty(actor, "system.resources.rp.max")) {
     updates["system.resources.rp.value"] = toNumber(actor.system.resources.rp.max, 0);
   }
+  // TODO-RULEBOOK-AMBIGUITY: rest only explicitly restores Endurance and RP (p.22-23); HP
+  // recovery follows the class text "nécessite des périodes de repos" (p.24), capped by wounds (p.98).
   if (full && FU.hasProperty(actor, "system.resources.hp.healableMax")) {
     await restoreHp(actor, 0, { full: true });
   }
@@ -2327,6 +2328,10 @@ export async function runRestRefresh(actor, { full = true, hours = full ? 8 : 1 
     updates["system.resources.demonisation"] = 0;
     updates["system.support.activeDemonistMedicine"] = false;
     updates["system.support.demonistMedicineActiveCombatId"] = "";
+    // TODO-RULEBOOK-AMBIGUITY: p.70 "consommé récemment" has no duration; a long rest
+    // (which also clears demonisation, p.71) is the reversible boundary chosen here.
+    updates["system.support.recentDemonFleshRank"] = "";
+    updates["system.support.highestDemonFleshRank"] = "";
   }
   await actor.update(updates);
   await resetRepeatedAction(actor);
@@ -2585,7 +2590,7 @@ export async function gainDemonFleshBdp(actor) {
   await actor.update({
     "system.resources.bdp.value": next,
     "system.support.recentDemonFleshRank": selected,
-    "system.support.highestDemonFleshRank": Object.keys(DEMON_FLESH_BDP).indexOf(selected) > Object.keys(DEMON_FLESH_BDP).indexOf(actor.system?.support?.highestDemonFleshRank || "") ? selected : actor.system.support.highestDemonFleshRank,
+    "system.support.highestDemonFleshRank": DEMON_FLESH_RANKS.indexOf(getDemonFleshRank(selected)) > DEMON_FLESH_RANKS.indexOf(getDemonFleshRank(actor.system?.support?.highestDemonFleshRank)) ? selected : actor.system.support.highestDemonFleshRank,
   });
   await ChatMessage.create({
     speaker: actorSpeaker(actor),

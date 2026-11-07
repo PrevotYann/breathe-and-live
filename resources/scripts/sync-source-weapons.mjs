@@ -9,7 +9,7 @@ const known = {
   "Lames dentelees Nichirin": ["2d6",1.5,23], "Masse Nichirin": ["1d12",9,23],
   "Masse et chaine Nichirin": ["1d12",9,23], "Fouet Nichirin": ["1d10",9,23],
   "Double epee-chaine Nichirin": ["2d10",3,23], "Katana torsade Nichirin": ["1d8",1.5,62],
-  "Odachi Nichirin": ["1d12",3,90], "Fusil de tranchee": ["3d6 + Precision",15,23],
+  "Odachi Nichirin": ["1d12",1.5,90], "Fusil de tranchee": ["3d6 + Precision",15,23],
   "Pistolet standard": ["1d8 + Precision",18,91], "Mauser C96": ["1d8 + Precision",18,91],
   "Nambu Type 14": ["1d8 + Precision",18,91], "Colt M1911": ["1d8 + Precision",18,91],
   "Type 38 Arisaka": ["1d12 + Precision",36,91], "Winchester 1895": ["1d12 + Precision",36,91],
@@ -35,7 +35,9 @@ function apply(doc) {
     Object.assign(doc.system, { damage: values[0], range: values[1], attackMod: 0, damageMod: 0, sourceSection: `Livre français — diapositive ${values[2]}`, ruleSource: source(values[2]) });
     if (/Kunai/.test(doc.name)) { doc.type = "projectile"; doc.system.rangeFormula = "1.5 * Force"; }
     if (doc.name === "Kunai de glycine") doc.system.poisonProfile = "glycineWeakening";
+    // p.90: +1 damage die and +1.5 m over standard melee reach (1.5 m), +1 charge turn.
     if (doc.name === "Odachi Nichirin") { doc.system.extraDamageDice = 1; doc.system.chargeTurns = 1; doc.system.rangeBonus = 1.5; }
+    if (/^(Pistolet standard|Mauser C96|Nambu Type 14|Colt M1911|Type 38 Arisaka|Winchester 1895|Mauser 98k)$/.test(doc.name)) doc.system.usageNote = "TODO-RULEBOOK-AMBIGUITY: p.23 résume pistolet 45 m / fusil 90 m ; la fiche détaillée p.91 (18 m / 36 m) est retenue.";
     if (doc.name === "Molotov") { doc.system.radius = 4.5; doc.system.periodicDamage = "1d8"; doc.system.periodicTurns = 3; doc.system.saveDc = 0; doc.system.ruleSource = source(94, ["portée de lancer"]); }
     if (doc.name === "Grenade") { doc.system.radius = 3; doc.system.saveDc = 0; doc.system.usageNote = "Grenade Type-97 : 20 dégâts, rayon 3 m. La portée du lancer est à fixer par le MJ."; doc.system.ruleSource = source(94, ["portée de lancer"]); }
     if (doc.name === "Lance-flammes") { Object.assign(doc.system, { area: "cone", saveDerived: "dexterite", saveDc: 14, burnFormula: "1d6", burnDuration: 3 }); doc.system.ammo = { value: 10, max: 10, reload: "Remplir le réservoir." }; }

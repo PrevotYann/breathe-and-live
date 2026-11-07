@@ -305,7 +305,7 @@ export const ADVANCED_STATES = [
   {
     key: "tcbPermanent",
     label: "TCB : Constant",
-    note: "Récupère 1 Endurance par tour tant qu'actif.",
+    note: "TCB maintenu sans énergie ; +1 Endurance par tour ; le Souffle de récupération stoppe les saignements.",
   },
   {
     key: "marque",
@@ -315,7 +315,7 @@ export const ADVANCED_STATES = [
   {
     key: "mondeTransparent",
     label: "Monde Transparent",
-    note: "Les attaques non basées sur le souffle deviennent critiques sur réussite.",
+    note: "Les techniques sans Souffle infligent des dégâts critiques sur réussite ; les attaques visant le personnage ont un désavantage.",
   },
   {
     key: "lameRouge",
@@ -394,22 +394,22 @@ export const CONDITION_DEFINITIONS = [
   {
     key: "imprisoned",
     label: "Emprisonné",
-    note: "Ne peut pas bouger tant que la technique tient.",
+    note: "Piégé par une magie sanguine : ne peut pas bouger jusqu'à sa libération.",
   },
   {
     key: "offBalance",
     label: "Déséquilibré",
-    note: "Ouverture immédiate ; la cible est déstabilisée.",
+    note: "Ne peut pas utiliser de points de réaction pour le reste du tour.",
   },
   {
     key: "paralyzed",
     label: "Paralysé",
-    note: "Ne peut pas agir normalement.",
+    note: "Incapable de bouger, mais peut encore parler.",
   },
   {
     key: "controlled",
     label: "Contrôlé",
-    note: "Sous l'effet d'une contrainte externe.",
+    note: "Perd le contrôle de son corps à cause d'une magie sanguine.",
   },
   {
     key: "poisoned",
@@ -439,7 +439,7 @@ export const CONDITION_DEFINITIONS = [
   {
     key: "paresthesia",
     label: "Paresthésie",
-    note: "Le toucher et la précision sont perturbés.",
+    note: "Échec auto aux tests de perception liés au toucher.",
   },
   {
     key: "ageusia",
@@ -538,6 +538,27 @@ export const DEMON_RANKS = [
   "Disciple de Lune superieure",
   "Lune superieure",
 ];
+
+/**
+ * Demonist flesh table (p.69-70): BDP gained per piece of flesh and Guérison démoniaque dice,
+ * by rank of the demon eaten. `flesh` is the label stored on the actor, `demonRank` the
+ * matching DEMON_RANKS entry (stat benchmarks for the enhancement reaction).
+ */
+export const DEMON_FLESH_RANKS = [
+  { flesh: "Rang faible", demonRank: "Demon faible", bdp: "1d4 + 1", heal: "1d10" },
+  { flesh: "Rang eleve", demonRank: "Demon eleve", bdp: "2d4 + 2", heal: "2d10" },
+  { flesh: "Disciple de Lune inferieure", demonRank: "Disciple de Lune inferieure", bdp: "1d10 + 3", heal: "1d20" },
+  { flesh: "Lune inferieure", demonRank: "Lune inferieure", bdp: "2d6 + 4", heal: "1d20" },
+  { flesh: "Disciple de Lune superieure", demonRank: "Disciple de Lune superieure", bdp: "3d6 + 5", heal: "1d100" },
+  { flesh: "Lune superieure", demonRank: "Lune superieure", bdp: "1d20 + 8", heal: "1d100" },
+];
+
+/** Accepts a flesh label or a demon rank (any accents/case) and returns the flesh-table row. */
+export function getDemonFleshRank(value) {
+  const key = String(value ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+  if (!key) return null;
+  return DEMON_FLESH_RANKS.find(row => [row.flesh, row.demonRank].some(label => label.toLowerCase() === key)) || null;
+}
 
 export const DEMON_RANK_LEVELS = Object.fromEntries(
   DEMON_RANKS.map((rank, index) => [rank, index + 1])

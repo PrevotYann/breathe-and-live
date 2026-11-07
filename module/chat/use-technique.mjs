@@ -5,6 +5,7 @@ import { activateSubclassStance } from "../rules/subclass-passives.mjs";
 import { checkTechniqueUses, consumeTechniqueUse } from "../rules/technique-limits.mjs";
 import { runSourceTechnique } from "../rules/source-technique-workflows.mjs";
 import { beginMistTrail } from "../rules/mist-trail.mjs";
+import { ensureRuleApproval } from "../rules/rule-source-gate.mjs";
 import { promptSourceMovement } from "../rules/source-movement.mjs";
 import { attachSourceReactions, permitAvoidanceCounter } from "../rules/source-reactions.mjs";
 import { sourceTrait, envelopingAttackPenalty } from "../rules/character-capabilities.mjs";
@@ -27,6 +28,7 @@ import {
   getTechniqueChargeState,
   getTechniqueCooldown,
   isTechniqueChargeReady,
+  isHalfStatDemon,
   normalizeBreathName,
   noteActorDamageTaken,
   setTechniqueCooldown,
@@ -38,6 +40,7 @@ import {
   getActivePoisonCoating,
   queueDemonPendingEffect,
   rollBasicAttack,
+  applyExecutionSkill,
   applyTargetedLimbDamage,
   setConditionState,
   spendRp,
@@ -48,31 +51,14 @@ import {
   getEffectiveBaseStats,
 } from "../rules/poison-utils.mjs";
 import { getConditionActionRestriction } from "../rules/condition-utils.mjs";
-import { LIMB_DEFINITIONS } from "../config/rule-data.mjs";
+import { DEMON_FLESH_RANKS, LIMB_DEFINITIONS } from "../config/rule-data.mjs";
 
 const FU = foundry.utils;
 const SYSTEM_ID = "breathe-and-live";
 const METERS_PER_SQUARE = 1.5;
 
-const DEMONIST_HEALING_BY_FLESH_RANK = {
-  "Rang faible": "1d10",
-  "Rang eleve": "2d10",
-  "Disciple de Lune inferieure": "1d20",
-  "Lune inferieure": "1d20",
-  "Disciple de Lune superieure": "1d100",
-  "Lune superieure": "1d100",
-  "Demon faible": "1d10",
-  "Demon eleve": "2d10",
-};
-
-const DEMON_HEALING_BY_RANK = {
-  "Demon faible": "1d10",
-  "Demon eleve": "2d10",
-  "Disciple de Lune inferieure": "1d20",
-  "Lune inferieure": "1d20",
-  "Disciple de Lune superieure": "1d100",
-  "Lune superieure": "1d100",
-};
+const DEMONIST_HEALING_BY_FLESH_RANK = Object.fromEntries(DEMON_FLESH_RANKS.flatMap(row => [[row.flesh, row.heal], [row.demonRank, row.heal]]));
+const DEMON_HEALING_BY_RANK = Object.fromEntries(DEMON_FLESH_RANKS.map(row => [row.demonRank, row.heal]));
 
 function toNumber(value, fallback = 0) {
   const number = Number(value);
@@ -377,10 +363,13 @@ async function useRegrowPower(actor, item) {
 }
 
 async function promptDemonistHealingRank(actor) {
-  const stored = String(actor.system?.support?.recentDemonFleshRank || "");
-  if (DEMONIST_HEALING_BY_FLESH_RANK[stored]) return stored;
-  const options = Object.keys(DEMONIST_HEALING_BY_FLESH_RANK)
-    .map((rank) => `<option value="${rank}">${rank}</option>`)
+  // p.70: Guérison démoniaque uses the strongest demon eaten recently.
+  const support = actor.system?.support ?? {};
+  for (const stored of [support.highestDemonFleshRank, support.recentDemonFleshRank]) {
+    if (DEMONIST_HEALING_BY_FLESH_RANK[String(stored || "")]) return String(stored);
+  }
+  const options = DEMON_FLESH_RANKS
+    .map(({ flesh }) => `<option value="${flesh}">${flesh}</option>`)
     .join("");
   return new Promise((resolve) => {
     new Dialog(
@@ -514,7 +503,7 @@ async function useStableShot(actor, item) {
   });
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
-    content: `<div class="bl-card"><b>${actor.name}</b> prend une <b>position stable</b>. La prochaine attaque a distance gagne +8 au toucher; le deplacement est a gerer comme immobilise.</div>`,
+    content: `<div class="bl-card"><b>${actor.name}</b> prend une <b>position stable</b>. La prochaine attaque à distance gagne +8 au toucher ; le personnage est immobilisé jusqu'au tir.</div>`,
   });
   return true;
 }
@@ -822,6 +811,7 @@ async function applyTechniqueDamage({
   const appliedDamage = await applyHpDamage(actor, damage);
   await noteActorDamageTaken(actor, damage, { attackerUuid: attacker.uuid, melee: !item.system?.ranged && Number(item.system?.range ?? 1.5) <= 1.5 });
   if (ctx.targetLimb) await applyTargetedLimbDamage(actor, ctx.targetLimb, damage);
+  if (appliedDamage.nextHp > 0 && await applyExecutionSkill(attacker, actor)) appliedDamage.nextHp = 0;
   if (damage > 0 && ["technique", "subclassTechnique"].includes(item.type) && attacker.system?.states?.lameRouge && ["demon", "npcDemon"].includes(actor.type)) {
     await lockRedBladeHealing(actor);
   }
@@ -912,12 +902,13 @@ export function useTechnique(attacker, item, options = {}) {
 }
 async function executeTechnique(attacker, item, { controlledToken = null } = {}) {
   if (!attacker || !item) return;
-  if (item.system?.ruleSource?.missingFields?.length && !item.system.ruleSource.approved) {
-    return ui.notifications.warn(`${item.name} : données absentes du livre (${item.system.ruleSource.missingFields.join(", ")}). Renseignez et validez les valeurs sur la fiche de technique.`);
-  }
-
   if (!(game.user.isGM || attacker.isOwner)) {
     return ui.notifications.warn("Tu n'es pas autorise a utiliser les techniques de cet acteur.");
+  }
+  if (!(await ensureRuleApproval(item))) return;
+  // Continuous limb regeneration (p.72) is listed as passive but must be switched on to tick.
+  if (item.system?.activation === "passive" && getDemonistUtilityKind(item) === "regrow") {
+    return useDemonistUtility(attacker, item, "regrow");
   }
   if (item.system?.activation === "passive") {
     return ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: attacker }), content: `<strong>${item.name}</strong><p>${item.system.description || item.system.usageNote || "Passif : consulter la fiche."}</p>` });
@@ -1068,7 +1059,9 @@ async function executeTechnique(attacker, item, { controlledToken = null } = {})
     const stat = String(item.system?.attackStat || "finesse");
     const base = getEffectiveBaseStats(attacker);
     const derived = attacker.system?.stats?.effectiveDerived || attacker.system?.stats?.derived || {};
-    const bonus = stat in base ? Number(base[stat]) - 1 : Number(derived[stat] || 0);
+    const bonus = stat in base
+      ? (isHalfStatDemon(attacker) && ["force", "finesse"].includes(stat) ? Math.floor(Math.max(0, Number(base[stat]) || 0) / 2) : Number(base[stat]) - 1)
+      : Number(derived[stat] || 0);
     const hits = [];
     for (const target of targetTokens) {
       const edge = Number(pre.rollEdge?.attack || 0) - (target.actor.system?.states?.mondeTransparent ? 1 : 0) - envelopingAttackPenalty(attacker);

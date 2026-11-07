@@ -82,7 +82,7 @@ export function buildReactionTargetRow({
         ${canDodge ? `<button class="bl-dodge" data-target-token="${targetToken.id}" data-damage="${damageTotal}">Esquiver (1 RP)</button>` : ""}
         ${canWaterDeflect ? `<button class="bl-deflect" data-target-token="${targetToken.id}" data-damage="${damageTotal}">Devier (1 RP)</button>` : ""}
         ${stance ? `<button class="${stance.source === "demon-defense" && stance.mode === "block" ? "bl-demon-block" : "bl-stance-deflect"}" data-target-token="${targetToken.id}" data-damage="${damageTotal}">${stanceLabel} (${stance.itemName})</button>` : ""}
-        ${allowReactions ? sourceReactionButtons(targetActor, targetToken.id) : ""}
+        ${allowReactions ? sourceReactionButtons(targetActor, targetToken.id, { canDodge }) : ""}
         ${extraButtonsHtml}
         <button class="bl-takedmg" data-target-token="${targetToken.id}" data-damage="${damageTotal}">${takeDamageLabel}</button>
       </div>

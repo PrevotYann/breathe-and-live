@@ -1919,7 +1919,7 @@
         },
         {
           "name": "Analgesiques",
-          "type": "consumable"
+          "type": "medical"
         },
         {
           "name": "Datsun Type 10",
@@ -1935,7 +1935,7 @@
         },
         {
           "name": "Ford Modele T",
-          "type": "transport"
+          "type": "vehicle"
         },
         {
           "name": "Sifflet Kasugai",

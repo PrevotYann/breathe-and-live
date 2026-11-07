@@ -1,14 +1,17 @@
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
 import { MockActor, gm, player, fire, hooks, makeCombat, NS, chatMessages, tokenFor } from "./foundry-mocks.mjs";
-import { setConditionState, processConditionTurnStart, processConditionTurnEnd, registerActionHooks, useMedicalItem, runRestRefresh, runDemonHeal } from "../module/rules/action-engine.mjs";
+import { setConditionState, processConditionTurnStart, processConditionTurnEnd, registerActionHooks, useMedicalItem, runRestRefresh, runDemonHeal, runDemonistHealingReaction, applyExecutionSkill } from "../module/rules/action-engine.mjs";
+import { sourceAllyReactionButtons } from "../module/rules/source-reactions.mjs";
 import { spendResourceCosts, applyHpDamage, restoreHp } from "../module/rules/resource-costs.mjs";
 import { drivingBonus, envelopingAttackPenalty } from "../module/rules/character-capabilities.mjs";
 import { getDeflectStance, consumeDeflectStance } from "../module/chat/reaction-card.mjs";
 import { refreshCombatActions, spendCombatAction } from "../module/rules/combat-actions.mjs";
 import { startRegeneration, tickRegeneration } from "../module/rules/regeneration.mjs";
 import { lockRedBladeHealing, healingIsBlocked } from "../module/rules/combat-state.mjs";
-import { applyPreHit, applyOnHit } from "../module/rules/breath-effects.mjs";
+import { applyPreHit, applyOnHit, getActiveBreaths, BREATH_FORM_COUNTS } from "../module/rules/breath-effects.mjs";
+import { actorHasBreath, buildFormulaWithActorStats } from "../module/rules/technique-utils.mjs";
+import { getDemonFleshRank } from "../module/config/rule-data.mjs";
 import { conditionAutoFailDerived, getConditionDerivedPenalties } from "../module/rules/condition-utils.mjs";
 import { useTechnique } from "../module/chat/use-technique.mjs";
 import { DEMON_RANK_PACKAGES } from "../module/config/rule-data.mjs";
@@ -149,20 +152,55 @@ test("blindness does not disable auditory Perception; paresthesia does not inven
   assert.deepEqual(conditionAutoFailDerived(actor, "perception", "vue"), ["Aveugle"]);
   assert.deepEqual(getConditionDerivedPenalties(actor), {});
 });
+const breathItem = (key, system = {}) => ({ type: "breath", name: key, system: { key, ...system } });
+const formItem = (key, form) => ({ type: "technique", name: `${key} ${form}`, system: { breathKey: key, form } });
 test("moon mastery adds the matching die to another breathing style", async () => {
-  const actor = character(); actor.system.breaths = { moon: { enabled: true, specials: { bonusSolo: true } } };
+  const actor = character(); actor.items.push(breathItem("moon", { masteryGranted: true }));
   const demon = character("demon"); const token = tokenFor(actor); token.document = { disposition: 1 }; canvas.tokens.placeables = [token];
   const pre = await applyPreHit(actor, { actor: demon }, { system: { breathKey: "water", damage: "2d8", costE: 4 } }, { attackerToken: token });
   assert.equal(pre.dmgExpr, "2d8 + 1d8");
 });
 test("snow mastery applies AC effects on ordinary weapon hits", async () => {
-  const actor = character(); actor.system.breaths = { snow: { enabled: true, specials: { dentsDeKatana: true } } };
+  const actor = character(); actor.items.push(breathItem("snow"), ...Array.from({ length: 8 }, (_, i) => formItem("snow", i + 1)));
   const target = character("demon"); await applyOnHit(actor, { actor: target }, { system: {}, uuid: "Item.weapon" }, {}, { tookDamage: true });
   assert.equal(target.getFlag(NS, "effects")[0].duration, "roundEnd");
 });
 test("incomplete forms cannot silently execute default numeric placeholders", async () => {
+  globalThis.Dialog = { confirm: async () => false };
   const actor = character(); const gear = { name: "Forme incomplète", system: { ruleSource: { missingFields: ["damage"], approved: false }, costE: 5 } };
   await useTechnique(actor, gear); assert.equal(actor.system.resources.e.value, 10); assert.equal(actor.updates.length, 0);
+  game.user = player; let asked = false; globalThis.Dialog = { confirm: async () => { asked = true; return true; } };
+  actor.owners = new Set([player.id]);
+  await useTechnique(actor, gear); assert.equal(asked, false, "players cannot arbitrate missing rule values");
+});
+test("GM arbitration at use time persists approval for blood arts with missing book values", async () => {
+  globalThis.Dialog = { confirm: async () => true };
+  const art = { name: "Art de sang", type: "bda", system: { activation: "passive", ruleSource: { missingFields: ["coût BDP"], approved: false } },
+    async update(patch) { this.system.ruleSource.approved = patch["system.ruleSource.approved"]; } };
+  await useTechnique(character("npcDemon"), art);
+  assert.equal(art.system.ruleSource.approved, true);
+});
+test("breath specials need the owned style and every form; legacy toggles grant nothing", () => {
+  const actor = character();
+  actor.system.breaths = { mist: { enabled: true, specials: { nuagesTrainants: true } } };
+  assert.equal(getActiveBreaths(actor).mist, undefined, "a toggle without the breath item is not a practised breath");
+  assert.equal(actorHasBreath(actor, "mist"), false);
+  actor.items.push(breathItem("mist", { specials: { nuagesTrainants: true } }), formItem("mist", 1), formItem("mist", 2));
+  assert.equal(getActiveBreaths(actor).mist.enabled, true);
+  assert.equal(getActiveBreaths(actor).mist.specials.nuagesTrainants, false, "2/6 forms: special stays locked");
+  actor.items.push(...[3, 4, 5, 6].map(n => formItem("mist", n)));
+  assert.equal(getActiveBreaths(actor).mist.specials.nuagesTrainants, true);
+  assert.deepEqual(Object.keys(getActiveBreaths(actor)), ["mist"], "no other breath leaks in");
+});
+test("every breath special is gated by mastery of its own style only", () => {
+  for (const [key, total] of Object.entries(BREATH_FORM_COUNTS)) {
+    const actor = character(); actor.items.push(breathItem(key));
+    for (let n = 1; n < total; n++) actor.items.push(formItem(key, n));
+    const partial = getActiveBreaths(actor)[key];
+    assert.ok(Object.values(partial.specials).every(v => v === false), `${key}: locked before last form`);
+    actor.items.push(formItem(key, total));
+    assert.ok(Object.values(getActiveBreaths(actor)[key].specials).every(v => v === true), `${key}: unlocked when mastered`);
+  }
 });
 test("rank-up grants usable study slots and preserves chosen statistics", async () => {
   const actor = character(); actor.system.progression = { studySlots: { value: 0, max: 0 }, skillSlots: { value: 0, max: 0 }, bonuses: {} };
@@ -292,4 +330,62 @@ test("physical combat traits do not boost actors absent from the active encounte
   const actor = character(); actor.items.push({name:"Force physique accrue",system:{traitKey:"strength"}});
   game.combat = makeCombat([new MockActor("other",character().system)]);
   assert.equal(getEffectiveBaseStats(actor).force,4);
+});
+
+test("demonist healing reaction uses the strongest recent flesh row (Rang élevé heals 2d10, not 1d10)", async () => {
+  const actor = character("demonist");
+  actor.system.support = { demonistHealingReaction: true, highestDemonFleshRank: "Rang eleve", recentDemonFleshRank: "Rang faible" };
+  const healed = await runDemonistHealingReaction(actor, { maximize: true });
+  assert.equal(healed, 20, "maximised 2d10");
+  assert.equal(getDemonFleshRank("Demon élevé").flesh, "Rang eleve", "demon rank and flesh labels resolve to one row");
+});
+test("a long rest clears demonisation and the 'recently eaten' flesh rank", async () => {
+  const actor = character("demonist");
+  actor.system.resources.demonisation = 6;
+  actor.system.support = { recentDemonFleshRank: "Lune inferieure", highestDemonFleshRank: "Lune inferieure" };
+  await runRestRefresh(actor, { hours: 8 });
+  assert.equal(actor.system.resources.demonisation, 0);
+  assert.equal(actor.system.support.recentDemonFleshRank, "");
+  assert.equal(actor.system.support.highestDemonFleshRank, "");
+});
+test("demons add half of Puissance/Finesse to blood art damage (p.112)", () => {
+  const demon = character("npcDemon"); demon.system.stats.base.finesse = 8; demon.system.demonology = { halfDamageStatRule: true };
+  assert.equal(buildFormulaWithActorStats("1d6 + Finesse", demon), "1d6 + 4");
+  const human = character(); human.system.stats.base.finesse = 8;
+  assert.equal(buildFormulaWithActorStats("1d6 + Finesse", human), "1d6 + 8", "humans unchanged");
+});
+test("continuous limb regeneration is listed as passive but can be switched on", async () => {
+  const actor = character("demonist"); globalThis.Dialog = class { constructor(d) { this.d = d; } render() { this.d.buttons.apply.callback({ find: () => ({ val: () => "2" }) }); } };
+  actor.system.combat.injuries = { limbs: { leftArm: { severed: true } } };
+  const regen = { id: "r", name: "Regeneration continue des membres", type: "demonAbility", system: { activation: "passive", costBdp: 0 } };
+  await useTechnique(actor, regen);
+  assert.equal(actor.system.combat.regeneration?.active, true);
+  assert.equal(actor.system.combat.regeneration?.continuous, true);
+});
+
+test("Bourreau kills a demon of 50 base HP or less on hit; stronger demons are untouched", async () => {
+  const slayer = character(); slayer.system.progression = { bonuses: { executionHpBaseLimit: 50 } };
+  const weak = character("npcDemon"); weak.system.resources.hp = { value: 30, max: 50 };
+  assert.equal(await applyExecutionSkill(slayer, weak), true);
+  assert.equal(weak.system.resources.hp.value, 0);
+  const strong = character("npcDemon"); strong.system.resources.hp = { value: 30, max: 80 };
+  assert.equal(await applyExecutionSkill(slayer, strong), false);
+  assert.equal(strong.system.resources.hp.value, 30);
+  assert.equal(await applyExecutionSkill(slayer, character()), false, "humans are never executed");
+});
+test("Tir en position stable immobilises the shooter until the shot", async () => {
+  const actor = character("demonist");
+  await actor.setFlag(NS, "stableShot", { attackBonus: 8 });
+  assert.equal(getConditionActionRestriction(actor, "movement").blocked, true);
+  assert.equal(getConditionActionRestriction(actor, "action").blocked, false);
+});
+test("an ally with 2 RP can pull a dodgeable target to safety; never against undodgeable attacks", () => {
+  const target = character(), ally = character();
+  const tTok = tokenFor(target, "t"), aTok = tokenFor(ally, "a");
+  tTok.document = { disposition: 1 }; aTok.document = { disposition: 1 };
+  ally.system.resources.rp.value = 2; canvas.tokens.placeables = [tTok, aTok];
+  assert.match(sourceAllyReactionButtons(target, "t"), /bl-dodge-pull/);
+  assert.doesNotMatch(sourceAllyReactionButtons(target, "t", { canDodge: false }), /bl-dodge-pull/);
+  ally.system.resources.rp.value = 1;
+  assert.doesNotMatch(sourceAllyReactionButtons(target, "t"), /bl-dodge-pull/);
 });

@@ -212,41 +212,44 @@ async function resolveOceanEnvironment(attacker) {
   return aquatic;
 }
 
+/** Number of named forms per breath in the rulebook data (p.38-55). */
+export const BREATH_FORM_COUNTS = { sun: 13, moon: 16, flame: 9, water: 10, wind: 9, thunder: 6, stone: 5, flower: 6, mist: 6, serpent: 5, sound: 6, insect: 4, love: 7, beast: 10, ocean: 7, west: 13, snow: 8 };
+
+function techniqueBreathKey(item) {
+  return item.system?.breathKey || normalizeBreathName(item.system?.breath);
+}
+
+/**
+ * Rulebook p.35: "Compétences spéciales obtenues après avoir maîtrisé toutes les formes de
+ * cette technique de souffle." A breath is practised only when its breath item is owned;
+ * its special skill exists only once every form is known, or when the GM grants mastery
+ * explicitly (NPC Hashira whose forms are not all embedded on the sheet).
+ */
+export function getBreathMastery(actor, key) {
+  const total = Number(BREATH_FORM_COUNTS[key]) || 0;
+  const breathItem = Array.from(actor?.items ?? []).find(i => i.type === "breath" && i.system?.key === key) || null;
+  const forms = new Set(Array.from(actor?.items ?? [])
+    .filter(i => i.type === "technique" && techniqueBreathKey(i) === key)
+    .map(i => Number(i.system?.form))
+    .filter(n => Number.isInteger(n) && n >= 1 && (!total || n <= total)));
+  const granted = !!breathItem?.system?.masteryGranted;
+  const allForms = total > 0 && forms.size >= total;
+  return { key, owned: !!breathItem, item: breathItem, known: forms.size, total, granted, mastered: !!breathItem && (granted || allForms) };
+}
+
 export function getActiveBreaths(actor) {
   const result = {};
-  const toggles = FU.getProperty(actor, "system.breaths") || {};
-
-  for (const [key, value] of Object.entries(toggles)) {
-    result[key] ??= { enabled: false, specials: {} };
-    if (value?.enabled) result[key].enabled = true;
-    for (const [specialKey, enabled] of Object.entries(value?.specials || {})) {
-      const normalized = normalizeSpecialKey(key, specialKey);
-      result[key].specials[normalized] = result[key].specials[normalized] || !!enabled;
-    }
-  }
-
-  for (const item of actor.items ?? []) {
+  for (const item of actor?.items ?? []) {
     if (item.type !== "breath") continue;
     const key = String(item.system?.key || "");
-    if (!key) continue;
-
-    result[key] ??= { enabled: false, specials: {} };
-    if (item.system?.enabled) result[key].enabled = true;
-    for (const [specialKey, enabled] of Object.entries(item.system?.specials || {})) {
-      const normalized = normalizeSpecialKey(key, specialKey);
-      result[key].specials[normalized] = result[key].specials[normalized] || !!enabled;
+    if (!key || result[key]) continue;
+    const mastery = getBreathMastery(actor, key);
+    const definition = BREATH_KEYS.find(entry => entry.key === key);
+    const specials = {};
+    for (const specialKey of Object.keys(definition?.specials || {})) {
+      specials[normalizeSpecialKey(key, specialKey)] = mastery.mastered;
     }
-  }
-
-  const counts = { sun: 13, moon: 16, flame: 9, water: 10, wind: 9, thunder: 6, stone: 5, flower: 6, mist: 6, serpent: 5, sound: 6, insect: 4, love: 7, beast: 10, ocean: 7, west: 13, snow: 8 };
-  for (const definition of BREATH_KEYS) {
-    const forms = new Set(Array.from(actor.items ?? []).filter(i => i.type === "technique" && (i.system?.breathKey || normalizeBreathName(i.system?.breath)) === definition.key).map(i => Number(i.system.form)));
-    const count = counts[definition.key];
-    const mastered = count && Array.from({ length: count }, (_, i) => i + 1).every(n => forms.has(n));
-    if (!mastered) continue;
-    result[definition.key] ??= { enabled: true, specials: {} };
-    result[definition.key].enabled = true; result[definition.key].mastered = true;
-    for (const key of Object.keys(definition.specials)) result[definition.key].specials[normalizeSpecialKey(definition.key, key)] = true;
+    result[key] = { enabled: true, mastered: mastery.mastered, known: mastery.known, total: mastery.total, specials };
   }
   return result;
 }

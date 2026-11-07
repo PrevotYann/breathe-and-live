@@ -586,6 +586,12 @@ class BLActor extends Actor {
       sys.progression.markedUnlocked ||= actorLevel >= 6;
       sys.progression.transparentWorldUnlocked ||= actorLevel >= 8;
       sys.progression.redBladeUnlocked ||= actorLevel >= 10;
+      // Higher skills (p.85-88) only exist once acquired; a ticked box alone grants nothing.
+      sys.states ??= {};
+      const gates = { tcbPermanent: "tcbConstantUnlocked", marque: "markedUnlocked", mondeTransparent: "transparentWorldUnlocked", lameRouge: "redBladeUnlocked" };
+      for (const [state, unlock] of Object.entries(gates)) {
+        if (sys.states[state] && !sys.progression[unlock]) sys.states[state] = false;
+      }
     }
 
     ensureConditionData(sys);
@@ -975,7 +981,9 @@ registerCombatAutomation(40, async (combat, changed, options, userId) => {
 
   const streak = toNumber(FU.getProperty(actor, streakPath), 0) + 1;
   await actor.update({ [streakPath]: streak });
-  if (streak >= 2) {
+  // p.5: forced recovery on the first turn at 0 E; unconscious only after two full rounds
+  // without a Recovery Breath (turn starts N+1 and N+2 missed -> knocked out at N+3).
+  if (streak >= 3) {
     await blSetUnconscious(actor, combatant);
   }
 });

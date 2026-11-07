@@ -17,8 +17,8 @@
           </select>
         </div>
         <div class="field">
-          <label>Activer pour l'acteur</label>
-          <input type="checkbox" name="system.enabled" data-dtype="Boolean" {{checked system.enabled}} />
+          <label>Formes connues</label>
+          <span class="tag {{#if mastery.mastered}}tag--seal{{/if}}">{{#if mastery.hasActor}}{{mastery.known}} / {{mastery.total}}{{else}}— / {{mastery.total}}{{/if}}{{#if mastery.mastered}} · Maîtrisé{{/if}}</span>
         </div>
       </div>
     </div>
@@ -32,14 +32,21 @@
 
   <section class="sheet-body">
     <div class="tab" data-group="primary" data-tab="specials">
+      <p class="hint">Compétence spéciale obtenue après avoir maîtrisé <b>toutes les formes</b> de ce souffle (livre, Techniques de Souffle). Elle s'active automatiquement dès que toutes les formes sont sur la fiche.</p>
       <div class="grid specials">
         {{#each system.specialsDisplay as |spec key|}}
-          <label class="checkbox" title="{{spec.hint}}">
-            <input type="checkbox" name="system.specials.{{key}}" data-dtype="Boolean" {{checked spec.enabled}} />
-            <span>{{spec.label}}</span>
-          </label>
+          <div class="bl-special {{#if spec.enabled}}is-active{{/if}}">
+            <strong>{{spec.label}}</strong> <span class="tag {{#if spec.enabled}}tag--seal{{/if}}">{{#if spec.enabled}}Active{{else}}Verrouillée{{/if}}</span>
+            <p>{{spec.hint}}</p>
+          </div>
         {{/each}}
       </div>
+      {{#if isGM}}
+        <label class="checkbox" title="Pour un PNJ (ex. Hashira) dont toutes les formes ne sont pas posées sur la fiche.">
+          <input type="checkbox" name="system.masteryGranted" data-dtype="Boolean" {{checked mastery.granted}} />
+          <span>Maîtrise complète accordée par le MJ</span>
+        </label>
+      {{/if}}
       {{#unless hasSpecials}}
         <p class="hint" >Choisis la <b>cle systeme</b> du souffle pour voir ses capacites speciales.</p>
       {{/unless}}

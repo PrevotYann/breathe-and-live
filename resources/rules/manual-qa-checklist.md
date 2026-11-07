@@ -265,3 +265,15 @@ Use this when automated testing is not practical inside the Foundry runtime.
 - Vérifier les illustrations finales : couverture, trois cartes sans grille dessinée, portraits des cinq prétirés et huit PNJ, Tomoshibi, deux Rôdeurs distincts, lanterne-prison, dessin de Mii, trois indices et deux pouvoirs. Aucun ancien portrait schématique ne doit apparaître.
 - Sur fond clair puis sombre, vérifier les coins transparents des jetons et leur lisibilité à une case de 100 px. Les épingles du four, du pont, des habitations et de la stèle restent sur les bons éléments des cartes.
 - Les mondes ayant déjà importé l'aventure gardent leurs documents : pour obtenir le portrait du Rôdeur long cou et les nouveaux liens d'objets, importer dans un monde de test ou mettre à jour les documents concernés après sauvegarde.
+
+## Souffles, réactions et arbitrage MJ (correctif post-0.7.2)
+
+- Fiche Pourfendeur sans Souffle de la Brume : le bouton « Brume : se cacher / sortir » est absent. Avec la Brume et 6/6 formes : il apparaît ; avec 2/6 : absent et « 🔒 Nuages traînants » affiché.
+- Pour chaque style : glisser le souffle, vérifier « Formes connues X / N » et que la compétence spéciale reste verrouillée tant que X < N.
+- Personnage niveau 1 : seuls Attaque de base, Sprinter, Attendre, Repos, Assistance et Kakushi sont proposés ; Riposte/Dégainage apparaissent après les compétences correspondantes.
+- Niveau 1 : Forme Marquée / Monde Transparent / Lame Rouge grisés avec le niveau requis.
+- Tomoshibi (one-shot) : les trois arts de sang se lancent directement. Akari (compendium) : le MJ reçoit la boîte « Arbitrage MJ » ; après validation, la carte se résout et la boîte ne revient plus. Un joueur reçoit un avertissement sans boîte.
+- Démoniste : consommer de la chair « Rang élevé », puis Soin max (2 RP) : 20 PV rendus. Après un repos de 8 h, le Soin redemande le rang.
+- Shiori : « Régénération continue des membres » affiche un bouton d'usage ; activée, la repousse se déclenche après la durée choisie et se renouvelle.
+- Tomoshibi (Finesse paire) : « Feu follet bleu » affiche 1d6 + moitié de la Finesse dans la carte.
+- Assistant de création Pourfendeur (souffle préféré Pierre) : masse et chaîne, pistolet choisi, 2 bandages, choix pansement/trousse. Démoniste : fusil de tranchée + wakizashi uniquement.

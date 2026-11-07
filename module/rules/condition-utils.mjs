@@ -91,6 +91,11 @@ export function getConditionActionRestriction(actor, kind = "action") {
     };
   }
 
+  // Tir en position stable (p.74) immobilises the shooter until the aimed shot is taken.
+  if (movementKinds.has(kind) && typeof actor?.getFlag === "function" && actor.getFlag(SYSTEM_ID, "stableShot")?.attackBonus) {
+    return { blocked: true, reason: "Tir en position stable : le personnage est immobilisé jusqu'à son tir." };
+  }
+
   if (movementKinds.has(kind) && summary.movementBlocked) {
     return {
       blocked: true,

@@ -1,13 +1,10 @@
-import { BREATH_KEYS, BREATH_SPECIAL_ALIASES, SYSTEM_ID } from "../config/rule-data.mjs";
+import { BREATH_KEYS, SYSTEM_ID } from "../config/rule-data.mjs";
+import { BREATH_FORM_COUNTS, getBreathMastery } from "../rules/breath-effects.mjs";
 import { activateSheetNavigation } from "./sheet-navigation.mjs";
 import { activateSheetImages, resolveItemImage } from "./sheet-presentation.mjs";
 
 function getBreathDefinition(key) {
   return BREATH_KEYS.find((entry) => entry.key === key) || null;
-}
-
-function normalizeSpecialKey(breathKey, specialKey) {
-  return BREATH_SPECIAL_ALIASES?.[breathKey]?.[specialKey] || specialKey;
 }
 
 function resolveBreathImage(key, currentImg = "") {
@@ -57,23 +54,21 @@ export class BLBreathSheet extends foundry.appv1.sheets.ItemSheet {
       definition?.prereq || sys.prereq || { sense: "", stats: "", weapons: "" }
     );
 
-    const normalizedSpecials = {};
-    for (const [specialKey, enabled] of Object.entries(sys.specials || {})) {
-      normalizedSpecials[normalizeSpecialKey(key, specialKey)] = !!enabled;
-    }
-    for (const specialKey of Object.keys(definition?.specials || {})) {
-      normalizedSpecials[specialKey] = !!normalizedSpecials[specialKey];
-    }
-    sys.specials = normalizedSpecials;
-
+    const owner = this.item.actor;
+    const mastery = owner ? getBreathMastery(owner, key) : null;
+    const mastered = mastery ? mastery.mastered : !!sys.masteryGranted;
     const specialsDisplay = {};
     for (const [specialKey, meta] of Object.entries(definition?.specials || {})) {
-      specialsDisplay[specialKey] = {
-        label: meta.label || specialKey,
-        hint: meta.hint || "",
-        enabled: !!sys.specials[specialKey],
-      };
+      specialsDisplay[specialKey] = { label: meta.label || specialKey, hint: meta.hint || "", enabled: mastered };
     }
+    data.mastery = {
+      known: mastery?.known ?? 0,
+      total: mastery?.total ?? (BREATH_FORM_COUNTS[key] || 0),
+      mastered,
+      granted: !!sys.masteryGranted,
+      hasActor: !!owner,
+    };
+    data.isGM = !!game.user?.isGM;
 
     data.system = {
       ...sys,
@@ -100,49 +95,21 @@ export class BLBreathSheet extends foundry.appv1.sheets.ItemSheet {
   async _updateObject(event, formData) {
     const FU = foundry.utils;
     const expanded = FU.expandObject(formData);
-    const currentSystem = FU.duplicate(this.item.system ?? {});
-    const key = String(expanded.system?.key || currentSystem.key || "");
+    const key = String(expanded.system?.key || this.item.system?.key || "");
     const definition = getBreathDefinition(key);
-
-    const nextSpecials = {};
-    for (const [specialKey, enabled] of Object.entries(currentSystem.specials || {})) {
-      nextSpecials[normalizeSpecialKey(key, specialKey)] = !!enabled;
-    }
-    for (const [specialKey, enabled] of Object.entries(expanded.system?.specials || {})) {
-      nextSpecials[normalizeSpecialKey(key, specialKey)] = !!enabled;
-    }
-    for (const specialKey of Object.keys(definition?.specials || {})) {
-      nextSpecials[specialKey] = !!nextSpecials[specialKey];
-    }
-
-    const nextSystem = FU.mergeObject(currentSystem, expanded.system || {}, {
-      inplace: false,
-      overwrite: true,
-    });
+    const nextSystem = expanded.system || {};
     nextSystem.key = key;
-    nextSystem.enabled = !!nextSystem.enabled;
+    // Special skills come from mastering every form (p.35), never from a free toggle.
+    delete nextSystem.specials;
+    delete nextSystem.enabled;
+    if (!game.user?.isGM) delete nextSystem.masteryGranted;
     nextSystem.prereq = FU.duplicate(
-      definition?.prereq || nextSystem.prereq || { sense: "", stats: "", weapons: "" }
+      definition?.prereq || nextSystem.prereq || this.item.system?.prereq || { sense: "", stats: "", weapons: "" }
     );
-    nextSystem.specials = nextSpecials;
-
-    const nextImg = resolveBreathImage(
-      key,
-      String(expanded.img || this.item.img || "")
-    );
-
     await this.item.update({
       name: expanded.name ?? this.item.name,
-      img: nextImg,
+      img: resolveBreathImage(key, String(expanded.img || this.item.img || "")),
       system: nextSystem,
-    });
-
-    const actor = this.item.actor;
-    if (!actor || !key) return;
-
-    await actor.update({
-      [`system.breaths.${key}.enabled`]: !!nextSystem.enabled,
-      [`system.breaths.${key}.specials`]: nextSpecials,
     });
   }
 }

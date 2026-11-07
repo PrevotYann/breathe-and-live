@@ -5,16 +5,20 @@ import { applyEffectsList } from "./effects-engine.mjs";
 import { spendCombatAction } from "./combat-actions.mjs";
 
 const names = new Set(["fendeur de riviere", "carapace reactive", "contre-morsure", "piege de diversion", "reflexe d'esquive"]);
-export function sourceReactionButtons(actor, tokenId) {
+export function sourceReactionButtons(actor, tokenId, { canDodge = true } = {}) {
   return Array.from(actor?.items ?? []).filter(i => i.type === "subclassTechnique" && names.has(normalizeRuleName(i.name)))
-    .map(i => `<button class="bl-source-reaction" data-target-token="${tokenId}" data-item-id="${i.id}">${i.name}</button>`).join("") + sourceAllyReactionButtons(actor, tokenId);
+    .map(i => `<button class="bl-source-reaction" data-target-token="${tokenId}" data-item-id="${i.id}">${i.name}</button>`).join("") + sourceAllyReactionButtons(actor, tokenId, { canDodge });
 }
-export function sourceAllyReactionButtons(actor, tokenId) {
+export function sourceAllyReactionButtons(actor, tokenId, { canDodge = true } = {}) {
   const target = canvas.tokens.get(tokenId);
   return (canvas.tokens.placeables ?? []).filter(t => t.actor && t.id !== tokenId).flatMap(t => {
+    // p.22: "Réaction d'esquive — 2 points : vous pourrez tirer vers vous n'importe quelle cible."
+    const pull = canDodge && t.document?.disposition === target?.document?.disposition
+      && Number(t.actor.system?.resources?.rp?.value) >= 2 && t.actor.system?.combat?.reactions?.dodge !== false;
     const pact = t.document?.disposition !== target?.document?.disposition && t.actor.items.find(i => normalizeRuleName(i.name) === "pacte de controle mental");
     const service = t.actor.system?.combat?.subclassStance === "service" && t.document?.disposition === target?.document?.disposition;
-    return [pact ? `<button class="bl-pacte" data-target-token="${tokenId}" data-ability-token="${t.id}" data-item-id="${pact.id}" disabled>Pacte (${t.name}) après esquive</button>` : "",
+    return [pull ? `<button class="bl-dodge-pull" data-target-token="${tokenId}" data-ability-token="${t.id}">Tirer à l'abri (${t.name}, 2 RP)</button>` : "",
+      pact ? `<button class="bl-pacte" data-target-token="${tokenId}" data-ability-token="${t.id}" data-item-id="${pact.id}" disabled>Pacte (${t.name}) après esquive</button>` : "",
       service ? `<button class="bl-service" data-target-token="${tokenId}" data-ability-token="${t.id}">Plaisir de servir (${t.name})</button>` : ""];
   }).join("");
 }
@@ -32,6 +36,17 @@ async function askNumber(title, label) {
   }).render(true));
 }
 export function attachSourceReactions(card, html, on, attacker) {
+  on(".bl-dodge-pull", async event => {
+    const button = $(event.currentTarget);
+    const target = canvas.tokens.get(String(button.attr("data-target-token")));
+    const rescuer = canvas.tokens.get(String(button.attr("data-ability-token")));
+    if (!target?.actor || !rescuer?.actor || !canInteractWithToken(rescuer)) return;
+    if (!(await spendRp(rescuer.actor, 2, "esquive : tirer une cible à l'abri"))) return;
+    const row = html.find(`.bl-target-row[data-target-token="${target.id}"]`);
+    row.find(".bl-target-result").html(`<em>${rescuer.name} tire ${target.name} vers lui (2 RP) : l'attaque est esquivée. Déplacez ${target.name} au contact de ${rescuer.name}.</em>`);
+    row.find("button").prop("disabled", true);
+    permitAvoidanceCounter(html, target.id);
+  });
   on(".bl-source-reaction", async event => {
     const button = $(event.currentTarget), token = canvas.tokens.get(String(button.attr("data-target-token")));
     if (!token?.actor || !canInteractWithToken(token)) return;

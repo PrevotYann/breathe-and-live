@@ -63,6 +63,31 @@ function correctFeature(doc) {
   }
 }
 for (const doc of features) correctFeature(doc);
+// v0.8.0 audit: align legacy inventory entries with p.100-103 and label entries without a book source.
+const page = n => `Livre français — diapositive ${n}`;
+const offBook = "Hors livre — gabarit MJ : aucune entrée équivalente dans le livre.";
+const inventoryFixes = {
+  "Analgesiques": doc => { doc.type = "medical"; Object.assign(doc.system, { healing: "", enduranceGain: "", sourceSection: page(100),
+    usageNote: "PV temporaires égaux au quart des PV maximum pendant une heure ; ensuite, sans soins reçus, les dégâts subis sont conservés (p.100)." }); },
+  "Seringue de sang demon": doc => Object.assign(doc.system, { healing: "", maxHeal: true, sourceSection: page(100),
+    usageNote: "Soins complets. Test de Médecine et un tour complet pour l'administrer. Au-delà de trois usages : effets secondaires graves à arbitrer (p.100)." }),
+  "Uniforme du Corps": doc => Object.assign(doc.system, { armorBonus: 1, sourceSection: page(103),
+    usageNote: "Uniforme du Corps : +1 CA une fois coché comme équipé ; résiste au sang acide des démons (p.103)." }),
+  "Uniforme de tueur renforce": doc => Object.assign(doc.system, { usageNote: `${offBook} Doublon de l'Uniforme du Corps (+1 CA, p.103).` }),
+  "Tenue de police": doc => Object.assign(doc.system, { sourceSection: page(103),
+    usageNote: "+1 Intimidation lors des interrogatoires de suspects ; accès aux ressources et informations de la police (p.103)." }),
+  "Ford Modele T": doc => { doc.type = "vehicle"; Object.assign(doc.system, { price: 600, price1934: 20000, vehicleBonus: { dexterite: 1 }, sourceSection: page(102),
+    usageNote: "+1 aux tests de Dextérité pendant la conduite (p.102)." }); },
+  "Rations de mission": doc => Object.assign(doc.system, { usageNote: offBook }),
+  "Kit de sauvetage anti-0 PV": doc => Object.assign(doc.system, { usageNote: `${offBook} ${doc.system.usageNote || ""}`.trim() }),
+  "Sifflet Kasugai": doc => Object.assign(doc.system, { usageNote: `${offBook} Les ordres au corbeau (p.16) ne nécessitent aucun objet.` }),
+};
+for (const doc of inventory) {
+  const fix = inventoryFixes[doc.name];
+  if (!fix) continue;
+  fix(doc);
+  if (doc.system.usageNote?.startsWith("Hors livre")) doc.system.tags = [...new Set([...(doc.system.tags || []), "hors-livre"])];
+}
 for (const file of [new URL("../../packs/actors-slayers.db", import.meta.url), new URL("../../packs/actors-demonists.db", import.meta.url)]) {
   const docs = read(file); for (const doc of docs) for (const item of doc.items ?? []) if (item.type === "feature") correctFeature(item);
   fs.writeFileSync(file, docs.map(d => JSON.stringify(d)).join("\n") + "\n");

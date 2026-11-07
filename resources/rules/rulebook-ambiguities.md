@@ -32,5 +32,14 @@ Référence actuelle : [livre français](https://docs.google.com/presentation/d/
 | Lune Brûlante p.124 | Portées absentes ; Incinération/Crémation vides | Effets connus présents, champs manquants et attaques nommées à compléter. |
 | Onze lignées p.123–134 | Arbres principalement vides | Marqueurs distinctifs, entrées narratives. Six attaques de Lune Endeuillée nommées sans valeurs. |
 | Yosuke p.119 | Variante du passif Océan et attaques spécifiques | PNJ dédié avec profils fixes et variante du passif ; les valeurs des sept formes restent à compléter depuis la source. |
+| Chair « consommée récemment » p.70 | Aucune durée | Le rang le plus fort mangé reste actif jusqu'au prochain repos prolongé, qui remet aussi la démonisation à zéro (p.71). |
+| Guérison des démons p.111 | « Quantité importante selon leur rang », sans dés | Table « Guérison démoniaque par Rangs » (p.70) appliquée au rang du démon lui-même. |
+| Repos et PV p.22-24 | Le repos ne chiffre que l'Endurance et les RP | Repos complet : PV rendus jusqu'au plafond des blessures graves (p.98), selon « l'épéiste nécessite des périodes de repos » (p.24). |
+| Réactions de sous-classe p.57-74 | Aucun coût en RP imprimé | 1 RP par réaction (règle générale des réactions) ; Exploit 2 RP (permutation + attaque) ; Concentration démoniaque payée en BDP seulement. |
+| Portées des armes à feu p.23 / p.91 | Pistolet 45 m / fusil 90 m (p.23) contre 18 m / 36 m (p.91) | Valeurs détaillées de la fiche p.91. |
+| Poisons de glycine p.95 / p.96 | Affaiblissant : « un niveau à chaque stat » ou « -1 Force et Dextérité par tour » ; Nuisible : 1d10/tour ou -10 % PV/tour | Fiches détaillées p.96 (Force/Dextérité ; -10 % PV, sans effet sur les Lunes). |
+| Bourreau / Guillotine p.83-84 | « PV de base » d'un démon | PV maximum du démon (valeur imprimée des blocs de stats), lecture la moins létale. |
+| Jambe sectionnée (humain) p.30 | Effet chiffré seulement pour les démons | Déplacement /2 aussi pour un humain, conséquence directe et réversible. |
+| Inconscience à 0 E p.5 | « 2 rounds » sans Souffle de récupération | Repos forcé au 1er tour à 0 E ; inconscience au début du 3e tour encore à 0. |
 
 Les obstacles, couverture, eau/terre, portée visuelle et personnes réellement traversées doivent être confirmés par le MJ. Les valeurs inconnues ne sont jamais présentées comme officielles. Voir `audit-2026-10-05.md` pour les limites et les notes de migration.

@@ -43,7 +43,7 @@ export const TOMOSHIBI_ARTS = [
       costBdp: 3, demonisationGain: 0, damage: "1d6 + Finesse", range: 9, rangeText: "9 m", attackStat: "finesse", autoHit: false,
       specialLines: ["Applique Brûlure (1 dégât de feu par tour) si l'attaque touche."],
       automation: bdaAutomation({ afflictionCondition: "burn" }),
-      ruleSource: { checkedAt: "2026-10-29", missingFields: ["coût BDP", "dégâts"], approved: false, scenario: true },
+      ruleSource: { checkedAt: "2026-10-29", missingFields: ["coût BDP", "dégâts"], approved: true, scenario: true },
     }),
   },
   {
@@ -59,7 +59,7 @@ export const TOMOSHIBI_ARTS = [
       costBdp: 5, demonisationGain: 0, damage: "1d4", range: 9, rangeText: "9 m", attackStat: "finesse", autoHit: false,
       specialLines: ["Applique Charmé si l'attaque touche (voir conseil MJ)."],
       automation: bdaAutomation({ afflictionCondition: "charmed", afflictionDuration: 1 }),
-      ruleSource: { checkedAt: "2026-10-29", missingFields: ["coût BDP", "dégâts", "durée du charme"], approved: false, scenario: true },
+      ruleSource: { checkedAt: "2026-10-29", missingFields: ["coût BDP", "dégâts", "durée du charme"], approved: true, scenario: true },
     }),
   },
   {
@@ -75,7 +75,7 @@ export const TOMOSHIBI_ARTS = [
       costBdp: 6, demonisationGain: 0, damage: "1d4", range: 4.5, rangeText: "4,5 m", attackStat: "finesse", autoHit: false,
       specialLines: ["Applique Emprisonné si l'attaque touche.", "Libération : test de Force DD 13 ou un allié coupe le papier."],
       automation: bdaAutomation({ afflictionCondition: "imprisoned" }),
-      ruleSource: { checkedAt: "2026-10-29", missingFields: ["coût BDP", "dégâts", "condition de libération"], approved: false, scenario: true },
+      ruleSource: { checkedAt: "2026-10-29", missingFields: ["coût BDP", "dégâts", "condition de libération"], approved: true, scenario: true },
     }),
   },
   {

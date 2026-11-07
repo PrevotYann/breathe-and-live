@@ -31,8 +31,8 @@
           <summary>Toutes les actions</summary>
           <div class="bl-action-grid">
             <button type="button" class="bl-action-wait">Attendre</button>
-            <button type="button" class="bl-action-counter">Riposte <small>1 RP</small></button>
-            <button type="button" class="bl-action-counter-assured">Coup assuré <small>2 RP</small></button>
+            {{#if capabilities.counterAttack}}<button type="button" class="bl-action-counter">Riposte <small>1 RP</small></button>{{/if}}
+            {{#if capabilities.counterAttack}}<button type="button" class="bl-action-counter-assured">Coup assuré <small>2 RP</small></button>{{/if}}
           </div>
         </details>
       </section>

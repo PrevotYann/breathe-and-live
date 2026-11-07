@@ -337,6 +337,10 @@ export function attackStatFromModifier(rawModifier = "") {
   return "";
 }
 
+export function isHalfStatDemon(actor) {
+  return ["demon", "npcDemon"].includes(String(actor?.type || "")) && actor.system?.demonology?.halfDamageStatRule !== false;
+}
+
 function statTokenMap(actor, context = {}) {
   const baseMap = baseStatLabelMap();
   const derivedMap = derivedLabelMap();
@@ -349,6 +353,10 @@ function statTokenMap(actor, context = {}) {
   }
 
   tokens[normalizeText("Puissance")] = tokens[normalizeText("Force")] ?? 0;
+  // p.112 "Ajout de dégâts réduits de moitié": demons add half of Puissance/Finesse to attacks.
+  if (isHalfStatDemon(actor)) {
+    for (const key of ["force", "puissance", "finesse"]) tokens[key] = Math.floor(Math.max(0, tokens[key] ?? 0) / 2);
+  }
 
   for (const [key, label] of Object.entries(derivedMap)) {
     tokens[normalizeText(key)] = Number(FU.getProperty(actor, `system.stats.effectiveDerived.${key}`) ?? FU.getProperty(actor, `system.stats.derived.${key}`) ?? 0) || 0;
@@ -397,9 +405,12 @@ export function buildFormulaWithActorStats(expr, actor, context = {}) {
 export function actorHasBreath(actor, breathKey) {
   const key = normalizeBreathName(breathKey);
   if (!actor || !key) return true;
-  const actorToggle = !!FU.getProperty(actor, `system.breaths.${key}.enabled`);
+  // A breath is practised only through its owned breath item. GM-run human NPCs may be
+  // statted with forms only, as the book's NPC blocks list techniques without a style card.
   const actorItem = actor.items?.some((item) => item.type === "breath" && item.system?.key === key);
-  return actorToggle || !!actorItem;
+  if (actorItem) return true;
+  return actor.type === "npcHuman" && !!actor.items?.some((item) => item.type === "technique"
+    && (item.system?.breathKey || normalizeBreathName(item.system?.breath)) === key);
 }
 
 function isConcretePrerequisite(value) {
