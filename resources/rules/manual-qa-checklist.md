@@ -2,6 +2,13 @@
 
 Use this when automated testing is not practical inside the Foundry runtime.
 
+- Optimisation des fiches (novembre 2026)
+  - Mizuki Asagiri : un seul « Souffle de l’Eau » dans le résumé de Fiche ; « Gérer » ouvre Souffles ; récupération et techniques fonctionnent toujours.
+  - Activer deux souffles, puis choisir un préféré inactif : chaque style apparaît une fois et le préféré inactif est explicitement identifié.
+  - Vérifier les icônes d’armes, pistolets, soins, objets et capacités dans Fiche, Sac et les fiches Item. Une image personnalisée valide reste affichée ; un chemin indisponible utilise une icône de secours sans modifier le document.
+  - Les passifs restent accessibles dans « Passifs & postures » ; les postures nécessitant une action gardent leur bouton d’utilisation.
+  - Les badges de ressources apparaissent hors de Fiche et les anneaux restent modifiables dans Fiche ; vérifier à 1040 et 560 px.
+
 - Four-actor combat regression
   - See `combat-audit-2026-10-10.md` for fixtures, repairs and tested limits.
   - Run `npm test` and `npm run test:combat:v14` in the disposable QA world.

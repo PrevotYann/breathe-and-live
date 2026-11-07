@@ -224,6 +224,19 @@
 .breathe-and-live .bl .bl-souffle-body { display: grid; justify-items: center; gap: 6px; width: 100%; text-align: center; }
 .breathe-and-live .bl .bl-souffle-name { font: 24px/1.1 var(--bl-display); color: var(--bl-accent); }
 .breathe-and-live .bl .bl-souffle .tag-row { justify-content: center; }
+.breathe-and-live .bl .bl-souffle.bl-souffle--styles { display: grid; justify-items: stretch; min-height: 0; margin: 8px 0 12px; padding: 10px 14px; background: var(--bl-paper-hi); border-left: 3px solid var(--bl-accent); }
+.breathe-and-live .bl .bl-souffle-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.breathe-and-live .bl .bl-open-breaths { min-height: 28px; padding: 2px 8px; font-size: 11px; }
+.breathe-and-live .bl .bl-breath-summary { display: grid; gap: 6px; width: 100%; margin: 0; padding: 0; list-style: none; }
+.breathe-and-live .bl .bl-breath-summary li { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; text-align: left; }
+.breathe-and-live .bl .bl-breath-summary img { width: 34px; height: 34px; object-fit: contain; border: 0; border-radius: 50%; }
+.breathe-and-live .bl .bl-breath-summary .bl-souffle-name { flex: 1; min-width: min(140px, 100%); font-size: 22px; overflow-wrap: anywhere; }
+.breathe-and-live .bl .bl-breath-summary .is-inactive .bl-souffle-name { color: var(--bl-muted); }
+.breathe-and-live .bl .bl-souffle--styles .bl-souffle-body { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.breathe-and-live .bl .bl-souffle--styles .bl-breath-summary { flex: 1 1 200px; width: auto; }
+.breathe-and-live .bl .bl-souffle--styles .tag-row { flex-basis: 100%; order: 1; justify-content: flex-start; }
+/* Resource badges remain available while browsing other tabs. */
+.breathe-and-live .bl:has(.sheet-body > .tab[data-tab="fiche"].active .bl-resource-cluster) .sheet-badge-row { display: none; }
 .breathe-and-live .bl .bl-blood { gap: 8px; }
 .breathe-and-live .bl .bl-blood-row { display: grid; grid-template-columns: auto 54px auto 54px; align-items: center; gap: 4px 6px; padding: 2px 10px; font: 700 13px var(--bl-label); text-transform: uppercase; letter-spacing: .05em; background: linear-gradient(to right, var(--bl-wash) var(--pct, 0%), transparent var(--pct, 0%)); border-radius: 999px; }
 .breathe-and-live .bl .bl-blood-row--danger { --bl-wash: color-mix(in srgb, var(--bl-alert) 18%, transparent); }
@@ -250,6 +263,10 @@
 .breathe-and-live .bl .bl-tech-name em { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-right: 7px; border: 2px solid var(--bl-ink); border-radius: 50%; font: 700 11px var(--bl-label); font-style: normal; vertical-align: 1px; }
 .breathe-and-live .bl :is(.bl-tech-cost, .bl-tech-damage) { padding-left: 6px; border-left: 1.5px solid var(--bl-rule); text-align: center; font-variant-numeric: tabular-nums; }
 .breathe-and-live .bl .bl-tech-damage { font-weight: 600; }
+.breathe-and-live .bl .bl-passive-techniques { margin: 6px 0; }
+.breathe-and-live .bl .bl-passive-list { display: grid; gap: 6px; margin: 0; padding: 4px 0 6px; list-style: none; }
+.breathe-and-live .bl .bl-passive-list li { display: flex; align-items: baseline; gap: 8px; }
+.breathe-and-live .bl .bl-passive-list i { color: var(--bl-accent); }
 
 /* Actions & status */
 .breathe-and-live .bl :is(.bl-combat-panel, .bl-status-summary) { margin-top: 14px; }

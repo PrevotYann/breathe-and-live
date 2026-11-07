@@ -34,15 +34,25 @@
     </div>
   </div>
 
-  <div class="bl-souffle">
+  <div class="bl-souffle {{#if isSlayer}}bl-souffle--styles{{/if}}">
     {{#if isSlayer}}
-      <span class="bl-ring-label">Souffle</span>
+      <div class="bl-souffle-heading">
+        <span class="bl-box-caption">Souffles</span>
+        <button type="button" class="bl-open-breaths" data-open-tab="breaths" title="Gérer les souffles et leurs passifs">Gérer <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+      </div>
       <div class="bl-souffle-body">
-        <strong class="bl-souffle-name">{{#if favoredBreathLabel}}{{favoredBreathLabel}}{{else}}Aucun souffle choisi{{/if}}</strong>
-        <div class="tag-row">
-          {{#each activeBreathLabels as |label|}}<span class="tag">{{label}}</span>{{/each}}
+        <ul class="bl-breath-summary">
+          {{#each breathSummary as |breath|}}
+            <li class="{{#if breath.itemId}}item{{/if}} {{#unless breath.active}}is-inactive{{/unless}}" {{#if breath.itemId}}data-item-id="{{breath.itemId}}"{{/if}}>
+              <img src="{{breath.img}}" alt="" />
+              {{#if breath.itemId}}<a class="item-edit bl-souffle-name" title="Ouvrir {{breath.label}}">{{breath.label}}</a>{{else}}<strong class="bl-souffle-name">{{breath.label}}</strong>{{/if}}
+              {{#unless breath.active}}<small class="tag">Préféré · inactif</small>{{/unless}}
+            </li>
+          {{else}}<li class="bl-empty"><small>Aucun souffle actif. Choisissez un style dans l’onglet Souffles.</small></li>{{/each}}
+        </ul>
+        {{#if activeStateLabels.length}}<div class="tag-row">
           {{#each activeStateLabels as |label|}}<span class="tag tag--seal">{{label}}</span>{{/each}}
-        </div>
+        </div>{{/if}}
         <button type="button" class="bl-action-recovery bl-stamp"><i class="fas fa-wind" aria-hidden="true"></i> Souffle de récupération</button>
       </div>
     {{else}}

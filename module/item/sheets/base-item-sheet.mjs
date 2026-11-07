@@ -1,4 +1,5 @@
 import { activateSheetNavigation } from "../../sheets/sheet-navigation.mjs";
+import { activateSheetImages, resolveItemImage } from "../../sheets/sheet-presentation.mjs";
 import {
   POISON_APPLICATION_OPTIONS,
   POISON_PROFILE_OPTIONS,
@@ -40,6 +41,7 @@ export class BLBaseItemSheet extends foundry.appv1.sheets.ItemSheet {
     const data = await super.getData(options);
     const sys = this.item.system ?? {};
     data.system = sys;
+    data.resolvedImg = resolveItemImage(this.item);
     data.join = (arr, sep = ", ") => (Array.isArray(arr) ? arr.join(sep) : "");
     data.isPoison = this.item.type === "poison";
     data.isMedical = ["medical", "consumable"].includes(this.item.type);
@@ -61,6 +63,7 @@ export class BLBaseItemSheet extends foundry.appv1.sheets.ItemSheet {
   activateListeners(html) {
     super.activateListeners(html);
     activateSheetNavigation(this, html);
+    activateSheetImages(this, html);
 
     // Synchronise tagsText <-> system.tags
     html.on("change", '[name="system.tagsText"]', (ev) => {

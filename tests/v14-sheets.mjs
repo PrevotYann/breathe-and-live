@@ -42,11 +42,16 @@ try {
     }, { kind, type });
     const sheet = page.locator(`[id="${id}"]`);
     await page.waitForFunction(id => getComputedStyle(document.getElementById(id)).opacity === "1", id);
+    await page.waitForFunction(id => [...document.getElementById(id).querySelectorAll("img")]
+      .every(img => img.complete && img.naturalWidth > 0), id);
     if (kind === "Actor") {
       const palette = { slayer: "#176b63", demonist: "#70419a", demon: "#a32e46",
         npcDemon: "#a32e46", companion: "#895812", npc: "#365e8d", npcHuman: "#365e8d" };
       assert.equal(await sheet.evaluate(el => getComputedStyle(el).getPropertyValue("--bl-accent").trim()),
         palette[type], `${type}: actor palette reaches the window`);
+      if (await sheet.locator(".actor-npc").count()) {
+        assert.equal(await sheet.locator(".sheet-badge-row").isVisible(), true, "NPC resources remain available");
+      }
     }
     const tabs = await sheet.locator(".sheet-tabs [data-tab]").evaluateAll(els => els.map(el => el.dataset.tab));
     assert.ok(tabs.length >= 2, `${type}: missing navigation`);
@@ -125,6 +130,44 @@ try {
     await page.evaluate(async () => { await qaSheetDoc.sheet.close(); await qaSheetDoc.delete(); });
     console.log(`PASS: ${kind}.${type} navigation, narrow layout, contrast and form persistence`);
   }
+  // Reproduce the reported duplicate breath and missing pistol icon on the actual pregen.
+  await page.setViewportSize({ width: 1500, height: 1500 });
+  const mizukiData = JSON.parse(fs.readFileSync(new URL("../packs/oneshot-lanternes-hotaru.db", import.meta.url), "utf8").trim())
+    .actors.find(actor => actor.name === "Mizuki Asagiri");
+  const mizukiId = await page.evaluate(async pregen => {
+    const actor = await Actor.create({ ...pregen, name: "QA sheet polish — Mizuki" });
+    globalThis.qaSheetDoc = actor;
+    await actor.sheet._render(true);
+    actor.sheet.setPosition({ left: 60, top: 30, width: 1040, height: 1400 });
+    return actor.sheet.id;
+  }, mizukiData);
+  const mizuki = page.locator(`[id="${mizukiId}"]`);
+  await page.waitForFunction(id => getComputedStyle(document.getElementById(id)).opacity === "1", mizukiId);
+  await page.waitForFunction(id => [...document.getElementById(id).querySelectorAll("img")]
+    .every(img => img.complete && img.naturalWidth > 0), mizukiId);
+  assert.equal(await mizuki.locator(".bl-breath-summary li").count(), 1, "one row for Water");
+  assert.equal(await mizuki.locator(".bl-breath-summary .bl-souffle-name").textContent(), "Souffle de l'Eau");
+  assert.equal(await mizuki.locator(".sheet-badge-row").isVisible(), false, "rings suffice on Fiche");
+  const pistol = mizuki.locator('.bl-weapon-box.item').filter({ hasText: "Pistolet" });
+  assert.match(await pistol.locator("img").getAttribute("src"), /firearm\.svg$/);
+  await mizuki.screenshot({ path: `${output}/mizuki-polished-1040.png` });
+  await mizuki.locator('[data-open-tab="breaths"]').click();
+  assert.equal(await mizuki.locator('.sheet-tabs [aria-selected="true"]').getAttribute("data-tab"), "breaths");
+  assert.equal(await mizuki.locator(".sheet-badge-row").isVisible(), true, "badges remain available on other tabs");
+  // An unavailable user image must recover without overwriting the saved path.
+  const customPath = "worlds/bl-v14-qa/unavailable-custom-pistol.webp";
+  await page.evaluate(async path => {
+    const gun = qaSheetDoc.items.find(item => item.type === "firearm");
+    globalThis.qaGunId = gun.id;
+    await gun.update({ img: path });
+  }, customPath);
+  await page.waitForFunction(() => {
+    const img = qaSheetDoc.sheet.element[0].querySelector(`[data-item-id="${qaGunId}"] img`);
+    return img?.getAttribute("src").endsWith("/firearm.svg") && img.complete && img.naturalWidth > 0;
+  });
+  assert.equal(await page.evaluate(() => qaSheetDoc.items.get(qaGunId).img), customPath);
+  await page.evaluate(async () => { await qaSheetDoc.sheet.close(); await qaSheetDoc.delete(); });
+  console.log("PASS: Mizuki breath deduplication, tab shortcut, contextual badges and missing/custom image recovery");
   assert.deepEqual(errors, []);
   fs.writeFileSync(`${output}/verified-layout.json`, JSON.stringify(report, null, 2));
   console.log(`PASS: ${types.length} sheet types, ${report.length} tab/width checks; screenshots in ${output}`);

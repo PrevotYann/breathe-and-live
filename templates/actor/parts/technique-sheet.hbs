@@ -3,7 +3,7 @@
   <div class="bl-frame bl-ruled">
     <div class="bl-ruled-head" aria-hidden="true"><span></span><span>Coût</span><span>Dégâts</span><span></span></div>
     <ol class="bl-ruled-list">
-      {{#each itemsTech as |it|}}
+      {{#each itemsTechUsable as |it|}}
         <li class="item technique-row" data-item-id="{{it.id}}">
           <a class="item-edit bl-tech-name" title="{{it.system.breathDisplay}}">{{#if it.system.form}}<em>{{it.system.form}}</em>{{/if}}{{it.name}}{{#if it.blMissingBreath}} <small>(souffle manquant)</small>{{/if}}</a>
           <span class="bl-tech-cost">{{it.blCost}}</span>
@@ -11,10 +11,18 @@
           <span class="controls">{{#if it.blUsable}}<a class="item-control item-chat" title="Utiliser {{it.name}}"><i class="fas fa-burst"></i></a>{{/if}}</span>
         </li>
       {{else}}
-        <li class="bl-ruled-empty"><small>Glissez des techniques depuis les compendiums.</small></li>
-        <li class="bl-ruled-empty"></li>
-        <li class="bl-ruled-empty"></li>
+        <li class="bl-ruled-empty"><small>Aucune technique active. Glissez des techniques depuis les compendiums.</small></li>
       {{/each}}
     </ol>
   </div>
+  {{#if itemsTechPassive.length}}
+    <details class="bl-passive-techniques">
+      <summary>Passifs &amp; postures <small>({{itemsTechPassive.length}})</small></summary>
+      <ul class="bl-passive-list">
+        {{#each itemsTechPassive as |it|}}
+          <li class="item" data-item-id="{{it.id}}"><i class="fas fa-bookmark" aria-hidden="true"></i><a class="item-edit" title="Ouvrir {{it.name}}">{{it.name}}</a></li>
+        {{/each}}
+      </ul>
+    </details>
+  {{/if}}
 </section>

@@ -50,3 +50,20 @@ La fiche imprimée du livre (p. 136-137) sert de modèle visuel et d'organisatio
 - Les trois questions de l'entraîneur sont des boutons radio sur `system.creation.trainerPoints.axis1-3` (0, 1 ou 2 pts) ; les questions partenaire et Kasugai gardent des valeurs numériques, le livre ne fixant pas de correspondance avec ces axes.
 
 Validation : `npm test` (95), `npm run lint`, `npm run test:sheets` (32 types, 258 combinaisons onglet/largeur, contrastes, persistance) et `npm run test:v14` sur Foundry 14.368.
+
+## Optimisation des fiches — novembre 2026
+
+Plan : auditer les partiels et les images, centraliser la présentation, supprimer les répétitions du résumé de combat, puis vérifier les fiches dans le monde isolé `bl-v14-qa` (Foundry 14.368). Les schémas Actor/Item et les calculs du livre restent inchangés.
+
+| Domaine | Interface et module |
+| --- | --- |
+| Souffles et maîtrises | `resources.hbs` : une ligne par style actif, préféré inactif explicitement identifié, accès direct à l’onglet Souffles ; données de vue dans `sheet-presentation.mjs` |
+| Ressources de combat | Anneaux dans Fiche ; badges du bandeau disponibles dans les autres onglets |
+| Techniques et postures | `technique-sheet.hbs` : actions exécutables dans la liste principale, capacités passives dans une section repliable ; aucune modification des activations des objets |
+| Équipement, soins, démons | Icônes par catégorie et par souffle, communes aux listes Actor et aux fiches Item ; remplacement des portraits indisponibles |
+
+Les 18 illustrations de souffle existantes sont réutilisées. Les 16 pictogrammes SVG originaux sont reproductibles avec `node resources/scripts/generate-item-icons.mjs`. Les 55 anciennes références d’images absentes du catalogue Foundry 14.368 sont reconnues dans `module/config/unavailable-core-icons.mjs` ; les autres images indisponibles sont remplacées à l’affichage après erreur de chargement, sans écraser les chemins enregistrés ou les illustrations personnalisées.
+
+Aucune migration ou réimportation des personnages n’est nécessaire. Installer le système reconstruit puis recharger le client Foundry et rouvrir les fiches.
+
+Validation : 108 tests automatisés, lint et build réussis ; Foundry 14.368 : 32 types de fiches et 258 combinaisons onglet/largeur, plus reproduction avec Mizuki (souffle unique, raccourci, pistolet et image personnalisée indisponible). Les badges des PNJ restent visibles. Capture : `tmp/sheet-previews/mizuki-polished-1040.png`.

@@ -34,6 +34,13 @@ export function activateSheetNavigation(sheet, html) {
     const tab = event.target.closest("[data-tab]");
     if (tab) activate(tab);
   });
+  root.querySelectorAll("[data-open-tab]").forEach(control => {
+    control.addEventListener("click", event => {
+      event.preventDefault();
+      const tab = tabs.find(tab => tab.dataset.tab === control.dataset.openTab);
+      if (tab) { activate(tab); tab.focus(); }
+    });
+  });
   nav.addEventListener("keydown", event => {
     const index = tabs.indexOf(event.target.closest("[data-tab]"));
     if (index < 0) return;

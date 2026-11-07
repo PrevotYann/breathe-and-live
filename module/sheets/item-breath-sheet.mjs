@@ -1,5 +1,6 @@
 import { BREATH_KEYS, BREATH_SPECIAL_ALIASES, SYSTEM_ID } from "../config/rule-data.mjs";
 import { activateSheetNavigation } from "./sheet-navigation.mjs";
+import { activateSheetImages, resolveItemImage } from "./sheet-presentation.mjs";
 
 function getBreathDefinition(key) {
   return BREATH_KEYS.find((entry) => entry.key === key) || null;
@@ -83,7 +84,7 @@ export class BLBreathSheet extends foundry.appv1.sheets.ItemSheet {
       value: entry.key,
       label: entry.optionLabel || entry.label,
     }));
-    data.resolvedImg = resolveBreathImage(key, this.item.img);
+    data.resolvedImg = resolveItemImage(this.item);
     data.supplement1934Global = !!game.settings.get(SYSTEM_ID, "enableSupplement1934");
     data.isSupplement1934Content = inferSupplement1934Content(this.item, sys);
 
@@ -93,6 +94,7 @@ export class BLBreathSheet extends foundry.appv1.sheets.ItemSheet {
   activateListeners(html) {
     super.activateListeners(html);
     activateSheetNavigation(this, html);
+    activateSheetImages(this, html);
   }
 
   async _updateObject(event, formData) {

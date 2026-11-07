@@ -1,4 +1,5 @@
 import { activateSheetNavigation } from "./sheet-navigation.mjs";
+import { activateSheetImages, buildBreathSummary, resolveActorImage, resolveItemImage } from "./sheet-presentation.mjs";
 import {
   ADVANCED_STATES,
   BREATH_KEYS,
@@ -482,6 +483,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
 
   async getData(options) {
     const data = await super.getData(options);
+    data.actorImg = resolveActorImage(this.actor);
     const rawSys =
       (this.actor.system && Object.keys(this.actor.system).length
         ? this.actor.system
@@ -668,7 +670,9 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
     data.supplement1934Active =
       data.supplement1934Global || !!data.system.supplement1934?.enabled;
 
-    const allItems = Array.from(this.actor.items ?? []);
+    const allItems = Array.from(this.actor.items ?? []).map(item => ({
+      id: item.id, name: item.name, type: item.type, img: resolveItemImage(item), system: item.system,
+    }));
     const activeBreaths = getActiveBreaths(this.actor);
     data.itemsTech = allItems
       .filter((i) => ["technique", "subclassTechnique", "bda", "demonAbility"].includes(i.type))
@@ -1017,6 +1021,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
       ? getBreathLabel(sys.profile.favoredBreath, sys.profile.favoredBreath)
       : "";
     data.activeBreathLabels = (data.breathEntries || []).filter((entry) => entry.enabled).map((entry) => entry.label);
+    data.breathSummary = buildBreathSummary(sys.profile?.favoredBreath, data.breathEntries, data.ownedBreathItems);
     data.activeStateLabels = (data.advancedStateEntries || []).filter((entry) => entry.active).map((entry) => entry.label);
     data.classLabel = {
       slayer: "Pourfendeur de démons", demonist: "Démoniste", demon: "Démon",
@@ -2168,6 +2173,7 @@ export class BLSlayerSheet extends foundry.appv1.sheets.ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
     activateSheetNavigation(this, html);
+    activateSheetImages(this, html);
     const canEdit = game.user?.isGM || this.actor.isOwner;
     const canRoll =
       canEdit || this.actor.testUserPermission?.(game.user, "OBSERVER") || false;
