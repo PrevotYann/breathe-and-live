@@ -583,8 +583,14 @@ function currentCombatRound() {
   return Number(game.combat?.round ?? 0) || 0;
 }
 
+// Charges and cooldowns count rounds of a single fight: state left by an earlier combat is ignored.
+function belongsToCurrentCombat(state) {
+  return !state?.combatId || state.combatId === (game.combat?.id ?? "");
+}
+
 export async function getTechniqueChargeState(actor) {
-  return actor?.getFlag(SYSTEM_ID, "techniqueCharge") || null;
+  const state = actor?.getFlag(SYSTEM_ID, "techniqueCharge") || null;
+  return state && belongsToCurrentCombat(state) ? state : null;
 }
 
 export async function clearTechniqueCharge(actor) {
@@ -598,6 +604,7 @@ export async function startTechniqueCharge(actor, item, turns = 1) {
     itemId: item.id,
     itemName: item.name,
     readyRound: currentCombatRound() + Math.max(1, toNumber(turns, 1)),
+    combatId: game.combat.id ?? "",
   };
   await actor.setFlag(SYSTEM_ID, "techniqueCharge", state);
   return state;
@@ -609,13 +616,20 @@ export function isTechniqueChargeReady(state) {
 }
 
 export function getTechniqueCooldowns(actor) {
-  return actor?.getFlag(SYSTEM_ID, "techniqueCooldowns") || {};
+  const stored = actor?.getFlag(SYSTEM_ID, "techniqueCooldowns") || {};
+  if (!belongsToCurrentCombat(stored)) return {};
+  const { combatId: _combatId, ...cooldowns } = stored;
+  return cooldowns;
 }
 
 export async function setTechniqueCooldown(actor, item, turns = 0) {
   if (!actor || !item || !game.combat || turns <= 0) return;
+  const stored = actor.getFlag(SYSTEM_ID, "techniqueCooldowns");
+  // setFlag merges objects: drop another fight's entries before writing this one's.
+  if (stored && !belongsToCurrentCombat(stored)) await actor.unsetFlag(SYSTEM_ID, "techniqueCooldowns");
   const cooldowns = FU.duplicate(getTechniqueCooldowns(actor));
   cooldowns[item.id] = currentCombatRound() + Math.max(1, toNumber(turns, 1)) + 1;
+  cooldowns.combatId = game.combat.id ?? "";
   await actor.setFlag(SYSTEM_ID, "techniqueCooldowns", cooldowns);
 }
 
@@ -637,7 +651,8 @@ export async function noteActorDamageTaken(actor, amount, context = {}) {
   }
   flag.current = Number(flag.current || 0) + Math.max(0, amount);
   await actor.setFlag(SYSTEM_ID, "damageTakenByRound", flag);
-  await clearTechniqueCharge(actor);
+  // "Être attaqué interrompt la charge": damage over time is not an attack.
+  if (!context.periodic) await clearTechniqueCharge(actor);
 
   const currentHpForDeath = toNumber(actor.system?.resources?.hp?.value, 0);
   const deathState = String(actor.system?.death?.state || "alive");

@@ -2,7 +2,7 @@ import { LIMB_DEFINITIONS, SYSTEM_ID } from "./config/rule-data.mjs";
 import { normalizeDerivedStats } from "./rules/actor-derived-formulas.mjs";
 
 const FU = foundry.utils;
-const MIGRATION_VERSION = "0.8.0";
+const MIGRATION_VERSION = "0.9.0";
 
 function ensureActorUpdate(actor) {
   const update = {};
@@ -162,6 +162,18 @@ export async function runSystemMigrations() {
   if (orphanBreaths.length) {
     await ChatMessage.create({ whisper: ChatMessage.getWhisperRecipients?.("GM") ?? [], content:
       `<p><strong>Breathe and Live 0.8.0</strong> : un souffle n'est désormais actif que si son objet Souffle est sur la fiche, et sa compétence spéciale exige toutes les formes.</p><p>Souffles cochés sans objet (à glisser depuis « Souffles - Styles ») : ${orphanBreaths.join(" ; ")}.</p>` });
+  }
+
+  // 0.9.0: charges and cooldowns are scoped to one combat. Older flags carry no combat id and
+  // could block a technique in every later fight; drop them for actors not in a running combat.
+  const fighting = new Set((game.combats?.contents ?? []).filter(combat => combat.started)
+    .flatMap(combat => Array.from(combat.combatants ?? [], combatant => combatant.actor?.id)));
+  for (const actor of game.actors?.contents ?? []) {
+    if (fighting.has(actor.id)) continue;
+    for (const key of ["techniqueCharge", "techniqueCooldowns"]) {
+      const flag = actor.getFlag?.(SYSTEM_ID, key);
+      if (flag && !flag.combatId) await actor.unsetFlag(SYSTEM_ID, key);
+    }
   }
 
   await game.settings.set(SYSTEM_ID, "schemaVersion", MIGRATION_VERSION);

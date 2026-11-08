@@ -7,6 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { documentDefaults, withDefaults } from "../../module/data/system-models.mjs";
+import { DEMON_BODY_OPTIONS } from "../../module/config/rule-data.mjs";
 import { ASSETS, SLUG, docId } from "../oneshot/lanternes-hotaru/ids.mjs";
 import { DEMONS, NPC_HUMANS, PREGENS } from "../oneshot/lanternes-hotaru/actors.mjs";
 import { KAKUSHI_DELIVERY, PLOT_ITEMS, SOURCE_SECTION, TOMOSHIBI_ARTS } from "../oneshot/lanternes-hotaru/items.mjs";
@@ -193,14 +194,16 @@ function buildNpc(def, folder) {
 function buildDemon(def, folder) {
   const system = documentDefaults("Actor", "npcDemon");
   const { force, courage, vitesse, intellect } = def.stats;
-  const hp = 20 + 5 * force, rp = Math.floor((5 + vitesse + intellect) / 2), bdp = 10 * courage;
+  // Demon body (p.108): humanoid 20 / bestial 40 / monstrous 60 base HP, then HP = base + 5 x Force.
+  const body = DEMON_BODY_OPTIONS.find(option => option.key === (def.body ?? "humanoid"));
+  const hp = body.baseHp + 5 * force, rp = Math.floor((5 + vitesse + intellect) / 2), bdp = 10 * courage;
   system.class = { type: "Demon", rank: def.rank, level: 1, subclass: "", era: "taisho" };
   system.stats.base = { ...def.stats };
   Object.assign(system.resources, {
-    hp: { value: hp, max: hp, healableMax: hp, base: 20, temporary: 0 },
+    hp: { value: hp, max: hp, healableMax: hp, base: body.baseHp, temporary: 0 },
     rp: { value: rp, max: rp }, ca: 10 + vitesse, bdp: { value: bdp, max: bdp },
   });
-  Object.assign(system.demonology, { bodyType: "humanoid", baseHpChoice: 20, dangerLevel: def.danger, basicDamage: def.basicDamage, rankPackage: def.rank });
+  Object.assign(system.demonology, { bodyType: body.key, baseHpChoice: body.baseHp, dangerLevel: def.danger, basicDamage: def.basicDamage, rankPackage: def.rank });
   system.npc = { ...def.npc };
   system.progression.notes = def.notes;
   const owner = `demon:${def.key}`;

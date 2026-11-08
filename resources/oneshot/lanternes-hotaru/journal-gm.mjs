@@ -278,7 +278,8 @@ ${readAloud(`<p>La nuit tombe. Des tambours résonnent. Les villageois, malgré 
 <ul>
 <li>Placez les deux jetons de ${npc.rodeur} sur la berge sud (ils sont déjà sur la carte, cachés : rendez-les visibles).</li>
 <li>Ce combat sert à <strong>apprendre les règles</strong>. Expliquez à chaque joueur ses options à son premier tour : déplacement, attaque normale, forme de Souffle (touche automatiquement), PR pour esquiver.</li>
-<li>Les Rôdeurs ont 4 PR chacun : ils esquivent les premières formes de Souffle. Expliquez-le aux joueurs : « Il esquive, mais il n'en a plus beaucoup ! »</li>
+<li>Les Rôdeurs ont 5 PR chacun : ils esquivent les premières formes de Souffle. Expliquez-le aux joueurs : « Il esquive, mais il n'en a plus beaucoup ! »</li>
+<li>Avec CA 14, les attaques normales les ratent souvent : c'est le moment d'expliquer que les formes de Souffle touchent automatiquement.</li>
 <li>Ils attaquent les villageois paniqués s'il n'y a pas de PJ à côté : donnez aux joueurs l'occasion de protéger quelqu'un.</li>
 <li>Tactique simple : voir ${gm("tactiques", "Tactiques des démons")}.</li>
 </ul>
@@ -318,11 +319,12 @@ ${readAloud(`<p>Au sommet de la colline, au milieu d'une clairière, se dressent
 <li><strong>Le four</strong> : la cachette de Tomoshibi. <strong>La trappe</strong> près du four mène à une cave vide (cul-de-sac).</li>
 </ul>
 <h2>Le combat</h2>
-<p>${npc.tomoshibi} a 50 PV, CA 15, <strong>6 PR</strong> et <strong>2 actions par tour</strong>. Il utilise ses arts de sang depuis sa fiche. Tactique détaillée : ${gm("tactiques", "Tactiques des démons")}.</p>
+<p>${npc.tomoshibi} a 90 PV, CA 16, <strong>8 PR</strong> et <strong>2 actions par tour</strong>. Sous le kimono, son corps n'est qu'un amas de papier huilé et de flammes bleues (corps « monstrueux » du livre). Il utilise ses arts de sang depuis sa fiche. Tactique détaillée : ${gm("tactiques", "Tactiques des démons")}.</p>
 <p>Le combat est plus dur que celui du pont. Rappelez aux joueurs :</p>
 <ul>
 <li>de dépenser leurs PR pour esquiver les arts de sang les plus dangereux ;</li>
 <li>que ses PR sont limités : en enchaînant les formes de Souffle, ils finiront par le toucher ;</li>
+<li>que la Brûlure du Feu follet n'interrompt pas une forme en charge : seule une attaque le fait ;</li>
 <li>que libérer les captifs compte autant que frapper.</li>
 </ul>
 <h2>Le nom de Kansuke</h2>
@@ -385,7 +387,7 @@ ${readAloud(`<p>La tête roule sur le plancher brûlé. Le masque de papier se d
     name: "9. Tactiques des démons",
     content: `
 <h2>${npc.rodeur} (Acte 2) — démons faibles</h2>
-<p><strong>35 PV, CA 11, 4 PR, 1 action par tour.</strong> Morsure 1d4+2, Griffure 3. Deux jetons, un seul acteur.</p>
+<p><strong>40 PV, CA 14, 5 PR, 30 BDP, 1 action par tour.</strong> Morsure 1d4+2, Griffure 3. Deux jetons, un seul acteur (jetons non liés : chacun a ses propres PV).</p>
 <ol>
 <li>Ils attaquent la cible la plus proche (un PJ ou un villageois).</li>
 <li>Ils dépensent un PR pour esquiver chaque forme de Souffle tant qu'ils en ont.</li>
@@ -393,9 +395,9 @@ ${readAloud(`<p>La tête roule sur le plancher brûlé. Le masque de papier se d
 <li>Si l'un des deux est décapité, l'autre tente de fuir vers la forêt.</li>
 </ol>
 <h2>${npc.tomoshibi} (Acte 3) — démon de rang élevé</h2>
-<p><strong>50 PV, CA 15, 6 PR, 50 BDP, 2 actions par tour.</strong> Morsure 1d4+3, Griffure 4, et ses arts de sang (sur sa fiche) :</p>
+<p><strong>90 PV, CA 16, 8 PR, 30 BDP, 2 actions par tour.</strong> Morsure 1d4+3, Griffure 4, et ses arts de sang (sur sa fiche) :</p>
 <ul>
-<li><strong>Feu follet bleu</strong> (3 BDP) : attaque à 9 m, 1d6 + Finesse, Brûlure.</li>
+<li><strong>Feu follet bleu</strong> (4 BDP) : jusqu'à 3 cibles à 9 m (ciblez les pourfendeurs, jamais les captifs), un jet de toucher par cible, 1d6 + Finesse, Brûlure pendant 3 tours.</li>
 <li><strong>Lueur d'oubli</strong> (5 BDP) : attaque à 9 m, 1d4, Charmé.</li>
 <li><strong>Lanterne-prison</strong> (6 BDP) : attaque à 4,5 m, 1d4, Emprisonné.</li>
 <li><strong>Guérison démoniaque</strong> (2 BDP) : il se soigne de 2d10 PV.</li>
@@ -404,7 +406,7 @@ ${readAloud(`<p>La tête roule sur le plancher brûlé. Le masque de papier se d
 <table>
 <tr><th>Round</th><th>Action 1</th><th>Action 2</th></tr>
 <tr><td>1</td><td>Dépose Mii dans une lanterne (elle est Emprisonnée).</td><td>Lueur d'oubli sur le personnage qui semble le plus fort.</td></tr>
-<tr><td>2</td><td>Feu follet bleu sur un personnage à distance.</td><td>Lanterne-prison sur quiconque s'approche d'un cocon.</td></tr>
+<tr><td>2</td><td>Feu follet bleu sur trois personnages, en commençant par celui qui est à distance.</td><td>Lanterne-prison sur quiconque s'approche d'un cocon.</td></tr>
 <tr><td>3 et après</td><td>Griffure ou Feu follet sur le personnage le plus blessé.</td><td>Sous 25 PV : Guérison démoniaque. Sinon, Lanterne-prison.</td></tr>
 </table>
 <h3>Ses réactions</h3>
@@ -412,6 +414,7 @@ ${readAloud(`<p>La tête roule sur le plancher brûlé. Le masque de papier se d
 <li>Il esquive (1 PR) les formes de Souffle qui font le plus mal (Coup de tonnerre et éclair, Univers flamboyant, Tigre de flamme...).</li>
 <li>Il ne dépense pas de PR contre les attaques normales : il compte sur sa CA.</li>
 <li>Quand il n'a plus de PR, décrivez qu'il commence à paniquer.</li>
+<li>Avec 30 BDP, il ne peut pas tout faire : quand ses BDP sont épuisés, il ne lui reste que ses griffes et la fuite vers le four.</li>
 </ul>
 <h3>Ce qu'il dit</h3>
 <ul>
@@ -419,7 +422,7 @@ ${readAloud(`<p>La tête roule sur le plancher brûlé. Le masque de papier se d
 <li>« Vous voulez une lanterne, vous aussi ? Je peux en faire une très belle. »</li>
 <li>(Blessé) « Pourquoi ? Pourquoi personne ne veut rester avec moi ? »</li>
 </ul>
-${box("Régler la difficulté", `<p><strong>Table de 3 joueurs, ou joueurs en difficulté :</strong> retirez-lui 2 PR (4 au lieu de 6) et 10 PV au départ. <strong>Table expérimentée :</strong> laissez-le utiliser Guérison démoniaque deux fois. Ces réglages sont des choix de MJ, pas des règles du livre.</p>`)}`,
+${box("Régler la difficulté", `<p>Ces valeurs ont été testées par simulation (combats complets joués par le moteur du système, 100 parties par configuration). Avec les cinq prétirés, le pont dure 2 à 3 rounds et l'atelier environ 4 rounds ; les joueurs l'emportent dans tous les cas testés.</p><p><strong>Table de 4 joueurs :</strong> aucun réglage (l'atelier dure 4 à 5 rounds). <strong>Table de 3 joueurs, ou joueurs en difficulté :</strong> donnez-lui un corps « animal » (70 PV au lieu de 90) et retirez-lui 2 PR (6 au lieu de 8) : l'atelier passe d'environ 7 à 5-6 rounds. <strong>Table expérimentée (5 joueurs) :</strong> le Rôdeur qui a fui le pont revient au round 2 (PV et PR pleins) : l'atelier dure alors 5 à 6 rounds et les personnages encaissent nettement plus de coups. Soigner Tomoshibi plus souvent ne change presque rien (2d10 PV face aux formes de Souffle) : préférez ce renfort. Ces réglages sont des choix de MJ, pas des règles du livre.</p>`)}`,
   },
   {
     key: "secours",

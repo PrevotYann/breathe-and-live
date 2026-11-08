@@ -1,5 +1,21 @@
 # Versions
 
+## 0.9.0 — 8 novembre 2026 — rencontres du one-shot testées et équilibrées
+
+- **Simulateur de rencontres** (`tests/oneshot-simulator.mjs`, `npm run sim:oneshot`) : le pont et l'atelier des « Lanternes de Hotaru » sont joués de bout en bout par le moteur du système (attaques, formes de Souffle, cartes de réaction, esquives, états, tours de combat), avec des dés tirés et les tactiques du Guide du MJ. Nouveau test `tests/oneshot-encounters.test.mjs`.
+- **Constat avant correction** : 100 % de victoires, chaque combat terminé en 2 rounds, moins de 1 PV perdu par les joueurs contre Tomoshibi ; le boss mourait avant d'avoir joué son plan.
+- **Rôdeurs des lanternes** : caractéristiques redistribuées (Social 7 inutile → Vitesse et Force) : 40 PV, CA 14 (repère « démon faible » du livre), 5 PR, 30 BDP. Toujours tableau (0,1,2,3,3,5) + set de rang faible.
+- **Tomoshibi** : corps « Monstrueux » (2 points de construction démoniaque, 60 PV de base) + danger anormal (1 point), caractéristiques alignées sur le repère « démon de rang élevé » : 90 PV, CA 16, 8 PR, 30 BDP, 2 actions. **Feu follet bleu** (valeurs propres au scénario) touche jusqu'à 3 cibles désignées à 9 m, un jet de toucher et une esquive par cible, 4 BDP ; sa Brûlure dure 3 tours (comme le lance-flammes du livre) au lieu d'être permanente.
+- **Résultat** (100 parties par configuration) : avec 5 joueurs, pont en 2-3 rounds et atelier en ~4 rounds, victoire dans tous les cas ; 4 joueurs ~4,6 rounds ; 3 joueurs ~7 rounds, ~5,5 avec le réglage conseillé. Le Guide du MJ (Actes 2-3, Tactiques, « Régler la difficulté ») donne les nouvelles valeurs et des réglages testés.
+- **Correctif — charges entre deux combats** : une forme en charge (Coup de tonnerre et éclair, Pluie miséricordieuse...) ou en recharge restait mémorisée après la fin du combat et bloquait toutes les formes au combat suivant. Les charges et recharges sont désormais liées au combat et effacées à sa fin (ainsi que le repos forcé à 0 E).
+- **Correctif — Brûlure et charge** : chaque dégât de Brûlure, Saignement ou Poison annulait la charge en cours ; un pourfendeur qui brûlait ne pouvait plus jamais lancer une forme à charge. Le livre dit « Être attaqué interrompt la charge » : seuls les dégâts d'une attaque l'interrompent.
+- **Décapitation** : une attaque de base à la lame Nichirin visant la tête d'un démon, dont les dégâts atteignent ses PV restants, annonce la décapitation sur la carte (tête sectionnée, état Mort) au lieu de « à confirmer par le MJ ».
+- Le script du one-shot gère le choix de corps démoniaque (20 / 40 / 60 PV de base) ; le test vérifie la décomposition tableau + set de rang et les 3 points de construction.
+- Migration 0.9.0 : les charges et recharges enregistrées par les versions précédentes sont effacées (sauf pour un acteur dans un combat en cours).
+- Mondes ayant déjà importé l'aventure : leurs démons gardent les anciennes valeurs ; réimporter l'aventure (ou recopier les fiches de Tomoshibi et du Rôdeur) pour profiter de l'équilibrage.
+
+Validation : 125 tests automatisés (dont 7 de rencontres), lint, vérification du livre et validation des 14 compendiums réussis.
+
 ## 0.8.0 — 7 novembre 2026 — audit complet des règles
 
 - **Souffles** : un souffle n'est pratiqué que si son objet « Souffle » est sur la fiche. Sa compétence spéciale (Brume « Nuages traînants », Eau « Dévier les vagues », Lune « Bonus solitaire », etc.) ne s'active qu'après avoir appris **toutes les formes** du style (livre, « Comment lire les fiches de souffle »). Les cases libres « Activer le souffle / ses passifs » sont supprimées ; la fiche affiche « Formes connues X / N » et les compétences verrouillées. Le MJ peut accorder la maîtrise à un PNJ (case « Maîtrise complète accordée par le MJ » sur l'objet Souffle).

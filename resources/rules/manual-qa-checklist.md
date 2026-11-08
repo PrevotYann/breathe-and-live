@@ -277,3 +277,12 @@ Use this when automated testing is not practical inside the Foundry runtime.
 - Shiori : « Régénération continue des membres » affiche un bouton d'usage ; activée, la repousse se déclenche après la durée choisie et se renouvelle.
 - Tomoshibi (Finesse paire) : « Feu follet bleu » affiche 1d6 + moitié de la Finesse dans la carte.
 - Assistant de création Pourfendeur (souffle préféré Pierre) : masse et chaîne, pistolet choisi, 2 bandages, choix pansement/trousse. Démoniste : fusil de tranchée + wakizashi uniquement.
+
+## Rencontres du one-shot et charges (0.9.0)
+
+- `npm run sim:oneshot -- 100` rejoue 100 fois le pont puis l'atelier dans le moteur du système (dés tirés, tactiques du Guide du MJ) : aucune erreur, victoire des prétirés ; avec 5 joueurs le pont dure 2 à 3 rounds et l'atelier environ 4. `npm run sim:oneshot -- 1` affiche le journal détaillé d'une partie ; `'{"partySize":3}'` en second argument teste une table de 3.
+- Foundry : Rôdeurs à 40 PV / CA 14 / 5 RP, chaque jeton avec ses propres PV ; Tomoshibi à 90 PV / CA 16 / 8 RP / 30 BDP, corps « Monstrueux ».
+- Cibler 4 pourfendeurs puis lancer « Feu follet bleu » : 3 lignes de cible seulement, un jet de toucher par cible, chacune peut esquiver séparément. Brûlure de 3 tours puis l'état disparaît.
+- Kenta charge « Coup de tonnerre et éclair », on termine le combat : au combat suivant, la forme se charge de nouveau dès son premier tour (plus de « charge déjà… round 2 »).
+- Un pourfendeur qui brûle charge une forme : la Brûlure inflige 1 dégât au début de son tour sans annuler la charge ; une attaque qui le blesse l'annule.
+- Attaque de base au katana Nichirin en visant la tête d'un démon blessé, dégâts ≥ PV restants : la carte annonce la décapitation, l'état passe à Mort et la tête est marquée sectionnée.

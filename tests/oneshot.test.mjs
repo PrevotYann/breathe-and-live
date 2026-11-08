@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { DEMON_BODY_OPTIONS, DEMON_DANGER_OPTIONS, DEMON_MOVEMENT_OPTIONS } from "../module/config/rule-data.mjs";
 
 const root = new URL("../", import.meta.url);
 const manifest = JSON.parse(fs.readFileSync(new URL("system.json", root), "utf8"));
@@ -55,13 +56,23 @@ test("pregens follow the book's level 1 creation rules", () => {
   }
 });
 
-test("demons use the creation array plus their rank package", () => {
+test("demons use the creation array plus their rank package and 3 build points (p.108-110)", () => {
   const packages = { "Demon faible": [4, 3, 2, 1, 1, 1], "Demon eleve": [4, 4, 3, 3, 2, 1] };
-  const total = values => values.reduce((sum, value) => sum + value, 0);
+  const keys = ["force", "finesse", "courage", "vitesse", "social", "intellect"];
+  const permutations = values => values.length <= 1 ? [values] : values.flatMap((value, index) =>
+    permutations([...values.slice(0, index), ...values.slice(index + 1)]).map(rest => [value, ...rest]));
+  const decomposes = (base, pack) => permutations([0, 1, 2, 3, 3, 5]).some(array =>
+    permutations(pack).some(added => keys.every((key, index) => array[index] + added[index] === base[key])));
   for (const actor of adventure.actors.filter(doc => doc.type === "npcDemon")) {
-    const base = actor.system.stats.base;
-    assert.equal(total(Object.values(base)), total([0, 1, 2, 3, 3, 5]) + total(packages[actor.system.class.rank]), actor.name);
-    assert.equal(actor.system.resources.hp.max, 20 + 5 * base.force, actor.name);
+    const base = actor.system.stats.base, demonology = actor.system.demonology;
+    assert.ok(decomposes(base, packages[actor.system.class.rank]), `${actor.name}: array (0,1,2,3,3,5) + rank package`);
+    const body = DEMON_BODY_OPTIONS.find(option => option.key === demonology.bodyType);
+    const movement = DEMON_MOVEMENT_OPTIONS.find(option => option.key === demonology.movementType);
+    const danger = DEMON_DANGER_OPTIONS.find(option => option.key === demonology.dangerLevel);
+    assert.ok(body.points + movement.points + danger.points <= 3, `${actor.name}: at most 3 build points`);
+    assert.equal(demonology.basicDamage, danger.baseDamage, actor.name);
+    assert.equal(actor.system.resources.hp.max, body.baseHp + 5 * base.force, actor.name);
+    assert.equal(actor.system.resources.ca, 10 + base.vitesse, actor.name);
     assert.equal(actor.system.resources.bdp.max, 10 * base.courage, actor.name);
     assert.equal(actor.system.resources.rp.max, Math.floor((5 + base.vitesse + base.intellect) / 2), actor.name);
   }

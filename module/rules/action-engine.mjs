@@ -624,10 +624,11 @@ export async function runDemonistEnhancementReaction(actor) {
   return effects;
 }
 
-async function applyDirectDamage(actor, amount, flavor) {
+// Periodic condition damage (burn, bleed, poison) is not an attack: it never interrupts a charge ("Être attaqué interrompt la charge", Temps de charge).
+async function applyDirectDamage(actor, amount, flavor, { periodic = false } = {}) {
   const hpValue = toNumber(actor.system?.resources?.hp?.value, 0);
   const { nextHp: newHp } = await applyHpDamage(actor, amount);
-  await noteActorDamageTaken(actor, Math.max(0, amount));
+  await noteActorDamageTaken(actor, Math.max(0, amount), periodic ? { periodic: true } : {});
   await ChatMessage.create({
     speaker: actorSpeaker(actor),
     content: `<em>${flavor} ${amount} degats (${hpValue} -> ${newHp} PV).</em>`,
@@ -1178,7 +1179,15 @@ async function applyBasicAttackDamage({
     attackerUuid: attacker.uuid, damage, melee: !isFirearm && Number(weapon?.system?.range || 1.5) <= 1.5,
     combatId: game.combat?.id || "", round: game.combat?.round, turn: game.combat?.turn,
   });
-  await applyTargetedLimbDamage(targetActor, targetLimb, damage);
+  // A Nichirin blade aimed at the head whose damage reaches the remaining HP beheads the demon.
+  const decapitated = targetLimb === "head" && damage > 0 && damage >= currentHp && !!weapon?.system?.isNichirin;
+  if (decapitated && isDemonActor(targetActor)) {
+    await targetActor.update({ "system.combat.injuries.limbs.head.injured": true, "system.combat.injuries.limbs.head.severed": true, "system.death.state": "dead" });
+    await ChatMessage.create({ speaker: actorSpeaker(attacker),
+      content: `<strong>${attacker.name} décapite ${targetActor.name} avec une lame Nichirin : le démon part en cendres.</strong>` });
+  } else {
+    await applyTargetedLimbDamage(targetActor, targetLimb, damage);
+  }
   if (result.nextHp > 0 && await applyExecutionSkill(attacker, targetActor)) result.nextHp = 0;
   const reactivatePoison = await onSubclassWeaponHit(attacker, targetActor, damage);
   if (reactivatePoison && targetActor.system?.conditions?.poisoned?.active) {
@@ -1211,7 +1220,7 @@ async function applyBasicAttackDamage({
     sourceLabel: weapon?.name || "Attaque de base",
   });
   await applyOnHit(attacker, targetToken, weapon ?? { system: {} },
-    { decapitated: targetLimb === "head" && damage >= currentHp && !!weapon?.system?.isNichirin },
+    { decapitated },
     { tookDamage: damage > 0, wasKilled: result.nextHp === 0 });
 
   return { currentHp, nextHp: result.nextHp, damage, poisonResult };
@@ -2690,7 +2699,8 @@ export async function processConditionTurnStart(actor, combat = game.combat) {
       await applyDirectDamage(
         actor,
         toNumber(roll.total, 0),
-        `${definition.label} affecte ${actor.name} :`
+        `${definition.label} affecte ${actor.name} :`,
+        { periodic: true }
       );
     }
 
@@ -2728,7 +2738,8 @@ export async function processConditionTurnStart(actor, combat = game.combat) {
         await applyDirectDamage(
           actor,
           Math.max(0, toNumber(runtime.turnDamage.value, 0)),
-          `Poison (${runtime.profile}) affecte ${actor.name} :`
+          `Poison (${runtime.profile}) affecte ${actor.name} :`,
+          { periodic: true }
         );
         await createPoisonStatusChat(actor, summary, "Le poison agit");
       } else if (runtime.turnDamage.kind === "formula" && runtime.turnDamage.formula) {
@@ -2736,7 +2747,8 @@ export async function processConditionTurnStart(actor, combat = game.combat) {
         await applyDirectDamage(
           actor,
           Math.max(0, toNumber(roll.total, 0)),
-          `Poison (${runtime.profile}) affecte ${actor.name} :`
+          `Poison (${runtime.profile}) affecte ${actor.name} :`,
+          { periodic: true }
         );
         await createPoisonStatusChat(actor, summary, "Le poison agit");
       } else if (runtime.turnDamage.kind === "percentMax") {
@@ -2745,7 +2757,8 @@ export async function processConditionTurnStart(actor, combat = game.combat) {
         await applyDirectDamage(
           actor,
           amount,
-          `Poison (${runtime.profile}) affecte ${actor.name} :`
+          `Poison (${runtime.profile}) affecte ${actor.name} :`,
+          { periodic: true }
         );
         await createPoisonStatusChat(actor, summary, "Le poison agit");
       } else if (runtime.turnDamage.kind === "mixed") {
@@ -2765,7 +2778,8 @@ export async function processConditionTurnStart(actor, combat = game.combat) {
           await applyDirectDamage(
             actor,
             amount,
-            `Poison (${runtime.profile}) affecte ${actor.name} :`
+            `Poison (${runtime.profile}) affecte ${actor.name} :`,
+            { periodic: true }
           );
         }
         await createPoisonStatusChat(actor, summary, "Le poison agit");
@@ -2852,6 +2866,12 @@ export function registerActionHooks() {
   Hooks.on("deleteCombat", async (combat, options, userId) => {
     if (!isAutomationAuthority(userId)) return;
     const updates = [];
+    // Round-based state must not leak into the next fight (charges, cooldowns, 0 E lockout).
+    for (const actor of combatActors(combat)) {
+      for (const key of ["techniqueCharge", "techniqueCooldowns", "mustRest", "damageTakenByRound"]) {
+        if (actor.getFlag?.(SYSTEM_ID, key) !== undefined) await actor.unsetFlag(SYSTEM_ID, key);
+      }
+    }
     for (const actor of new Set([...(game.actors?.contents ?? []), ...combatActors(combat)])) {
       if (actor.type !== "demonist") continue;
       const activeCombatId = String(actor.system?.support?.demonistMedicineActiveCombatId || "");

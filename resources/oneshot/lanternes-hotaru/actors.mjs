@@ -272,8 +272,11 @@ export const DEMONS = [
     name: "Rôdeur des lanternes",
     rank: "Demon faible",
     img: token("rodeur-des-lanternes"),
-    // Array (0,1,2,3,3,5) + weak rank package (4,3,2,1,1,1).
-    stats: { force: 3, finesse: 8, courage: 5, vitesse: 1, social: 7, intellect: 2 },
+    // Array (0,1,2,3,3,5) + weak rank package (4,3,2,1,1,1), tuned with tests/oneshot-simulator.mjs:
+    // force 0+4, finesse 5+3, courage 2+1, vitesse 3+1, social 3+2, intellect 1+1.
+    // 40 HP, CA 14 (the book's weak-rank benchmark), 5 RP: the bridge fight lasts 2-3 rounds.
+    stats: { force: 4, finesse: 8, courage: 3, vitesse: 4, social: 5, intellect: 2 },
+    body: "humanoid",
     danger: "moderate",
     basicDamage: "1d4",
     abilities: [SRC.demonHeal],
@@ -291,8 +294,12 @@ export const DEMONS = [
     name: "Tomoshibi, le Lanternier",
     rank: "Demon eleve",
     img: token("tomoshibi"),
-    // Array (0,1,2,3,3,5) + high rank package (4,4,3,3,2,1).
-    stats: { force: 6, finesse: 9, courage: 5, vitesse: 5, social: 3, intellect: 3 },
+    // Array (0,1,2,3,3,5) + high rank package (4,4,3,3,2,1): force 2+4, finesse 5+4, courage 1+2,
+    // vitesse 3+3, social 0+1, intellect 3+3. CA 16 and 8 RP match the book's high-rank benchmark.
+    // Build points (p.108): monstrous body (2 pts, 60 base HP) + abnormal danger (1 pt) = 90 HP.
+    // Tuned with tests/oneshot-simulator.mjs: about 4 rounds against the five pregens.
+    stats: { force: 6, finesse: 9, courage: 3, vitesse: 6, social: 1, intellect: 6 },
+    body: "monstrous",
     danger: "abnormal",
     basicDamage: "1d6",
     abilities: [SRC.demonHeal, SRC.demonRegrow],
