@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { docId } from "../resources/oneshot/lanternes-hotaru/ids.mjs";
 import { DEMON_BODY_OPTIONS, DEMON_DANGER_OPTIONS, DEMON_MOVEMENT_OPTIONS } from "../module/config/rule-data.mjs";
 
 const root = new URL("../", import.meta.url);
@@ -109,6 +110,34 @@ test("every system asset referenced by the adventure exists", () => {
   const prowlers = bridge.tokens.filter(token => token.name.startsWith("Rôdeur"));
   assert.equal(prowlers.length, 2);
   assert.notEqual(prowlers[0].texture.src, prowlers[1].texture.src, "the two prowlers have distinct final portraits");
+});
+
+test("map pins, tokens and camera include the v14 grid-rounded canvas padding", () => {
+  // Anchors independently measured in the shipped paintings; canvas origins are
+  // (400,300), (300,200), (300,300) for the three 100px-grid scenes.
+  const [village, bridge, workshop] = adventure.scenes;
+  const bridgePin = village.notes.find(note => note.text === "D. Pont rouge");
+  assert.deepEqual([bridgePin.x, bridgePin.y], [2450, 1700]);
+  const kiln = workshop.notes.find(note => note.text === "Le four (cachette)");
+  assert.deepEqual([kiln.x, kiln.y], [2350, 1010]);
+  const memorial = workshop.notes.find(note => note.text === "Stèle de Kansuke");
+  assert.deepEqual([memorial.x, memorial.y], [2895, 2080]);
+  for (const [scene, origin] of [[village, [400, 300]], [bridge, [300, 200]], [workshop, [300, 300]]]) {
+    assert.deepEqual([scene.initial.x, scene.initial.y], [origin[0] + scene.width / 2, origin[1] + scene.height / 2]);
+    for (const note of scene.notes) {
+      assert.deepEqual(note.levels, [scene.initialLevel]);
+      assert.ok(note.x >= origin[0] && note.x <= origin[0] + scene.width, note.text);
+      assert.ok(note.y >= origin[1] && note.y <= origin[1] + scene.height, note.text);
+    }
+    for (const token of scene.tokens) {
+      assert.ok(token.x >= origin[0] && token.x + token.width * 100 <= origin[0] + scene.width, token.name);
+      assert.ok(token.y >= origin[1] && token.y + token.height * 100 <= origin[1] + scene.height, token.name);
+    }
+  }
+  for (const [key, center] of [["sota", [900, 745]], ["fumi", [1250, 1090]], ["jiro", [1915, 1245]]]) {
+    const token = workshop.tokens.find(token => token.actorId === docId(`actor:${key}`));
+    assert.deepEqual([token.x + 50 - 300, token.y + 50 - 300], center, key);
+  }
 });
 
 test("folders referenced by adventure documents are included", () => {

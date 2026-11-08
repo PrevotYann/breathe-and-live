@@ -149,7 +149,7 @@ try {
   assert.equal(await mizuki.locator(".bl-breath-summary .bl-souffle-name").textContent(), "Souffle de l'Eau");
   assert.equal(await mizuki.locator(".sheet-badge-row").isVisible(), false, "rings suffice on Fiche");
   const pistol = mizuki.locator('.bl-weapon-box.item').filter({ hasText: "Pistolet" });
-  assert.match(await pistol.locator("img").getAttribute("src"), /firearm\.svg$/);
+  assert.match(await pistol.locator("img").getAttribute("src"), /firearm\.webp$/);
   await mizuki.screenshot({ path: `${output}/mizuki-polished-1040.png` });
   await mizuki.locator('[data-open-tab="breaths"]').click();
   assert.equal(await mizuki.locator('.sheet-tabs [aria-selected="true"]').getAttribute("data-tab"), "breaths");
@@ -163,7 +163,7 @@ try {
   }, customPath);
   await page.waitForFunction(() => {
     const img = qaSheetDoc.sheet.element[0].querySelector(`[data-item-id="${qaGunId}"] img`);
-    return img?.getAttribute("src").endsWith("/firearm.svg") && img.complete && img.naturalWidth > 0;
+    return img?.getAttribute("src").endsWith("/firearm.webp") && img.complete && img.naturalWidth > 0;
   });
   assert.equal(await page.evaluate(() => qaSheetDoc.items.get(qaGunId).img), customPath);
   await page.evaluate(async () => { await qaSheetDoc.sheet.close(); await qaSheetDoc.delete(); });

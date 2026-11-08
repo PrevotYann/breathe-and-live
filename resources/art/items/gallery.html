@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="fr"><meta charset="utf-8"><title>Breathe and Live — Illustrations d'objets</title>
+<style>
+body{margin:32px;background:#171e30;color:#f1e4ce;font:18px Georgia,serif}h1{font-size:28px}main{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:20px;max-width:1040px}figure{margin:0;padding:8px;border:1px solid #776549;border-radius:8px}img{width:100%;aspect-ratio:1;object-fit:contain;border-radius:4px}figcaption{text-align:center;padding:6px}small{display:block;color:#c9bca9;margin:16px 0}
+</style>
+<h1>Illustrations d'objets</h1><small>Images originales générées avec image_gen. Indigo, ambre, papier et contours peints, en accord avec Les Lanternes de Hotaru.</small>
+<main id="gallery"></main>
+<script>
+const labels={weapon:'Armes',firearm:'Armes à feu',ammunition:'Munitions',explosive:'Explosifs',technique:'Techniques',breath:'Souffles',blood:'Arts de sang',medical:'Soins',poison:'Poisons',food:'Nourriture',clothing:'Vêtements',transport:'Transport',tools:'Outils',feature:'Maîtrises',sense:'Sens',gear:'Équipement'};
+for(const [id,label] of Object.entries(labels)){
+ const figure=document.createElement('figure'),img=document.createElement('img'),caption=document.createElement('figcaption');
+ img.src=`../../../assets/icons/items/${id}.webp`;img.alt=label;caption.textContent=label;
+ figure.append(img,caption);document.getElementById('gallery').append(figure);
+}
+</script></html>

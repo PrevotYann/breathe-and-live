@@ -14,6 +14,7 @@ import { KAKUSHI_DELIVERY, PLOT_ITEMS, SOURCE_SECTION, TOMOSHIBI_ARTS } from "..
 import { GM_PAGES } from "../oneshot/lanternes-hotaru/journal-gm.mjs";
 import { FORM_SUMMARIES, HANDOUT_PAGES, PREGEN_TEXT, PREGENS_INTRO, RULES_FOR_PLAYERS } from "../oneshot/lanternes-hotaru/journal-players.mjs";
 import { SCENES } from "../oneshot/lanternes-hotaru/scenes.mjs";
+import { mapToCanvas, SCENE_GRID_SIZE, SCENE_PADDING } from "../oneshot/lanternes-hotaru/coordinates.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, "system.json"), "utf8"));
@@ -313,9 +314,9 @@ function scene(def, index) {
   const tokenCounts = {};
   return {
     _id: docId(`scene:${def.key}`), name: def.name, navName: def.navName, active: false, navigation: true, navOrder: index,
-    thumb: def.thumb, width: def.width, height: def.height, padding: 0.1, shiftX: 0, shiftY: 0,
-    initial: { x: Math.round(def.width / 2), y: Math.round(def.height / 2), scale: 0.4 }, initialLevel: levelId,
-    grid: { type: 1, size: 100, style: "solidLines", thickness: 1, color: "#000000", alpha: 0.15, distance: 1.5, units: "m" },
+    thumb: def.thumb, width: def.width, height: def.height, padding: SCENE_PADDING, shiftX: 0, shiftY: 0,
+    initial: { ...mapToCanvas(def, { x: Math.round(def.width / 2), y: Math.round(def.height / 2) }), scale: 0.4 }, initialLevel: levelId,
+    grid: { type: 1, size: SCENE_GRID_SIZE, style: "solidLines", thickness: 1, color: "#000000", alpha: 0.15, distance: 1.5, units: "m" },
     tokenVision: false, fog: { mode: 0 },
     environment: { darknessLevel: def.darkness, darknessLock: false, globalLight: { enabled: false } },
     levels: [{
@@ -327,7 +328,7 @@ function scene(def, index) {
     }],
     notes: def.notes.map((note, i) => ({
       _id: docId(`note:${def.key}:${i}`), entryId: docId("journal:gm"), pageId: docId(`page:gm:${note.page}`),
-      x: note.x, y: note.y, elevation: 0, levels: [], sort: i, locked: false,
+      ...mapToCanvas(def, note), elevation: 0, levels: [levelId], sort: i, locked: false,
       texture: { src: "icons/svg/book.svg", tint: "#f2c94c", anchorX: 0.5, anchorY: 0.5, fit: "contain" },
       iconSize: 48, text: note.text, fontFamily: "", fontSize: 28, textAnchor: 1, textColor: "#ffffff", global: false, flags: {},
     })),
@@ -339,7 +340,7 @@ function scene(def, index) {
         ...structuredClone(actor.prototypeToken),
         _id: docId(`token:${def.key}:${token.actor}:${tokenCounts[token.actor]}`), name: token.name ?? actor.name, actorId: actor._id,
         ...(token.img ? { texture: { ...actor.prototypeToken.texture, src: token.img } } : {}),
-        x: token.x, y: token.y, elevation: 0, level: levelId, hidden: !!token.hidden, locked: false, sort: 0, flags: {},
+        ...mapToCanvas(def, token), elevation: 0, level: levelId, hidden: !!token.hidden, locked: false, sort: 0, flags: {},
       };
     }),
     drawings: [], lights: [], sounds: [], regions: [], tiles: [], walls: [],

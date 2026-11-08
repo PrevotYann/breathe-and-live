@@ -8,9 +8,11 @@
     "test:v14": "node tests/v14-smoke.mjs",
     "test:combat:v14": "node tests/v14-four-actor-combat.mjs",
     "test:sheets": "node tests/v14-sheets.mjs",
+    "test:oneshot:v14": "node tests/v14-oneshot-maps.mjs",
     "sim:oneshot": "node tests/oneshot-sim-run.mjs",
     "build": "npm run verify:rules && vite build && node resources/scripts/package-system.mjs",
-    "sync:rules": "node resources/scripts/sync-source-catalog.mjs && node resources/scripts/sync-source-weapons.mjs && node resources/scripts/sync-source-abilities.mjs && node resources/scripts/audit-rulebook.mjs --apply",
+    "sync:rules": "node resources/scripts/sync-source-catalog.mjs && node resources/scripts/sync-source-weapons.mjs && node resources/scripts/sync-source-abilities.mjs && node resources/scripts/audit-rulebook.mjs --apply && npm run sync:art",
+    "sync:art": "node resources/scripts/refresh-compendium-art.mjs",
     "verify:rules": "node resources/scripts/verify-rulebook.mjs",
     "repair:pack-ids": "node resources/scripts/repair-pack-ids.mjs",
     "clean:packs": "node resources/scripts/clean-compendiums.mjs",
@@ -19,9 +21,10 @@
     "verify:ready": "node resources/scripts/verify-system-readiness.mjs",
     "lint": "eslint .",
     "assets:ink": "node resources/scripts/generate-ink-assets.mjs",
+    "assets:items": "node resources/scripts/prepare-item-art.mjs",
     "assets:oneshot": "node resources/scripts/prepare-oneshot-assets.mjs",
     "assets:oneshot:layouts": "node resources/scripts/generate-oneshot-assets.mjs",
-    "build:oneshot": "node resources/scripts/build-oneshot-pack.mjs"
+    "build:oneshot": "npm run sync:art && node resources/scripts/build-oneshot-pack.mjs"
   },
   "devDependencies": {
     "@foundryvtt/foundryvtt-cli": "^1.0.3",

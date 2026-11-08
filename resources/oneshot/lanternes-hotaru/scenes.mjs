@@ -1,5 +1,7 @@
 // Scenes of the one-shot. Coordinates are in pixels on maps drawn with a
-// 100 px grid (1 square = 1.5 m). Notes open the matching GM guide page.
+// 100 px grid (1 square = 1.5 m), measured against the final painted WebPs.
+// Notes are point anchors; tokens use their top-left corner (not their center).
+// The pack builder adds Foundry's canvas padding exactly once.
 import { ASSETS } from "./ids.mjs";
 
 export const SCENES = [
@@ -19,13 +21,13 @@ export const SCENES = [
       { page: "lieu-c", x: 3060, y: 750, text: "C. Hutte du charbonnier" },
       { page: "lieu-d", x: 2050, y: 1400, text: "D. Pont rouge" },
       { page: "lieu-d", x: 440, y: 310, text: "D. Sanctuaire aux glycines" },
-      { page: "lieu-d", x: 3780, y: 330, text: "D. Chemin de la colline" },
+      { page: "lieu-d", x: 3780, y: 250, text: "D. Chemin de la colline" },
       { page: "lieu-e", x: 600, y: 1115, text: "E. Maison du chef" },
     ],
     tokens: [
       { actor: "gonbei-arakawa", x: 1700, y: 1480 },
       { actor: "okiku", x: 1430, y: 1300 },
-      { actor: "oume", x: 940, y: 1440 },
+      { actor: "oume", x: 950, y: 1830 },
       { actor: "mii", x: 3010, y: 900 },
       { actor: "shinpei-kakushi", x: 100, y: 1500 },
     ],
@@ -62,15 +64,15 @@ export const SCENES = [
     darkness: 0,
     notes: [
       { page: "acte-3", x: 1500, y: 1950, text: "Acte 3 — Arrivée" },
-      { page: "acte-3", x: 2050, y: 760, text: "Le four (cachette)" },
+      { page: "acte-3", x: 2050, y: 710, text: "Le four (cachette)" },
       { page: "epilogue", x: 2595, y: 1780, text: "Stèle de Kansuke" },
     ],
     tokens: [
       { actor: "tomoshibi", x: 1400, y: 700 },
       { actor: "mii", x: 1500, y: 700 },
-      { actor: "sota", x: 850, y: 770 },
-      { actor: "fumi", x: 1200, y: 1100 },
-      { actor: "jiro", x: 1850, y: 1250 },
+      { actor: "sota", x: 850, y: 695 },
+      { actor: "fumi", x: 1200, y: 1040 },
+      { actor: "jiro", x: 1865, y: 1195 },
       { actor: "shinpei-kakushi", x: 1450, y: 2050, hidden: true },
       { actor: "oume", x: 1550, y: 2050, hidden: true },
     ],

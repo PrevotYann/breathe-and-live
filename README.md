@@ -1,6 +1,6 @@
 # Breathe and Live Foundry VTT System
 
-Version 0.7.0 — Foundry VTT 14.368
+Version 0.10.0 — Foundry VTT 14.368
 
 French Demon Slayer / Breathe and Live system with Slayer, Demonist, Demon and NPC sheets, breathing techniques, combat reactions, progression, equipment, and the 1934 supplement.
 
@@ -19,8 +19,8 @@ Click **Install**. The same URL supports future updates. The repository and rele
 To publish a release, increment `system.json`'s version and push the changes to `master`; GitHub Actions creates the matching tag and release. You can also push a tag matching the version in `system.json`:
 
 ```sh
-git tag v0.7.0
-git push origin v0.7.0
+git tag v0.10.0
+git push origin v0.10.0
 ```
 
 The GitHub Actions release workflow runs the tests, builds the system and compendiums, and publishes `manifest.json`, `system.json`, and `breathe-and-live.zip`. For later releases, increment `system.json`'s version and update its versioned `download` URL before tagging. The build generates `dist/manifest.json` from the packaged `system.json`, so no second manifest needs manual maintenance. The ZIP contains the built files at its root; GitHub's automatic source-code ZIP is not an installable build.
@@ -28,6 +28,13 @@ The GitHub Actions release workflow runs the tests, builds the system and compen
 See [V14 migration and validation](resources/rules/foundry-v14-migration.md) for upgrading an existing V12 world and running the browser smoke tests. Back up the world before Foundry performs its core migration.
 
 ## One-shot d'initiation : « Les Lanternes de Hotaru »
+
+La version 0.10.0 corrige le placement des épingles de journal et des jetons sur
+les trois cartes et remplace les pictogrammes d'objets par 16 illustrations
+peintes. Voir les [notes de version](resources/rules/release-0.10.0.md) et la
+[galerie des objets](resources/art/items/gallery.html). Les scènes déjà
+importées dans un monde doivent être mises à jour ou réimportées pour recevoir
+les nouvelles positions.
 
 Le compendium **One-shot - Les Lanternes de Hotaru** (dossier *Scénarios*) contient une Aventure Foundry. Ouvrez-la puis cliquez sur *Importer l'aventure* : acteurs, objets, journaux et scènes sont créés dans des dossiers « Les Lanternes de Hotaru ». Commencez par le journal *Guide du MJ*.
 

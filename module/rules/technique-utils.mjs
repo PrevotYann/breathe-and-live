@@ -1,29 +1,9 @@
+import { normalizeBreathName } from "./breath-name.mjs";
 import { BREATH_KEYS, SYSTEM_ID } from "../config/rule-data.mjs";
 import { getEffectiveBaseStats } from "./poison-utils.mjs";
 import { calculateHealableMax } from "./actor-derived-formulas.mjs";
 
 const FU = foundry.utils;
-
-const BREATH_KEYWORDS = [
-  ["sun", /(soleil|sun)/i],
-  ["moon", /(lune|moon)/i],
-  ["flame", /(flamme|flame)/i],
-  ["water", /(eau|water)/i],
-  ["wind", /(vent|wind)/i],
-  ["thunder", /(foudre|tonnerre|thunder)/i],
-  ["stone", /(pierre|stone)/i],
-  ["flower", /(fleur|flower)/i],
-  ["mist", /(brume|mist)/i],
-  ["serpent", /(serpent)/i],
-  ["sound", /(son|sound)/i],
-  ["insect", /(insecte|insect)/i],
-  ["love", /(amour|love)/i],
-  ["beast", /(bete|bête|beast)/i],
-  ["ocean", /(ocean|océan)/i],
-  ["west", /(ouest|west)/i],
-  ["snow", /(neige|snow)/i],
-  ["custom", /(original|custom|homebrew)/i],
-];
 
 const DERIVED_LABELS = {
   athletisme: "Athletisme",
@@ -219,14 +199,7 @@ function makeTagList(tags = []) {
   return list;
 }
 
-export function normalizeBreathName(raw) {
-  const text = String(raw ?? "").trim();
-  if (!text) return "";
-  for (const [key, pattern] of BREATH_KEYWORDS) {
-    if (pattern.test(text)) return key;
-  }
-  return "";
-}
+export { normalizeBreathName } from "./breath-name.mjs";
 
 export function getBreathDefinition(key) {
   return BREATH_KEYS.find((entry) => entry.key === key) || null;

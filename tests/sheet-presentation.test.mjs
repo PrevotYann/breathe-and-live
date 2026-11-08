@@ -59,11 +59,42 @@ test("cached image failures recover even when the load error preceded listeners"
   const img = dom.window.document.querySelector("img");
   Object.defineProperty(img, "complete", { value: true });
   activateSheetImages({ item: { type: "medical" } }, dom.window.document.body);
-  assert.match(img.getAttribute("src"), /medical\.svg$/);
+  assert.match(img.getAttribute("src"), /medical\.webp$/);
 });
 
 test("legacy demon portraits and firearm icons resolve without requesting missing core files", () => {
   assert.equal(resolveActorImage({ img: "icons/svg/monster.svg" }), "icons/svg/mystery-man.svg");
   assert.equal(resolveActorImage({ img: "worlds/campaign/portrait.webp" }), "worlds/campaign/portrait.webp");
-  assert.match(resolveItemImage({ type: "firearm", img: "icons/weapons/guns/gun-pistol.webp" }), /firearm\.svg$/);
+  assert.match(resolveItemImage({ type: "firearm", img: "icons/weapons/guns/gun-pistol.webp" }), /firearm\.webp$/);
+});
+
+test("legacy system pictograms use painted art while custom SVGs are preserved", () => {
+  assert.match(resolveItemImage({ type: "medical", img: "systems/breathe-and-live/assets/icons/items/medical.svg" }), /medical\.webp$/);
+  assert.equal(resolveItemImage({ type: "medical", img: "worlds/campaign/custom.svg" }), "worlds/campaign/custom.svg");
+});
+
+test("compendium item records persist usable art outside the sheet renderer", () => {
+  const root = new URL("../", import.meta.url);
+  const manifest = JSON.parse(fs.readFileSync(new URL("system.json", root)));
+  let illustrated = 0;
+  function inspect(doc, isItem = false) {
+    if (isItem) {
+      assert.equal(doc.img, resolveItemImage(doc), doc.name);
+      if (doc.img.startsWith("systems/breathe-and-live/")) {
+        assert.ok(fs.existsSync(new URL(doc.img.slice("systems/breathe-and-live/".length), root)), doc.name);
+        illustrated++;
+      }
+    }
+    for (const item of doc.items ?? []) inspect(item, true);
+    for (const actor of doc.actors ?? []) inspect(actor);
+  }
+  for (const pack of manifest.packs) {
+    const docs = pack.path.endsWith(".db")
+      ? fs.readFileSync(new URL(pack.path, root), "utf8").trim().split(/\r?\n/).map(JSON.parse)
+      : fs.readdirSync(new URL(`packs/_source/${pack.name}/`, root), { recursive: true })
+        .filter(name => name.endsWith(".json") && !name.split(/[\\/]/).at(-1).startsWith("_"))
+        .map(name => JSON.parse(fs.readFileSync(new URL(`packs/_source/${pack.name}/${name.replaceAll("\\", "/")}`, root))));
+    for (const doc of docs) inspect(doc, pack.type === "Item");
+  }
+  assert.ok(illustrated > 100);
 });

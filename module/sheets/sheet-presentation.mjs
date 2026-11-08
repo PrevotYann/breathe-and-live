@@ -1,6 +1,6 @@
 import { BREATH_KEYS, SYSTEM_ID } from "../config/rule-data.mjs";
 import { UNAVAILABLE_CORE_ICONS } from "../config/unavailable-core-icons.mjs";
-import { normalizeBreathName } from "../rules/technique-utils.mjs";
+import { normalizeBreathName } from "../rules/breath-name.mjs";
 
 const ICON_ROOT = `systems/${SYSTEM_ID}/assets/icons/items`;
 const ITEM_ICONS = {
@@ -20,12 +20,13 @@ export function getItemFallbackImage(item = {}) {
     const breath = BREATH_KEYS.find(entry => entry.key === breathKey);
     if (breath?.img) return breath.img;
   }
-  return `${ICON_ROOT}/${ITEM_ICONS[item.type] || "gear"}.svg`;
+  return `${ICON_ROOT}/${ITEM_ICONS[item.type] || "gear"}.webp`;
 }
 
 export function resolveItemImage(item = {}) {
   const img = String(item.img || "").trim();
-  return !img || /^icons\/svg\//.test(img) || UNAVAILABLE_CORE_ICONS.has(img) ? getItemFallbackImage(item) : img;
+  const legacySystemIcon = img.startsWith(`${ICON_ROOT}/`) && img.endsWith(".svg");
+  return !img || /^icons\/svg\//.test(img) || legacySystemIcon || UNAVAILABLE_CORE_ICONS.has(img) ? getItemFallbackImage(item) : img;
 }
 
 export function resolveActorImage(actor = {}) {

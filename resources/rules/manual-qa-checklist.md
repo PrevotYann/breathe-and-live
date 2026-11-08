@@ -286,3 +286,12 @@ Use this when automated testing is not practical inside the Foundry runtime.
 - Kenta charge « Coup de tonnerre et éclair », on termine le combat : au combat suivant, la forme se charge de nouveau dès son premier tour (plus de « charge déjà… round 2 »).
 - Un pourfendeur qui brûle charge une forme : la Brûlure inflige 1 dégât au début de son tour sans annuler la charge ; une attaque qui le blesse l'annule.
 - Attaque de base au katana Nichirin en visant la tête d'un démon blessé, dégâts ≥ PV restants : la carte annonce la décapitation, l'état passe à Mort et la tête est marquée sectionnée.
+
+## Épingles du one-shot et illustrations d'objets
+
+- `npm run test:oneshot:v14` dans le monde jetable `bl-v14-qa` : importer l'Aventure, afficher les trois cartes, vérifier les 13 épingles et les 17 jetons par rapport aux origines réelles du canvas. Les pages de journal doivent toutes être accessibles depuis les épingles.
+- Village : auberge près du saule, atelier d'Oume au sud-ouest, maison du chef à l'ouest, hutte avec four à charbon à l'est, sanctuaire au nord-ouest, chemin au nord-est ; Oume devant son atelier.
+- Atelier : épingle au centre du four et sur la stèle ; Sota, Fumi et Jirō au centre des trois cocons, sans décalage de marge.
+- Ouvrir les listes de compendiums de soins, armes, progression et arts démoniaques : aucune icône SVG générique d'objet. Glisser un objet sur une fiche et vérifier son illustration peinte. Une illustration personnalisée reste prioritaire.
+- `npm run assets:items` : les 16 WebP se décodent en 512 × 512. Vérifier la lisibilité à petite taille dans `resources/art/items/gallery.html`.
+- Monde existant : une mise à jour du système conserve les scènes locales. Réimporter ou mettre à jour les scènes de l'Aventure pour recevoir les nouvelles positions, après avoir préservé les personnalisations.
